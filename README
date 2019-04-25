@@ -1,0 +1,32 @@
+Fedora CoreOS Config Transpiler
+
+Still a work in progress.
+
+Each config spec is composed of a base and distro component. The base components
+roughly mirror the Ignition spec and are distro agnostic. The distro compoents
+contain sugar for common configuration of the host (e.g. etcd) and are not
+distro-independent.
+
+Each distro and base component are versioned independently with each new
+version getting it's own package. These versions are not exposed to the user.
+
+Each fcos config version has it's own version which is independent of the
+versions of the base and distro components that compose it. However a major
+or minor bump of either component necesitates a corresponding bump in the fcos
+config version.
+
+internal/
+  main, non-exported code
+
+base/
+  Contains distro-agnostic code. Each package here targets only one Ignition
+  spec verions.
+
+distro/
+  Contains distro-specific code. Each package here can target multiple Ignition
+  versions if it makes sense.
+
+config/
+  Contains definitions combining an entry in base and an entry in distro. Also
+  contains the top level Translate() function that determines which version to
+  parse and emit.
