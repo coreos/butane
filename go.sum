@@ -1,0 +1,9 @@
+github.com/ajeddeloh/ignition v0.6.0 h1:UmrrpeVWIB4lBHf2atn/wZbJI7sYLBUvE8aA5B6Wn6s=
+github.com/ajeddeloh/yaml v0.0.0-20141224210557-6b16a5714269 h1:5exOSffWnMuW0z7StqHxz6IFVV082C6rxw9/eR2U7r8=
+github.com/ajeddeloh/yaml v0.0.0-20141224210557-6b16a5714269/go.mod h1:idhzw68Q7v4j+rQ2AGyq3OlZW2Jij9mdmGA4/Sk6J0E=
+github.com/coreos/go-semver v0.3.0 h1:wkHLiw0WNATZnSG7epLsujiMCgPAc9xhjJ4tgnAxmfM=
+github.com/coreos/go-semver v0.3.0/go.mod h1:nnelYz7RCh+5ahJtPPxZlU+153eP4D4r3EedlOD2RNk=
+github.com/coreos/ignition v0.32.0 h1:uMFA1tWr7B9kq2Ku4Bmo61G4gUm/vHsOuognuYaS0yg=
+github.com/coreos/ignition v0.32.0/go.mod h1:WJQapxzEn9DE0ryxsGvm8QnBajm/XsS/PkrDqSpz+bA=
+github.com/go-yaml/yaml v2.1.0+incompatible h1:RYi2hDdss1u4YE7GwixGzWwVo47T8UQwnTLB6vQiq+o=
+github.com/go-yaml/yaml v2.1.0+incompatible/go.mod h1:w2MrLa16VYP0jy6N7M5kHaCkaLENm+P+Tv+MfurjSw0=
