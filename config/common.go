@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	yaml "github.com/ajeddeloh/yaml"
+	json "github.com/ajeddeloh/go-json"
+	"github.com/go-yaml/yaml"
 	"github.com/coreos/go-semver/semver"
 )
 
@@ -12,7 +13,9 @@ var (
 	ErrNoVariant      = errors.New("Error parsing variant. Variant must be specified")
 	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
 
-	registry = map[string]translator{}
+	registry = map[string]translator{
+		"fcos+1.0.0": TranslateFcos0_1,
+	}
 )
 
 func getTranslator(variant string, version semver.Version) (translator, error) {
@@ -55,7 +58,23 @@ func Translate(input []byte, options TranslateOptions) ([]byte, error) {
 
 	translator, err := getTranslator(ver.Variant, version)
 	if err != nil {
+		return nil, err
 	}
 
 	return translator(input, options)
+}
+
+// Misc helpers
+func unmarshal(data []byte, to interface{}, strict bool) error {
+	if strict {
+		return yaml.UnmarshalStrict(data, to)
+	}
+	return yaml.Unmarshal(data, to)
+}
+
+func marshal(from interface{}, pretty bool) ([]byte, error) {
+	if pretty {
+		return json.MarshalIndent(from, "", "  ")
+	}
+	return json.Marshal(from)
 }
