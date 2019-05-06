@@ -2,7 +2,7 @@ package config
 
 import (
 	base_0_1 "github.com/ajeddeloh/fcct/base/v0_1"
-	"github.com/ajeddeloh/fcct/distro/fcos_0_1"
+	fcos_0_1 "github.com/ajeddeloh/fcct/distro/fcos/v0_1"
 )
 
 type FcosConfig0_1 struct {
