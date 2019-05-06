@@ -5,5 +5,9 @@ import (
 )
 
 func (f Fcos) ToIgn3_0() (types.Config, error) {
-	return types.Config{}, nil
+	return types.Config{
+		Ignition: types.Ignition{
+			Version: "3.0.0",
+		},
+	}, nil
 }
