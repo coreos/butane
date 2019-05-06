@@ -11,6 +11,8 @@ github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 h1:3jFq2xL4ZajGK
 github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/ignition v0.32.0 h1:uMFA1tWr7B9kq2Ku4Bmo61G4gUm/vHsOuognuYaS0yg=
 github.com/coreos/ignition v0.32.0/go.mod h1:WJQapxzEn9DE0ryxsGvm8QnBajm/XsS/PkrDqSpz+bA=
+github.com/coreos/ignition/v2 v2.0.0-beta h1:QU7mbrAWip+dp9RQ8tZQ2x1t7uWQEcTJBd6f6+TlB78=
+github.com/coreos/ignition/v2 v2.0.0-beta/go.mod h1:VzUffEQLl900URFrEZtOdDi0IlBwJrYJXh/jeCB9nbc=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-yaml/yaml v2.1.0+incompatible h1:RYi2hDdss1u4YE7GwixGzWwVo47T8UQwnTLB6vQiq+o=
 github.com/go-yaml/yaml v2.1.0+incompatible/go.mod h1:w2MrLa16VYP0jy6N7M5kHaCkaLENm+P+Tv+MfurjSw0=
