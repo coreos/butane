@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/ajeddeloh/fcct/config"
+	"github.com/ajeddeloh/fcct/config/common"
 )
 
 func fail(format string, args ...interface{}) {
@@ -19,7 +20,7 @@ func main() {
 		input    string
 		output   string
 	)
-	options := config.TranslateOptions{}
+	options := common.TranslateOptions{}
 	flag.BoolVar(&options.Strict, "strict", false, "fail on any warning")
 	flag.BoolVar(&options.Pretty, "pretty", false, "output formatted json")
 	flag.StringVar(&input, "input", "", "read from input file instead of stdin")

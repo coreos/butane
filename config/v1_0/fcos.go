@@ -1,10 +1,11 @@
-package config
+package v1_0
 
 import (
 	"errors"
 	"fmt"
 	"reflect"
 
+	"github.com/ajeddeloh/fcct/config/common"
 	base_0_1 "github.com/ajeddeloh/fcct/base/v0_1"
 	fcos_0_1 "github.com/ajeddeloh/fcct/distro/fcos/v0_1"
 
@@ -17,15 +18,15 @@ var (
 )
 
 type FcosConfig0_1 struct {
-	Common          `yaml:",inline"`
+	common.Common   `yaml:",inline"`
 	base_0_1.Config `yaml:",inline"`
 	fcos_0_1.Fcos   `yaml:",inline"`
 }
 
-func TranslateFcos0_1(input []byte, options TranslateOptions) ([]byte, error) {
+func TranslateFcos0_1(input []byte, options common.TranslateOptions) ([]byte, error) {
 	cfg := FcosConfig0_1{}
 
-	if err := unmarshal(input, &cfg, options.Strict); err != nil {
+	if err := common.Unmarshal(input, &cfg, options.Strict); err != nil {
 		return nil, err
 	}
 
@@ -47,5 +48,5 @@ func TranslateFcos0_1(input []byte, options TranslateOptions) ([]byte, error) {
 	}
 
 	// TODO validation
-	return marshal(final, options.Pretty)
+	return common.Marshal(final, options.Pretty)
 }

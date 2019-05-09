@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	json "github.com/ajeddeloh/go-json"
-	"github.com/go-yaml/yaml"
+	"github.com/ajeddeloh/fcct/config/common"
+	"github.com/ajeddeloh/fcct/config/v1_0"
+
 	"github.com/coreos/go-semver/semver"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -14,7 +16,7 @@ var (
 	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
 
 	registry = map[string]translator{
-		"fcos+1.0.0": TranslateFcos0_1,
+		"fcos+1.0.0": v1_0.TranslateFcos0_1,
 	}
 )
 
@@ -26,22 +28,12 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 	return t, nil
 }
 
-type TranslateOptions struct {
-	Pretty bool
-	Strict bool
-}
-
-type Common struct {
-	Version string `yaml:"version"`
-	Variant string `yaml:"variant"`
-}
-
-type translator func([]byte, TranslateOptions) ([]byte, error)
+type translator func([]byte, common.TranslateOptions) ([]byte, error)
 
 // Translate wraps all of the actual translate functions in a switch that determines the correct one to call
-func Translate(input []byte, options TranslateOptions) ([]byte, error) {
+func Translate(input []byte, options common.TranslateOptions) ([]byte, error) {
 	// first determine version. This will ignore most fields, so don't use strict
-	ver := Common{}
+	ver := common.Common{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
 		return nil, fmt.Errorf("Error unmarshaling yaml: %v", err)
 	}
@@ -64,17 +56,3 @@ func Translate(input []byte, options TranslateOptions) ([]byte, error) {
 	return translator(input, options)
 }
 
-// Misc helpers
-func unmarshal(data []byte, to interface{}, strict bool) error {
-	if strict {
-		return yaml.UnmarshalStrict(data, to)
-	}
-	return yaml.Unmarshal(data, to)
-}
-
-func marshal(from interface{}, pretty bool) ([]byte, error) {
-	if pretty {
-		return json.MarshalIndent(from, "", "  ")
-	}
-	return json.Marshal(from)
-}
