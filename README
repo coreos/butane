@@ -27,6 +27,15 @@ distro/
   versions if it makes sense.
 
 config/
-  Contains definitions combining an entry in base and an entry in distro. Also
-  contains the top level Translate() function that determines which version to
+  Contains the top level Translate() function that determines which version to
   parse and emit.
+
+config/common/
+  Contains the common bits and functions for all spec versions. This means the
+  (un)marshaling helpers and the version+variant struct to be included in every
+  user facing spec
+
+config/vX_Y/
+  Contains user facing definitions of the spec. Each is composed by combining a
+  base and distro package with the common version+variant. Each of the defines
+  their own translate function to be registered in the config/ package.

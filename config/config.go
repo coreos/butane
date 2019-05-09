@@ -16,7 +16,7 @@ var (
 	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
 
 	registry = map[string]translator{
-		"fcos+1.0.0": v1_0.TranslateFcos0_1,
+		"fcos+1.0.0": v1_0.TranslateBytes,
 	}
 )
 
