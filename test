@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+export GO111MODULE=on
+
+echo "checking gofmt"
+res=$(gofmt -d .)
+echo "$res"
+test -z "$res"
+
+echo "running tests"
+go test ./... -cover
