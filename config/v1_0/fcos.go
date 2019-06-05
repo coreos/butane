@@ -11,7 +11,11 @@ import (
 
 	"github.com/coreos/ignition/v2/config/v3_0"
 	"github.com/coreos/ignition/v2/config/v3_0/types"
-	"github.com/coreos/ignition/v2/config/validate"
+	ignvalidate "github.com/coreos/ignition/v2/config/validate"
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
+	"github.com/coreos/vcontext/validate"
+
 )
 
 var (
@@ -41,10 +45,17 @@ func (c Config) Translate() (types.Config, error) {
 func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, error) {
 	cfg := Config{}
 
-	if err := common.Unmarshal(input, &cfg, options.Strict); err != nil {
+	contextTree, err := common.Unmarshal(input, &cfg, options.Strict)
+	if err != nil {
 		return nil, err
 	}
-	r := validate.ValidateWithoutSource(reflect.ValueOf(cfg))
+
+	r := validate.Validate(cfg, "yaml")
+	unusedKeyCheck := func(v reflect.Value, c path.ContextPath) report.Report {
+		return ignvalidate.ValidateUnusedKeys(v, c, contextTree)
+	}
+	r.Merge(validate.ValidateCustom(cfg, "yaml", unusedKeyCheck))
+	r.Correlate(contextTree)
 	if r.IsFatal() {
 		fmt.Println(r.String())
 		return nil, ErrInvalidConfig
@@ -55,7 +66,10 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, erro
 		return nil, err
 	}
 
-	r.Merge(validate.ValidateWithoutSource(reflect.ValueOf(final)))
+	translatedTree := common.ToCamelCase(contextTree)
+	second := validate.Validate(final, "json")
+	second.Correlate(translatedTree)
+	r.Merge(second)
 	fmt.Println(r.String())
 
 	if r.IsFatal() {
