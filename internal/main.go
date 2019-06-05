@@ -17,8 +17,8 @@ func fail(format string, args ...interface{}) {
 
 func main() {
 	var (
-		input    string
-		output   string
+		input  string
+		output string
 	)
 	options := common.TranslateOptions{}
 	flag.BoolVar(&options.Strict, "strict", false, "fail on any warning")

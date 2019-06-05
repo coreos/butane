@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ajeddeloh/fcct/config/common"
 	base_0_1 "github.com/ajeddeloh/fcct/base/v0_1"
+	"github.com/ajeddeloh/fcct/config/common"
 	fcos_0_1 "github.com/ajeddeloh/fcct/distro/fcos/v0_1"
 
 	"github.com/coreos/ignition/v2/config/v3_0"
@@ -15,7 +15,6 @@ import (
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/coreos/vcontext/validate"
-
 )
 
 var (

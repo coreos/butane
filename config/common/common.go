@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	vyaml "github.com/coreos/vcontext/yaml"
 	"github.com/coreos/vcontext/tree"
+	vyaml "github.com/coreos/vcontext/yaml"
 	"gopkg.in/yaml.v3"
 )
 
@@ -49,9 +49,9 @@ func ToCamelCase(t tree.Node) tree.Node {
 	switch n := t.(type) {
 	case tree.MapNode:
 		m := tree.MapNode{
-			Children:  make(map[string]tree.Node, len(n.Children)),
-			Keys:      make(map[string]tree.Leaf, len(n.Keys)),
-			Marker:    n.Marker,
+			Children: make(map[string]tree.Node, len(n.Children)),
+			Keys:     make(map[string]tree.Leaf, len(n.Keys)),
+			Marker:   n.Marker,
 		}
 		for k, v := range n.Children {
 			m.Children[camel(k)] = ToCamelCase(v)

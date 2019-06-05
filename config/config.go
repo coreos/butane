@@ -55,4 +55,3 @@ func Translate(input []byte, options common.TranslateOptions) ([]byte, error) {
 
 	return translator(input, options)
 }
-
