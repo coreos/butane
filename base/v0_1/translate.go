@@ -32,7 +32,7 @@ func (c Config) ToIgn3_0() (types.Config, error) {
 
 func translateIgnition(from Ignition) (to types.Ignition) {
 	tr := translate.NewTranslator()
-	to.Version = "3.0.0"
+	to.Version = types.MaxVersion.String()
 	tr.Translate(&from.Config, &to.Config)
 	tr.Translate(&from.Security, &to.Security)
 	tr.Translate(&from.Timeouts, &to.Timeouts)
