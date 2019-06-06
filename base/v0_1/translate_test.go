@@ -24,6 +24,7 @@ import (
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
+// TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entires.
 func TestTranslateFile(t *testing.T) {
 	tests := []struct {
 		in  File
@@ -123,6 +124,7 @@ func TestTranslateFile(t *testing.T) {
 	}
 }
 
+// TestTranslateDirectory tests translating the ct storage.directories.[i] entries to ignition storage.directories.[i] entires.
 func TestTranslateDirectory(t *testing.T) {
 	tests := []struct {
 		in  Directory
@@ -176,6 +178,7 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 }
 
+// TestTranslateLink tests translating the ct storage.links.[i] entries to ignition storage.links.[i] entires.
 func TestTranslateLink(t *testing.T) {
 	tests := []struct {
 		in  Link
@@ -231,6 +234,8 @@ func TestTranslateLink(t *testing.T) {
 	}
 }
 
+// TestTranslateIgnition tests translating the ct config.ignition to the ignition config.ignition section.
+// It ensure that the version is set as well.
 func TestTranslateIgnition(t *testing.T) {
 	tests := []struct {
 		in  Ignition
@@ -251,6 +256,8 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
+// TestToIgn3_0 tests the config.ToIgn3_0 function ensuring it will generate a valid config even when empty. Not much else is
+// tested since it uses the Ignition translation code which has it's own set of tests.
 func TestToIgn3_0(t *testing.T) {
 	tests := []struct {
 		in  Config
