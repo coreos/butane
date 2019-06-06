@@ -35,6 +35,9 @@ type Common struct {
 }
 
 // Misc helpers
+
+// Unmarshal unmarshals the data to "to" and also returns a context tree for the source. If strict
+// is set it errors out on unused keys.
 func Unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
 	dec := yaml.NewDecoder(bytes.NewReader(data))
 	dec.KnownFields(strict)
@@ -44,6 +47,7 @@ func Unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
 	return vyaml.UnmarshalToContext(data)
 }
 
+// Marshal is a wrapper for marshaling to json with or without pretty-printing the output
 func Marshal(from interface{}, pretty bool) ([]byte, error) {
 	if pretty {
 		return json.MarshalIndent(from, "", "  ")
@@ -51,6 +55,7 @@ func Marshal(from interface{}, pretty bool) ([]byte, error) {
 	return json.Marshal(from)
 }
 
+// camel takes a snake_case string and converting it to camelCase
 func camel(in string) string {
 	words := strings.Split(in, "_")
 	for i, word := range words[1:] {
@@ -59,6 +64,7 @@ func camel(in string) string {
 	return strings.Join(words, "")
 }
 
+// ToCamelCase converts the keys in a context tree from snake_case to camelCase
 func ToCamelCase(t tree.Node) tree.Node {
 	switch n := t.(type) {
 	case tree.MapNode:
