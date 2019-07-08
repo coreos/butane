@@ -8,5 +8,6 @@ require (
 	github.com/coreos/ignition/v2 v2.0.0
 	github.com/coreos/vcontext v0.0.0-20190605182717-e9c4ffaa1f6a
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/vincent-petithory/dataurl v0.0.0-20160330182126-9a301d65acbb
 	gopkg.in/yaml.v3 v3.0.0-20190502103701-55513cacd4ae
 )

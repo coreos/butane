@@ -65,6 +65,7 @@ type File struct {
 type FileContents struct {
 	Compression  *string      `yaml:"compression"`
 	Source       *string      `yaml:"source"`
+	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
 	Verification Verification `yaml:"verification"`
 }
 
