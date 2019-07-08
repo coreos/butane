@@ -15,8 +15,11 @@
 package v0_1
 
 import (
+	"net/url"
+
 	"github.com/coreos/ignition/v2/config/translate"
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/vincent-petithory/dataurl"
 )
 
 func (c Config) ToIgn3_0() (types.Config, error) {
@@ -41,6 +44,7 @@ func translateIgnition(from Ignition) (to types.Ignition) {
 
 func translateFile(from File) (to types.File) {
 	tr := translate.NewTranslator()
+	tr.AddCustomTranslator(translateFileContents)
 	tr.Translate(&from.Group, &to.Group)
 	tr.Translate(&from.User, &to.User)
 	tr.Translate(&from.Append, &to.Append)
@@ -48,6 +52,20 @@ func translateFile(from File) (to types.File) {
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	to.Mode = from.Mode
+	return
+}
+
+func translateFileContents(from FileContents) (to types.FileContents) {
+	to.Source = from.Source
+	to.Compression = from.Compression
+	to.Verification.Hash = from.Verification.Hash
+	if from.Inline != nil {
+		src := (&url.URL{
+			Scheme: "data",
+			Opaque: "," + dataurl.EscapeString(*from.Inline),
+		}).String()
+		to.Source = &src
+	}
 	return
 }
 

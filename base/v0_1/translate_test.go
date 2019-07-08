@@ -57,7 +57,7 @@ func TestTranslateFile(t *testing.T) {
 						},
 					},
 					{
-						Source:      util.StrToPtr("http://example/com"),
+						Inline:      util.StrToPtr("hello"),
 						Compression: util.StrToPtr("gzip"),
 						Verification: Verification{
 							Hash: util.StrToPtr("this isn't validated"),
@@ -97,7 +97,7 @@ func TestTranslateFile(t *testing.T) {
 							},
 						},
 						{
-							Source:      util.StrToPtr("http://example/com"),
+							Source:      util.StrToPtr("data:,hello"),
 							Compression: util.StrToPtr("gzip"),
 							Verification: types.Verification{
 								Hash: util.StrToPtr("this isn't validated"),
