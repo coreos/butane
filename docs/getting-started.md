@@ -6,7 +6,7 @@ Fedora CoreOS Configs are YAML files conforming to `fcct`'s schema. For more inf
 
 ### Getting FCCT
 
-Download the latest version of `fcct` and the detached signature from the [releases page](https://github.com/ajeddeloh/fcct/releases). Verify it with gpg:
+Download the latest version of `fcct` and the detached signature from the [releases page](https://github.com/coreos/fcct/releases). Verify it with gpg:
 
 ```
 gpg --verify <fcct binary> <detached sig>
