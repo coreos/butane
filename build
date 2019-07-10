@@ -14,4 +14,4 @@ if [ -z ${BIN_PATH+a} ]; then
 fi
 
 echo "Building $NAME..."
-go build -buildmode=pie -o ${BIN_PATH}/${NAME} internal/main.go
+go build -o ${BIN_PATH}/${NAME} internal/main.go
