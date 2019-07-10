@@ -1,0 +1,5 @@
+2019-07-10 FCCT 0.1.0
+
+Initial Release of FCCT. While the golang API is not stable, the Fedora CoreOS
+Configuration language is. Configs written with version 1.0.0 will continue to
+work with future releases of FCCT.
