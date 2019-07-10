@@ -20,8 +20,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/ajeddeloh/fcct/config"
-	"github.com/ajeddeloh/fcct/config/common"
+	"github.com/coreos/fcct/config"
+	"github.com/coreos/fcct/config/common"
 )
 
 func fail(format string, args ...interface{}) {

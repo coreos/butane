@@ -18,8 +18,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ajeddeloh/fcct/config/common"
-	"github.com/ajeddeloh/fcct/config/v1_0"
+	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/config/v1_0"
 
 	"github.com/coreos/go-semver/semver"
 	"gopkg.in/yaml.v3"

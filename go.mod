@@ -1,4 +1,4 @@
-module github.com/ajeddeloh/fcct
+module github.com/coreos/fcct
 
 go 1.12
 
