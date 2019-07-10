@@ -4,7 +4,7 @@ set -eu
 
 export GO111MODULE=on
 export GOFLAGS=-mod=readonly
-export CGO_ENABLED=1
+export CGO_ENABLED=0
 
 NAME=fcct
 
