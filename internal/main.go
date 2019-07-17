@@ -48,31 +48,31 @@ func main() {
 		var err error
 		infile, err = os.Open(input)
 		if err != nil {
-			fail("failed to open %s: %v", input, err)
+			fail("failed to open %s: %v\n", input, err)
 		}
 		defer infile.Close()
 	}
 
 	dataIn, err := ioutil.ReadAll(infile)
 	if err != nil {
-		fail("failed to read %s: %v", infile.Name(), err)
+		fail("failed to read %s: %v\n", infile.Name(), err)
 	}
 
 	dataOut, err := config.Translate(dataIn, options)
 	if err != nil {
-		fail("Error translating config: %v", err)
+		fail("Error translating config: %v\n", err)
 	}
 
 	if output != "" {
 		var err error
-		outfile, err = os.Open(output)
+		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
-			fail("failed to open %s: %v", output, err)
+			fail("failed to open %s: %v\n", output, err)
 		}
 		defer outfile.Close()
 	}
 
 	if _, err := outfile.Write(dataOut); err != nil {
-		fail("Failed to write config to %s: %v", outfile.Name(), err)
+		fail("Failed to write config to %s: %v\n", outfile.Name(), err)
 	}
 }
