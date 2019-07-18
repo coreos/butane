@@ -143,5 +143,5 @@ systemd:
         WantedBy=local-fs.target
 ```
 
-[spec]: configuration.md
+[spec]: configuration-v1_0.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
