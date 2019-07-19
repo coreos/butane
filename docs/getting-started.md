@@ -11,6 +11,7 @@ Download the latest version of `fcct` and the detached signature from the [relea
 ```
 gpg --verify <detached sig> <fcct binary>
 ```
+You may need to download the [CoreOS Application Signing Key](http://coreos.com/security/app-signing-key/) and import it with `gpg --import <key>` if you have not already done so.
 
 New releases of `fcct` are backwards compatible with old releases unless otherwise noted.
 
