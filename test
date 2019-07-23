@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 export GO111MODULE=on
 
@@ -8,5 +8,27 @@ res=$(gofmt -d .)
 echo "$res"
 test -z "$res"
 
-echo "running tests"
+echo "Running tests"
 go test ./... -cover
+
+echo "Checking docs"
+shopt -s nullglob
+mkdir tmpdocs
+trap 'rm -r tmpdocs' EXIT
+
+for doc in docs/*md
+do
+	echo "Checking $doc"
+	# split each doc into a bunch of tmpfiles then run ct on them
+	sed -n '/^```yaml fedora-coreos-config/,/^```/ p' < ${doc} \
+		| csplit - '/```yaml fedora-coreos-config/' '{*}' -z --prefix tmpdocs/tmpconfig -q
+
+	for i in tmpdocs/*
+	do
+		cat "$i" | tail -n +2 | head -n -1 \
+			| go run internal/main.go --strict > /dev/null \
+			|| (cat -n "$i" && false)
+	done
+done
+
+echo ok
