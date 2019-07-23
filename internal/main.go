@@ -22,6 +22,7 @@ import (
 
 	"github.com/coreos/fcct/config"
 	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/internal/version"
 )
 
 func fail(format string, args ...interface{}) {
@@ -31,16 +32,23 @@ func fail(format string, args ...interface{}) {
 
 func main() {
 	var (
-		input  string
-		output string
+		input       string
+		output      string
+		versionFlag bool
 	)
 	options := common.TranslateOptions{}
+	flag.BoolVar(&versionFlag, "version", false, "print the version and exit")
 	flag.BoolVar(&options.Strict, "strict", false, "fail on any warning")
 	flag.BoolVar(&options.Pretty, "pretty", false, "output formatted json")
 	flag.StringVar(&input, "input", "", "read from input file instead of stdin")
 	flag.StringVar(&output, "output", "", "write to output file instead of stdout")
 
 	flag.Parse()
+
+	if versionFlag {
+		fmt.Println(version.String)
+		os.Exit(0)
+	}
 
 	var infile *os.File = os.Stdin
 	var outfile *os.File = os.Stdout
