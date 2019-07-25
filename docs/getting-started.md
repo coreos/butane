@@ -6,6 +6,10 @@ Fedora CoreOS Configs are YAML files conforming to `fcct`'s schema. For more inf
 
 ### Getting FCCT
 
+`fcct` can be downloaded as a standalone binary or run as a container with docker or podman.
+
+#### Standalone binary
+
 Download the latest version of `fcct` and the detached signature from the [releases page](https://github.com/coreos/fcct/releases). Verify it with gpg:
 
 ```
@@ -14,6 +18,21 @@ gpg --verify <detached sig> <fcct binary>
 You may need to download the [CoreOS Application Signing Key](http://coreos.com/security/app-signing-key/) and import it with `gpg --import <key>` if you have not already done so.
 
 New releases of `fcct` are backwards compatible with old releases unless otherwise noted.
+
+#### Container
+
+This example uses podman, but docker can also be used. Substitute v0.2.0 with the desired version. Note that the `latest` tag corresponds with `master` and not with the latest release.
+
+```bash
+# Pull the desired version
+podman pull quay.io/coreos/fcct:v0.2.0
+
+# Run fcct using standard in and standard out
+podman run -it --rm quay.io/coreos/fcct:v0.2.0 -pretty -strict < your_config.fcc > transpiled_config.ign
+
+# Run fcct using files.
+podman run --rm -v your_config.fcc:/config.fcc:z quay.io/coreos/fcct:v0.2.0 -pretty -strict -input /config.fcc > transpiled_config.ign
+```
 
 ### Writing and using Fedora CoreOS Configs
 
