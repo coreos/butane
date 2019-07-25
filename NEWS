@@ -1,3 +1,21 @@
+2019-07-24 FCCT 0.2.0
+
+  Features:
+
+    - Add --version flag
+    - Add Dockerfile and build containers automatically on quay.io
+
+  Bug Fixes:
+
+    - Fix validation of paths for files and directories
+    - Fix --output flag handling
+
+  Misc Changes:
+
+    - Add tests for the examples in the docs
+    - Add travis integration
+
+
 2019-07-10 FCCT 0.1.0
 
 Initial Release of FCCT. While the golang API is not stable, the Fedora CoreOS
