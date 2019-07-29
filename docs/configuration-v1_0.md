@@ -103,7 +103,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
 * **_passwd_** (object): describes the desired additions to the passwd database.
   * **_users_** (list of objects): the list of accounts that shall exist. All users must have a unique `name`.
     * **name** (string): the username for the account.
-    * **_password_hash_** (string): the encrypted password for the account.
+    * **_password_hash_** (string): the hashed password for the account.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
     * **_uid_** (integer): the user ID of the account.
     * **_gecos_** (string): the GECOS field of the account.
@@ -118,7 +118,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
   * **_groups_** (list of objects): the list of groups to be added. All groups must have a unique `name`.
     * **name** (string): the name of the group.
     * **_gid_** (integer): the group ID of the new group.
-    * **_password_hash_** (string): the encrypted password of the new group.
+    * **_password_hash_** (string): the hashed password of the new group.
     * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
