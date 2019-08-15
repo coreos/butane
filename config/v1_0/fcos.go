@@ -83,7 +83,7 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, erro
 	second := validate.Validate(final, "json")
 	second.Correlate(translatedTree)
 	r.Merge(second)
-	fmt.Println(r.String())
+	fmt.Print(r.String())
 
 	if r.IsFatal() {
 		return nil, ErrInvalidConfig
