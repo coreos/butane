@@ -31,7 +31,7 @@ podman pull quay.io/coreos/fcct:v0.2.0
 podman run -it --rm quay.io/coreos/fcct:v0.2.0 -pretty -strict < your_config.fcc > transpiled_config.ign
 
 # Run fcct using files.
-podman run --rm -v your_config.fcc:/config.fcc:z quay.io/coreos/fcct:v0.2.0 -pretty -strict -input /config.fcc > transpiled_config.ign
+podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:v0.2.0 -pretty -strict -input /config.fcc > transpiled_config.ign
 ```
 
 ### Writing and using Fedora CoreOS Configs
