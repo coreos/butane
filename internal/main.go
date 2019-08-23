@@ -73,7 +73,7 @@ func main() {
 
 	if output != "" {
 		var err error
-		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE, 0644)
+		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
 			fail("failed to open %s: %v\n", output, err)
 		}
