@@ -28,7 +28,7 @@ This example uses podman, but docker can also be used. Substitute v0.2.0 with th
 podman pull quay.io/coreos/fcct:v0.2.0
 
 # Run fcct using standard in and standard out
-podman run -it --rm quay.io/coreos/fcct:v0.2.0 -pretty -strict < your_config.fcc > transpiled_config.ign
+podman run -i --rm quay.io/coreos/fcct:v0.2.0 -pretty -strict < your_config.fcc > transpiled_config.ign
 
 # Run fcct using files.
 podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:v0.2.0 -pretty -strict -input /config.fcc > transpiled_config.ign
