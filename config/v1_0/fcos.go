@@ -16,7 +16,6 @@ package v1_0
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 
 	base_0_1 "github.com/coreos/fcct/base/v0_1"
@@ -55,12 +54,15 @@ func (c Config) Translate() (types.Config, error) {
 	return v3_0.Merge(distro, base), nil
 }
 
-func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, error) {
+// TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
+// warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
+// translating, an error is returned.
+func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
 	cfg := Config{}
 
 	contextTree, err := common.Unmarshal(input, &cfg, options.Strict)
 	if err != nil {
-		return nil, err
+		return nil, report.Report{}, err
 	}
 
 	r := validate.Validate(cfg, "yaml")
@@ -70,24 +72,23 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, erro
 	r.Merge(validate.ValidateCustom(cfg, "yaml", unusedKeyCheck))
 	r.Correlate(contextTree)
 	if r.IsFatal() {
-		fmt.Println(r.String())
-		return nil, ErrInvalidConfig
+		return nil, r, ErrInvalidConfig
 	}
 
 	final, err := cfg.Translate()
 	if err != nil {
-		return nil, err
+		return nil, r, err
 	}
 
 	translatedTree := common.ToCamelCase(contextTree)
 	second := validate.Validate(final, "json")
 	second.Correlate(translatedTree)
 	r.Merge(second)
-	fmt.Println(r.String())
 
 	if r.IsFatal() {
-		return nil, ErrInvalidConfig
+		return nil, r, ErrInvalidConfig
 	}
 
-	return common.Marshal(final, options.Pretty)
+	outbytes, err := common.Marshal(final, options.Pretty)
+	return outbytes, r, err
 }

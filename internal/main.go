@@ -66,7 +66,8 @@ func main() {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}
 
-	dataOut, err := config.Translate(dataIn, options)
+	dataOut, r, err := config.Translate(dataIn, options)
+	fmt.Fprintf(os.Stderr, "%s", r.String())
 	if err != nil {
 		fail("Error translating config: %v\n", err)
 	}
