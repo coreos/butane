@@ -22,6 +22,7 @@ import (
 	"github.com/coreos/fcct/config/v1_0"
 
 	"github.com/coreos/go-semver/semver"
+	"github.com/coreos/vcontext/report"
 	"gopkg.in/yaml.v3"
 )
 
@@ -42,29 +43,33 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 	return t, nil
 }
 
-type translator func([]byte, common.TranslateOptions) ([]byte, error)
+// translators take a raw config and translate it to a raw Ignition config. The report returned should include any
+// errors, warnings, etc and may or may not be fatal. If report is fatal, or other errors are encountered while translating
+// translators should return an error.
+type translator func([]byte, common.TranslateOptions) ([]byte, report.Report, error)
 
-// Translate wraps all of the actual translate functions in a switch that determines the correct one to call
-func Translate(input []byte, options common.TranslateOptions) ([]byte, error) {
+// Translate wraps all of the actual translate functions in a switch that determines the correct one to call.
+// Translate returns an error if the report had fatal errors or if other errors occured during translation.
+func Translate(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
 	// first determine version. This will ignore most fields, so don't use strict
 	ver := common.Common{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
-		return nil, fmt.Errorf("Error unmarshaling yaml: %v", err)
+		return nil, report.Report{}, fmt.Errorf("Error unmarshaling yaml: %v", err)
 	}
 
 	if ver.Variant == "" {
-		return nil, ErrNoVariant
+		return nil, report.Report{}, ErrNoVariant
 	}
 
 	tmp, err := semver.NewVersion(ver.Version)
 	if err != nil {
-		return nil, ErrInvalidVersion
+		return nil, report.Report{}, ErrInvalidVersion
 	}
 	version := *tmp
 
 	translator, err := getTranslator(ver.Variant, version)
 	if err != nil {
-		return nil, err
+		return nil, report.Report{}, err
 	}
 
 	return translator(input, options)
