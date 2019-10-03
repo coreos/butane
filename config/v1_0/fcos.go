@@ -22,7 +22,6 @@ import (
 	"github.com/coreos/fcct/config/common"
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 
-	"github.com/coreos/ignition/v2/config/v3_0"
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 	ignvalidate "github.com/coreos/ignition/v2/config/validate"
 	"github.com/coreos/vcontext/path"
@@ -41,17 +40,17 @@ type Config struct {
 }
 
 func (c Config) Translate() (types.Config, error) {
-	base, err := c.Config.ToIgn3_0()
+	cfg, err := c.Config.ToIgn3_0()
 	if err != nil {
 		return types.Config{}, err
 	}
 
-	distro, err := c.Fcos.ToIgn3_0()
+	cfg, err = c.Fcos.ToIgn3_0(cfg)
 	if err != nil {
 		return types.Config{}, err
 	}
 
-	return v3_0.Merge(distro, base), nil
+	return cfg, nil
 }
 
 // TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
