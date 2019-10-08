@@ -21,6 +21,7 @@ import (
 	base_0_1 "github.com/coreos/fcct/base/v0_1"
 	"github.com/coreos/fcct/config/common"
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
+	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 	ignvalidate "github.com/coreos/ignition/v2/config/validate"
@@ -39,18 +40,20 @@ type Config struct {
 	fcos_0_1.Fcos   `yaml:",inline"`
 }
 
-func (c Config) Translate() (types.Config, error) {
-	cfg, err := c.Config.ToIgn3_0()
+func (c Config) Translate() (types.Config, translate.TranslationSet, error) {
+	cfg, baseTranslations, err := c.Config.ToIgn3_0()
 	if err != nil {
-		return types.Config{}, err
+		return types.Config{}, translate.TranslationSet{}, err
 	}
 
-	cfg, err = c.Fcos.ToIgn3_0(cfg)
+	finalcfg, distroTranslations, err := c.Fcos.ToIgn3_0(cfg)
 	if err != nil {
-		return types.Config{}, err
+		return types.Config{}, translate.TranslationSet{}, err
 	}
 
-	return cfg, nil
+	baseTranslations.Merge(distroTranslations)
+
+	return finalcfg, baseTranslations, nil
 }
 
 // TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
@@ -74,14 +77,14 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 		return nil, r, ErrInvalidConfig
 	}
 
-	final, err := cfg.Translate()
+	final, translations, err := cfg.Translate()
 	if err != nil {
 		return nil, r, err
 	}
 
-	translatedTree := common.ToCamelCase(contextTree)
 	second := validate.Validate(final, "json")
-	second.Correlate(translatedTree)
+	common.TranslateReportPaths(&second, translations)
+	second.Correlate(contextTree)
 	r.Merge(second)
 
 	if r.IsFatal() {

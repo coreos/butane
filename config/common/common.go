@@ -17,11 +17,20 @@ package common
 import (
 	"bytes"
 	"encoding/json"
+	"regexp"
 	"strings"
 
+	"github.com/coreos/fcct/translate"
+
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 	"github.com/coreos/vcontext/tree"
 	vyaml "github.com/coreos/vcontext/yaml"
 	"gopkg.in/yaml.v3"
+)
+
+var (
+	snakeRe = regexp.MustCompile("([A-Z])")
 )
 
 type TranslateOptions struct {
@@ -55,41 +64,34 @@ func Marshal(from interface{}, pretty bool) ([]byte, error) {
 	return json.Marshal(from)
 }
 
-// camel takes a snake_case string and converting it to camelCase
-func camel(in string) string {
-	words := strings.Split(in, "_")
-	for i, word := range words[1:] {
-		words[i+1] = strings.Title(word)
+// snakePath converts a path.ContextPath with camelCase elements and returns the
+// same path but with snake_case elements instead
+func snakePath(p path.ContextPath) path.ContextPath {
+	ret := path.New(p.Tag)
+	for _, part := range p.Path {
+		if str, ok := part.(string); ok {
+			ret = ret.Append(snake(str))
+		} else {
+			ret = ret.Append(part)
+		}
 	}
-	return strings.Join(words, "")
+	return ret
 }
 
-// ToCamelCase converts the keys in a context tree from snake_case to camelCase
-func ToCamelCase(t tree.Node) tree.Node {
-	switch n := t.(type) {
-	case tree.MapNode:
-		m := tree.MapNode{
-			Children: make(map[string]tree.Node, len(n.Children)),
-			Keys:     make(map[string]tree.Leaf, len(n.Keys)),
-			Marker:   n.Marker,
+// snake converts from camelCase (not CamelCase) to snake_case
+func snake(in string) string {
+	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
+}
+
+// TranslateReportPaths takes a report from a camelCase json document and a set of translations rules,
+// applies those rules and converts all camelCase to snake_case.
+func TranslateReportPaths(r *report.Report, ts translate.TranslationSet) {
+	for i, ent := range r.Entries {
+		context := ent.Context
+		if t, ok := ts.Set[context.String()]; ok {
+			context = t.From
 		}
-		for k, v := range n.Children {
-			m.Children[camel(k)] = ToCamelCase(v)
-		}
-		for k, v := range n.Keys {
-			m.Keys[camel(k)] = v
-		}
-		return m
-	case tree.SliceNode:
-		s := tree.SliceNode{
-			Children: make([]tree.Node, 0, len(n.Children)),
-			Marker:   n.Marker,
-		}
-		for _, v := range n.Children {
-			s.Children = append(s.Children, ToCamelCase(v))
-		}
-		return s
-	default: // leaf
-		return t
+		context = snakePath(context)
+		r.Entries[i].Context = context
 	}
 }

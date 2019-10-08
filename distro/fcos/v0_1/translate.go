@@ -15,10 +15,12 @@
 package fcos_0_1
 
 import (
+	"github.com/coreos/fcct/translate"
+
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 )
 
 // ToIgn3_0 takes a config and merges in the distro specific bits.
-func (f Fcos) ToIgn3_0(in types.Config) (types.Config, error) {
-	return in, nil
+func (f Fcos) ToIgn3_0(in types.Config) (types.Config, translate.TranslationSet, error) {
+	return in, translate.TranslationSet{}, nil
 }
