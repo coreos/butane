@@ -21,7 +21,7 @@ import (
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/ignition/v2/config/v3_1_experimental/types"
 	"github.com/coreos/vcontext/path"
 )
 
@@ -283,7 +283,7 @@ func TestTranslateIgnition(t *testing.T) {
 		{
 			Ignition{},
 			types.Ignition{
-				Version: "3.0.0",
+				Version: "3.1.0-experimental",
 			},
 		},
 	}
@@ -295,9 +295,9 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
-// TestToIgn3_0 tests the config.ToIgn3_0 function ensuring it will generate a valid config even when empty. Not much else is
+// TestToIgn3_1 tests the config.ToIgn3_1 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has it's own set of tests.
-func TestToIgn3_0(t *testing.T) {
+func TestToIgn3_1(t *testing.T) {
 	tests := []struct {
 		in  Config
 		out types.Config
@@ -306,13 +306,13 @@ func TestToIgn3_0(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.0.0",
+					Version: "3.1.0-experimental",
 				},
 			},
 		},
 	}
 	for i, test := range tests {
-		actual, _, err := test.in.ToIgn3_0()
+		actual, _, err := test.in.ToIgn3_1()
 		if err != nil {
 			t.Errorf("#%d: got error: %v", i, err)
 		}

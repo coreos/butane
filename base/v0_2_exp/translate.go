@@ -19,14 +19,14 @@ import (
 
 	"github.com/coreos/fcct/translate"
 
-	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/ignition/v2/config/v3_1_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/vincent-petithory/dataurl"
 )
 
 // ToIgn3_0 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
-func (c Config) ToIgn3_0() (types.Config, translate.TranslationSet, error) {
+func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 	ret := types.Config{}
 	tr := translate.NewTranslator("yaml", "json")
 	tr.AddCustomTranslator(translateIgnition)
