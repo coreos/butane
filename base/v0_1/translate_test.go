@@ -18,21 +18,49 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/coreos/fcct/translate"
+
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_0/types"
+	"github.com/coreos/vcontext/path"
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
+// verifyTranslations ensures all the translations are identity, unless they match a listed one
+// it returns the offending translation if there is one
+func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
+	exceptionSet := translate.TranslationSet{
+		FromTag: set.FromTag,
+		ToTag:   set.ToTag,
+		Set:     map[string]translate.Translation{},
+	}
+	for _, ex := range exceptions {
+		exceptionSet.AddTranslation(ex.From, ex.To)
+	}
+	for key, translation := range set.Set {
+		if ex, ok := exceptionSet.Set[key]; ok {
+			if !reflect.DeepEqual(translation, ex) {
+				return &ex
+			}
+		} else if !reflect.DeepEqual(translation.From.Path, translation.To.Path) {
+			return &translation
+		}
+	}
+	return nil
+}
+
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entires.
 func TestTranslateFile(t *testing.T) {
 	tests := []struct {
-		in  File
-		out types.File
+		in         File
+		out        types.File
+		exceptions []translate.Translation
 	}{
 		{
 			File{},
 			types.File{},
+			nil,
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
@@ -113,13 +141,24 @@ func TestTranslateFile(t *testing.T) {
 					},
 				},
 			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "append", 1, "inline"),
+					To:   path.New("json", "append", 1, "source"),
+				},
+			},
 		},
 	}
 
 	for i, test := range tests {
-		actual := translateFile(test.in)
+		actual, translations := translateFile(test.in)
+
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+
+		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
+			t.Errorf("#%d: bad translation: %v", i, *errT)
 		}
 	}
 }
@@ -171,7 +210,7 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual := translateDirectory(test.in)
+		actual, _ := translateDirectory(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -227,7 +266,7 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual := translateLink(test.in)
+		actual, _ := translateLink(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -249,7 +288,7 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual := translateIgnition(test.in)
+		actual, _ := translateIgnition(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -273,7 +312,7 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, err := test.in.ToIgn3_0()
+		actual, _, err := test.in.ToIgn3_0()
 		if err != nil {
 			t.Errorf("#%d: got error: %v", i, err)
 		}

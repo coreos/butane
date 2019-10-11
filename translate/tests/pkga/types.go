@@ -1,4 +1,4 @@
-// Copyright 2019 Red Hat, Inc
+// Copyright 2019 Red Hat, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -10,17 +10,27 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.)
+// limitations under the License.
 
-package fcos_0_1
+package pkga
 
-import (
-	"github.com/coreos/fcct/translate"
+type Trivial struct {
+	A string
+	B int
+	C bool
+}
 
-	"github.com/coreos/ignition/v2/config/v3_0/types"
-)
+type Nested struct {
+	D string
+	Trivial
+}
 
-// ToIgn3_0 takes a config and merges in the distro specific bits.
-func (f Fcos) ToIgn3_0(in types.Config) (types.Config, translate.TranslationSet, error) {
-	return in, translate.TranslationSet{}, nil
+type TrivialReordered struct {
+	B int
+	A string
+	C bool
+}
+
+type HasList struct {
+	L []Trivial
 }
