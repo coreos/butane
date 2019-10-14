@@ -25,6 +25,10 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **source** (string): the URL of the certificate (in PEM format). Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified.
         * **_verification_** (object): options related to the verification of the certificate.
           * **_hash_** (string): the hash of the certificate, in the form `<type>-<value>` where type is sha512.
+  * **_proxy_** (object): options relating to setting an `HTTP(S)` proxy when fetching resources.
+    * **_httpProxy_** (string): will be used as the proxy URL for HTTP requests and HTTPS requests unless overridden by `httpsProxy` or `noProxy`.
+    * **_httpsProxy_** (string): will be used as the proxy URL for HTTPS requests unless overridden by `noProxy`.
+    * **_noProxy_** (list of strings): specifies a list of strings to hosts that should be excluded from proxying. Each value is represented by an `IP address prefix (1.2.3.4)`, `an IP address prefix in CIDR notation (1.2.3.4/8)`, `a domain name`, or `a special DNS label (*)`. An IP address prefix and domain name can also include a literal port number `(1.2.3.4:80)`. A domain name matches that name and all subdomains. A domain name with a leading `.` matches subdomains only. For example `foo.com` matches `foo.com` and `bar.foo.com`; `.y.com` matches `x.y.com` but not `y.com`. A single asterisk `(*)` indicates that no proxying should be done.
 * **_storage_** (object): describes the desired state of the system's storage devices.
   * **_disks_** (list of objects): the list of disks to be configured and their options. Every entry must have a unique `device`.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.

@@ -41,6 +41,7 @@ func translateIgnition(from Ignition) (to types.Ignition, tm translate.Translati
 	tr := translate.NewTranslator("yaml", "json")
 	to.Version = types.MaxVersion.String()
 	tm = tr.Translate(&from.Config, &to.Config).Prefix("config")
+	tm.MergeP("proxy", tr.Translate(&from.Proxy, &to.Proxy))
 	tm.MergeP("security", tr.Translate(&from.Security, &to.Security))
 	tm.MergeP("timeouts", tr.Translate(&from.Timeouts, &to.Timeouts))
 	return

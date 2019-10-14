@@ -286,6 +286,21 @@ func TestTranslateIgnition(t *testing.T) {
 				Version: "3.1.0-experimental",
 			},
 		},
+		{
+			Ignition{
+				Proxy: Proxy{
+					HTTPProxy: util.StrToPtr("https://example.com:8080"),
+					NoProxy:   []string{"example.com"},
+				},
+			},
+			types.Ignition{
+				Version: "3.1.0-experimental",
+				Proxy: types.Proxy{
+					HTTPProxy: util.StrToPtr("https://example.com:8080"),
+					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
+				},
+			},
+		},
 	}
 	for i, test := range tests {
 		actual, _ := translateIgnition(test.in)

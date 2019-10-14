@@ -85,6 +85,7 @@ type Group string
 
 type Ignition struct {
 	Config   IgnitionConfig `yaml:"config"`
+	Proxy    Proxy          `yaml:"proxy"`
 	Security Security       `yaml:"security"`
 	Timeouts Timeouts       `yaml:"timeouts"`
 }
@@ -150,6 +151,12 @@ type PasswdUser struct {
 	Shell             *string            `yaml:"shell"`
 	System            *bool              `yaml:"system"`
 	UID               *int               `yaml:"uid"`
+}
+
+type Proxy struct {
+	HTTPProxy  *string  `yaml:"http_proxy"`
+	HTTPSProxy *string  `yaml:"https_proxy"`
+	NoProxy    []string `yaml:"no_proxy"`
 }
 
 type Raid struct {
