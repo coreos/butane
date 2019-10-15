@@ -211,8 +211,27 @@ type TranslationSet struct {
 	Set     map[string]Translation
 }
 
+func NewTranslationSet(fromTag, toTag string) TranslationSet {
+	return TranslationSet{
+		FromTag: fromTag,
+		ToTag:   toTag,
+		Set:     map[string]Translation{},
+	}
+}
+
+func (ts TranslationSet) String() string {
+	str := fmt.Sprintf("from: %v\nto: %v\n", ts.FromTag, ts.ToTag)
+	for k, v := range ts.Set {
+		str += fmt.Sprintf("%s: %v -> %v\n", k, v.From.String(), v.To.String())
+	}
+	return str
+}
+
 // AddTranslation adds a translation to the set
 func (ts TranslationSet) AddTranslation(from, to path.ContextPath) {
+	// create copies of the paths so if someone else changes from.Path the added translation does not change.
+	from = from.Copy()
+	to = to.Copy()
 	translation := Translation{
 		From: from,
 		To:   to,
@@ -233,30 +252,23 @@ func (ts TranslationSet) AddIdentity(paths ...string) {
 // Merge adds all the entries to the set. It mutates the Set in place.
 func (ts TranslationSet) Merge(from TranslationSet) {
 	for _, t := range from.Set {
-		ts.Set[t.From.String()] = t
+		ts.AddTranslation(t.From, t.To)
 	}
 }
 
 // MergeP is like Merge, but first it calls Prefix on the set being merged in.
 func (ts TranslationSet) MergeP(prefix interface{}, from TranslationSet) {
 	from = from.Prefix(prefix)
-	for _, t := range from.Set {
-		ts.Set[t.To.String()] = t
-	}
+	ts.Merge(from)
 }
 
 // Prefix returns a TranslationSet with all translation paths prefixed by prefix.
 func (ts TranslationSet) Prefix(prefix interface{}) TranslationSet {
-	ret := TranslationSet{
-		FromTag: ts.FromTag,
-		ToTag:   ts.ToTag,
-		Set:     map[string]Translation{},
-	}
-	p := []interface{}{prefix}
+	ret := NewTranslationSet(ts.FromTag, ts.ToTag)
+	from := path.New(ts.FromTag, prefix)
+	to := path.New(ts.ToTag, prefix)
 	for _, tr := range ts.Set {
-		tr.From.Path = append(p, tr.From.Path...)
-		tr.To.Path = append(p, tr.To.Path...)
-		ret.AddTranslation(tr.From, tr.To)
+		ret.AddTranslation(from.Append(tr.From.Path...), to.Append(tr.From.Path...))
 	}
 	return ret
 }
