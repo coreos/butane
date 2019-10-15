@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package fcos_0_1
+package v0_2_exp
 
 import (
-	"github.com/coreos/fcct/translate"
+	"errors"
 
-	types3_0 "github.com/coreos/ignition/v2/config/v3_0/types"
-	types3_1 "github.com/coreos/ignition/v2/config/v3_1_experimental/types"
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
-// ToIgn3_0 takes a config and merges in the distro specific bits.
-func (f Fcos) ToIgn3_0(in types3_0.Config) (types3_0.Config, translate.TranslationSet, error) {
-	return in, translate.TranslationSet{}, nil
-}
+var (
+	ErrInlineAndSource = errors.New("inline cannot be specified if source is specified")
+)
 
-func (f Fcos) ToIgn3_1(in types3_1.Config) (types3_1.Config, translate.TranslationSet, error) {
-	return in, translate.TranslationSet{}, nil
+func (f FileContents) Validate(c path.ContextPath) (r report.Report) {
+	if f.Inline != nil && f.Source != nil {
+		r.AddOnError(c.Append("inline"), ErrInlineAndSource)
+	}
+	return
 }
