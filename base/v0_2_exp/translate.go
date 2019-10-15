@@ -33,6 +33,7 @@ func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 	tr.AddCustomTranslator(translateFile)
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
+	tr.AddCustomTranslator(translateFilesystem)
 	translations := tr.Translate(&c, &ret)
 	return ret, translations, nil
 }
@@ -98,5 +99,18 @@ func translateLink(from Link) (to types.Link, tm translate.TranslationSet) {
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	tm.AddIdentity("target", "hard", "overwrite", "path")
+	return
+}
+
+func translateFilesystem(from Filesystem) (to types.Filesystem, tm translate.TranslationSet) {
+	tr := translate.NewTranslator("yaml", "json")
+	tm = tr.Translate(&from.Options, &to.Options).Prefix("options")
+	to.Device = from.Device
+	to.Label = from.Label
+	to.Format = from.Format
+	to.Path = from.Path
+	to.UUID = from.UUID
+	to.WipeFilesystem = from.WipeFilesystem
+	tm.AddIdentity("device", "format", "label", "path", "uuid", "wipeFilesystem")
 	return
 }

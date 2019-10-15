@@ -273,6 +273,49 @@ func TestTranslateLink(t *testing.T) {
 	}
 }
 
+// TestTranslateFilesystem tests translating the ct storage.filesystems.[i] entries to ignition storage.filesystems.[i] entries.
+func TestTranslateFilesystem(t *testing.T) {
+	tests := []struct {
+		in  Filesystem
+		out types.Filesystem
+	}{
+		{
+			Filesystem{},
+			types.Filesystem{},
+		},
+		{
+			// contains invalid (by the validator's definition) combinations of fields,
+			// but the translator doesn't care and we can check they all get translated at once
+			Filesystem{
+				Device:         "/foo",
+				Format:         util.StrToPtr("/bar"),
+				Label:          util.StrToPtr("/baz"),
+				Options:        []string{"foo", "foo", "bar"},
+				Path:           util.StrToPtr("/quux"),
+				UUID:           util.StrToPtr("1234"),
+				WipeFilesystem: util.BoolToPtr(true),
+				WithMountUnit:  util.BoolToPtr(true),
+			},
+			types.Filesystem{
+				Device:         "/foo",
+				Format:         util.StrToPtr("/bar"),
+				Label:          util.StrToPtr("/baz"),
+				Options:        []types.FilesystemOption{"foo", "foo", "bar"},
+				Path:           util.StrToPtr("/quux"),
+				UUID:           util.StrToPtr("1234"),
+				WipeFilesystem: util.BoolToPtr(true),
+			},
+		},
+	}
+
+	for i, test := range tests {
+		actual, _ := translateFilesystem(test.in)
+		if !reflect.DeepEqual(actual, test.out) {
+			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+	}
+}
+
 // TestTranslateIgnition tests translating the ct config.ignition to the ignition config.ignition section.
 // It ensure that the version is set as well.
 func TestTranslateIgnition(t *testing.T) {
