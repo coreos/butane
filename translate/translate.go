@@ -17,7 +17,6 @@ package translate
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
@@ -94,16 +93,6 @@ func couldBeValidTranslator(t reflect.Type) bool {
 		return false
 	}
 	return true
-}
-
-// fieldName returns the name uses when (un)marshalling a field. t should be a reflect.Value of a struct,
-// index is the field index, and tag is the struct tag used when (un)marshalling (e.g. "json" or "yaml")
-func fieldName(t reflect.Value, index int, tag string) string {
-	f := t.Type().Field(index)
-	if tag == "" {
-		return f.Name
-	}
-	return strings.Split(f.Tag.Get(tag), ",")[0]
 }
 
 // translate from one type to another, but deep copy all data
