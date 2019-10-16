@@ -17,6 +17,9 @@ package translate
 import (
 	"reflect"
 	"strings"
+
+	"github.com/coreos/ignition/v2/config/util"
+	"github.com/coreos/vcontext/path"
 )
 
 // fieldName returns the name uses when (un)marshalling a field. t should be a reflect.Value of a struct,
@@ -27,4 +30,51 @@ func fieldName(t reflect.Value, index int, tag string) string {
 		return f.Name
 	}
 	return strings.Split(f.Tag.Get(tag), ",")[0]
+}
+
+func prefixPath(p path.ContextPath, prefix ...interface{}) path.ContextPath {
+	return path.New(p.Tag, prefix...).Append(p.Path...)
+}
+
+func prefixPaths(ps []path.ContextPath, prefix ...interface{}) []path.ContextPath {
+	ret := []path.ContextPath{}
+	for _, p := range ps {
+		ret = append(ret, prefixPath(p, prefix...))
+	}
+	return ret
+}
+
+func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
+	k := v.Kind()
+	t := v.Type()
+	switch {
+	case util.IsPrimitive(k):
+		return nil
+	case k == reflect.Ptr:
+		if v.IsNil() {
+			return nil
+		}
+		return getAllPaths(v.Elem(), tag)
+	case k == reflect.Slice:
+		ret := []path.ContextPath{}
+		for i := 0; i < v.Len(); i++ {
+			ret = append(ret, prefixPaths(getAllPaths(v.Index(i), tag), i)...)
+		}
+		return ret
+	case k == reflect.Struct:
+		ret := []path.ContextPath{}
+		for i := 0; i < t.NumField(); i++ {
+			name := fieldName(v, i, tag)
+			field := v.Field(i)
+			if t.Field(i).Anonymous {
+				ret = append(ret, getAllPaths(field, tag)...)
+			} else {
+				ret = append(ret, prefixPaths(getAllPaths(field, tag), name)...)
+				ret = append(ret, path.New(tag, name))
+			}
+		}
+		return ret
+	default:
+		panic("Encountered types that are not the same when they should be. This is a bug, please file a report")
+	}
 }
