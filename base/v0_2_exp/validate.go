@@ -22,12 +22,27 @@ import (
 )
 
 var (
-	ErrInlineAndSource = errors.New("inline cannot be specified if source is specified")
+	ErrInlineAndSource   = errors.New("inline cannot be specified if source is specified")
+	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
+	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
 )
 
 func (f FileContents) Validate(c path.ContextPath) (r report.Report) {
 	if f.Inline != nil && f.Source != nil {
 		r.AddOnError(c.Append("inline"), ErrInlineAndSource)
+	}
+	return
+}
+
+func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
+	if fs.WithMountUnit == nil || !*fs.WithMountUnit {
+		return
+	}
+	if fs.Path == nil || *fs.Path == "" {
+		r.AddOnError(c.Append("path"), ErrMountUnitNoPath)
+	}
+	if fs.Format == nil || *fs.Format == "" {
+		r.AddOnError(c.Append("format"), ErrMountUnitNoFormat)
 	}
 	return
 }
