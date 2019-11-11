@@ -17,7 +17,6 @@ package translate
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
@@ -94,16 +93,6 @@ func couldBeValidTranslator(t reflect.Type) bool {
 		return false
 	}
 	return true
-}
-
-// fieldName returns the name uses when (un)marshalling a field. t should be a reflect.Value of a struct,
-// index is the field index, and tag is the struct tag used when (un)marshalling (e.g. "json" or "yaml")
-func fieldName(t reflect.Value, index int, tag string) string {
-	f := t.Type().Field(index)
-	if tag == "" {
-		return f.Name
-	}
-	return strings.Split(f.Tag.Get(tag), ",")[0]
 }
 
 // translate from one type to another, but deep copy all data
@@ -191,74 +180,6 @@ type Translator interface {
 	AddCustomTranslator(t interface{})
 	// Also returns a list of source and dest paths, autocompleted by fromTag and toTag
 	Translate(from, to interface{}) TranslationSet
-}
-
-// Translation represents how a path changes when translating. If something at $yaml.storage.filesystems.4
-// generates content at $json.systemd.units.3 a translation can represent that. This allows validation errors
-// in Ignition structs to be tracked back to their source in the yaml.
-type Translation struct {
-	From path.ContextPath
-	To   path.ContextPath
-}
-
-// TranslationSet represents all of the translations that occurred. They're stored in a map from a string representation
-// of the destination path to the translation struct. The map is purely an optimization to allow fast lookups. Ideally the
-// map would just be from the destination path.ContextPath to the source path.ContextPath, but ContextPath contains a slice
-// which are not comparable and thus cannot be used as keys in maps.
-type TranslationSet struct {
-	FromTag string
-	ToTag   string
-	Set     map[string]Translation
-}
-
-// AddTranslation adds a translation to the set
-func (ts TranslationSet) AddTranslation(from, to path.ContextPath) {
-	translation := Translation{
-		From: from,
-		To:   to,
-	}
-	toString := translation.To.String()
-	ts.Set[toString] = translation
-}
-
-// Shortcut for AddTranslation for identity translations
-func (ts TranslationSet) AddIdentity(paths ...string) {
-	for _, p := range paths {
-		from := path.New(ts.FromTag, p)
-		to := path.New(ts.ToTag, p)
-		ts.AddTranslation(from, to)
-	}
-}
-
-// Merge adds all the entries to the set. It mutates the Set in place.
-func (ts TranslationSet) Merge(from TranslationSet) {
-	for _, t := range from.Set {
-		ts.Set[t.From.String()] = t
-	}
-}
-
-// MergeP is like Merge, but first it calls Prefix on the set being merged in.
-func (ts TranslationSet) MergeP(prefix interface{}, from TranslationSet) {
-	from = from.Prefix(prefix)
-	for _, t := range from.Set {
-		ts.Set[t.To.String()] = t
-	}
-}
-
-// Prefix returns a TranslationSet with all translation paths prefixed by prefix.
-func (ts TranslationSet) Prefix(prefix interface{}) TranslationSet {
-	ret := TranslationSet{
-		FromTag: ts.FromTag,
-		ToTag:   ts.ToTag,
-		Set:     map[string]Translation{},
-	}
-	p := []interface{}{prefix}
-	for _, tr := range ts.Set {
-		tr.From.Path = append(p, tr.From.Path...)
-		tr.To.Path = append(p, tr.To.Path...)
-		ret.AddTranslation(tr.From, tr.To)
-	}
-	return ret
 }
 
 // NewTranslator creates a new Translator for translating from types with fromTag struct tags (e.g. "yaml")

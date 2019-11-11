@@ -15,7 +15,6 @@
 package v1_0
 
 import (
-	"errors"
 	"reflect"
 
 	base_0_1 "github.com/coreos/fcct/base/v0_1"
@@ -28,10 +27,6 @@ import (
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/coreos/vcontext/validate"
-)
-
-var (
-	ErrInvalidConfig = errors.New("config generated was invalid")
 )
 
 type Config struct {
@@ -74,7 +69,7 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 	r.Merge(validate.ValidateCustom(cfg, "yaml", unusedKeyCheck))
 	r.Correlate(contextTree)
 	if r.IsFatal() {
-		return nil, r, ErrInvalidConfig
+		return nil, r, common.ErrInvalidSourceConfig
 	}
 
 	final, translations, err := cfg.Translate()
@@ -88,7 +83,7 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 	r.Merge(second)
 
 	if r.IsFatal() {
-		return nil, r, ErrInvalidConfig
+		return nil, r, common.ErrInvalidGeneratedConfig
 	}
 
 	outbytes, err := common.Marshal(final, options.Pretty)

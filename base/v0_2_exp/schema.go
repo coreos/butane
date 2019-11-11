@@ -70,13 +70,14 @@ type FileContents struct {
 }
 
 type Filesystem struct {
-	Device         string             `yaml:"device"`
-	Format         *string            `yaml:"format"`
-	Label          *string            `yaml:"label"`
-	Options        []FilesystemOption `yaml:"options"`
-	Path           *string            `yaml:"path"`
-	UUID           *string            `yaml:"uuid"`
-	WipeFilesystem *bool              `yaml:"wipe_filesystem"`
+	Device         string   `yaml:"device"`
+	Format         *string  `yaml:"format"`
+	Label          *string  `yaml:"label"`
+	Options        []string `yaml:"options"`
+	Path           *string  `yaml:"path"`
+	UUID           *string  `yaml:"uuid"`
+	WipeFilesystem *bool    `yaml:"wipe_filesystem"`
+	WithMountUnit  *bool    `yaml:"with_mount_unit"`
 }
 
 type FilesystemOption string
