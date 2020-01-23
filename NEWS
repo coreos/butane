@@ -1,3 +1,22 @@
+2020-01-23 FCCT 0.3.0
+
+  Features:
+
+    - Add v1.1.0-experimental spec
+    - Add with_mount_unit field to generate mount unit from filesystem entry
+
+  Bug Fixes:
+
+    - Report warnings and errors to stderr, not stdout
+    - Truncate output file before writing
+    - Fix line and column reporting
+
+  Misc Changes:
+
+    - Document syntax of inline file contents
+    - Document usage of published container image
+
+
 2019-07-24 FCCT 0.2.0
 
   Features:
