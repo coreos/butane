@@ -21,17 +21,17 @@ New releases of `fcct` are backwards compatible with old releases unless otherwi
 
 #### Container
 
-This example uses podman, but docker can also be used. Substitute v0.2.0 with the desired version. Note that the `latest` tag corresponds with `master` and not with the latest release.
+This example uses podman, but docker can also be used.
 
 ```bash
 # Pull the desired version
-podman pull quay.io/coreos/fcct:v0.2.0
+podman pull quay.io/coreos/fcct:release
 
 # Run fcct using standard in and standard out
-podman run -i --rm quay.io/coreos/fcct:v0.2.0 -pretty -strict < your_config.fcc > transpiled_config.ign
+podman run -i --rm quay.io/coreos/fcct:release -pretty -strict < your_config.fcc > transpiled_config.ign
 
 # Run fcct using files.
-podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:v0.2.0 -pretty -strict -input /config.fcc > transpiled_config.ign
+podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:release -pretty -strict -input /config.fcc > transpiled_config.ign
 ```
 
 ### Writing and using Fedora CoreOS Configs
