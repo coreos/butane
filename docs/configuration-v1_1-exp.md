@@ -56,6 +56,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_label_** (string): the label of the filesystem.
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
+    * **_mount_options_** (list of strings): any special options to be passed to the mount command.
     * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.

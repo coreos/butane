@@ -125,7 +125,8 @@ func translateLink(from Link) (to types.Link, tm translate.TranslationSet) {
 
 func translateFilesystem(from Filesystem) (to types.Filesystem, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = tr.Translate(&from.Options, &to.Options).Prefix("options")
+	tm = tr.Translate(&from.MountOptions, &to.MountOptions).Prefix("mount_options")
+	tm.MergeP("options", tr.Translate(&from.Options, &to.Options))
 	to.Device = from.Device
 	to.Label = from.Label
 	to.Format = from.Format

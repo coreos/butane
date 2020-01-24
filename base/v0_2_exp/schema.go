@@ -73,6 +73,7 @@ type Filesystem struct {
 	Device         string   `yaml:"device"`
 	Format         *string  `yaml:"format"`
 	Label          *string  `yaml:"label"`
+	MountOptions   []string `yaml:"mount_options"`
 	Options        []string `yaml:"options"`
 	Path           *string  `yaml:"path"`
 	UUID           *string  `yaml:"uuid"`
