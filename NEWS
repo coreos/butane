@@ -1,3 +1,15 @@
+2020-01-24 FCCT 0.4.0
+
+  Features:
+
+    - Add mount_options field to filesystem entry
+
+  Misc Changes:
+
+    - Add "release" tag to container of latest release
+    - Vendor dependencies
+
+
 2020-01-23 FCCT 0.3.0
 
   Features:
