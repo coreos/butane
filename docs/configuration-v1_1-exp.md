@@ -5,7 +5,7 @@
 The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for FCCT.
-* **version** (string): the semantic version of the spec for this document. This document is for version `1.0.0` and generates Ignition configs with version `3.0.0`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0-experimental` and generates Ignition configs with version `3.1.0-experimental`.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
@@ -56,6 +56,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_label_** (string): the label of the filesystem.
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
+    * **_mount_options_** (list of strings): any special options to be passed to the mount command.
     * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.
