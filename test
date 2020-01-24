@@ -3,8 +3,10 @@ set -euo pipefail
 
 export GO111MODULE=on
 
+SRC=$(find . -name '*.go' -not -path "./vendor/*")
+
 echo "checking gofmt"
-res=$(gofmt -d .)
+res=$(gofmt -d $SRC)
 echo "$res"
 test -z "$res"
 
