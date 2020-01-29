@@ -35,9 +35,11 @@ func main() {
 	var (
 		input       string
 		output      string
+		helpFlag    bool
 		versionFlag bool
 	)
 	options := common.TranslateOptions{}
+	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
 	pflag.BoolVar(&versionFlag, "version", false, "print the version and exit")
 	pflag.BoolVar(&options.Strict, "strict", false, "fail on any warning")
 	pflag.BoolVar(&options.Pretty, "pretty", false, "output formatted json")
@@ -45,6 +47,11 @@ func main() {
 	pflag.StringVar(&output, "output", "", "write to output file instead of stdout")
 
 	pflag.Parse()
+
+	if helpFlag {
+		pflag.Usage()
+		os.Exit(0)
+	}
 
 	if versionFlag {
 		fmt.Println(version.String)
