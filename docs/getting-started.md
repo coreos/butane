@@ -24,7 +24,7 @@ New releases of `fcct` are backwards compatible with old releases unless otherwi
 This example uses podman, but docker can also be used.
 
 ```bash
-# Pull the desired version
+# Pull the latest release
 podman pull quay.io/coreos/fcct:release
 
 # Run fcct using standard in and standard out
