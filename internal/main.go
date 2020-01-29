@@ -40,11 +40,11 @@ func main() {
 	)
 	options := common.TranslateOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
-	pflag.BoolVar(&versionFlag, "version", false, "print the version and exit")
-	pflag.BoolVar(&options.Strict, "strict", false, "fail on any warning")
-	pflag.BoolVar(&options.Pretty, "pretty", false, "output formatted json")
+	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
+	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")
+	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
-	pflag.StringVar(&output, "output", "", "write to output file instead of stdout")
+	pflag.StringVarP(&output, "output", "o", "", "write to output file instead of stdout")
 
 	pflag.Parse()
 
