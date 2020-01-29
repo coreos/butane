@@ -44,9 +44,24 @@ func main() {
 	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
+	pflag.Lookup("input").Deprecated = "specify filename directly on command line"
+	pflag.Lookup("input").Hidden = true
 	pflag.StringVarP(&output, "output", "o", "", "write to output file instead of stdout")
 
+	pflag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options] [input-file]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Options:\n")
+		pflag.PrintDefaults()
+	}
 	pflag.Parse()
+
+	args := pflag.Args()
+	if len(args) == 1 && input == "" {
+		input = args[0]
+	} else if len(args) > 0 {
+		pflag.Usage()
+		os.Exit(2)
+	}
 
 	if helpFlag {
 		pflag.Usage()

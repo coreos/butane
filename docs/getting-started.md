@@ -31,7 +31,7 @@ podman pull quay.io/coreos/fcct:release
 podman run -i --rm quay.io/coreos/fcct:release --pretty --strict < your_config.fcc > transpiled_config.ign
 
 # Run fcct using files.
-podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:release --pretty --strict --input /config.fcc > transpiled_config.ign
+podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:release --pretty --strict /config.fcc > transpiled_config.ign
 ```
 
 ### Writing and using Fedora CoreOS Configs
@@ -53,7 +53,7 @@ In this above file, you'll want to set the `ssh-rsa AAAAB3NzaC1yc...` line to be
 If we take this file and give it to `fcct`:
 
 ```
-$ ./bin/amd64/fcct --input example.yaml
+$ ./bin/amd64/fcct example.yaml
 
 {"ignition":{"config":{"replace":{"source":null,"verification":{}}},"security":{"tls":{}},"timeouts":{},"version":"3.0.0"},"passwd":{"users":[{"name":"core","sshAuthorizedKeys":["ssh-rsa ssh-rsa AAAAB3NzaC1yc..."]}]},"storage":{},"systemd":{}}
 ```
