@@ -17,3 +17,14 @@ for each release artifact. Do not try to sign all of them at once by globbing. I
  - Update the `release` tag on Quay:
    - [ ] Visit the [Quay tags page](https://quay.io/repository/coreos/fcct?tab=tags) and wait for a versioned tag to appear
    - [ ] Click the gear next to the tag, select "Add New Tag", enter `release`, and confirm
+ - Update Fedora RPM:
+   - [ ] Create a PR to bump the FCCT spec file in [Fedora](https://src.fedoraproject.org/rpms/fedora-coreos-config-transpiler).
+   - [ ] Once that PR merges to `master`, merge `master` into the other relevant branches (e.g. `f31`) then push those.
+   - [ ] On each of those branches (including `master`) run `fedpkg build`
+   - [ ] Once the builds have finished, submit them to [Bodhi](https://bodhi.fedoraproject.org/updates/new), filling in:
+     - `fedora-coreos-config-transpiler` for `Packages`
+     - Selecting the build(s) that just completed, except for the Rawhide one (which gets submitted automatically)
+     - Copy relevant part of release notes from the GitHub release
+     - Leave `Update name` blank
+     - `Type`, `Severity` and `Suggestion` can be left as `unspecified` unless it is a security release. In that case select `security` with the appropriate severity.
+     - `Stable karma` and `Unstable` karma can be set to `2` and `-1`, respectively.
