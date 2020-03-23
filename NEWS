@@ -1,3 +1,26 @@
+2020-03-23 FCCT 0.5.0
+
+  Breaking Changes:
+
+    - Previously, command-line options could be preceded by a single dash
+      (-strict) or double dash (--strict).  Accept only the double-dash form.
+
+  Features:
+
+    - Accept input filename directly on command line, without --input
+    - Add short equivalents of command-line options
+
+  Bug Fixes:
+
+    - Fail if unexpected non-option arguments are specified
+
+  Misc Changes:
+
+    - Deprecate --input and hide it from --help
+    - Document files[].append[].inline property
+    - Update docs for switch to Fedora signing keys
+
+
 2020-01-24 FCCT 0.4.0
 
   Features:
