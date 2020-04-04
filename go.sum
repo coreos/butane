@@ -7,8 +7,8 @@ github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 h1:3jFq2xL4ZajGK
 github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e h1:Wf6HqHfScWJN9/ZjdUKyjop4mf3Qdd+1TvvltAvM3m8=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
-github.com/coreos/ignition/v2 v2.1.1 h1:siNZchKAWoLeV708X4QWG9chTYhssE93HBKkZx+JJO8=
-github.com/coreos/ignition/v2 v2.1.1/go.mod h1:RqmqU64zxarUJa3l4cHtbhcSwfQLpUhv0WVziZwoXvE=
+github.com/coreos/ignition/v2 v2.2.2-0.20200330160851-f73e34b2c21c h1:At6oplnugMVLmXQf8lZr9HhX8RwxcSKbCgn5r8C9f74=
+github.com/coreos/ignition/v2 v2.2.2-0.20200330160851-f73e34b2c21c/go.mod h1:RqmqU64zxarUJa3l4cHtbhcSwfQLpUhv0WVziZwoXvE=
 github.com/coreos/vcontext v0.0.0-20190529201340-22b159166068/go.mod h1:E+6hug9bFSe0KZ2ZAzr8M9F5JlArJjv5D1JS7KSkPKE=
 github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5 h1:DjoHHi6+9J7DGYPvBdmszKZLY+ucx2bnA77jf8KIk9M=
 github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5/go.mod h1:E+6hug9bFSe0KZ2ZAzr8M9F5JlArJjv5D1JS7KSkPKE=
