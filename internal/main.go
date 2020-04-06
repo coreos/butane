@@ -104,7 +104,7 @@ func main() {
 		defer outfile.Close()
 	}
 
-	if _, err := outfile.Write(dataOut); err != nil {
+	if _, err := outfile.Write(append(dataOut, '\n')); err != nil {
 		fail("Failed to write config to %s: %v\n", outfile.Name(), err)
 	}
 }
