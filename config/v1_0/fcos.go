@@ -77,10 +77,17 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 		return nil, r, err
 	}
 
-	second := validate.Validate(final, "json")
-	common.TranslateReportPaths(&second, translations)
-	second.Correlate(contextTree)
-	r.Merge(second)
+	// Check for invalid duplicated keys.
+	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
+	common.TranslateReportPaths(&dupsReport, translations)
+	dupsReport.Correlate(contextTree)
+	r.Merge(dupsReport)
+
+	// Validate JSON semantics.
+	jsonReport := validate.Validate(final, "json")
+	common.TranslateReportPaths(&jsonReport, translations)
+	jsonReport.Correlate(contextTree)
+	r.Merge(jsonReport)
 
 	if r.IsFatal() {
 		return nil, r, common.ErrInvalidGeneratedConfig
