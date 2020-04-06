@@ -19,13 +19,14 @@ import (
 
 	types3_0 "github.com/coreos/ignition/v2/config/v3_0/types"
 	types3_1 "github.com/coreos/ignition/v2/config/v3_1_experimental/types"
+	"github.com/coreos/vcontext/report"
 )
 
 // ToIgn3_0 takes a config and merges in the distro specific bits.
-func (f Fcos) ToIgn3_0(in types3_0.Config) (types3_0.Config, translate.TranslationSet, error) {
-	return in, translate.TranslationSet{}, nil
+func (f Fcos) ToIgn3_0(in types3_0.Config) (types3_0.Config, translate.TranslationSet, report.Report) {
+	return in, translate.TranslationSet{}, report.Report{}
 }
 
-func (f Fcos) ToIgn3_1(in types3_1.Config) (types3_1.Config, translate.TranslationSet, error) {
-	return in, translate.TranslationSet{}, nil
+func (f Fcos) ToIgn3_1(in types3_1.Config) (types3_1.Config, translate.TranslationSet, report.Report) {
+	return in, translate.TranslationSet{}, report.Report{}
 }

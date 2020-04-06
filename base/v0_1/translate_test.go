@@ -312,11 +312,10 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, err := test.in.ToIgn3_0()
-		if err != nil {
-			t.Errorf("#%d: got error: %v", i, err)
+		actual, _, report := test.in.ToIgn3_0()
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
-
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
