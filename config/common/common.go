@@ -16,12 +16,12 @@ package common
 
 import (
 	"bytes"
-	"encoding/json"
 	"regexp"
 	"strings"
 
 	"github.com/coreos/fcct/translate"
 
+	"github.com/clarketm/json"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/coreos/vcontext/tree"
