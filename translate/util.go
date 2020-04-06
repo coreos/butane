@@ -78,3 +78,17 @@ func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
 		panic("Encountered types that are not the same when they should be. This is a bug, please file a report")
 	}
 }
+
+// Utility function to run a translation and prefix the resulting
+// TranslationSet.
+func Prefixed(tr Translator, prefix interface{}, from interface{}, to interface{}) TranslationSet {
+	tm := tr.Translate(from, to)
+	return tm.Prefix(prefix)
+}
+
+// Utility function to run a translation and merge the result into the
+// specified TranslationSet (with the specified prefix).
+func MergeP(tr Translator, tm TranslationSet, prefix interface{}, from interface{}, to interface{}) {
+	translations := tr.Translate(from, to)
+	tm.MergeP(prefix, translations)
+}

@@ -41,19 +41,19 @@ func (c Config) ToIgn3_0() (types.Config, translate.TranslationSet, report.Repor
 func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
 	to.Version = types.MaxVersion.String()
-	tm = tr.Translate(&from.Config, &to.Config).Prefix("config")
-	tm.MergeP("security", tr.Translate(&from.Security, &to.Security))
-	tm.MergeP("timeouts", tr.Translate(&from.Timeouts, &to.Timeouts))
+	tm = translate.Prefixed(tr, "config", &from.Config, &to.Config)
+	translate.MergeP(tr, tm, "security", &from.Security, &to.Security)
+	translate.MergeP(tr, tm, "timeouts", &from.Timeouts, &to.Timeouts)
 	return
 }
 
 func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
 	tr.AddCustomTranslator(translateFileContents)
-	tm = tr.Translate(&from.Group, &to.Group).Prefix("group")
-	tm.MergeP("user", tr.Translate(&from.User, &to.User))
-	tm.MergeP("append", tr.Translate(&from.Append, &to.Append))
-	tm.MergeP("contents", tr.Translate(&from.Contents, &to.Contents))
+	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, "user", &from.User, &to.User)
+	translate.MergeP(tr, tm, "append", &from.Append, &to.Append)
+	translate.MergeP(tr, tm, "contents", &from.Contents, &to.Contents)
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	to.Mode = from.Mode
@@ -63,7 +63,7 @@ func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 
 func translateFileContents(from FileContents) (to types.FileContents, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = tr.Translate(&from.Verification, &to.Verification).Prefix("verification")
+	tm = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	to.Source = from.Source
 	to.Compression = from.Compression
 	tm.AddIdentity("source", "compression")
@@ -80,8 +80,8 @@ func translateFileContents(from FileContents) (to types.FileContents, tm transla
 
 func translateDirectory(from Directory) (to types.Directory, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = tr.Translate(&from.Group, &to.Group).Prefix("group")
-	tm.MergeP("user", tr.Translate(&from.User, &to.User))
+	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, "user", &from.User, &to.User)
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	to.Mode = from.Mode
@@ -91,8 +91,8 @@ func translateDirectory(from Directory) (to types.Directory, tm translate.Transl
 
 func translateLink(from Link) (to types.Link, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = tr.Translate(&from.Group, &to.Group).Prefix("group")
-	tm.MergeP("user", tr.Translate(&from.User, &to.User))
+	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, "user", &from.User, &to.User)
 	to.Target = from.Target
 	to.Hard = from.Hard
 	to.Overwrite = from.Overwrite
