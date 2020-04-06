@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/coreos/go-semver v0.3.0
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
-	github.com/coreos/ignition/v2 v2.1.1
+	github.com/coreos/ignition/v2 v2.2.2-0.20200330160851-f73e34b2c21c
 	github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/spf13/pflag v1.0.5

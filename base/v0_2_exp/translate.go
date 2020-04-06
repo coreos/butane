@@ -86,6 +86,7 @@ func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 func translateFileContents(from FileContents) (to types.FileContents, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
 	tm = tr.Translate(&from.Verification, &to.Verification).Prefix("verification")
+	tm.MergeP("httpHeaders", tr.Translate(&from.HTTPHeaders, &to.HTTPHeaders))
 	to.Source = from.Source
 	to.Compression = from.Compression
 	tm.AddIdentity("source", "compression")

@@ -80,6 +80,12 @@ func TestTranslateFile(t *testing.T) {
 					{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
+						HTTPHeaders: HTTPHeaders{
+							HTTPHeader{
+								Name:  "Header",
+								Value: util.StrToPtr("this isn't validated"),
+							},
+						},
 						Verification: Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},
@@ -87,6 +93,12 @@ func TestTranslateFile(t *testing.T) {
 					{
 						Inline:      util.StrToPtr("hello"),
 						Compression: util.StrToPtr("gzip"),
+						HTTPHeaders: HTTPHeaders{
+							HTTPHeader{
+								Name:  "Header",
+								Value: util.StrToPtr("this isn't validated"),
+							},
+						},
 						Verification: Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},
@@ -96,6 +108,12 @@ func TestTranslateFile(t *testing.T) {
 				Contents: FileContents{
 					Source:      util.StrToPtr("http://example/com"),
 					Compression: util.StrToPtr("gzip"),
+					HTTPHeaders: HTTPHeaders{
+						HTTPHeader{
+							Name:  "Header",
+							Value: util.StrToPtr("this isn't validated"),
+						},
+					},
 					Verification: Verification{
 						Hash: util.StrToPtr("this isn't validated"),
 					},
@@ -120,6 +138,12 @@ func TestTranslateFile(t *testing.T) {
 						{
 							Source:      util.StrToPtr("http://example/com"),
 							Compression: util.StrToPtr("gzip"),
+							HTTPHeaders: types.HTTPHeaders{
+								types.HTTPHeader{
+									Name:  "Header",
+									Value: util.StrToPtr("this isn't validated"),
+								},
+							},
 							Verification: types.Verification{
 								Hash: util.StrToPtr("this isn't validated"),
 							},
@@ -127,6 +151,12 @@ func TestTranslateFile(t *testing.T) {
 						{
 							Source:      util.StrToPtr("data:,hello"),
 							Compression: util.StrToPtr("gzip"),
+							HTTPHeaders: types.HTTPHeaders{
+								types.HTTPHeader{
+									Name:  "Header",
+									Value: util.StrToPtr("this isn't validated"),
+								},
+							},
 							Verification: types.Verification{
 								Hash: util.StrToPtr("this isn't validated"),
 							},
@@ -135,6 +165,12 @@ func TestTranslateFile(t *testing.T) {
 					Contents: types.FileContents{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
+						HTTPHeaders: types.HTTPHeaders{
+							types.HTTPHeader{
+								Name:  "Header",
+								Value: util.StrToPtr("this isn't validated"),
+							},
+						},
 						Verification: types.Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},

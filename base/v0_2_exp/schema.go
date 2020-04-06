@@ -15,6 +15,7 @@
 package v0_2_exp
 
 type CaReference struct {
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
 	Source       string       `yaml:"source"`
 	Verification Verification `yaml:"verification"`
 }
@@ -27,6 +28,7 @@ type Config struct {
 }
 
 type ConfigReference struct {
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
 	Source       *string      `yaml:"source"`
 	Verification Verification `yaml:"verification"`
 }
@@ -64,6 +66,7 @@ type File struct {
 
 type FileContents struct {
 	Compression  *string      `yaml:"compression"`
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
 	Source       *string      `yaml:"source"`
 	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
 	Verification Verification `yaml:"verification"`
@@ -84,6 +87,13 @@ type Filesystem struct {
 type FilesystemOption string
 
 type Group string
+
+type HTTPHeader struct {
+	Name  string  `yaml:"name"`
+	Value *string `yaml:"value"`
+}
+
+type HTTPHeaders []HTTPHeader
 
 type Ignition struct {
 	Config   IgnitionConfig `yaml:"config"`
