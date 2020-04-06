@@ -211,10 +211,14 @@ func TestTranslateFile(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations := translateFile(test.in)
+		actual, translations, report := translateFile(test.in)
 
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 
 		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
@@ -270,9 +274,12 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateDirectory(test.in)
+		actual, _, report := translateDirectory(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -326,9 +333,12 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateLink(test.in)
+		actual, _, report := translateLink(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -371,9 +381,12 @@ func TestTranslateFilesystem(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateFilesystem(test.in)
+		actual, _, report := translateFilesystem(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -460,9 +473,12 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _ := translateIgnition(test.in)
+		actual, _, report := translateIgnition(test.in)
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }

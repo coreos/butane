@@ -15,12 +15,14 @@
 package translate
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/coreos/fcct/translate/tests/pkga"
 	"github.com/coreos/fcct/translate/tests/pkgb"
 
 	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,9 +69,10 @@ func TestTranslateTrivial(t *testing.T) {
 
 	trans := NewTranslator("", "")
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
 func TestTranslateNested(t *testing.T) {
@@ -101,9 +104,10 @@ func TestTranslateNested(t *testing.T) {
 
 	trans := NewTranslator("", "")
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
 func TestTranslateTrivialReordered(t *testing.T) {
@@ -128,18 +132,21 @@ func TestTranslateTrivialReordered(t *testing.T) {
 
 	trans := NewTranslator("", "")
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
 func TestCustomTranslatorTrivial(t *testing.T) {
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet) {
+	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
 		ts := mkTrans(fp("A"), fp("A"),
 			fp("B"), fp("B"),
 			fp("C"), fp("C"),
 			fp("C"), fp("D"),
 		)
+		var r report.Report
+		r.AddOnInfo(fp("A"), errors.New("info"))
 		return pkgb.Nested{
 			Trivial: pkgb.Trivial{
 				A: a.A,
@@ -147,7 +154,7 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 				C: a.C,
 			},
 			D: "abc",
-		}, ts
+		}, ts, r
 	}
 	in := pkga.Trivial{
 		A: "asdf",
@@ -175,20 +182,21 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 	trans := NewTranslator("", "")
 	trans.AddCustomTranslator(tr)
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "info at $.A: info\n", "bad report")
 }
 
 func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
 	trans := NewTranslator("", "")
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet) {
+	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
 		ret := pkgb.Nested{
 			D: "abc",
 		}
-		ts := trans.Translate(&a, &ret.Trivial)
+		ts, r := trans.Translate(&a, &ret.Trivial)
 		ts.AddTranslation(fp("C"), fp("D"))
-		return ret, ts
+		return ret, ts, r
 	}
 	in := pkga.Trivial{
 		A: "asdf",
@@ -215,13 +223,14 @@ func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
 
 	trans.AddCustomTranslator(tr)
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
 func TestCustomTranslatorList(t *testing.T) {
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet) {
+	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
 		ts := mkTrans(fp("A"), fp("A"),
 			fp("B"), fp("B"),
 			fp("C"), fp("C"),
@@ -234,7 +243,7 @@ func TestCustomTranslatorList(t *testing.T) {
 				C: a.C,
 			},
 			D: "abc",
-		}, ts
+		}, ts, report.Report{}
 	}
 	in := pkga.HasList{
 		L: []pkga.Trivial{
@@ -270,9 +279,10 @@ func TestCustomTranslatorList(t *testing.T) {
 	trans := NewTranslator("", "")
 	trans.AddCustomTranslator(tr)
 
-	ts := trans.Translate(&in, &got)
+	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
 func TestAddIdentity(t *testing.T) {

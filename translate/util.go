@@ -20,6 +20,7 @@ import (
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
 // fieldName returns the name uses when (un)marshalling a field. t should be a reflect.Value of a struct,
@@ -79,16 +80,28 @@ func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
 	}
 }
 
-// Utility function to run a translation and prefix the resulting
-// TranslationSet.
-func Prefixed(tr Translator, prefix interface{}, from interface{}, to interface{}) TranslationSet {
-	tm := tr.Translate(from, to)
-	return tm.Prefix(prefix)
+// Return a copy of the report, with the context paths prefixed by prefix.
+func prefixReport(r report.Report, prefix interface{}) report.Report {
+	var ret report.Report
+	ret.Merge(r)
+	for i := range ret.Entries {
+		entry := &ret.Entries[i]
+		entry.Context = path.New(entry.Context.Tag, prefix).Append(entry.Context.Path...)
+	}
+	return ret
 }
 
-// Utility function to run a translation and merge the result into the
-// specified TranslationSet (with the specified prefix).
-func MergeP(tr Translator, tm TranslationSet, prefix interface{}, from interface{}, to interface{}) {
-	translations := tr.Translate(from, to)
+// Utility function to run a translation and prefix the resulting
+// TranslationSet and Report.
+func Prefixed(tr Translator, prefix interface{}, from interface{}, to interface{}) (TranslationSet, report.Report) {
+	tm, r := tr.Translate(from, to)
+	return tm.Prefix(prefix), prefixReport(r, prefix)
+}
+
+// Utility function to run a translation and merge the result, with the
+// specified prefix, into the specified TranslationSet and Report.
+func MergeP(tr Translator, tm TranslationSet, r *report.Report, prefix interface{}, from interface{}, to interface{}) {
+	translations, report := tr.Translate(from, to)
 	tm.MergeP(prefix, translations)
+	r.Merge(prefixReport(report, prefix))
 }

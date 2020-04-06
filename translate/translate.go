@@ -20,6 +20,7 @@ import (
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
 /*
@@ -36,6 +37,7 @@ import (
 
 var (
 	translationsType = reflect.TypeOf(TranslationSet{})
+	reportType       = reflect.TypeOf(report.Report{})
 )
 
 // Returns if this type can be translated without a custom translator. Children or other
@@ -84,12 +86,13 @@ func couldBeValidTranslator(t reflect.Type) bool {
 	if t.Kind() != reflect.Func {
 		return false
 	}
-	if t.NumIn() != 1 || t.NumOut() != 2 {
+	if t.NumIn() != 1 || t.NumOut() != 3 {
 		return false
 	}
 	if util.IsInvalidInConfig(t.In(0).Kind()) ||
 		util.IsInvalidInConfig(t.Out(0).Kind()) ||
-		t.Out(1) != translationsType {
+		t.Out(1) != translationsType ||
+		t.Out(2) != reportType {
 		return false
 	}
 	return true
@@ -163,6 +166,14 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 			to := toPath.Append(trans.To.Path...)
 			t.translations.AddTranslation(from, to)
 		}
+
+		// likewise for the report entries
+		retReport := returns[2].Interface().(report.Report)
+		for i := range retReport.Entries {
+			entry := &retReport.Entries[i]
+			entry.Context = fromPath.Append(entry.Context.Path...)
+		}
+		t.report.Merge(retReport)
 		return
 	}
 	if t.translatable(tFrom, tTo) {
@@ -175,11 +186,11 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 
 type Translator interface {
 	// Adds a custom translator for cases where the structs are not identical. Must be of type
-	// func(fromType) -> (toType, TranslationSet). The translator should return the set of all
-	// translations it did.
+	// func(fromType) -> (toType, TranslationSet, report.Report). The translator should return
+	// the set of all translations it did.
 	AddCustomTranslator(t interface{})
 	// Also returns a list of source and dest paths, autocompleted by fromTag and toTag
-	Translate(from, to interface{}) TranslationSet
+	Translate(from, to interface{}) (TranslationSet, report.Report)
 }
 
 // NewTranslator creates a new Translator for translating from types with fromTag struct tags (e.g. "yaml")
@@ -201,6 +212,7 @@ type translator struct {
 	// All trivially translated fields use the default behavior.
 	translators  []reflect.Value
 	translations TranslationSet
+	report       *report.Report
 }
 
 // fn should be of the form func(fromType, translationsMap) -> toType
@@ -223,7 +235,7 @@ func (t translator) getTranslator(from, to reflect.Type) reflect.Value {
 }
 
 // Translate translates from into to and returns a set of all the path changes it performed.
-func (t translator) Translate(from, to interface{}) TranslationSet {
+func (t translator) Translate(from, to interface{}) (TranslationSet, report.Report) {
 	fv := reflect.ValueOf(from)
 	tv := reflect.ValueOf(to)
 	if fv.Kind() != reflect.Ptr || tv.Kind() != reflect.Ptr {
@@ -231,12 +243,13 @@ func (t translator) Translate(from, to interface{}) TranslationSet {
 	}
 	fv = fv.Elem()
 	tv = tv.Elem()
-	// Make sure to clear this every time`
+	// Make sure to clear these every time
 	t.translations = TranslationSet{
 		FromTag: t.translations.FromTag,
 		ToTag:   t.translations.ToTag,
 		Set:     map[string]Translation{},
 	}
+	t.report = &report.Report{}
 	t.translate(fv, tv, path.New(t.translations.FromTag), path.New(t.translations.ToTag))
-	return t.translations
+	return t.translations, *t.report
 }

@@ -62,29 +62,29 @@ func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, report.Repor
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
 	tr.AddCustomTranslator(translateFilesystem)
-	translations := tr.Translate(&c, &ret)
+	translations, report := tr.Translate(&c, &ret)
 	translations.Merge(c.addMountUnits(&ret))
-	return ret, translations, report.Report{}
+	return ret, translations, report
 }
 
-func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet) {
+func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
 	tr.AddCustomTranslator(translateResource)
 	to.Version = types.MaxVersion.String()
-	tm = translate.Prefixed(tr, "config", &from.Config, &to.Config)
-	translate.MergeP(tr, tm, "proxy", &from.Proxy, &to.Proxy)
-	translate.MergeP(tr, tm, "security", &from.Security, &to.Security)
-	translate.MergeP(tr, tm, "timeouts", &from.Timeouts, &to.Timeouts)
+	tm, r = translate.Prefixed(tr, "config", &from.Config, &to.Config)
+	translate.MergeP(tr, tm, &r, "proxy", &from.Proxy, &to.Proxy)
+	translate.MergeP(tr, tm, &r, "security", &from.Security, &to.Security)
+	translate.MergeP(tr, tm, &r, "timeouts", &from.Timeouts, &to.Timeouts)
 	return
 }
 
-func translateFile(from File) (to types.File, tm translate.TranslationSet) {
+func translateFile(from File) (to types.File, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
 	tr.AddCustomTranslator(translateResource)
-	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
-	translate.MergeP(tr, tm, "user", &from.User, &to.User)
-	translate.MergeP(tr, tm, "append", &from.Append, &to.Append)
-	translate.MergeP(tr, tm, "contents", &from.Contents, &to.Contents)
+	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
+	translate.MergeP(tr, tm, &r, "append", &from.Append, &to.Append)
+	translate.MergeP(tr, tm, &r, "contents", &from.Contents, &to.Contents)
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	to.Mode = from.Mode
@@ -92,10 +92,10 @@ func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 	return
 }
 
-func translateResource(from Resource) (to types.Resource, tm translate.TranslationSet) {
+func translateResource(from Resource) (to types.Resource, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
-	translate.MergeP(tr, tm, "httpHeaders", &from.HTTPHeaders, &to.HTTPHeaders)
+	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
+	translate.MergeP(tr, tm, &r, "httpHeaders", &from.HTTPHeaders, &to.HTTPHeaders)
 	to.Source = from.Source
 	to.Compression = from.Compression
 	tm.AddIdentity("source", "compression")
@@ -110,10 +110,10 @@ func translateResource(from Resource) (to types.Resource, tm translate.Translati
 	return
 }
 
-func translateDirectory(from Directory) (to types.Directory, tm translate.TranslationSet) {
+func translateDirectory(from Directory) (to types.Directory, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
-	translate.MergeP(tr, tm, "user", &from.User, &to.User)
+	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	to.Mode = from.Mode
@@ -121,10 +121,10 @@ func translateDirectory(from Directory) (to types.Directory, tm translate.Transl
 	return
 }
 
-func translateLink(from Link) (to types.Link, tm translate.TranslationSet) {
+func translateLink(from Link) (to types.Link, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = translate.Prefixed(tr, "group", &from.Group, &to.Group)
-	translate.MergeP(tr, tm, "user", &from.User, &to.User)
+	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
+	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	to.Target = from.Target
 	to.Hard = from.Hard
 	to.Overwrite = from.Overwrite
@@ -133,10 +133,10 @@ func translateLink(from Link) (to types.Link, tm translate.TranslationSet) {
 	return
 }
 
-func translateFilesystem(from Filesystem) (to types.Filesystem, tm translate.TranslationSet) {
+func translateFilesystem(from Filesystem) (to types.Filesystem, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json")
-	tm = translate.Prefixed(tr, "mount_options", &from.MountOptions, &to.MountOptions)
-	translate.MergeP(tr, tm, "options", &from.Options, &to.Options)
+	tm, r = translate.Prefixed(tr, "mount_options", &from.MountOptions, &to.MountOptions)
+	translate.MergeP(tr, tm, &r, "options", &from.Options, &to.Options)
 	to.Device = from.Device
 	to.Label = from.Label
 	to.Format = from.Format
