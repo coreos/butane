@@ -23,17 +23,17 @@ import (
 	"github.com/coreos/vcontext/report"
 )
 
-// TestValidateFileContents tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
-func TestValidateFileContents(t *testing.T) {
+// TestValidateResource tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
+func TestValidateResource(t *testing.T) {
 	tests := []struct {
-		in  FileContents
+		in  Resource
 		out error
 	}{
 		{},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			FileContents{
+			Resource{
 				Source:      util.StrToPtr("http://example/com"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
@@ -43,7 +43,7 @@ func TestValidateFileContents(t *testing.T) {
 			nil,
 		},
 		{
-			FileContents{
+			Resource{
 				Inline:      util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
@@ -53,7 +53,7 @@ func TestValidateFileContents(t *testing.T) {
 			nil,
 		},
 		{
-			FileContents{
+			Resource{
 				Source:      util.StrToPtr("data:,hello"),
 				Inline:      util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),

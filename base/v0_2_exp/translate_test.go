@@ -76,7 +76,7 @@ func TestTranslateFile(t *testing.T) {
 					Name: util.StrToPtr("bazquux"),
 				},
 				Mode: util.IntToPtr(420),
-				Append: []FileContents{
+				Append: []Resource{
 					{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
@@ -105,7 +105,7 @@ func TestTranslateFile(t *testing.T) {
 					},
 				},
 				Overwrite: util.BoolToPtr(true),
-				Contents: FileContents{
+				Contents: Resource{
 					Source:      util.StrToPtr("http://example/com"),
 					Compression: util.StrToPtr("gzip"),
 					HTTPHeaders: HTTPHeaders{
@@ -134,7 +134,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Mode: util.IntToPtr(420),
-					Append: []types.FileContents{
+					Append: []types.Resource{
 						{
 							Source:      util.StrToPtr("http://example/com"),
 							Compression: util.StrToPtr("gzip"),
@@ -162,7 +162,7 @@ func TestTranslateFile(t *testing.T) {
 							},
 						},
 					},
-					Contents: types.FileContents{
+					Contents: types.Resource{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
 						HTTPHeaders: types.HTTPHeaders{

@@ -27,8 +27,8 @@ var (
 	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
 )
 
-func (f FileContents) Validate(c path.ContextPath) (r report.Report) {
-	if f.Inline != nil && f.Source != nil {
+func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
+	if rs.Inline != nil && rs.Source != nil {
 		r.AddOnError(c.Append("inline"), ErrInlineAndSource)
 	}
 	return
