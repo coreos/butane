@@ -44,7 +44,7 @@ Type={{.Format}}
 RequiredBy=local-fs.target`))
 )
 
-// ToIgn3_0 translates the config to an Ignition config. It also returns the set of translations
+// ToIgn3_1 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
 func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 	ret := types.Config{}

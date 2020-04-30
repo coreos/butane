@@ -50,7 +50,7 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 	return nil
 }
 
-// TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entires.
+// TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
 	tests := []struct {
 		in         File
