@@ -14,23 +14,11 @@
 
 package v0_2_exp
 
-type CaReference struct {
-	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
-	Source       string       `yaml:"source"`
-	Verification Verification `yaml:"verification"`
-}
-
 type Config struct {
 	Ignition Ignition `yaml:"ignition"`
 	Passwd   Passwd   `yaml:"passwd"`
 	Storage  Storage  `yaml:"storage"`
 	Systemd  Systemd  `yaml:"systemd"`
-}
-
-type ConfigReference struct {
-	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
-	Source       *string      `yaml:"source"`
-	Verification Verification `yaml:"verification"`
 }
 
 type Device string
@@ -55,21 +43,13 @@ type Dropin struct {
 }
 
 type File struct {
-	Group     NodeGroup      `yaml:"group"`
-	Overwrite *bool          `yaml:"overwrite"`
-	Path      string         `yaml:"path"`
-	User      NodeUser       `yaml:"user"`
-	Append    []FileContents `yaml:"append"`
-	Contents  FileContents   `yaml:"contents"`
-	Mode      *int           `yaml:"mode"`
-}
-
-type FileContents struct {
-	Compression  *string      `yaml:"compression"`
-	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
-	Source       *string      `yaml:"source"`
-	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
-	Verification Verification `yaml:"verification"`
+	Group     NodeGroup  `yaml:"group"`
+	Overwrite *bool      `yaml:"overwrite"`
+	Path      string     `yaml:"path"`
+	User      NodeUser   `yaml:"user"`
+	Append    []Resource `yaml:"append"`
+	Contents  Resource   `yaml:"contents"`
+	Mode      *int       `yaml:"mode"`
 }
 
 type Filesystem struct {
@@ -103,8 +83,8 @@ type Ignition struct {
 }
 
 type IgnitionConfig struct {
-	Merge   []ConfigReference `yaml:"merge"`
-	Replace ConfigReference   `yaml:"replace"`
+	Merge   []Resource `yaml:"merge"`
+	Replace Resource   `yaml:"replace"`
 }
 
 type Link struct {
@@ -181,6 +161,14 @@ type Raid struct {
 
 type RaidOption string
 
+type Resource struct {
+	Compression  *string      `yaml:"compression"`
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
+	Source       *string      `yaml:"source"`
+	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
+	Verification Verification `yaml:"verification"`
+}
+
 type SSHAuthorizedKey string
 
 type Security struct {
@@ -201,7 +189,7 @@ type Systemd struct {
 }
 
 type TLS struct {
-	CertificateAuthorities []CaReference `yaml:"certificate_authorities"`
+	CertificateAuthorities []Resource `yaml:"certificate_authorities"`
 }
 
 type Timeouts struct {

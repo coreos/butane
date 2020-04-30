@@ -44,7 +44,7 @@ Type={{.Format}}
 RequiredBy=local-fs.target`))
 )
 
-// ToIgn3_0 translates the config to an Ignition config. It also returns the set of translations
+// ToIgn3_1 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
 func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 	ret := types.Config{}
@@ -61,6 +61,8 @@ func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 
 func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
+	tr.AddCustomTranslator(translateIgnitionConfig)
+	tr.AddCustomTranslator(translateSecurity)
 	to.Version = types.MaxVersion.String()
 	tm = tr.Translate(&from.Config, &to.Config).Prefix("config")
 	tm.MergeP("proxy", tr.Translate(&from.Proxy, &to.Proxy))
@@ -69,9 +71,31 @@ func translateIgnition(from Ignition) (to types.Ignition, tm translate.Translati
 	return
 }
 
+func translateIgnitionConfig(from IgnitionConfig) (to types.IgnitionConfig, tm translate.TranslationSet) {
+	tr := translate.NewTranslator("yaml", "json")
+	tr.AddCustomTranslator(translateResource)
+	tm = tr.Translate(&from.Merge, &to.Merge).Prefix("merge")
+	tm.MergeP("replace", tr.Translate(&from.Replace, &to.Replace))
+	return
+}
+
+func translateSecurity(from Security) (to types.Security, tm translate.TranslationSet) {
+	tr := translate.NewTranslator("yaml", "json")
+	tr.AddCustomTranslator(translateTLS)
+	tm = tr.Translate(&from.TLS, &to.TLS).Prefix("tls")
+	return
+}
+
+func translateTLS(from TLS) (to types.TLS, tm translate.TranslationSet) {
+	tr := translate.NewTranslator("yaml", "json")
+	tr.AddCustomTranslator(translateResource)
+	tm = tr.Translate(&from.CertificateAuthorities, &to.CertificateAuthorities).Prefix("certificateAuthorities")
+	return
+}
+
 func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tr.AddCustomTranslator(translateFileContents)
+	tr.AddCustomTranslator(translateResource)
 	tm = tr.Translate(&from.Group, &to.Group).Prefix("group")
 	tm.MergeP("user", tr.Translate(&from.User, &to.User))
 	tm.MergeP("append", tr.Translate(&from.Append, &to.Append))
@@ -83,7 +107,7 @@ func translateFile(from File) (to types.File, tm translate.TranslationSet) {
 	return
 }
 
-func translateFileContents(from FileContents) (to types.FileContents, tm translate.TranslationSet) {
+func translateResource(from Resource) (to types.Resource, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
 	tm = tr.Translate(&from.Verification, &to.Verification).Prefix("verification")
 	tm.MergeP("httpHeaders", tr.Translate(&from.HTTPHeaders, &to.HTTPHeaders))

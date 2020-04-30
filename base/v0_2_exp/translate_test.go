@@ -50,7 +50,7 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 	return nil
 }
 
-// TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entires.
+// TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
 	tests := []struct {
 		in         File
@@ -76,7 +76,7 @@ func TestTranslateFile(t *testing.T) {
 					Name: util.StrToPtr("bazquux"),
 				},
 				Mode: util.IntToPtr(420),
-				Append: []FileContents{
+				Append: []Resource{
 					{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
@@ -105,7 +105,7 @@ func TestTranslateFile(t *testing.T) {
 					},
 				},
 				Overwrite: util.BoolToPtr(true),
-				Contents: FileContents{
+				Contents: Resource{
 					Source:      util.StrToPtr("http://example/com"),
 					Compression: util.StrToPtr("gzip"),
 					HTTPHeaders: HTTPHeaders{
@@ -134,7 +134,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Mode: util.IntToPtr(420),
-					Append: []types.FileContents{
+					Append: []types.Resource{
 						{
 							Source:      util.StrToPtr("http://example/com"),
 							Compression: util.StrToPtr("gzip"),
@@ -162,7 +162,7 @@ func TestTranslateFile(t *testing.T) {
 							},
 						},
 					},
-					Contents: types.FileContents{
+					Contents: types.Resource{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
 						HTTPHeaders: types.HTTPHeaders{
@@ -181,6 +181,30 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "append", 1, "inline"),
 					To:   path.New("json", "append", 1, "source"),
+				},
+			},
+		},
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Inline: util.StrToPtr("xyzzy"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source: util.StrToPtr("data:,xyzzy"),
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "source"),
 				},
 			},
 		},
@@ -369,6 +393,33 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 		{
 			Ignition{
+				Config: IgnitionConfig{
+					Merge: []Resource{
+						{
+							Inline: util.StrToPtr("xyzzy"),
+						},
+					},
+					Replace: Resource{
+						Inline: util.StrToPtr("xyzzy"),
+					},
+				},
+			},
+			types.Ignition{
+				Version: "3.1.0-experimental",
+				Config: types.IgnitionConfig{
+					Merge: []types.Resource{
+						{
+							Source: util.StrToPtr("data:,xyzzy"),
+						},
+					},
+					Replace: types.Resource{
+						Source: util.StrToPtr("data:,xyzzy"),
+					},
+				},
+			},
+		},
+		{
+			Ignition{
 				Proxy: Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []string{"example.com"},
@@ -379,6 +430,31 @@ func TestTranslateIgnition(t *testing.T) {
 				Proxy: types.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
+				},
+			},
+		},
+		{
+			Ignition{
+				Security: Security{
+					TLS: TLS{
+						CertificateAuthorities: []Resource{
+							{
+								Inline: util.StrToPtr("xyzzy"),
+							},
+						},
+					},
+				},
+			},
+			types.Ignition{
+				Version: "3.1.0-experimental",
+				Security: types.Security{
+					TLS: types.TLS{
+						CertificateAuthorities: []types.Resource{
+							{
+								Source: util.StrToPtr("data:,xyzzy"),
+							},
+						},
+					},
 				},
 			},
 		},
