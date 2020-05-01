@@ -39,6 +39,13 @@ After=systemd-fsck@{{.Device}}
 Where={{.Path}}
 What={{.Device}}
 Type={{.Format}}
+{{- if .MountOptions }}
+Options=
+  {{- range $i, $opt := .MountOptions }}
+    {{- if $i }},{{ end }}
+    {{- $opt }}
+  {{- end }}
+{{- end }}
 
 [Install]
 RequiredBy=local-fs.target`))
