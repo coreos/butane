@@ -31,7 +31,8 @@ import (
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
-// verifyTranslations ensures all the translations are identity, unless they match a listed one
+// verifyTranslations ensures all the translations are identity, unless they match a listed one,
+// and verifies that all the listed ones exist.
 // it returns the offending translation if there is one
 func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
 	exceptionSet := translate.TranslationSet{
@@ -41,6 +42,13 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 	}
 	for _, ex := range exceptions {
 		exceptionSet.AddTranslation(ex.From, ex.To)
+		if tr, ok := set.Set[ex.To.String()]; ok {
+			if !reflect.DeepEqual(tr, ex) {
+				return &ex
+			}
+		} else {
+			return &ex
+		}
 	}
 	for key, translation := range set.Set {
 		if ex, ok := exceptionSet.Set[key]; ok {

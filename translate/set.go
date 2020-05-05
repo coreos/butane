@@ -107,7 +107,7 @@ func (ts TranslationSet) Prefix(prefix interface{}) TranslationSet {
 	from := path.New(ts.FromTag, prefix)
 	to := path.New(ts.ToTag, prefix)
 	for _, tr := range ts.Set {
-		ret.AddTranslation(from.Append(tr.From.Path...), to.Append(tr.From.Path...))
+		ret.AddTranslation(from.Append(tr.From.Path...), to.Append(tr.To.Path...))
 	}
 	return ret
 }
