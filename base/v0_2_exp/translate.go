@@ -68,35 +68,12 @@ func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, error) {
 
 func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet) {
 	tr := translate.NewTranslator("yaml", "json")
-	tr.AddCustomTranslator(translateIgnitionConfig)
-	tr.AddCustomTranslator(translateSecurity)
+	tr.AddCustomTranslator(translateResource)
 	to.Version = types.MaxVersion.String()
 	tm = tr.Translate(&from.Config, &to.Config).Prefix("config")
 	tm.MergeP("proxy", tr.Translate(&from.Proxy, &to.Proxy))
 	tm.MergeP("security", tr.Translate(&from.Security, &to.Security))
 	tm.MergeP("timeouts", tr.Translate(&from.Timeouts, &to.Timeouts))
-	return
-}
-
-func translateIgnitionConfig(from IgnitionConfig) (to types.IgnitionConfig, tm translate.TranslationSet) {
-	tr := translate.NewTranslator("yaml", "json")
-	tr.AddCustomTranslator(translateResource)
-	tm = tr.Translate(&from.Merge, &to.Merge).Prefix("merge")
-	tm.MergeP("replace", tr.Translate(&from.Replace, &to.Replace))
-	return
-}
-
-func translateSecurity(from Security) (to types.Security, tm translate.TranslationSet) {
-	tr := translate.NewTranslator("yaml", "json")
-	tr.AddCustomTranslator(translateTLS)
-	tm = tr.Translate(&from.TLS, &to.TLS).Prefix("tls")
-	return
-}
-
-func translateTLS(from TLS) (to types.TLS, tm translate.TranslationSet) {
-	tr := translate.NewTranslator("yaml", "json")
-	tr.AddCustomTranslator(translateResource)
-	tm = tr.Translate(&from.CertificateAuthorities, &to.CertificateAuthorities).Prefix("certificateAuthorities")
 	return
 }
 
