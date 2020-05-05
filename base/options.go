@@ -15,4 +15,5 @@
 package base
 
 type TranslateOptions struct {
+	FilesDir string // allow embedding local files relative to this directory
 }

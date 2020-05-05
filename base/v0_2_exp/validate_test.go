@@ -26,10 +26,12 @@ import (
 // TestValidateResource tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
 func TestValidateResource(t *testing.T) {
 	tests := []struct {
-		in  Resource
-		out error
+		in      Resource
+		out     error
+		errPath path.ContextPath
 	}{
 		{},
+		// source specified
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
@@ -41,7 +43,9 @@ func TestValidateResource(t *testing.T) {
 				},
 			},
 			nil,
+			path.New("yaml"),
 		},
+		// inline specified
 		{
 			Resource{
 				Inline:      util.StrToPtr("hello"),
@@ -51,7 +55,21 @@ func TestValidateResource(t *testing.T) {
 				},
 			},
 			nil,
+			path.New("yaml"),
 		},
+		// local specified
+		{
+			Resource{
+				Local:       util.StrToPtr("hello"),
+				Compression: util.StrToPtr("gzip"),
+				Verification: Verification{
+					Hash: util.StrToPtr("this isn't validated"),
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// source + inline, invalid
 		{
 			Resource{
 				Source:      util.StrToPtr("data:,hello"),
@@ -61,16 +79,55 @@ func TestValidateResource(t *testing.T) {
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
-			ErrInlineAndSource,
+			ErrTooManyResourceSources,
+			path.New("yaml", "source"),
+		},
+		// source + local, invalid
+		{
+			Resource{
+				Source:      util.StrToPtr("data:,hello"),
+				Local:       util.StrToPtr("hello"),
+				Compression: util.StrToPtr("gzip"),
+				Verification: Verification{
+					Hash: util.StrToPtr("this isn't validated"),
+				},
+			},
+			ErrTooManyResourceSources,
+			path.New("yaml", "source"),
+		},
+		// inline + local, invalid
+		{
+			Resource{
+				Inline:      util.StrToPtr("hello"),
+				Local:       util.StrToPtr("hello"),
+				Compression: util.StrToPtr("gzip"),
+				Verification: Verification{
+					Hash: util.StrToPtr("this isn't validated"),
+				},
+			},
+			ErrTooManyResourceSources,
+			path.New("yaml", "inline"),
+		},
+		// source + inline + local, invalid
+		{
+			Resource{
+				Source:      util.StrToPtr("data:,hello"),
+				Inline:      util.StrToPtr("hello"),
+				Local:       util.StrToPtr("hello"),
+				Compression: util.StrToPtr("gzip"),
+				Verification: Verification{
+					Hash: util.StrToPtr("this isn't validated"),
+				},
+			},
+			ErrTooManyResourceSources,
+			path.New("yaml", "source"),
 		},
 	}
 
 	for i, test := range tests {
 		actual := test.in.Validate(path.New("yaml"))
 		expected := report.Report{}
-		// hardcode inline for now since that's the only place errors occur. Move into the
-		// test struct once there's more than one place
-		expected.AddOnError(path.New("yaml", "inline"), test.out)
+		expected.AddOnError(test.errPath, test.out)
 
 		if !reflect.DeepEqual(actual, expected) {
 			t.Errorf("#%d: expected %+v got %+v", i, expected, actual)
