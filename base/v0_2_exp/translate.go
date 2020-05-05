@@ -19,6 +19,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/go-systemd/unit"
@@ -54,9 +55,9 @@ RequiredBy=local-fs.target`))
 
 // ToIgn3_1 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
-func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, report.Report) {
+func (c Config) ToIgn3_1(options base.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
-	tr := translate.NewTranslator("yaml", "json")
+	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateIgnition)
 	tr.AddCustomTranslator(translateFile)
 	tr.AddCustomTranslator(translateDirectory)
@@ -67,8 +68,8 @@ func (c Config) ToIgn3_1() (types.Config, translate.TranslationSet, report.Repor
 	return ret, translations, report
 }
 
-func translateIgnition(from Ignition) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateIgnition(from Ignition, options base.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateResource)
 	to.Version = types.MaxVersion.String()
 	tm, r = translate.Prefixed(tr, "config", &from.Config, &to.Config)
@@ -78,8 +79,8 @@ func translateIgnition(from Ignition) (to types.Ignition, tm translate.Translati
 	return
 }
 
-func translateFile(from File) (to types.File, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateFile(from File, options base.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateResource)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
@@ -92,8 +93,8 @@ func translateFile(from File) (to types.File, tm translate.TranslationSet, r rep
 	return
 }
 
-func translateResource(from Resource) (to types.Resource, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateResource(from Resource, options base.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	translate.MergeP(tr, tm, &r, "httpHeaders", &from.HTTPHeaders, &to.HTTPHeaders)
 	to.Source = from.Source
@@ -110,8 +111,8 @@ func translateResource(from Resource) (to types.Resource, tm translate.Translati
 	return
 }
 
-func translateDirectory(from Directory) (to types.Directory, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateDirectory(from Directory, options base.TranslateOptions) (to types.Directory, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	to.Overwrite = from.Overwrite
@@ -121,8 +122,8 @@ func translateDirectory(from Directory) (to types.Directory, tm translate.Transl
 	return
 }
 
-func translateLink(from Link) (to types.Link, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateLink(from Link, options base.TranslateOptions) (to types.Link, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	to.Target = from.Target
@@ -133,8 +134,8 @@ func translateLink(from Link) (to types.Link, tm translate.TranslationSet, r rep
 	return
 }
 
-func translateFilesystem(from Filesystem) (to types.Filesystem, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json")
+func translateFilesystem(from Filesystem, options base.TranslateOptions) (to types.Filesystem, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "mount_options", &from.MountOptions, &to.MountOptions)
 	translate.MergeP(tr, tm, &r, "options", &from.Options, &to.Options)
 	to.Device = from.Device

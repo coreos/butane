@@ -29,7 +29,7 @@ import (
  * call NewTranslator() to get a translator instance. This can then have
  * additional translation rules (in the form of functions) to translate from
  * types in one struct to the other. Those functions are in the form:
- *     func(typeFromInputStruct) -> typeFromOutputStruct
+ *     func(fromType, optionsType) -> (toType, TranslationSet, report.Report)
  * These can be closures that reference the translator as well. This allows for
  * manually translating some fields but resuming automatic translation on the
  * other fields through the Translator.Translate() function.
@@ -82,17 +82,18 @@ func (t translator) translatableStruct(t1, t2 reflect.Type) bool {
 }
 
 // checks that t could reasonably be the type of a translator function
-func couldBeValidTranslator(t reflect.Type) bool {
-	if t.Kind() != reflect.Func {
+func (t translator) couldBeValidTranslator(tr reflect.Type) bool {
+	if tr.Kind() != reflect.Func {
 		return false
 	}
-	if t.NumIn() != 1 || t.NumOut() != 3 {
+	if tr.NumIn() != 2 || tr.NumOut() != 3 {
 		return false
 	}
-	if util.IsInvalidInConfig(t.In(0).Kind()) ||
-		util.IsInvalidInConfig(t.Out(0).Kind()) ||
-		t.Out(1) != translationsType ||
-		t.Out(2) != reportType {
+	if util.IsInvalidInConfig(tr.In(0).Kind()) ||
+		util.IsInvalidInConfig(tr.Out(0).Kind()) ||
+		tr.In(1) != reflect.TypeOf(t.options) ||
+		tr.Out(1) != translationsType ||
+		tr.Out(2) != reportType {
 		return false
 	}
 	return true
@@ -156,7 +157,7 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 	tFrom := vFrom.Type()
 	tTo := vTo.Type()
 	if fnv := t.getTranslator(tFrom, tTo); fnv.IsValid() {
-		returns := fnv.Call([]reflect.Value{vFrom})
+		returns := fnv.Call([]reflect.Value{vFrom, reflect.ValueOf(t.options)})
 		vTo.Set(returns[0])
 
 		// handle all the translations and "rebase" them to our current place
@@ -186,8 +187,8 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 
 type Translator interface {
 	// Adds a custom translator for cases where the structs are not identical. Must be of type
-	// func(fromType) -> (toType, TranslationSet, report.Report). The translator should return
-	// the set of all translations it did.
+	// func(fromType, optionsType) -> (toType, TranslationSet, report.Report).
+	// The translator should return the set of all translations it did.
 	AddCustomTranslator(t interface{})
 	// Also returns a list of source and dest paths, autocompleted by fromTag and toTag
 	Translate(from, to interface{}) (TranslationSet, report.Report)
@@ -196,8 +197,9 @@ type Translator interface {
 // NewTranslator creates a new Translator for translating from types with fromTag struct tags (e.g. "yaml")
 // to types with toTag struct tages (e.g. "json"). These tags are used when determining paths when generating
 // the TranslationSet returned by Translator.Translate()
-func NewTranslator(fromTag, toTag string) Translator {
+func NewTranslator(fromTag, toTag string, options interface{}) Translator {
 	return &translator{
+		options: options,
 		translations: TranslationSet{
 			FromTag: fromTag,
 			ToTag:   toTag,
@@ -207,6 +209,7 @@ func NewTranslator(fromTag, toTag string) Translator {
 }
 
 type translator struct {
+	options interface{}
 	// List of custom translation funcs, must pass couldBeValidTranslator
 	// This is only for fields that cannot or should not be trivially translated,
 	// All trivially translated fields use the default behavior.
@@ -215,11 +218,11 @@ type translator struct {
 	report       *report.Report
 }
 
-// fn should be of the form func(fromType, translationsMap) -> toType
-// fn should mutate translationsMap to add all the translations it did
+// fn should be of the form
+// func(fromType, optionsType) -> (toType, TranslationSet, report.Report)
 func (t *translator) AddCustomTranslator(fn interface{}) {
 	fnv := reflect.ValueOf(fn)
-	if !couldBeValidTranslator(fnv.Type()) {
+	if !t.couldBeValidTranslator(fnv.Type()) {
 		panic("Tried to register invalid translator function")
 	}
 	t.translators = append(t.translators, fnv)

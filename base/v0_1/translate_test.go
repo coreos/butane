@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -151,7 +152,7 @@ func TestTranslateFile(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations, report := translateFile(test.in)
+		actual, translations, report := translateFile(test.in, base.TranslateOptions{})
 
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
@@ -214,7 +215,7 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateDirectory(test.in)
+		actual, _, report := translateDirectory(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -273,7 +274,7 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateLink(test.in)
+		actual, _, report := translateLink(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -298,7 +299,7 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := translateIgnition(test.in)
+		actual, _, report := translateIgnition(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}
@@ -325,7 +326,7 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_0()
+		actual, _, report := test.in.ToIgn3_0(base.TranslateOptions{})
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}

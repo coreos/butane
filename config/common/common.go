@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/clarketm/json"
@@ -33,9 +34,12 @@ var (
 	snakeRe = regexp.MustCompile("([A-Z])")
 )
 
+type BaseOptions = base.TranslateOptions
+
 type TranslateOptions struct {
 	Pretty bool
 	Strict bool
+	BaseOptions
 }
 
 type Common struct {

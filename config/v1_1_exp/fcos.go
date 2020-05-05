@@ -35,13 +35,13 @@ type Config struct {
 	fcos_0_1.Fcos   `yaml:",inline"`
 }
 
-func (c Config) Translate() (types.Config, translate.TranslationSet, report.Report) {
-	cfg, baseTranslations, baseReport := c.Config.ToIgn3_1()
+func (c Config) Translate(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
+	cfg, baseTranslations, baseReport := c.Config.ToIgn3_1(options.BaseOptions)
 	if baseReport.IsFatal() {
 		return types.Config{}, translate.TranslationSet{}, baseReport
 	}
 
-	finalcfg, distroTranslations, distroReport := c.Fcos.ToIgn3_1(cfg)
+	finalcfg, distroTranslations, distroReport := c.Fcos.ToIgn3_1(cfg, options.BaseOptions)
 	baseReport.Merge(distroReport)
 	if baseReport.IsFatal() {
 		return types.Config{}, translate.TranslationSet{}, baseReport
@@ -73,7 +73,7 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 		return nil, r, common.ErrInvalidSourceConfig
 	}
 
-	final, translations, translateReport := cfg.Translate()
+	final, translations, translateReport := cfg.Translate(options)
 	translateReport.Correlate(contextTree)
 	r.Merge(translateReport)
 	if r.IsFatal() {

@@ -26,6 +26,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type testOptions struct{}
+
 // Note: we need different input and output types which unfortunately means a lot of tests
 
 // mkTrans makes a TranslationSet with no tag in the paths consuming pairs of args. i.e:
@@ -67,7 +69,7 @@ func TestTranslateTrivial(t *testing.T) {
 
 	got := pkgb.Trivial{}
 
-	trans := NewTranslator("", "")
+	trans := NewTranslator("", "", testOptions{})
 
 	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
@@ -102,7 +104,7 @@ func TestTranslateNested(t *testing.T) {
 
 	got := pkgb.Nested{}
 
-	trans := NewTranslator("", "")
+	trans := NewTranslator("", "", testOptions{})
 
 	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
@@ -130,7 +132,7 @@ func TestTranslateTrivialReordered(t *testing.T) {
 
 	got := pkgb.TrivialReordered{}
 
-	trans := NewTranslator("", "")
+	trans := NewTranslator("", "", testOptions{})
 
 	ts, r := trans.Translate(&in, &got)
 	assert.Equal(t, got, expected, "bad translation")
@@ -139,7 +141,7 @@ func TestTranslateTrivialReordered(t *testing.T) {
 }
 
 func TestCustomTranslatorTrivial(t *testing.T) {
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
+	tr := func(a pkga.Trivial, options testOptions) (pkgb.Nested, TranslationSet, report.Report) {
 		ts := mkTrans(fp("A"), fp("A"),
 			fp("B"), fp("B"),
 			fp("C"), fp("C"),
@@ -179,7 +181,7 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 
 	got := pkgb.Nested{}
 
-	trans := NewTranslator("", "")
+	trans := NewTranslator("", "", testOptions{})
 	trans.AddCustomTranslator(tr)
 
 	ts, r := trans.Translate(&in, &got)
@@ -189,8 +191,8 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 }
 
 func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
-	trans := NewTranslator("", "")
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
+	trans := NewTranslator("", "", testOptions{})
+	tr := func(a pkga.Trivial, options testOptions) (pkgb.Nested, TranslationSet, report.Report) {
 		ret := pkgb.Nested{
 			D: "abc",
 		}
@@ -230,7 +232,7 @@ func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
 }
 
 func TestCustomTranslatorList(t *testing.T) {
-	tr := func(a pkga.Trivial) (pkgb.Nested, TranslationSet, report.Report) {
+	tr := func(a pkga.Trivial, options testOptions) (pkgb.Nested, TranslationSet, report.Report) {
 		ts := mkTrans(fp("A"), fp("A"),
 			fp("B"), fp("B"),
 			fp("C"), fp("C"),
@@ -276,7 +278,7 @@ func TestCustomTranslatorList(t *testing.T) {
 
 	got := pkgb.HasList{}
 
-	trans := NewTranslator("", "")
+	trans := NewTranslator("", "", testOptions{})
 	trans.AddCustomTranslator(tr)
 
 	ts, r := trans.Translate(&in, &got)
