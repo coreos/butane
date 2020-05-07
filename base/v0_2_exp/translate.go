@@ -15,6 +15,9 @@
 package v0_2_exp
 
 import (
+	"bytes"
+	"compress/gzip"
+	"encoding/base64"
 	"errors"
 	"io/ioutil"
 	"net/url"
@@ -139,22 +142,77 @@ func translateResource(from Resource, options base.TranslateOptions) (to types.R
 			return
 		}
 
-		src := (&url.URL{
-			Scheme: "data",
-			Opaque: "," + dataurl.Escape(contents),
-		}).String()
+		src, gzipped, err := makeDataURL(contents, to.Compression)
+		if err != nil {
+			r.AddOnError(c, err)
+			return
+		}
 		to.Source = &src
 		tm.AddTranslation(c, path.New("json", "source"))
+		if gzipped {
+			to.Compression = util.StrToPtr("gzip")
+			tm.AddTranslation(c, path.New("json", "compression"))
+		}
 	}
 
 	if from.Inline != nil {
-		src := (&url.URL{
-			Scheme: "data",
-			Opaque: "," + dataurl.EscapeString(*from.Inline),
-		}).String()
+		c := path.New("yaml", "inline")
+
+		src, gzipped, err := makeDataURL([]byte(*from.Inline), to.Compression)
+		if err != nil {
+			r.AddOnError(c, err)
+			return
+		}
 		to.Source = &src
-		tm.AddTranslation(path.New("yaml", "inline"), path.New("json", "source"))
+		tm.AddTranslation(c, path.New("json", "source"))
+		if gzipped {
+			to.Compression = util.StrToPtr("gzip")
+			tm.AddTranslation(c, path.New("json", "compression"))
+		}
 	}
+	return
+}
+
+func makeDataURL(contents []byte, currentCompression *string) (uri string, gzipped bool, err error) {
+	// try three different encodings, and select the smallest one
+
+	// URL-escaped, useful for ASCII text
+	opaque := "," + dataurl.Escape(contents)
+
+	// Base64-encoded, useful for small or incompressible binary data
+	b64 := ";base64," + base64.StdEncoding.EncodeToString(contents)
+	if len(b64) < len(opaque) {
+		opaque = b64
+	}
+
+	// Base64-encoded gzipped, useful for compressible data.  If the
+	// user already enabled compression, don't compress again.
+	// We don't try base64-encoded URL-escaped because gzipped data is
+	// binary and URL escaping is unlikely to be efficient.
+	if currentCompression == nil || *currentCompression == "" {
+		var buf bytes.Buffer
+		var compressor *gzip.Writer
+		if compressor, err = gzip.NewWriterLevel(&buf, gzip.BestCompression); err != nil {
+			return
+		}
+		if _, err = compressor.Write(contents); err != nil {
+			return
+		}
+		if err = compressor.Close(); err != nil {
+			return
+		}
+		gz := ";base64," + base64.StdEncoding.EncodeToString(buf.Bytes())
+		// Account for space needed by "compression": "gzip".
+		if len(gz)+25 < len(opaque) {
+			opaque = gz
+			gzipped = true
+		}
+	}
+
+	uri = (&url.URL{
+		Scheme: "data",
+		Opaque: opaque,
+	}).String()
 	return
 }
 

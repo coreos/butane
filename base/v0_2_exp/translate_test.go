@@ -64,23 +64,28 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
+	zzz := "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+	zzz_gz := "data:;base64,H4sIAAAAAAAC/6oajAAQAAD//5tA8d+VAAAA"
+	random := "\xc0\x9cl\x01\x89i\xa5\xbfW\xe4\x1b\xf4J_\xb79P\xa3#\xa7"
+	random_b64 := "data:;base64,wJxsAYlppb9X5Bv0Sl+3OVCjI6c="
+
 	filesDir, err := ioutil.TempDir("", "translate-test-")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	defer os.RemoveAll(filesDir)
-	f, err := os.OpenFile(filepath.Join(filesDir, "file-1"), os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		t.Error(err)
-		return
+	fileContents := map[string]string{
+		"file-1": "file contents\n",
+		"file-2": zzz,
+		"file-3": random,
 	}
-	// no defer; we close immediately after writing
-	_, err = f.WriteString("file contents\n")
-	f.Close()
-	if err != nil {
-		t.Error(err)
-		return
+	for name, contents := range fileContents {
+		err := ioutil.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
+		if err != nil {
+			t.Error(err)
+			return
+		}
 	}
 
 	tests := []struct {
@@ -330,7 +335,7 @@ func TestTranslateFile(t *testing.T) {
 			File{
 				Path: "/foo",
 				Contents: Resource{
-					Local: util.StrToPtr("file-2"),
+					Local: util.StrToPtr("file-missing"),
 				},
 			},
 			types.File{
@@ -339,7 +344,110 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			[]translate.Translation{},
-			"error at $.contents.local: open " + filepath.Join(filesDir, "file-2") + ": no such file or directory\n",
+			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": no such file or directory\n",
+			base.TranslateOptions{
+				FilesDir: filesDir,
+			},
+		},
+		// inline and local automatic file encoding
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					// gzip
+					Inline: util.StrToPtr(zzz),
+				},
+				Append: []Resource{
+					{
+						// gzip
+						Local: util.StrToPtr("file-2"),
+					},
+					{
+						// base64
+						Inline: util.StrToPtr(random),
+					},
+					{
+						// base64
+						Local: util.StrToPtr("file-3"),
+					},
+					{
+						// URL-escaped
+						Inline:      util.StrToPtr(zzz),
+						Compression: util.StrToPtr("invalid"),
+					},
+					{
+						// URL-escaped
+						Local:       util.StrToPtr("file-2"),
+						Compression: util.StrToPtr("invalid"),
+					},
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source:      util.StrToPtr(zzz_gz),
+						Compression: util.StrToPtr("gzip"),
+					},
+					Append: []types.Resource{
+						{
+							Source:      util.StrToPtr(zzz_gz),
+							Compression: util.StrToPtr("gzip"),
+						},
+						{
+							Source: util.StrToPtr(random_b64),
+						},
+						{
+							Source: util.StrToPtr(random_b64),
+						},
+						{
+							Source:      util.StrToPtr("data:," + zzz),
+							Compression: util.StrToPtr("invalid"),
+						},
+						{
+							Source:      util.StrToPtr("data:," + zzz),
+							Compression: util.StrToPtr("invalid"),
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "source"),
+				},
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "compression"),
+				},
+				{
+					From: path.New("yaml", "append", 0, "local"),
+					To:   path.New("json", "append", 0, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 0, "local"),
+					To:   path.New("json", "append", 0, "compression"),
+				},
+				{
+					From: path.New("yaml", "append", 1, "inline"),
+					To:   path.New("json", "append", 1, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 2, "local"),
+					To:   path.New("json", "append", 2, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 3, "inline"),
+					To:   path.New("json", "append", 3, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 4, "local"),
+					To:   path.New("json", "append", 4, "source"),
+				},
+			},
+			"",
 			base.TranslateOptions{
 				FilesDir: filesDir,
 			},
