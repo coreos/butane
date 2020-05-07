@@ -25,7 +25,7 @@ import (
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_1_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_1/types"
 	"github.com/coreos/vcontext/path"
 )
 
@@ -645,7 +645,7 @@ func TestTranslateIgnition(t *testing.T) {
 		{
 			Ignition{},
 			types.Ignition{
-				Version: "3.1.0-experimental",
+				Version: "3.1.0",
 			},
 		},
 		{
@@ -662,7 +662,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.1.0-experimental",
+				Version: "3.1.0",
 				Config: types.IgnitionConfig{
 					Merge: []types.Resource{
 						{
@@ -683,7 +683,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.1.0-experimental",
+				Version: "3.1.0",
 				Proxy: types.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
@@ -703,7 +703,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.1.0-experimental",
+				Version: "3.1.0",
 				Security: types.Security{
 					TLS: types.TLS{
 						CertificateAuthorities: []types.Resource{
@@ -738,7 +738,7 @@ func TestToIgn3_1(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.1.0-experimental",
+					Version: "3.1.0",
 				},
 			},
 		},

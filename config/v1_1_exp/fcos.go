@@ -22,7 +22,7 @@ import (
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 	"github.com/coreos/fcct/translate"
 
-	"github.com/coreos/ignition/v2/config/v3_1_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_1/types"
 	ignvalidate "github.com/coreos/ignition/v2/config/validate"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
