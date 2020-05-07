@@ -8,12 +8,12 @@ github.com/coreos/go-semver/semver
 github.com/coreos/go-systemd/unit
 # github.com/coreos/go-systemd/v22 v22.0.0
 github.com/coreos/go-systemd/v22/unit
-# github.com/coreos/ignition/v2 v2.2.2-0.20200429185013-c829f1be6667
+# github.com/coreos/ignition/v2 v2.3.0
 github.com/coreos/ignition/v2/config/shared/errors
 github.com/coreos/ignition/v2/config/shared/validations
 github.com/coreos/ignition/v2/config/util
 github.com/coreos/ignition/v2/config/v3_0/types
-github.com/coreos/ignition/v2/config/v3_1_experimental/types
+github.com/coreos/ignition/v2/config/v3_1/types
 github.com/coreos/ignition/v2/config/validate
 # github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5
 github.com/coreos/vcontext/json

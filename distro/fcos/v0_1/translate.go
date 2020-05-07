@@ -19,7 +19,7 @@ import (
 	"github.com/coreos/fcct/translate"
 
 	types3_0 "github.com/coreos/ignition/v2/config/v3_0/types"
-	types3_1 "github.com/coreos/ignition/v2/config/v3_1_experimental/types"
+	types3_1 "github.com/coreos/ignition/v2/config/v3_1/types"
 	"github.com/coreos/vcontext/report"
 )
 
