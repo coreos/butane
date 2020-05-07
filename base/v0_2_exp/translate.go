@@ -120,18 +120,8 @@ func translateResource(from Resource, options base.TranslateOptions) (to types.R
 		// calculate file path within FilesDir and check for
 		// path traversal
 		filePath := filepath.Join(options.FilesDir, *from.Local)
-		absBasePath, err := filepath.Abs(options.FilesDir)
-		if err != nil {
+		if err := ensurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
 			r.AddOnError(c, err)
-			return
-		}
-		absFilePath, err := filepath.Abs(filePath)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		if !strings.HasPrefix(absFilePath, absBasePath+string(filepath.Separator)) {
-			r.AddOnError(c, ErrFilesDirEscape)
 			return
 		}
 
@@ -288,4 +278,19 @@ func mountUnitFromFS(fs Filesystem) types.Unit {
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
 	}
+}
+
+func ensurePathWithinFilesDir(path, filesDir string) error {
+	absBase, err := filepath.Abs(filesDir)
+	if err != nil {
+		return err
+	}
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	if !strings.HasPrefix(absPath, absBase+string(filepath.Separator)) {
+		return ErrFilesDirEscape
+	}
+	return nil
 }
