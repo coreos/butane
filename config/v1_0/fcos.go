@@ -35,20 +35,21 @@ type Config struct {
 	fcos_0_1.Fcos   `yaml:",inline"`
 }
 
-func (c Config) Translate() (types.Config, translate.TranslationSet, error) {
-	cfg, baseTranslations, err := c.Config.ToIgn3_0()
-	if err != nil {
-		return types.Config{}, translate.TranslationSet{}, err
+func (c Config) Translate(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
+	cfg, baseTranslations, baseReport := c.Config.ToIgn3_0(options.BaseOptions)
+	if baseReport.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, baseReport
 	}
 
-	finalcfg, distroTranslations, err := c.Fcos.ToIgn3_0(cfg)
-	if err != nil {
-		return types.Config{}, translate.TranslationSet{}, err
+	finalcfg, distroTranslations, distroReport := c.Fcos.ToIgn3_0(cfg, options.BaseOptions)
+	baseReport.Merge(distroReport)
+	if baseReport.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, baseReport
 	}
 
 	baseTranslations.Merge(distroTranslations)
 
-	return finalcfg, baseTranslations, nil
+	return finalcfg, baseTranslations, baseReport
 }
 
 // TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
@@ -72,9 +73,11 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 		return nil, r, common.ErrInvalidSourceConfig
 	}
 
-	final, translations, err := cfg.Translate()
-	if err != nil {
-		return nil, r, err
+	final, translations, translateReport := cfg.Translate(options)
+	translateReport.Correlate(contextTree)
+	r.Merge(translateReport)
+	if r.IsFatal() {
+		return nil, r, common.ErrInvalidSourceConfig
 	}
 
 	// Check for invalid duplicated keys.

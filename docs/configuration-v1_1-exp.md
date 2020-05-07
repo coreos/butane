@@ -9,16 +9,18 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline`.
-      * **_inline_** (string): the contents of the config. Mutually exclusive with `source`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_replace_** (object): the config that will replace the current.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline`.
-      * **_inline_** (string): the contents of the config. Mutually exclusive with `source`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
@@ -29,9 +31,10 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_http_total_** (integer) the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
-      * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source` or `inline`.
-        * **_source_** (string): the URL of the certificate (in PEM format). Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline`.
-        * **_inline_** (string): the contents of the certificate (in PEM format). Mutually exclusive with `source`.
+      * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
+        * **_source_** (string): the URL of the certificate (in PEM format). Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+        * **_inline_** (string): the contents of the certificate (in PEM format). Mutually exclusive with `source` and `local`.
+        * **_local_** (string): a local path to the contents of the certificate (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
           * **name** (string): the header name.
           * **_value_** (string): the header contents.
@@ -72,11 +75,12 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.
-    * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `source` must be specified if `overwrite` is true. Defaults to false.
+    * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `contents` must be specified if `overwrite` is true. Defaults to false.
     * **_contents_** (object): options related to the contents of the file.
       * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. If source is omitted and a regular file already exists at the path, Ignition will do nothing. If source is omitted and no file exists, an empty file will be created. Mutually exclusive with `inline`.
-      * **_inline_** (string): the contents of the file. Mutually exclusive with `source`.
+      * **_source_** (string): the URL of the file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. If source is omitted and a regular file already exists at the path, Ignition will do nothing. If source is omitted and no file exists, an empty file will be created. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents of the file. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents of the file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
@@ -84,14 +88,15 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_append_** (list of objects): list of contents to be appended to the file. Follows the same stucture as `contents`
       * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the contents to append. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline`.
-      * **_inline_** (string): the contents to append. Mutually exclusive with `source`.
+      * **_source_** (string): the URL of the contents to append. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents to append. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents to append, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
       * **_verification_** (object): options related to the verification of the appended contents.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
-    * **_mode_** (integer): the file's permission mode. If not specified, the permission mode for files defaults to 0644 or the existing file's permissions if `overwrite` is false, `source` is unspecified, and a file already exists at the path.
+    * **_mode_** (integer): the file's permission mode. If not specified, the permission mode for files defaults to 0644 or the existing file's permissions if `overwrite` is false, `contents` is unspecified, and a file already exists at the path.
     * **_user_** (object): specifies the file's owner.
       * **_id_** (integer): the user ID of the owner.
       * **_name_** (string): the user name of the owner.

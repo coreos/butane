@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -151,10 +152,14 @@ func TestTranslateFile(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations := translateFile(test.in)
+		actual, translations, report := translateFile(test.in, base.TranslateOptions{})
 
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 
 		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
@@ -210,9 +215,12 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateDirectory(test.in)
+		actual, _, report := translateDirectory(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -266,9 +274,12 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateLink(test.in)
+		actual, _, report := translateLink(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -288,9 +299,12 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _ := translateIgnition(test.in)
+		actual, _, report := translateIgnition(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -312,11 +326,10 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, err := test.in.ToIgn3_0()
-		if err != nil {
-			t.Errorf("#%d: got error: %v", i, err)
+		actual, _, report := test.in.ToIgn3_0(base.TranslateOptions{})
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
-
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}

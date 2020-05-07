@@ -15,9 +15,13 @@
 package v0_2_exp
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 
+	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -27,7 +31,8 @@ import (
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
-// verifyTranslations ensures all the translations are identity, unless they match a listed one
+// verifyTranslations ensures all the translations are identity, unless they match a listed one,
+// and verifies that all the listed ones exist.
 // it returns the offending translation if there is one
 func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
 	exceptionSet := translate.TranslationSet{
@@ -37,6 +42,13 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 	}
 	for _, ex := range exceptions {
 		exceptionSet.AddTranslation(ex.From, ex.To)
+		if tr, ok := set.Set[ex.To.String()]; ok {
+			if !reflect.DeepEqual(tr, ex) {
+				return &ex
+			}
+		} else {
+			return &ex
+		}
 	}
 	for key, translation := range set.Set {
 		if ex, ok := exceptionSet.Set[key]; ok {
@@ -52,15 +64,38 @@ func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
+	filesDir, err := ioutil.TempDir("", "translate-test-")
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer os.RemoveAll(filesDir)
+	f, err := os.OpenFile(filepath.Join(filesDir, "file-1"), os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	// no defer; we close immediately after writing
+	_, err = f.WriteString("file contents\n")
+	f.Close()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
 	tests := []struct {
 		in         File
 		out        types.File
 		exceptions []translate.Translation
+		report     string
+		options    base.TranslateOptions
 	}{
 		{
 			File{},
 			types.File{},
 			nil,
+			"",
+			base.TranslateOptions{},
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
@@ -102,6 +137,9 @@ func TestTranslateFile(t *testing.T) {
 						Verification: Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},
+					},
+					{
+						Local: util.StrToPtr("file-1"),
 					},
 				},
 				Overwrite: util.BoolToPtr(true),
@@ -161,6 +199,9 @@ func TestTranslateFile(t *testing.T) {
 								Hash: util.StrToPtr("this isn't validated"),
 							},
 						},
+						{
+							Source: util.StrToPtr("data:,file%20contents%0A"),
+						},
 					},
 					Contents: types.Resource{
 						Source:      util.StrToPtr("http://example/com"),
@@ -182,8 +223,17 @@ func TestTranslateFile(t *testing.T) {
 					From: path.New("yaml", "append", 1, "inline"),
 					To:   path.New("json", "append", 1, "source"),
 				},
+				{
+					From: path.New("yaml", "append", 2, "local"),
+					To:   path.New("json", "append", 2, "source"),
+				},
+			},
+			"",
+			base.TranslateOptions{
+				FilesDir: filesDir,
 			},
 		},
+		// inline file contents
 		{
 			File{
 				Path: "/foo",
@@ -207,14 +257,104 @@ func TestTranslateFile(t *testing.T) {
 					To:   path.New("json", "contents", "source"),
 				},
 			},
+			"",
+			base.TranslateOptions{},
+		},
+		// local file contents
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("file-1"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source: util.StrToPtr("data:,file%20contents%0A"),
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "local"),
+					To:   path.New("json", "contents", "source"),
+				},
+			},
+			"",
+			base.TranslateOptions{
+				FilesDir: filesDir,
+			},
+		},
+		// filesDir not specified
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("file-1"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+			},
+			[]translate.Translation{},
+			"error at $.contents.local: " + ErrNoFilesDir.Error() + "\n",
+			base.TranslateOptions{},
+		},
+		// attempted directory traversal
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("../file-1"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+			},
+			[]translate.Translation{},
+			"error at $.contents.local: " + ErrFilesDirEscape.Error() + "\n",
+			base.TranslateOptions{
+				FilesDir: filesDir,
+			},
+		},
+		// attempted inclusion of nonexistent file
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("file-2"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+			},
+			[]translate.Translation{},
+			"error at $.contents.local: open " + filepath.Join(filesDir, "file-2") + ": no such file or directory\n",
+			base.TranslateOptions{
+				FilesDir: filesDir,
+			},
 		},
 	}
 
 	for i, test := range tests {
-		actual, translations := translateFile(test.in)
+		actual, translations, report := translateFile(test.in, test.options)
 
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+
+		if report.String() != test.report {
+			t.Errorf("#%d: expected report '%+v', got '%+v'", i, test.report, report.String())
 		}
 
 		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
@@ -270,9 +410,12 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateDirectory(test.in)
+		actual, _, report := translateDirectory(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -326,9 +469,12 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateLink(test.in)
+		actual, _, report := translateLink(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -371,9 +517,12 @@ func TestTranslateFilesystem(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _ := translateFilesystem(test.in)
+		actual, _, report := translateFilesystem(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -460,9 +609,12 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _ := translateIgnition(test.in)
+		actual, _, report := translateIgnition(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+		}
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 	}
 }
@@ -484,11 +636,10 @@ func TestToIgn3_1(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, err := test.in.ToIgn3_1()
-		if err != nil {
-			t.Errorf("#%d: got error: %v", i, err)
+		actual, _, report := test.in.ToIgn3_1(base.TranslateOptions{})
+		if report.String() != "" {
+			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
-
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
 		}

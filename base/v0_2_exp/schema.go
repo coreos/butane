@@ -166,6 +166,7 @@ type Resource struct {
 	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
 	Source       *string      `yaml:"source"`
 	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
+	Local        *string      `yaml:"local"`  // Added, not in ignition spec
 	Verification Verification `yaml:"verification"`
 }
 

@@ -22,14 +22,28 @@ import (
 )
 
 var (
-	ErrInlineAndSource   = errors.New("inline cannot be specified if source is specified")
-	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
-	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
+	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
+	ErrMountUnitNoPath        = errors.New("path is required if with_mount_unit is true")
+	ErrMountUnitNoFormat      = errors.New("format is required if with_mount_unit is true")
 )
 
 func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
-	if rs.Inline != nil && rs.Source != nil {
-		r.AddOnError(c.Append("inline"), ErrInlineAndSource)
+	var field string
+	sources := 0
+	if rs.Local != nil {
+		sources++
+		field = "local"
+	}
+	if rs.Inline != nil {
+		sources++
+		field = "inline"
+	}
+	if rs.Source != nil {
+		sources++
+		field = "source"
+	}
+	if sources > 1 {
+		r.AddOnError(c.Append(field), ErrTooManyResourceSources)
 	}
 	return
 }
