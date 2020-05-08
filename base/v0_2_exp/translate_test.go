@@ -15,6 +15,7 @@
 package v0_2_exp
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -24,12 +25,21 @@ import (
 	"github.com/coreos/fcct/base"
 	"github.com/coreos/fcct/translate"
 
+	"github.com/clarketm/json"
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_1/types"
 	"github.com/coreos/vcontext/path"
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
+
+func format(from interface{}) string {
+	buf, err := json.MarshalIndent(from, "", "  ")
+	if err != nil {
+		return fmt.Sprintf("<Error marshaling to JSON: %v>", err)
+	}
+	return string(buf)
+}
 
 // verifyTranslations ensures all the translations are identity, unless they match a listed one,
 // and verifies that all the listed ones exist.
@@ -458,7 +468,7 @@ func TestTranslateFile(t *testing.T) {
 		actual, translations, report := translateFile(test.in, test.options)
 
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 
 		if report.String() != test.report {
@@ -520,7 +530,7 @@ func TestTranslateDirectory(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateDirectory(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -579,7 +589,7 @@ func TestTranslateLink(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateLink(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -627,7 +637,7 @@ func TestTranslateFilesystem(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateFilesystem(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -719,7 +729,7 @@ func TestTranslateIgnition(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateIgnition(test.in, base.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -749,7 +759,7 @@ func TestToIgn3_1(t *testing.T) {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
+			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
 	}
 }

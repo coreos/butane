@@ -130,7 +130,7 @@ func TestValidateResource(t *testing.T) {
 		expected.AddOnError(test.errPath, test.out)
 
 		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %+v got %+v", i, expected, actual)
+			t.Errorf("#%d: expected %v got %v", i, format(expected), format(actual))
 		}
 	}
 }
