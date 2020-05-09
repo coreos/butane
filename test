@@ -21,7 +21,7 @@ trap 'rm -r tmpdocs' EXIT
 for doc in docs/*md
 do
 	echo "Checking $doc"
-	# split each doc into a bunch of tmpfiles then run ct on them
+	# split each doc into a bunch of tmpfiles then run fcct on them
 	sed -n '/^```yaml fedora-coreos-config/,/^```/ p' < ${doc} \
 		| csplit - '/```yaml fedora-coreos-config/' '{*}' -z --prefix tmpdocs/tmpconfig -q
 
@@ -31,6 +31,7 @@ do
 			| go run internal/main.go --strict > /dev/null \
 			|| (cat -n "$i" && false)
 	done
+	rm -f tmpdocs/tmpconfig*
 done
 
 echo ok
