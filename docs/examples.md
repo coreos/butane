@@ -71,6 +71,35 @@ storage:
       mode: 0644
 ```
 
+### Directory trees
+
+Consider a directory tree at `~/fcc/tree` on the system running FCCT:
+
+```
+file
+overridden-file
+directory/file
+directory/symlink -> ../file
+```
+
+This example copies that directory tree to `/etc/files` on the target system. The ownership and mode for `overridden-file` are explicitly set by the config. All other filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. The example must be transpiled with `--files-dir ~/fcc`.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.1.0-experimental
+storage:
+  trees:
+    - local: tree
+      path: /etc/files
+  files:
+    - path: /etc/files/overridden-file
+      mode: 0600
+      user:
+        id: 500
+      group:
+        id: 501
+```
+
 ## systemd units
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
