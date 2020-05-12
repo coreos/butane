@@ -35,6 +35,11 @@ import (
  * other fields through the Translator.Translate() function.
  */
 
+const (
+	TAG_KEY       = "fcct"
+	TAG_AUTO_SKIP = "auto_skip"
+)
+
 var (
 	translationsType = reflect.TypeOf(TranslationSet{})
 	reportType       = reflect.TypeOf(report.Report{})
@@ -64,13 +69,19 @@ func (t translator) translatable(t1, t2 reflect.Type) bool {
 
 // precondition: t1, t2 are both of Kind 'struct'
 func (t translator) translatableStruct(t1, t2 reflect.Type) bool {
-	if t1.NumField() != t2.NumField() || t1.Name() != t2.Name() {
+	if t1.Name() != t2.Name() {
 		return false
 	}
+	t1Fields := 0
 	for i := 0; i < t1.NumField(); i++ {
 		t1f := t1.Field(i)
-		t2f, ok := t2.FieldByName(t1f.Name)
+		if t1f.Tag.Get(TAG_KEY) == TAG_AUTO_SKIP {
+			// ignore this input field
+			continue
+		}
+		t1Fields++
 
+		t2f, ok := t2.FieldByName(t1f.Name)
 		if !ok {
 			return false
 		}
@@ -78,7 +89,7 @@ func (t translator) translatableStruct(t1, t2 reflect.Type) bool {
 			return false
 		}
 	}
-	return true
+	return t2.NumField() == t1Fields
 }
 
 // checks that t could reasonably be the type of a translator function
@@ -126,6 +137,10 @@ func (t translator) translateSameType(vFrom, vTo reflect.Value, fromPath, toPath
 		}
 	case k == reflect.Struct:
 		for i := 0; i < vFrom.NumField(); i++ {
+			if vFrom.Type().Field(i).Tag.Get(TAG_KEY) == TAG_AUTO_SKIP {
+				// ignore this input field
+				continue
+			}
 			fieldGoName := vFrom.Type().Field(i).Name
 			toStructField, ok := vTo.Type().FieldByName(fieldGoName)
 			if !ok {
