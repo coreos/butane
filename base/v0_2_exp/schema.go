@@ -183,6 +183,7 @@ type Storage struct {
 	Filesystems []Filesystem `yaml:"filesystems"`
 	Links       []Link       `yaml:"links"`
 	Raid        []Raid       `yaml:"raid"`
+	Trees       []Tree       `yaml:"trees" fcct:"auto_skip"` // Added, not in ignition spec
 }
 
 type Systemd struct {
@@ -196,6 +197,11 @@ type TLS struct {
 type Timeouts struct {
 	HTTPResponseHeaders *int `yaml:"http_response_headers"`
 	HTTPTotal           *int `yaml:"http_total"`
+}
+
+type Tree struct {
+	Local string  `yaml:"local"`
+	Path  *string `yaml:"path"`
 }
 
 type Unit struct {
