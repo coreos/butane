@@ -61,7 +61,7 @@ type Filesystem struct {
 	Path           *string  `yaml:"path"`
 	UUID           *string  `yaml:"uuid"`
 	WipeFilesystem *bool    `yaml:"wipe_filesystem"`
-	WithMountUnit  *bool    `yaml:"with_mount_unit"`
+	WithMountUnit  *bool    `yaml:"with_mount_unit" fcct:"auto_skip"` // Added, not in Ignition spec
 }
 
 type FilesystemOption string

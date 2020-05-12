@@ -71,7 +71,6 @@ func (c Config) ToIgn3_1(options base.TranslateOptions) (types.Config, translate
 	tr.AddCustomTranslator(translateFile)
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
-	tr.AddCustomTranslator(translateFilesystem)
 	translations, report := tr.Translate(&c, &ret)
 	translations.Merge(c.addMountUnits(&ret))
 	return ret, translations, report
@@ -236,20 +235,6 @@ func translateLink(from Link, options base.TranslateOptions) (to types.Link, tm 
 	to.Overwrite = from.Overwrite
 	to.Path = from.Path
 	tm.AddIdentity("target", "hard", "overwrite", "path")
-	return
-}
-
-func translateFilesystem(from Filesystem, options base.TranslateOptions) (to types.Filesystem, tm translate.TranslationSet, r report.Report) {
-	tr := translate.NewTranslator("yaml", "json", options)
-	tm, r = translate.Prefixed(tr, "mount_options", &from.MountOptions, &to.MountOptions)
-	translate.MergeP(tr, tm, &r, "options", &from.Options, &to.Options)
-	to.Device = from.Device
-	to.Label = from.Label
-	to.Format = from.Format
-	to.Path = from.Path
-	to.UUID = from.UUID
-	to.WipeFilesystem = from.WipeFilesystem
-	tm.AddIdentity("device", "format", "label", "path", "uuid", "wipeFilesystem")
 	return
 }
 

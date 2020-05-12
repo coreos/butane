@@ -597,7 +597,7 @@ func TestTranslateLink(t *testing.T) {
 	}
 }
 
-// TestTranslateFilesystem tests translating the ct storage.filesystems.[i] entries to ignition storage.filesystems.[i] entries.
+// TestTranslateFilesystem tests translating the fcct storage.filesystems.[i] entries to ignition storage.filesystems.[i] entries.
 func TestTranslateFilesystem(t *testing.T) {
 	tests := []struct {
 		in  Filesystem
@@ -635,9 +635,17 @@ func TestTranslateFilesystem(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateFilesystem(test.in, base.TranslateOptions{})
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+		// Filesystem doesn't have a custom translator, so embed in a
+		// complete config
+		in := Config{
+			Storage: Storage{
+				Filesystems: []Filesystem{test.in},
+			},
+		}
+		expected := []types.Filesystem{test.out}
+		actual, _, report := in.ToIgn3_1(base.TranslateOptions{})
+		if !reflect.DeepEqual(actual.Storage.Filesystems, expected) {
+			t.Errorf("#%d: expected %v, got %v", i, format(expected), format(actual.Storage.Filesystems))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
