@@ -34,3 +34,9 @@ type TrivialReordered struct {
 type HasList struct {
 	L []Trivial
 }
+
+type TrivialSkip struct {
+	A string `fcct:"auto_skip"`
+	B int
+	C bool
+}

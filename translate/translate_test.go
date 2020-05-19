@@ -140,6 +140,32 @@ func TestTranslateTrivialReordered(t *testing.T) {
 	assert.Equal(t, r.String(), "", "non-empty report")
 }
 
+func TestTranslateTrivialSkip(t *testing.T) {
+	in := pkga.TrivialSkip{
+		A: "asdf",
+		B: 5,
+		C: true,
+	}
+
+	expected := pkgb.TrivialSkip{
+		B: 5,
+		C: true,
+	}
+	exTrans := mkTrans(
+		fp("B"), fp("B"),
+		fp("C"), fp("C"),
+	)
+
+	got := pkgb.TrivialSkip{}
+
+	trans := NewTranslator("", "", testOptions{})
+
+	ts, r := trans.Translate(&in, &got)
+	assert.Equal(t, got, expected, "bad translation")
+	assert.Equal(t, ts, exTrans, "bad translation")
+	assert.Equal(t, r.String(), "", "non-empty report")
+}
+
 func TestCustomTranslatorTrivial(t *testing.T) {
 	tr := func(a pkga.Trivial, options testOptions) (pkgb.Nested, TranslationSet, report.Report) {
 		ts := mkTrans(fp("A"), fp("A"),

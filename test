@@ -17,20 +17,23 @@ echo "Checking docs"
 shopt -s nullglob
 mkdir tmpdocs
 trap 'rm -r tmpdocs' EXIT
+# Create files-dir contents expected by configs
+mkdir -p tmpdocs/files-dir/tree
 
 for doc in docs/*md
 do
 	echo "Checking $doc"
-	# split each doc into a bunch of tmpfiles then run ct on them
+	# split each doc into a bunch of tmpfiles then run fcct on them
 	sed -n '/^```yaml fedora-coreos-config/,/^```/ p' < ${doc} \
 		| csplit - '/```yaml fedora-coreos-config/' '{*}' -z --prefix tmpdocs/tmpconfig -q
 
-	for i in tmpdocs/*
+	for i in tmpdocs/tmpconfig*
 	do
 		cat "$i" | tail -n +2 | head -n -1 \
-			| go run internal/main.go --strict > /dev/null \
+			| go run internal/main.go --strict --files-dir tmpdocs/files-dir > /dev/null \
 			|| (cat -n "$i" && false)
 	done
+	rm -f tmpdocs/tmpconfig*
 done
 
 echo ok

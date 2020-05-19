@@ -130,7 +130,29 @@ func TestValidateResource(t *testing.T) {
 		expected.AddOnError(test.errPath, test.out)
 
 		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %+v got %+v", i, expected, actual)
+			t.Errorf("#%d: expected %v got %v", i, format(expected), format(actual))
+		}
+	}
+}
+
+func TestValidateTree(t *testing.T) {
+	tests := []struct {
+		in  Tree
+		out error
+	}{
+		{
+			in:  Tree{},
+			out: ErrTreeNoLocal,
+		},
+	}
+
+	for i, test := range tests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnError(path.New("yaml"), test.out)
+
+		if !reflect.DeepEqual(actual, expected) {
+			t.Errorf("#%d: expected %v got %v", i, format(expected), format(actual))
 		}
 	}
 }

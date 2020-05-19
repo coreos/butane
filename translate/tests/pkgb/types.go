@@ -35,3 +35,8 @@ type TrivialReordered struct {
 type HasList struct {
 	L []Nested
 }
+
+type TrivialSkip struct {
+	B int
+	C bool
+}

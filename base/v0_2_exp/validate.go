@@ -25,6 +25,7 @@ var (
 	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
 	ErrMountUnitNoPath        = errors.New("path is required if with_mount_unit is true")
 	ErrMountUnitNoFormat      = errors.New("format is required if with_mount_unit is true")
+	ErrTreeNoLocal            = errors.New("local is required")
 )
 
 func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
@@ -57,6 +58,13 @@ func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
 	}
 	if fs.Format == nil || *fs.Format == "" {
 		r.AddOnError(c.Append("format"), ErrMountUnitNoFormat)
+	}
+	return
+}
+
+func (t Tree) Validate(c path.ContextPath) (r report.Report) {
+	if t.Local == "" {
+		r.AddOnError(c, ErrTreeNoLocal)
 	}
 	return
 }
