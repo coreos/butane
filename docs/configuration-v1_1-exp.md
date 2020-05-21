@@ -32,9 +32,9 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
-        * **_source_** (string): the URL of the certificate (in PEM format). Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
-        * **_inline_** (string): the contents of the certificate (in PEM format). Mutually exclusive with `source` and `local`.
-        * **_local_** (string): a local path to the contents of the certificate (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+        * **_source_** (string): the URL of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+        * **_inline_** (string): the contents of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
+        * **_local_** (string): a local path to contents of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
           * **name** (string): the header name.
           * **_value_** (string): the header contents.
