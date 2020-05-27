@@ -20,7 +20,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`.
-        * **source** (string): the URL of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified.
+        * **source** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.3.1, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified.
         * **_verification_** (object): options related to the verification of the certificate.
           * **_hash_** (string): the hash of the certificate, in the form `<type>-<value>` where type is sha512.
 * **_storage_** (object): describes the desired state of the system's storage devices.
