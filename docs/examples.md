@@ -55,7 +55,7 @@ storage:
         id: 501
 ```
 
-This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that it matches the provided sha512 hash, and writes it to `/opt/file2`.
+This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that the _uncompressed_ contents match the provided sha512 hash, and writes it to `/opt/file2`.
 
 ```yaml fedora-coreos-config
 variant: fcos
