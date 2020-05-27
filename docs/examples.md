@@ -71,6 +71,19 @@ storage:
       mode: 0644
 ```
 
+This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running FCCT. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to FCCT.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.1.0-experimental
+storage:
+  files:
+    - path: /opt/file3
+      contents:
+        local: local-file3
+      mode: 0644
+```
+
 ### Directory trees
 
 Consider a directory tree at `~/fcc/tree` on the system running FCCT:
