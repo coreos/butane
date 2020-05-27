@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_2
+package v0_3_exp
 
 import (
 	"bytes"
@@ -31,7 +31,7 @@ import (
 
 	"github.com/coreos/go-systemd/unit"
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_1/types"
+	"github.com/coreos/ignition/v2/config/v3_2_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/vincent-petithory/dataurl"
@@ -66,9 +66,9 @@ Options=
 RequiredBy=local-fs.target`))
 )
 
-// ToIgn3_1 translates the config to an Ignition config. It also returns the set of translations
+// ToIgn3_2 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
-func (c Config) ToIgn3_1(options base.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
+func (c Config) ToIgn3_2(options base.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateIgnition)
