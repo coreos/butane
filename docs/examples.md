@@ -100,6 +100,40 @@ storage:
         id: 501
 ```
 
+### Filesystems and Partitions
+
+This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.0.0
+storage:
+  disks:
+    - device: /dev/sdb
+      wipe_table: true
+      partitions:
+        - number: 1
+          label: var
+  filesystems:
+    - path: /var
+      device: /dev/disk/by-partlabel/var
+      format: btrfs
+      wipe_filesystem: true
+      label: var
+systemd:
+  units:
+    - name: var.mount
+      enabled: true
+      contents: |
+        [Unit]
+        Before=local-fs.target
+        [Mount]
+        Where=/var
+        What=/dev/disk/by-partlabel/var
+        [Install]
+        WantedBy=local-fs.target
+```
+
 ## systemd units
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
@@ -136,40 +170,6 @@ systemd:
         ExecStart=/usr/bin/echo "Hello, World!"
         [Install]
         WantedBy=multi-user.target
-```
-
-### Filesystems and Partitions
-
-This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
-
-```yaml fedora-coreos-config
-variant: fcos
-version: 1.0.0
-storage:
-  disks:
-    - device: /dev/sdb
-      wipe_table: true
-      partitions:
-        - number: 1
-          label: var
-  filesystems:
-    - path: /var
-      device: /dev/disk/by-partlabel/var
-      format: btrfs
-      wipe_filesystem: true
-      label: var
-systemd:
-  units:
-    - name: var.mount
-      enabled: true
-      contents: |
-        [Unit]
-        Before=local-fs.target
-        [Mount]
-        Where=/var
-        What=/dev/disk/by-partlabel/var
-        [Install]
-        WantedBy=local-fs.target
 ```
 
 [spec]: configuration-v1_0.md
