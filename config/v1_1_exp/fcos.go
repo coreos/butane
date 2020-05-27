@@ -17,7 +17,7 @@ package v1_1_exp
 import (
 	"reflect"
 
-	base_0_2 "github.com/coreos/fcct/base/v0_2_exp"
+	base_0_2 "github.com/coreos/fcct/base/v0_2"
 	"github.com/coreos/fcct/config/common"
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 	"github.com/coreos/fcct/translate"
