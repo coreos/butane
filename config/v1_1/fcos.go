@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_1_exp
+package v1_1
 
 import (
 	"reflect"
@@ -52,7 +52,7 @@ func (c Config) Translate(options common.TranslateOptions) (types.Config, transl
 	return finalcfg, baseTranslations, baseReport
 }
 
-// TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
+// TranslateBytes translates from a v1.1 fcc to a v3.1.0 Ignition config. It returns a report of any errors or
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
 func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
