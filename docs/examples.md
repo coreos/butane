@@ -55,7 +55,7 @@ storage:
         id: 501
 ```
 
-This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that it matches the provided sha512 hash, and writes it to `/opt/file2`.
+This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that the _uncompressed_ contents match the provided sha512 hash, and writes it to `/opt/file2`.
 
 ```yaml fedora-coreos-config
 variant: fcos
@@ -68,6 +68,19 @@ storage:
         compression: gzip
         verification:
           hash: sha512-4ee6a9d20cc0e6c7ee187daffa6822bdef7f4cebe109eff44b235f97e45dc3d7a5bb932efc841192e46618f48a6f4f5bc0d15fd74b1038abf46bf4b4fd409f2e
+      mode: 0644
+```
+
+This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running FCCT. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to FCCT.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.1.0-experimental
+storage:
+  files:
+    - path: /opt/file3
+      contents:
+        local: local-file3
       mode: 0644
 ```
 
@@ -98,6 +111,29 @@ storage:
         id: 500
       group:
         id: 501
+```
+
+### Filesystems and Partitions
+
+This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.1.0-experimental
+storage:
+  disks:
+    - device: /dev/sdb
+      wipe_table: true
+      partitions:
+        - number: 1
+          label: var
+  filesystems:
+    - path: /var
+      device: /dev/disk/by-partlabel/var
+      format: btrfs
+      wipe_filesystem: true
+      label: var
+      with_mount_unit: true
 ```
 
 ## systemd units
@@ -136,40 +172,6 @@ systemd:
         ExecStart=/usr/bin/echo "Hello, World!"
         [Install]
         WantedBy=multi-user.target
-```
-
-### Filesystems and Partitions
-
-This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
-
-```yaml fedora-coreos-config
-variant: fcos
-version: 1.0.0
-storage:
-  disks:
-    - device: /dev/sdb
-      wipe_table: true
-      partitions:
-        - number: 1
-          label: var
-  filesystems:
-    - path: /var
-      device: /dev/disk/by-partlabel/var
-      format: btrfs
-      wipe_filesystem: true
-      label: var
-systemd:
-  units:
-    - name: var.mount
-      enabled: true
-      contents: |
-        [Unit]
-        Before=local-fs.target
-        [Mount]
-        Where=/var
-        What=/dev/disk/by-partlabel/var
-        [Install]
-        WantedBy=local-fs.target
 ```
 
 [spec]: configuration-v1_0.md

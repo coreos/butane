@@ -19,6 +19,7 @@ mkdir tmpdocs
 trap 'rm -r tmpdocs' EXIT
 # Create files-dir contents expected by configs
 mkdir -p tmpdocs/files-dir/tree
+touch tmpdocs/files-dir/local-file3
 
 for doc in docs/*md
 do
