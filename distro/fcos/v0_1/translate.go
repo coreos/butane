@@ -20,6 +20,7 @@ import (
 
 	types3_0 "github.com/coreos/ignition/v2/config/v3_0/types"
 	types3_1 "github.com/coreos/ignition/v2/config/v3_1/types"
+	types3_2 "github.com/coreos/ignition/v2/config/v3_2_experimental/types"
 	"github.com/coreos/vcontext/report"
 )
 
@@ -29,5 +30,9 @@ func (f Fcos) ToIgn3_0(in types3_0.Config, options base.TranslateOptions) (types
 }
 
 func (f Fcos) ToIgn3_1(in types3_1.Config, options base.TranslateOptions) (types3_1.Config, translate.TranslationSet, report.Report) {
+	return in, translate.TranslationSet{}, report.Report{}
+}
+
+func (f Fcos) ToIgn3_2(in types3_2.Config, options base.TranslateOptions) (types3_2.Config, translate.TranslationSet, report.Report) {
 	return in, translate.TranslationSet{}, report.Report{}
 }
