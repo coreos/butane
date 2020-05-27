@@ -1,9 +1,11 @@
-# Configuration Specification v1.1.0 #
+# Configuration Specification v1.2.0-experimental #
+
+**Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
 
 The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for FCCT.
-* **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0` and generates Ignition configs with version `3.1.0`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `1.2.0-experimental` and generates Ignition configs with version `3.2.0-experimental`.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
