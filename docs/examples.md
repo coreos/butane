@@ -106,7 +106,7 @@ This example creates a single partition spanning all of the sdb device then crea
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0-experimental
 storage:
   disks:
     - device: /dev/sdb
@@ -120,18 +120,7 @@ storage:
       format: btrfs
       wipe_filesystem: true
       label: var
-systemd:
-  units:
-    - name: var.mount
-      enabled: true
-      contents: |
-        [Unit]
-        Before=local-fs.target
-        [Mount]
-        Where=/var
-        What=/dev/disk/by-partlabel/var
-        [Install]
-        WantedBy=local-fs.target
+      with_mount_unit: true
 ```
 
 ## systemd units
