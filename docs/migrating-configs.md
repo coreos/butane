@@ -8,23 +8,6 @@ There are no breaking changes between versions 1.0.0 and 1.1.0 of the configurat
 
 The following is a list of notable new features, deprecations, and changes.
 
-### SHA-256 resource verification
-
-All `verification.hash` fields now support the `sha256` hash type.
-
-```yaml fedora-coreos-config
-variant: fcos
-version: 1.1.0
-storage:
-  files:
-    - path: /etc/hosts
-      mode: 644
-      contents:
-        source: https://example.com/etc/hosts
-        verification:
-          hash: sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-```
-
 ### Compression support for certificate authorities and merged configs
 
 The config `merge` and `replace` sections and the `certificate_authorities` section now support gzip-compressed resources via the `compression` field. `gzip` compression is supported for all URL schemes except `s3`.
@@ -42,6 +25,23 @@ ignition:
       certificate_authorities:
         - source: https://example.com/ca.pem.gz
           compression: gzip
+```
+
+### SHA-256 resource verification
+
+All `verification.hash` fields now support the `sha256` hash type.
+
+```yaml fedora-coreos-config
+variant: fcos
+version: 1.1.0
+storage:
+  files:
+    - path: /etc/hosts
+      mode: 644
+      contents:
+        source: https://example.com/etc/hosts
+        verification:
+          hash: sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
 ```
 
 ### Filesystem mount options
