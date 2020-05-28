@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_2_exp
+package v0_2
 
 import (
 	"errors"

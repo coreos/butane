@@ -75,7 +75,7 @@ This example creates a file at `/opt/file3` whose contents are read from a local
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.1.0-experimental
+version: 1.1.0
 storage:
   files:
     - path: /opt/file3
@@ -99,7 +99,7 @@ This example copies that directory tree to `/etc/files` on the target system. Th
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.1.0-experimental
+version: 1.1.0
 storage:
   trees:
     - local: tree
@@ -119,7 +119,7 @@ This example creates a single partition spanning all of the sdb device then crea
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.1.0-experimental
+version: 1.1.0
 storage:
   disks:
     - device: /dev/sdb
