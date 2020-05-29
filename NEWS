@@ -1,3 +1,31 @@
+2020-05-28 FCCT 0.6.0
+
+  Features:
+
+    - Stabilize FCC spec 1.1.0, targeting Ignition spec 3.1.0
+    - Add FCC spec 1.2.0-experimental, targeting Ignition spec
+      3.2.0-experimental
+    - Add inline field to TLS certificate authorities and config merge and
+      replace (1.1.0)
+    - Add local field for embedding contents from local file (1.1.0)
+    - Add storage.trees section for embedding local directory trees (1.1.0)
+    - Auto-select smallest encoding for inline or local contents (1.1.0)
+    - Add http_headers field for specifying HTTP headers on fetch (1.1.0)
+
+  Bug Fixes:
+
+    - Include mount options in generated mount units (1.1.0)
+    - Validate uniqueness constraints within FCC sections
+    - Omit empty values from output JSON
+    - Append newline to output
+
+  Docs Changes:
+
+    - Document support for CA bundles in Ignition >= 2.3.0
+    - Document support for sha256 resource verification (1.1.0)
+    - Clarify semantics of overwrite and mode fields
+
+
 2020-03-23 FCCT 0.5.0
 
   Breaking Changes:
