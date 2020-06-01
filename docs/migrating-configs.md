@@ -120,7 +120,7 @@ version: 1.1.0
 storage:
   files:
     - path: /etc/hosts
-      mode: 644
+      mode: 0644
       contents:
         source: https://example.com/etc/hosts
         verification:
