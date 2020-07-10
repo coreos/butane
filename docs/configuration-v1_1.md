@@ -65,7 +65,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **path** (string): the mount-point of the filesystem while Ignition is running relative to where the root filesystem will be mounted. This is not necessarily the same as where it should be mounted in the real root, but it is encouraged to make it the same.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **format** (string): the filesystem format (ext4, btrfs, xfs, vfat, or swap).
-    * **_wipe_filesystem_** (boolean): whether or not to wipe the device before filesystem creation, see [the documentation on filesystems](operator-notes.md#filesystem-reuse-semantics) for more information.
+    * **_wipe_filesystem_** (boolean): whether or not to wipe the device before filesystem creation, see [the documentation on filesystems](https://github.com/coreos/ignition/blob/master/doc/operator-notes.md#filesystem-reuse-semantics) for more information.
     * **_label_** (string): the label of the filesystem.
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
