@@ -37,6 +37,12 @@ var (
 		"fcos+1.1.0":              v1_1.TranslateBytes,
 		"fcos+1.2.0-experimental": v1_2_exp.TranslateBytes,
 	}
+
+	mergers = map[string]merger{
+		"fcos+1.0.0":              v1_0.MergeBytes,
+		"fcos+1.1.0":              v1_1.MergeBytes,
+		"fcos+1.2.0-experimental": v1_2_exp.MergeBytes,
+	}
 )
 
 func getTranslator(variant string, version semver.Version) (translator, error) {
@@ -51,6 +57,18 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 // errors, warnings, etc and may or may not be fatal. If report is fatal, or other errors are encountered while translating
 // translators should return an error.
 type translator func([]byte, common.TranslateOptions) ([]byte, report.Report, error)
+
+// mergers take a slice of raw configs and merge into a raw Ignition config.
+type merger func([][]byte, common.TranslateOptions) ([]byte, error)
+
+// getMerger returns a merger based on the target version.
+func getMerger(variant string, version semver.Version) (merger, error) {
+	m, ok := mergers[fmt.Sprintf("%s+%s", variant, version.String())]
+	if !ok {
+		return nil, fmt.Errorf("No merger exists for variant %s with version %s", variant, version.String())
+	}
+	return m, nil
+}
 
 // Translate wraps all of the actual translate functions in a switch that determines the correct one to call.
 // Translate returns an error if the report had fatal errors or if other errors occured during translation.
@@ -77,4 +95,39 @@ func Translate(input []byte, options common.TranslateOptions) ([]byte, report.Re
 	}
 
 	return translator(input, options)
+}
+
+// MergeBytes translates and merges a slice of raw configs to a single raw
+// Ignition config. The variant and version of the first raw config
+// ("fragment") determines the merger version to use.
+func MergeBytes(fragments [][]byte, options common.TranslateOptions) ([]byte, error) {
+	if len(fragments) == 0 {
+		return nil, fmt.Errorf("Must provide one or more config fragments")
+	}
+
+	// use first fragment to detect variant and version
+	first := fragments[0]
+
+	// first determine version. This will ignore most fields, so don't use strict
+	ver := common.Common{}
+	if err := yaml.Unmarshal(first, &ver); err != nil {
+		return nil, fmt.Errorf("Error unmarshaling yaml: %v", err)
+	}
+
+	if ver.Variant == "" {
+		return nil, ErrNoVariant
+	}
+
+	tmp, err := semver.NewVersion(ver.Version)
+	if err != nil {
+		return nil, ErrInvalidVersion
+	}
+	version := *tmp
+
+	merger, err := getMerger(ver.Variant, version)
+	if err != nil {
+		return nil, err
+	}
+
+	return merger(fragments, options)
 }

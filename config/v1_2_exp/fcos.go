@@ -22,6 +22,7 @@ import (
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 	"github.com/coreos/fcct/translate"
 
+	"github.com/coreos/ignition/v2/config/v3_2_experimental"
 	"github.com/coreos/ignition/v2/config/v3_2_experimental/types"
 	ignvalidate "github.com/coreos/ignition/v2/config/validate"
 	"github.com/coreos/vcontext/path"
@@ -98,4 +99,22 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 
 	outbytes, err := common.Marshal(final, options.Pretty)
 	return outbytes, r, err
+}
+
+func MergeBytes(fragments [][]byte, options common.TranslateOptions) ([]byte, error) {
+	// merged Ignition Config
+	final := types.Config{}
+
+	for _, fragment := range fragments {
+		cfg := Config{}
+		_, err := common.Unmarshal(fragment, &cfg, options.Strict)
+		if err != nil {
+			return nil, err
+		}
+
+		fragmentIgn, _, _ := cfg.Translate(options)
+		v3_2_experimental.Merge(final, fragmentIgn)
+	}
+	outbytes, err := common.Marshal(final, options.Pretty)
+	return outbytes, err
 }
