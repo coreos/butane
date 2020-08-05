@@ -255,6 +255,7 @@ func TestTranslateFile(t *testing.T) {
 			File{
 				Path: "/foo",
 				Contents: Resource{
+					// String is too short for auto gzip compression
 					Inline: util.StrToPtr("xyzzy"),
 				},
 			},
@@ -462,6 +463,35 @@ func TestTranslateFile(t *testing.T) {
 			"",
 			base.TranslateOptions{
 				FilesDir: filesDir,
+			},
+		},
+		// Test disable automatic gzip compression
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Inline: util.StrToPtr(zzz),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source: util.StrToPtr("data:," + zzz),
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "source"),
+				},
+			},
+			"",
+			base.TranslateOptions{
+				NoResourceAutoCompression: true,
 			},
 		},
 	}

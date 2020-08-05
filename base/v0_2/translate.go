@@ -140,7 +140,7 @@ func translateResource(from Resource, options base.TranslateOptions) (to types.R
 			return
 		}
 
-		src, gzipped, err := makeDataURL(contents, to.Compression)
+		src, gzipped, err := makeDataURL(contents, to.Compression, options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -156,7 +156,7 @@ func translateResource(from Resource, options base.TranslateOptions) (to types.R
 	if from.Inline != nil {
 		c := path.New("yaml", "inline")
 
-		src, gzipped, err := makeDataURL([]byte(*from.Inline), to.Compression)
+		src, gzipped, err := makeDataURL([]byte(*from.Inline), to.Compression, options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -171,7 +171,7 @@ func translateResource(from Resource, options base.TranslateOptions) (to types.R
 	return
 }
 
-func makeDataURL(contents []byte, currentCompression *string) (uri string, gzipped bool, err error) {
+func makeDataURL(contents []byte, currentCompression *string, noResourceAutoCompression bool) (uri string, gzipped bool, err error) {
 	// try three different encodings, and select the smallest one
 
 	// URL-escaped, useful for ASCII text
@@ -187,7 +187,7 @@ func makeDataURL(contents []byte, currentCompression *string) (uri string, gzipp
 	// user already enabled compression, don't compress again.
 	// We don't try base64-encoded URL-escaped because gzipped data is
 	// binary and URL escaping is unlikely to be efficient.
-	if currentCompression == nil || *currentCompression == "" {
+	if (currentCompression == nil || *currentCompression == "") && !noResourceAutoCompression {
 		var buf bytes.Buffer
 		var compressor *gzip.Writer
 		if compressor, err = gzip.NewWriterLevel(&buf, gzip.BestCompression); err != nil {
@@ -320,7 +320,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
-			url, gzipped, err := makeDataURL(contents, file.Contents.Compression)
+			url, gzipped, err := makeDataURL(contents, file.Contents.Compression, options.NoResourceAutoCompression)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil
