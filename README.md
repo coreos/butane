@@ -2,8 +2,8 @@
 
 The Fedora CoreOS Config Transpiler (FCCT) translates human readable Fedora CoreOS Configs (FCCs)
 into machine readable [Ignition](https://github.com/coreos/ignition) Configs. See the [getting
-started](docs/getting-started.md) guide for how to use FCCT and the [configuration spec](docs/configuration-v1_0.md)
-for everything FCCs support.
+started](docs/getting-started.md) guide for how to use FCCT and the [configuration
+specifications](docs/specs.md) for everything FCCs support.
 
 ### Project Layout
 

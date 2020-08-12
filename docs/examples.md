@@ -179,5 +179,5 @@ systemd:
         WantedBy=multi-user.target
 ```
 
-[spec]: configuration-v1_0.md
+[spec]: specs.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
