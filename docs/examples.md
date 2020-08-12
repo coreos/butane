@@ -1,3 +1,8 @@
+---
+layout: default
+nav_order: 3
+---
+
 # Examples
 
 Here you can find a bunch of simple examples for using `fcct`, with some explanations about what they do. The examples here are in no way comprehensive, for a full list of all the options present in `fcct` check out the [configuration specification][spec].

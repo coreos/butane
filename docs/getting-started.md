@@ -1,3 +1,8 @@
+---
+layout: default
+nav_order: 2
+---
+
 # Getting started
 
 `fcct`, the Fedora CoreOS Config Transpiler, is a tool that consumes a Fedora CoreOS Config and produces an Ignition config, which is a JSON document that can be given to a Fedora CoreOS machine when it first boots. Using this config, a machine can be told to create users, create filesystems, set up the network, install systemd units, and more.
