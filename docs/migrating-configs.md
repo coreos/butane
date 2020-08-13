@@ -17,7 +17,8 @@ The following is a list of notable new features, deprecations, and changes.
 
 The config `merge` and `replace` sections, the `certificate_authorities` section, and the files `contents` and `append` sections gained a new field called `local`, which is mutually exclusive with the `source` and `inline` fields. It causes the contents of a file from the system running FCCT to be embedded in the config. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 ignition:
@@ -44,7 +45,8 @@ The `storage` section gained a new subsection called `trees`. It is a list of di
 
 Tree paths are relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -64,7 +66,8 @@ storage:
 
 The `certificate_authorities` section now supports inline contents via the `inline` field. The config `merge` and `replace` sections also now support `inline`, but using this functionality is not recommended.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 ignition:
@@ -100,7 +103,8 @@ ignition:
 
 The config `merge` and `replace` sections and the `certificate_authorities` section now support gzip-compressed resources via the `compression` field. `gzip` compression is supported for all URL schemes except `s3`.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 ignition:
@@ -119,7 +123,8 @@ ignition:
 
 All `verification.hash` fields now support the `sha256` hash type.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -136,7 +141,8 @@ storage:
 
 The `filesystems` section gained a new `with_mount_unit` field. If `true`, a generic mount unit will be automatically generated for the specified filesystem.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -151,7 +157,8 @@ storage:
 
 The `filesystems` section gained a new `mount_options` field. It is a list of options Ignition should pass to `mount -o` when mounting the specified filesystem. This is useful for mounting btrfs subvolumes. If the `with_mount_unit` field is `true`, this field also affects mount options used by the provisioned system when mounting the filesystem.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -171,7 +178,8 @@ The sections which allow fetching a remote URL &mdash; config `merge` and `repla
 
 During config merging, if a child config specifies a header `name` but not a corresponding `value`, any header with that `name` in the parent config will be removed.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -201,7 +209,8 @@ The `https_proxy` field specifies the proxy URL for HTTPS requests. The `http_pr
 
 IP addresses and domain names can also include a port number (`1.2.3.4:80`).
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 ignition:

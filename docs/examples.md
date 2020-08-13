@@ -11,7 +11,8 @@ Here you can find a bunch of simple examples for using `fcct`, with some explana
 
 This example modifies the existing `core` user and sets its ssh key.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 passwd:
@@ -23,7 +24,8 @@ passwd:
 
 This example creates one user, `user1` and sets up one ssh public key for the user. The user is also given the home directory `/home/user1`, but it's not created, the user is added to the `wheel` and `plugdev` groups, and the user's shell is set to `/bin/bash`.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 passwd:
@@ -45,7 +47,8 @@ passwd:
 
 This example creates a file at `/opt/file` with the contents `Hello, world!`, permissions 0644 (so readable and writable by the owner, and only readable by everyone else), and the file is owned by user uid 500 and gid 501.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -62,7 +65,8 @@ storage:
 
 This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that the _uncompressed_ contents match the provided sha512 hash, and writes it to `/opt/file2`.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -78,7 +82,8 @@ storage:
 
 This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running FCCT. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to FCCT.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -102,7 +107,8 @@ directory/symlink -> ../file
 
 This example copies that directory tree to `/etc/files` on the target system. The ownership and mode for `overridden-file` are explicitly set by the config. All other filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. The example must be transpiled with `--files-dir ~/fcc`.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -122,7 +128,8 @@ storage:
 
 This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 storage:
@@ -145,7 +152,8 @@ storage:
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 systemd:
@@ -162,7 +170,8 @@ systemd:
 
 This example creates a new systemd unit called hello.service, enables it so it will run on boot, and defines the contents to simply echo `"Hello, World!"`.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 systemd:

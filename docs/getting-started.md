@@ -43,7 +43,8 @@ podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:re
 
 As a simple example, let's use `fcct` to set the authorized ssh key for the `core` user on a Fedora CoreOS machine.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
 version: 1.1.0
 passwd:
