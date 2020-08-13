@@ -13,7 +13,7 @@ This example modifies the existing `core` user and sets its ssh key.
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 passwd:
   users:
     - name: core
@@ -25,7 +25,7 @@ This example creates one user, `user1` and sets up one ssh public key for the us
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 passwd:
   users:
     - name: user1
@@ -47,7 +47,7 @@ This example creates a file at `/opt/file` with the contents `Hello, world!`, pe
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 storage:
   files:
     - path: /opt/file
@@ -64,7 +64,7 @@ This example fetches a gzip-compressed file from `http://example.com/file2`, mak
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 storage:
   files:
     - path: /opt/file2
@@ -147,7 +147,7 @@ This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autolo
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 systemd:
   units:
     - name: serial-getty@ttyS0.service
@@ -164,7 +164,7 @@ This example creates a new systemd unit called hello.service, enables it so it w
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 systemd:
   units:
     - name: hello.service

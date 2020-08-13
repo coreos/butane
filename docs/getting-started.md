@@ -45,7 +45,7 @@ As a simple example, let's use `fcct` to set the authorized ssh key for the `cor
 
 ```yaml fedora-coreos-config
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 passwd:
   users:
     - name: core
