@@ -8,30 +8,32 @@ github.com/coreos/go-semver/semver
 github.com/coreos/go-systemd/unit
 # github.com/coreos/go-systemd/v22 v22.0.0
 github.com/coreos/go-systemd/v22/unit
-# github.com/coreos/ignition/v2 v2.3.0
-github.com/coreos/ignition/v2/config/shared/errors
-github.com/coreos/ignition/v2/config/shared/validations
-github.com/coreos/ignition/v2/config/util
+# github.com/coreos/ignition/v2 v2.5.0
 github.com/coreos/ignition/v2/config/v3_0/types
+github.com/coreos/ignition/v2/config/util
 github.com/coreos/ignition/v2/config/v3_1/types
 github.com/coreos/ignition/v2/config/v3_2_experimental/types
 github.com/coreos/ignition/v2/config/validate
+github.com/coreos/ignition/v2/config/shared/errors
+github.com/coreos/ignition/v2/config/shared/validations
 # github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5
-github.com/coreos/vcontext/json
 github.com/coreos/vcontext/path
 github.com/coreos/vcontext/report
 github.com/coreos/vcontext/tree
-github.com/coreos/vcontext/validate
 github.com/coreos/vcontext/yaml
+github.com/coreos/vcontext/validate
+github.com/coreos/vcontext/json
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.3.0
+# github.com/stretchr/testify v1.5.1
 github.com/stretchr/testify/assert
 # github.com/vincent-petithory/dataurl v0.0.0-20160330182126-9a301d65acbb
 github.com/vincent-petithory/dataurl
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652
 gopkg.in/yaml.v3

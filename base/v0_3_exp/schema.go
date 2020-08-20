@@ -14,6 +14,12 @@
 
 package v0_3_exp
 
+type Clevis struct {
+	Tang      []Tang `yaml:"tang"`
+	Threshold *int   `yaml:"threshold"`
+	Tpm2      *bool  `yaml:"tpm2"`
+}
+
 type Config struct {
 	Ignition Ignition `yaml:"ignition"`
 	Passwd   Passwd   `yaml:"passwd"`
@@ -95,6 +101,18 @@ type Link struct {
 	Hard      *bool     `yaml:"hard"`
 	Target    string    `yaml:"target"`
 }
+
+type Luks struct {
+	Clevis  *Clevis      `yaml:"clevis"`
+	Device  *string      `yaml:"device"`
+	KeyFile Resource     `yaml:"key_file"`
+	Label   *string      `yaml:"label"`
+	Name    string       `yaml:"name"`
+	Options []LuksOption `yaml:"options"`
+	UUID    *string      `yaml:"uuid"`
+}
+
+type LuksOption string
 
 type NodeGroup struct {
 	ID   *int    `yaml:"id"`
@@ -182,12 +200,18 @@ type Storage struct {
 	Files       []File       `yaml:"files"`
 	Filesystems []Filesystem `yaml:"filesystems"`
 	Links       []Link       `yaml:"links"`
+	Luks        []Luks       `yaml:"luks"`
 	Raid        []Raid       `yaml:"raid"`
 	Trees       []Tree       `yaml:"trees" fcct:"auto_skip"` // Added, not in ignition spec
 }
 
 type Systemd struct {
 	Units []Unit `yaml:"units"`
+}
+
+type Tang struct {
+	Thumbprint *string `yaml:"thumbprint"`
+	URL        string  `yaml:"url"`
 }
 
 type TLS struct {
