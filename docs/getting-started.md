@@ -1,8 +1,13 @@
+---
+layout: default
+nav_order: 2
+---
+
 # Getting started
 
 `fcct`, the Fedora CoreOS Config Transpiler, is a tool that consumes a Fedora CoreOS Config and produces an Ignition config, which is a JSON document that can be given to a Fedora CoreOS machine when it first boots. Using this config, a machine can be told to create users, create filesystems, set up the network, install systemd units, and more.
 
-Fedora CoreOS Configs are YAML files conforming to `fcct`'s schema. For more information on the schema, take a look at [doc/configuration-v1_0.md][spec].
+Fedora CoreOS Configs are YAML files conforming to `fcct`'s schema. For more information on the schema, take a look at the [configuration specifications][spec].
 
 ### Getting FCCT
 
@@ -38,9 +43,10 @@ podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:re
 
 As a simple example, let's use `fcct` to set the authorized ssh key for the `core` user on a Fedora CoreOS machine.
 
-```yaml fedora-coreos-config
+<!-- fedora-coreos-config -->
+```yaml
 variant: fcos
-version: 1.0.0
+version: 1.1.0
 passwd:
   users:
     - name: core
@@ -64,7 +70,7 @@ The method by which this file is provided to a Fedora CoreOS machine depends on 
 
 To see some examples for what else `fcct` can do, head over to the [examples][examples].
 
-[spec]: configuration-v1_0.md
+[spec]: specs.md
 [ignition]: https://github.com/coreos/ignition
 [supported-platforms]: https://github.com/coreos/ignition/blob/master/doc/supported-platforms.md
 [examples]: examples.md

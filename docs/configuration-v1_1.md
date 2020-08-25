@@ -1,3 +1,10 @@
+---
+layout: default
+title: v1.1.0
+parent: Configuration specifications
+nav_order: 2
+---
+
 # Configuration Specification v1.1.0 #
 
 The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:

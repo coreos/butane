@@ -25,16 +25,17 @@ for doc in docs/*md
 do
 	echo "Checking $doc"
 	# split each doc into a bunch of tmpfiles then run fcct on them
-	sed -n '/^```yaml fedora-coreos-config/,/^```/ p' < ${doc} \
-		| csplit - '/```yaml fedora-coreos-config/' '{*}' -z --prefix tmpdocs/tmpconfig -q
+	sed -n '/^<!-- fedora-coreos-config -->/,/^```$/ p' < ${doc} \
+		| csplit - '/<!-- fedora-coreos-config -->/' '{*}' -z --prefix "tmpdocs/fcc_$(basename ${doc%.*})_" -q
 
-	for i in tmpdocs/tmpconfig*
+	for i in tmpdocs/fcc_*
 	do
-		cat "$i" | tail -n +2 | head -n -1 \
+		echo "Checking $i"
+		cat "$i" | tail -n +3 | head -n -1 \
 			| go run internal/main.go --strict --files-dir tmpdocs/files-dir > /dev/null \
 			|| (cat -n "$i" && false)
 	done
-	rm -f tmpdocs/tmpconfig*
+	rm -f tmpdocs/fcc_*
 done
 
 echo ok
