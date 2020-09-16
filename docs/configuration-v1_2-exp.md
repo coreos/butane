@@ -1,11 +1,11 @@
 ---
 layout: default
-title: v1.2.0-experimental
+title: Config Spec v1.2.0-experimental
 parent: Configuration specifications
 nav_order: 3
 ---
 
-# Configuration Specification v1.2.0-experimental #
+# Configuration Specification v1.2.0-experimental
 
 **Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
 
