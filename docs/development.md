@@ -4,6 +4,10 @@ nav_order: 9
 ---
 
 # Developing FCCT
+{: .no_toc }
+
+1. TOC
+{:toc}
 
 ## Creating a release
 

@@ -7,6 +7,11 @@ nav_order: 5
 
 Occasionally, there are changes made to Fedora CoreOS configuration that break backward compatibility. While this is not a concern for running machines (since Ignition only runs one time during first boot), it is a concern for those who maintain configuration files. This document serves to detail each of the breaking changes and tries to provide some reasoning for the change. This does not cover all of the changes to the spec - just those that need to be considered when migrating from one version to the next.
 
+{: .no_toc }
+
+1. TOC
+{:toc}
+
 ## From Version 1.0.0 to 1.1.0
 
 There are no breaking changes between versions 1.0.0 and 1.1.0 of the configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.
