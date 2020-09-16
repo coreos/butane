@@ -19,8 +19,8 @@ We recommend that you always use the latest **stable** specification to benefit
 from new features and bug fixes. The following **stable** specification
 versions are currently supported in `fcct`:
 
-- [v1.0.0](configuration-v1_0.md)
 - [v1.1.0](configuration-v1_1.md)
+- [v1.0.0](configuration-v1_0.md)
 
 ## Experimental specification versions
 
