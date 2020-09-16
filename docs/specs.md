@@ -10,8 +10,8 @@ has_toc: false
 Fedora CoreOS Configs must conform to a specific version of the `fcct` schema,
 specified with the `version: X.Y.Z` field in the configuration.
 
-See the [Migrating Between Configuration Versions](migrating-configs.md) page
-for instructions to update a configuration to the latest specification.
+See the [Upgrading Configs](migrating-configs.md) page for instructions to
+update a configuration to the latest specification.
 
 ## Stable specification versions
 
