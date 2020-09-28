@@ -187,6 +187,7 @@ systemd:
         Description=A hello world unit!
         [Service]
         Type=oneshot
+        RemainAfterExit=yes
         ExecStart=/usr/bin/echo "Hello, World!"
         [Install]
         WantedBy=multi-user.target
