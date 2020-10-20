@@ -45,6 +45,40 @@ passwd:
       shell: /bin/bash
 ```
 
+### Using Password Authentication
+
+You can use a Fedora CoreOS Config to set a password for a local user. Building on the previous example, we can configure the `password_hash` for one or more users:
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.1.0
+passwd:
+  users:
+    - name: user1
+      ssh_authorized_keys:
+        - key1
+      password_hash: $y$j9T$aUmgEDoFIDPhGxEe2FUjc/$C5A...
+      home_dir: /home/user1
+      no_create_home: true
+      groups:
+        - wheel
+        - plugdev
+      shell: /bin/bash
+```
+
+To generate a secure password hash, use the `mkpasswd` command:
+
+```
+$ mkpasswd --method=yescrypt
+Password:
+$y$j9T$A0Y3wwVOKP69S.1K/zYGN.$S596l11UGH3XjN...
+```
+
+The `yescrypt` hashing method is recommended for new passwords. For more details on hashing methods, see `man 5 crypt`.
+
+For more information, see the Fedora CoreOS documentation on [Authentication][fcos-auth-docs].
+
 ## Storage and files
 
 ### Files
@@ -195,3 +229,4 @@ systemd:
 
 [spec]: specs.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
+[fcos-auth-docs]: https://docs.fedoraproject.org/en-US/fedora-coreos/authentication
