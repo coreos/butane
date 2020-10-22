@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_3_exp
+package v0_3
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ import (
 
 	"github.com/clarketm/json"
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_2_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/path"
 )
 
@@ -1154,7 +1154,7 @@ func TestTranslateIgnition(t *testing.T) {
 		{
 			Ignition{},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.2.0",
 			},
 		},
 		{
@@ -1171,7 +1171,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.2.0",
 				Config: types.IgnitionConfig{
 					Merge: []types.Resource{
 						{
@@ -1192,7 +1192,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.2.0",
 				Proxy: types.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
@@ -1212,7 +1212,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.2.0",
 				Security: types.Security{
 					TLS: types.TLS{
 						CertificateAuthorities: []types.Resource{
@@ -1247,7 +1247,7 @@ func TestToIgn3_2(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.2.0-experimental",
+					Version: "3.2.0",
 				},
 			},
 		},

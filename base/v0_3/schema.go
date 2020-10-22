@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_3_exp
+package v0_3
 
 type Clevis struct {
-	Tang      []Tang `yaml:"tang"`
-	Threshold *int   `yaml:"threshold"`
-	Tpm2      *bool  `yaml:"tpm2"`
+	Custom    *Custom `yaml:"custom"`
+	Tang      []Tang  `yaml:"tang"`
+	Threshold *int    `yaml:"threshold"`
+	Tpm2      *bool   `yaml:"tpm2"`
 }
 
 type Config struct {
@@ -25,6 +26,12 @@ type Config struct {
 	Passwd   Passwd   `yaml:"passwd"`
 	Storage  Storage  `yaml:"storage"`
 	Systemd  Systemd  `yaml:"systemd"`
+}
+
+type Custom struct {
+	Config       string `yaml:"config"`
+	NeedsNetwork *bool  `yaml:"needs_network"`
+	Pin          string `yaml:"pin"`
 }
 
 type Device string
@@ -103,13 +110,14 @@ type Link struct {
 }
 
 type Luks struct {
-	Clevis  *Clevis      `yaml:"clevis"`
-	Device  *string      `yaml:"device"`
-	KeyFile Resource     `yaml:"key_file"`
-	Label   *string      `yaml:"label"`
-	Name    string       `yaml:"name"`
-	Options []LuksOption `yaml:"options"`
-	UUID    *string      `yaml:"uuid"`
+	Clevis     *Clevis      `yaml:"clevis"`
+	Device     *string      `yaml:"device"`
+	KeyFile    Resource     `yaml:"key_file"`
+	Label      *string      `yaml:"label"`
+	Name       string       `yaml:"name"`
+	Options    []LuksOption `yaml:"options"`
+	UUID       *string      `yaml:"uuid"`
+	WipeVolume *bool        `yaml:"wipe_volume"`
 }
 
 type LuksOption string
@@ -128,6 +136,7 @@ type Partition struct {
 	GUID               *string `yaml:"guid"`
 	Label              *string `yaml:"label"`
 	Number             int     `yaml:"number"`
+	Resize             *bool   `yaml:"resize"`
 	ShouldExist        *bool   `yaml:"should_exist"`
 	SizeMiB            *int    `yaml:"size_mib"`
 	StartMiB           *int    `yaml:"start_mib"`
@@ -144,6 +153,7 @@ type PasswdGroup struct {
 	Gid          *int    `yaml:"gid"`
 	Name         string  `yaml:"name"`
 	PasswordHash *string `yaml:"password_hash"`
+	ShouldExist  *bool   `yaml:"should_exist"`
 	System       *bool   `yaml:"system"`
 }
 
@@ -157,6 +167,7 @@ type PasswdUser struct {
 	NoUserGroup       *bool              `yaml:"no_user_group"`
 	PasswordHash      *string            `yaml:"password_hash"`
 	PrimaryGroup      *string            `yaml:"primary_group"`
+	ShouldExist       *bool              `yaml:"should_exist"`
 	SSHAuthorizedKeys []SSHAuthorizedKey `yaml:"ssh_authorized_keys"`
 	Shell             *string            `yaml:"shell"`
 	System            *bool              `yaml:"system"`

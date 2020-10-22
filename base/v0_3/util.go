@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_3_exp
+package v0_3
 
 import (
-	"github.com/coreos/ignition/v2/config/v3_2_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_2/types"
 )
 
 type nodeTracker struct {
