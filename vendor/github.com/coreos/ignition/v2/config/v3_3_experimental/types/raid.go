@@ -15,44 +15,41 @@
 package types
 
 import (
-	"path/filepath"
-
 	"github.com/coreos/ignition/v2/config/shared/errors"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 )
 
-func (n Node) Key() string {
-	return n.Path
+func (r Raid) Key() string {
+	return r.Name
 }
 
-func (n Node) Validate(c path.ContextPath) (r report.Report) {
-	r.AddOnError(c.Append("path"), validatePath(n.Path))
+func (r Raid) IgnoreDuplicates() map[string]struct{} {
+	return map[string]struct{}{
+		"Options": {},
+	}
+}
+
+func (ra Raid) Validate(c path.ContextPath) (r report.Report) {
+	r.AddOnError(c.Append("level"), ra.validateLevel())
 	return
 }
 
-func (n Node) Depth() int {
-	count := 0
-	for p := filepath.Clean(string(n.Path)); p != "/"; count++ {
-		p = filepath.Dir(p)
+func (r Raid) validateLevel() error {
+	switch r.Level {
+	case "linear", "raid0", "0", "stripe":
+		if r.Spares != nil && *r.Spares != 0 {
+			return errors.ErrSparesUnsupportedForLevel
+		}
+	case "raid1", "1", "mirror":
+	case "raid4", "4":
+	case "raid5", "5":
+	case "raid6", "6":
+	case "raid10", "10":
+	default:
+		return errors.ErrUnrecognizedRaidLevel
 	}
-	return count
-}
 
-func validateIDorName(id *int, name *string) error {
-	if id != nil && (name != nil && *name != "") {
-		return errors.ErrBothIDAndNameSet
-	}
 	return nil
-}
-
-func (nu NodeUser) Validate(c path.ContextPath) (r report.Report) {
-	r.AddOnError(c, validateIDorName(nu.ID, nu.Name))
-	return
-}
-
-func (ng NodeGroup) Validate(c path.ContextPath) (r report.Report) {
-	r.AddOnError(c, validateIDorName(ng.ID, ng.Name))
-	return
 }
