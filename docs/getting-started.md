@@ -71,6 +71,6 @@ The method by which this file is provided to a Fedora CoreOS machine depends on 
 To see some examples for what else `fcct` can do, head over to the [examples][examples].
 
 [spec]: specs.md
-[ignition]: https://github.com/coreos/ignition
-[supported-platforms]: https://github.com/coreos/ignition/blob/master/doc/supported-platforms.md
+[ignition]: https://coreos.github.io/ignition/
+[supported-platforms]: https://coreos.github.io/ignition/supported-platforms/
 [examples]: examples.md
