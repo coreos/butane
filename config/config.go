@@ -21,7 +21,8 @@ import (
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/v1_0"
 	"github.com/coreos/fcct/config/v1_1"
-	"github.com/coreos/fcct/config/v1_2_exp"
+	"github.com/coreos/fcct/config/v1_2"
+	"github.com/coreos/fcct/config/v1_3_exp"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
@@ -35,7 +36,8 @@ var (
 	registry = map[string]translator{
 		"fcos+1.0.0":              v1_0.TranslateBytes,
 		"fcos+1.1.0":              v1_1.TranslateBytes,
-		"fcos+1.2.0-experimental": v1_2_exp.TranslateBytes,
+		"fcos+1.2.0":              v1_2.TranslateBytes,
+		"fcos+1.3.0-experimental": v1_3_exp.TranslateBytes,
 	}
 )
 

@@ -1,4 +1,4 @@
-// Copyright 2019 Red Hat, Inc
+// Copyright 2020 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_3_exp
+package v0_4_exp
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ import (
 
 	"github.com/clarketm/json"
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_2_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
 	"github.com/coreos/vcontext/path"
 )
 
@@ -675,7 +675,7 @@ func TestTranslateFilesystem(t *testing.T) {
 			},
 		}
 		expected := []types.Filesystem{test.out}
-		actual, _, report := in.ToIgn3_2(base.TranslateOptions{})
+		actual, _, report := in.ToIgn3_3(base.TranslateOptions{})
 		if !reflect.DeepEqual(actual.Storage.Filesystems, expected) {
 			t.Errorf("#%d: expected %v, got %v", i, format(expected), format(actual.Storage.Filesystems))
 		}
@@ -1120,7 +1120,7 @@ func TestTranslateTree(t *testing.T) {
 		if test.options != nil {
 			options = *test.options
 		}
-		actual, _, report := config.ToIgn3_2(options)
+		actual, _, report := config.ToIgn3_3(options)
 
 		expectedReport := strings.ReplaceAll(test.report, "%FilesDir%", filesDir)
 		if report.String() != expectedReport {
@@ -1154,7 +1154,7 @@ func TestTranslateIgnition(t *testing.T) {
 		{
 			Ignition{},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.3.0-experimental",
 			},
 		},
 		{
@@ -1171,7 +1171,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.3.0-experimental",
 				Config: types.IgnitionConfig{
 					Merge: []types.Resource{
 						{
@@ -1192,7 +1192,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.3.0-experimental",
 				Proxy: types.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
@@ -1212,7 +1212,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.2.0-experimental",
+				Version: "3.3.0-experimental",
 				Security: types.Security{
 					TLS: types.TLS{
 						CertificateAuthorities: []types.Resource{
@@ -1236,9 +1236,9 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
-// TestToIgn3_2 tests the config.ToIgn3_2 function ensuring it will generate a valid config even when empty. Not much else is
+// TestToIgn3_3 tests the config.ToIgn3_3 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has it's own set of tests.
-func TestToIgn3_2(t *testing.T) {
+func TestToIgn3_3(t *testing.T) {
 	tests := []struct {
 		in  Config
 		out types.Config
@@ -1247,13 +1247,13 @@ func TestToIgn3_2(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.2.0-experimental",
+					Version: "3.3.0-experimental",
 				},
 			},
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_2(base.TranslateOptions{})
+		actual, _, report := test.in.ToIgn3_3(base.TranslateOptions{})
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}

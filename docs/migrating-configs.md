@@ -12,6 +12,104 @@ Occasionally, there are changes made to Fedora CoreOS configuration that break b
 1. TOC
 {:toc}
 
+## From Version 1.1.0 to 1.2.0
+
+There are no breaking changes between versions 1.1.0 and 1.2.0 of the configuration specification. Any valid 1.1.0 configuration can be updated to a 1.2.0 configuration by changing the version string in the config.
+
+The following is a list of notable new features, deprecations, and changes.
+
+### Partition resizing
+
+The `partition` section gained a new `resize` field. When true, Ignition will resize an existing partition if it matches the config in all respects except the partition size.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.2.0
+storage:
+  disks:
+    - device: /dev/sda
+      partitions:
+        - label: root
+          size_mib: 16384
+          resize: true
+```
+
+### LUKS encrypted storage
+
+Ignition now supports creating LUKS2 encrypted storage volumes. Volumes can be configured to allow unlocking with any combination of a TPM2 device via Clevis, network Tang servers via Clevis, and static key files. Alternatively, the Clevis configuration can be manually specified with a custom PIN and CFG. If a key file is not specified for a device, an ephemeral one will be created.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.2.0
+storage:
+  luks:
+    - name: static-key-example
+      device: /dev/sdb
+      key_file:
+        inline: REPLACE-THIS-WITH-YOUR-KEY-MATERIAL
+    - name: tpm-example
+      device: /dev/sdc
+      clevis:
+        tpm2: true
+    - name: tang-example
+      device: /dev/sdd
+      clevis:
+        tang:
+          - url: https://tang.example.com
+            thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+  filesystems:
+    - path: /var/lib/static_key_example
+      device: /dev/disk/by-id/dm-name-static-key-example
+      format: ext4
+      label: STATIC-EXAMPLE
+      with_mount_unit: true
+    - path: /var/lib/tpm_example
+      device: /dev/disk/by-id/dm-name-tpm-example
+      format: ext4
+      label: TPM-EXAMPLE
+      with_mount_unit: true
+    - path: /var/lib/tang_example
+      device: /dev/disk/by-id/dm-name-tang-example
+      format: ext4
+      label: TANG-EXAMPLE
+      with_mount_unit: true
+```
+
+### User/group deletion
+
+The `passwd` `users` and `groups` sections have a new field `should_exist`. If specified and false, Ignition will delete the specified user or group if it exists.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.2.0
+passwd:
+  users:
+    - name: core
+      should_exist: false
+  groups:
+    - name: core
+      should_exist: false
+```
+
+### Google Cloud Storage URL support
+
+The sections which allow fetching a remote URL now accept Google Cloud Storage (`gs://`) URLs in the `source` field.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.2.0
+storage:
+  files:
+    - path: /etc/example
+      mode: 0644
+      contents:
+        source: gs://bucket/object
+```
+
 ## From Version 1.0.0 to 1.1.0
 
 There are no breaking changes between versions 1.0.0 and 1.1.0 of the configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.

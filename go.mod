@@ -6,7 +6,7 @@ require (
 	github.com/clarketm/json v1.14.1
 	github.com/coreos/go-semver v0.3.0
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
-	github.com/coreos/ignition/v2 v2.5.0
+	github.com/coreos/ignition/v2 v2.7.0
 	github.com/coreos/vcontext v0.0.0-20191017033345-260217907eb5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/spf13/pflag v1.0.5
