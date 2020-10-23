@@ -1,3 +1,22 @@
+2020-10-23 FCCT 0.7.0
+
+  Features:
+
+    - Stabilize FCC spec 1.2.0, targeting Ignition spec 3.2.0
+    - Add FCC spec 1.3.0-experimental, targeting Ignition spec
+      3.3.0-experimental
+    - Add storage.luks section for creating LUKS2 encrypted volumes
+      (1.2.0)
+    - Add resize field for modifying partition size (1.2.0)
+    - Add should_exist field for deleting users & groups (1.2.0)
+    - Add NoResourceAutoCompression translate option to skip
+      automatic compression (Go API)
+
+  Docs Changes:
+
+    - Switch to GitHub Pages
+
+
 2020-05-28 FCCT 0.6.0
 
   Features:
