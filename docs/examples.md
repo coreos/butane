@@ -186,6 +186,48 @@ storage:
       with_mount_unit: true
 ```
 
+### LUKS encrypted storage
+
+This example creates three LUKS2 encrypted storage volumes: one unlocked with a static key file, one with a TPM2 device via Clevis, and one with a network Tang server via Clevis. Volumes can be unlocked with any combination of these methods, or with a custom Clevis PIN and CFG. If a key file is not specified for a device, an ephemeral one will be created.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.2.0
+storage:
+  luks:
+    - name: static-key-example
+      device: /dev/sdb
+      key_file:
+        inline: REPLACE-THIS-WITH-YOUR-KEY-MATERIAL
+    - name: tpm-example
+      device: /dev/sdc
+      clevis:
+        tpm2: true
+    - name: tang-example
+      device: /dev/sdd
+      clevis:
+        tang:
+          - url: https://tang.example.com
+            thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+  filesystems:
+    - path: /var/lib/static_key_example
+      device: /dev/disk/by-id/dm-name-static-key-example
+      format: ext4
+      label: STATIC-EXAMPLE
+      with_mount_unit: true
+    - path: /var/lib/tpm_example
+      device: /dev/disk/by-id/dm-name-tpm-example
+      format: ext4
+      label: TPM-EXAMPLE
+      with_mount_unit: true
+    - path: /var/lib/tang_example
+      device: /dev/disk/by-id/dm-name-tang-example
+      format: ext4
+      label: TANG-EXAMPLE
+      with_mount_unit: true
+```
+
 ## systemd units
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
