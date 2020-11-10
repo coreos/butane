@@ -45,7 +45,7 @@ passwd:
       shell: /bin/bash
 ```
 
-### Using Password Authentication
+### Using password authentication
 
 You can use a Fedora CoreOS Config to set a password for a local user. Building on the previous example, we can configure the `password_hash` for one or more users:
 
@@ -162,7 +162,7 @@ storage:
         id: 501
 ```
 
-### Filesystems and Partitions
+### Filesystems and partitions
 
 This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
 
