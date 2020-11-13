@@ -25,7 +25,6 @@ import (
 )
 
 type Config struct {
-	common.Common   `yaml:",inline"`
 	base_0_2.Config `yaml:",inline"`
 }
 

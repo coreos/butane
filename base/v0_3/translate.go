@@ -92,20 +92,25 @@ RequiredBy=remote-fs.target`))
 // it did so paths in the resultant config can be tracked back to their source in the source config.
 func (c Config) ToIgn3_2(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
+
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateIgnition)
 	tr.AddCustomTranslator(translateFile)
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
 	tr.AddCustomTranslator(translateResource)
-	translations, report := tr.Translate(&c, &ret)
-	translations.Merge(c.addMountUnits(&ret))
 
-	ts, r := c.processTrees(&ret, options)
-	translations.Merge(ts)
-	report.Merge(r)
+	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
+	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
+	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
+	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
+	tm.Merge(c.addMountUnits(&ret))
 
-	return ret, translations, report
+	tm2, r2 := c.processTrees(&ret, options)
+	tm.Merge(tm2)
+	r.Merge(r2)
+
+	return ret, tm, r
 }
 
 func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {

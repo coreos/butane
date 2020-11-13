@@ -24,8 +24,3 @@ type TranslateBytesOptions struct {
 	Pretty bool
 	Strict bool
 }
-
-type Common struct {
-	Version string `yaml:"version"`
-	Variant string `yaml:"variant"`
-}

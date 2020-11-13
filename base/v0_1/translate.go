@@ -30,13 +30,18 @@ import (
 // it did so paths in the resultant config can be tracked back to their source in the source config.
 func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
+
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateIgnition)
 	tr.AddCustomTranslator(translateFile)
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
-	translations, report := tr.Translate(&c, &ret)
-	return ret, translations, report
+
+	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
+	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
+	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
+	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
+	return ret, tm, r
 }
 
 func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {

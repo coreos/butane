@@ -41,6 +41,12 @@ var (
 	}
 )
 
+/// Fields that must be included in the root struct of every spec version.
+type commonFields struct {
+	Version string `yaml:"version"`
+	Variant string `yaml:"variant"`
+}
+
 func getTranslator(variant string, version semver.Version) (translator, error) {
 	t, ok := registry[fmt.Sprintf("%s+%s", variant, version.String())]
 	if !ok {
@@ -58,7 +64,7 @@ type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Repor
 // TranslateBytes returns an error if the report had fatal errors or if other errors occured during translation.
 func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	// first determine version. This will ignore most fields, so don't use strict
-	ver := common.Common{}
+	ver := commonFields{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
 		return nil, report.Report{}, fmt.Errorf("Error unmarshaling yaml: %v", err)
 	}

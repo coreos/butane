@@ -22,6 +22,8 @@ type Clevis struct {
 }
 
 type Config struct {
+	Version  string   `yaml:"version"`
+	Variant  string   `yaml:"variant"`
 	Ignition Ignition `yaml:"ignition"`
 	Passwd   Passwd   `yaml:"passwd"`
 	Storage  Storage  `yaml:"storage"`
