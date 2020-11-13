@@ -19,10 +19,10 @@ import (
 	"fmt"
 
 	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/config/v1_0"
-	"github.com/coreos/fcct/config/v1_1"
-	"github.com/coreos/fcct/config/v1_2"
-	"github.com/coreos/fcct/config/v1_3_exp"
+	fcos1_0 "github.com/coreos/fcct/config/fcos/v1_0"
+	fcos1_1 "github.com/coreos/fcct/config/fcos/v1_1"
+	fcos1_2 "github.com/coreos/fcct/config/fcos/v1_2"
+	fcos1_3_exp "github.com/coreos/fcct/config/fcos/v1_3_exp"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
@@ -34,10 +34,10 @@ var (
 	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
 
 	registry = map[string]translator{
-		"fcos+1.0.0":              v1_0.TranslateBytes,
-		"fcos+1.1.0":              v1_1.TranslateBytes,
-		"fcos+1.2.0":              v1_2.TranslateBytes,
-		"fcos+1.3.0-experimental": v1_3_exp.TranslateBytes,
+		"fcos+1.0.0":              fcos1_0.TranslateBytes,
+		"fcos+1.1.0":              fcos1_1.TranslateBytes,
+		"fcos+1.2.0":              fcos1_2.TranslateBytes,
+		"fcos+1.3.0-experimental": fcos1_3_exp.TranslateBytes,
 	}
 )
 
