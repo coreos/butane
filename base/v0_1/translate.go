@@ -41,6 +41,10 @@ func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, transla
 	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
 	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
 	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
+
+	if r.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, r
+	}
 	return ret, tm, r
 }
 

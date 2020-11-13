@@ -87,6 +87,9 @@ func (c Config) ToIgn3_1(options common.TranslateOptions) (types.Config, transla
 	tm.Merge(tm2)
 	r.Merge(r2)
 
+	if r.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, r
+	}
 	return ret, tm, r
 }
 
