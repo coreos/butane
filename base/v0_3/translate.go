@@ -149,7 +149,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 		// calculate file path within FilesDir and check for
 		// path traversal
 		filePath := filepath.Join(options.FilesDir, *from.Local)
-		if err := ensurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
+		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
 			r.AddOnError(c, err)
 			return
 		}
@@ -232,7 +232,7 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 		// calculate base path within FilesDir and check for
 		// path traversal
 		srcBaseDir := filepath.Join(options.FilesDir, tree.Local)
-		if err := ensurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
+		if err := baseutil.EnsurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
 			r.AddOnError(yamlPath, err)
 			continue
 		}
@@ -419,19 +419,4 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
 	}
-}
-
-func ensurePathWithinFilesDir(path, filesDir string) error {
-	absBase, err := filepath.Abs(filesDir)
-	if err != nil {
-		return err
-	}
-	absPath, err := filepath.Abs(path)
-	if err != nil {
-		return err
-	}
-	if !strings.HasPrefix(absPath, absBase+string(filepath.Separator)) {
-		return common.ErrFilesDirEscape
-	}
-	return nil
 }
