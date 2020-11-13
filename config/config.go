@@ -15,7 +15,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/coreos/fcct/config/common"
@@ -30,9 +29,6 @@ import (
 )
 
 var (
-	ErrNoVariant      = errors.New("Error parsing variant. Variant must be specified")
-	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
-
 	registry = map[string]translator{}
 )
 
@@ -83,12 +79,12 @@ func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte,
 	}
 
 	if ver.Variant == "" {
-		return nil, report.Report{}, ErrNoVariant
+		return nil, report.Report{}, common.ErrNoVariant
 	}
 
 	tmp, err := semver.NewVersion(ver.Version)
 	if err != nil {
-		return nil, report.Report{}, ErrInvalidVersion
+		return nil, report.Report{}, common.ErrInvalidVersion
 	}
 	version := *tmp
 

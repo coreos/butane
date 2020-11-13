@@ -15,17 +15,10 @@
 package v0_4_exp
 
 import (
-	"errors"
+	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
-)
-
-var (
-	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
-	ErrMountUnitNoPath        = errors.New("path is required if with_mount_unit is true")
-	ErrMountUnitNoFormat      = errors.New("format is required if with_mount_unit is true")
-	ErrTreeNoLocal            = errors.New("local is required")
 )
 
 func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
@@ -44,7 +37,7 @@ func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
 		field = "source"
 	}
 	if sources > 1 {
-		r.AddOnError(c.Append(field), ErrTooManyResourceSources)
+		r.AddOnError(c.Append(field), common.ErrTooManyResourceSources)
 	}
 	return
 }
@@ -54,17 +47,17 @@ func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
 		return
 	}
 	if fs.Path == nil || *fs.Path == "" {
-		r.AddOnError(c.Append("path"), ErrMountUnitNoPath)
+		r.AddOnError(c.Append("path"), common.ErrMountUnitNoPath)
 	}
 	if fs.Format == nil || *fs.Format == "" {
-		r.AddOnError(c.Append("format"), ErrMountUnitNoFormat)
+		r.AddOnError(c.Append("format"), common.ErrMountUnitNoFormat)
 	}
 	return
 }
 
 func (t Tree) Validate(c path.ContextPath) (r report.Report) {
 	if t.Local == "" {
-		r.AddOnError(c, ErrTreeNoLocal)
+		r.AddOnError(c, common.ErrTreeNoLocal)
 	}
 	return
 }

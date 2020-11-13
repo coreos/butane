@@ -321,7 +321,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			[]translate.Translation{},
-			"error at $.contents.local: " + ErrNoFilesDir.Error() + "\n",
+			"error at $.contents.local: " + common.ErrNoFilesDir.Error() + "\n",
 			common.TranslateOptions{},
 		},
 		// attempted directory traversal
@@ -338,7 +338,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			[]translate.Translation{},
-			"error at $.contents.local: " + ErrFilesDirEscape.Error() + "\n",
+			"error at $.contents.local: " + common.ErrFilesDirEscape.Error() + "\n",
 			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
@@ -966,18 +966,18 @@ func TestTranslateTree(t *testing.T) {
 					Path: "/link-partial",
 				},
 			},
-			report: "error at $.storage.trees.0: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.1: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.2: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.4: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.6: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.7: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.8: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.9: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.10: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.12: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.14: " + ErrNodeExists.Error() + "\n" +
-				"error at $.storage.trees.15: " + ErrNodeExists.Error() + "\n",
+			report: "error at $.storage.trees.0: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.1: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.2: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.4: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.6: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.7: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.8: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.9: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.10: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.12: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.14: " + common.ErrNodeExists.Error() + "\n" +
+				"error at $.storage.trees.15: " + common.ErrNodeExists.Error() + "\n",
 		},
 		// files-dir escape
 		{
@@ -986,7 +986,7 @@ func TestTranslateTree(t *testing.T) {
 					Local: "../escape",
 				},
 			},
-			report: "error at $.storage.trees.0: " + ErrFilesDirEscape.Error() + "\n",
+			report: "error at $.storage.trees.0: " + common.ErrFilesDirEscape.Error() + "\n",
 		},
 		// no files-dir
 		{
@@ -996,7 +996,7 @@ func TestTranslateTree(t *testing.T) {
 					Local: "tree",
 				},
 			},
-			report: "error at $.storage.trees.0: " + ErrNoFilesDir.Error() + "\n",
+			report: "error at $.storage.trees.0: " + common.ErrNoFilesDir.Error() + "\n",
 		},
 		// non-file/dir/symlink in directory tree
 		{
@@ -1008,7 +1008,7 @@ func TestTranslateTree(t *testing.T) {
 					Local: "tree",
 				},
 			},
-			report: "error at $.storage.trees.0: " + ErrFileType.Error() + "\n",
+			report: "error at $.storage.trees.0: " + common.ErrFileType.Error() + "\n",
 		},
 		// unreadable file
 		{
@@ -1044,7 +1044,7 @@ func TestTranslateTree(t *testing.T) {
 					Local: "nonexistent",
 				},
 			},
-			report: "error at $.storage.trees.0: " + ErrTreeNotDirectory.Error() + "\n" +
+			report: "error at $.storage.trees.0: " + common.ErrTreeNotDirectory.Error() + "\n" +
 				"error at $.storage.trees.1: stat %FilesDir%/nonexistent: no such file or directory\n",
 		},
 	}
