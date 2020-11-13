@@ -15,8 +15,6 @@
 package v1_1
 
 import (
-	"reflect"
-
 	base_0_2 "github.com/coreos/fcct/base/v0_2"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
@@ -24,10 +22,7 @@ import (
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_1/types"
-	ignvalidate "github.com/coreos/ignition/v2/config/validate"
-	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
-	"github.com/coreos/vcontext/validate"
 )
 
 type Config struct {
@@ -57,46 +52,5 @@ func (c Config) Translate(options common.TranslateOptions) (types.Config, transl
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
 func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
-	cfg := Config{}
-
-	contextTree, err := util.Unmarshal(input, &cfg, options.Strict)
-	if err != nil {
-		return nil, report.Report{}, err
-	}
-
-	r := validate.Validate(cfg, "yaml")
-	unusedKeyCheck := func(v reflect.Value, c path.ContextPath) report.Report {
-		return ignvalidate.ValidateUnusedKeys(v, c, contextTree)
-	}
-	r.Merge(validate.ValidateCustom(cfg, "yaml", unusedKeyCheck))
-	r.Correlate(contextTree)
-	if r.IsFatal() {
-		return nil, r, common.ErrInvalidSourceConfig
-	}
-
-	final, translations, translateReport := cfg.Translate(options)
-	translateReport.Correlate(contextTree)
-	r.Merge(translateReport)
-	if r.IsFatal() {
-		return nil, r, common.ErrInvalidSourceConfig
-	}
-
-	// Check for invalid duplicated keys.
-	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
-	util.TranslateReportPaths(&dupsReport, translations)
-	dupsReport.Correlate(contextTree)
-	r.Merge(dupsReport)
-
-	// Validate JSON semantics.
-	jsonReport := validate.Validate(final, "json")
-	util.TranslateReportPaths(&jsonReport, translations)
-	jsonReport.Correlate(contextTree)
-	r.Merge(jsonReport)
-
-	if r.IsFatal() {
-		return nil, r, common.ErrInvalidGeneratedConfig
-	}
-
-	outbytes, err := util.Marshal(final, options.Pretty)
-	return outbytes, r, err
+	return util.TranslateBytes(input, &Config{}, options)
 }
