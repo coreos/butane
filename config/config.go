@@ -54,9 +54,9 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 // translators should return an error.
 type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Report, error)
 
-// Translate wraps all of the actual translate functions in a switch that determines the correct one to call.
-// Translate returns an error if the report had fatal errors or if other errors occured during translation.
-func Translate(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+// TranslateBytes wraps all of the individual TranslateBytes functions in a switch that determines the correct one to call.
+// TranslateBytes returns an error if the report had fatal errors or if other errors occured during translation.
+func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	// first determine version. This will ignore most fields, so don't use strict
 	ver := common.Common{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
