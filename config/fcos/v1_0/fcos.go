@@ -36,9 +36,9 @@ func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, report.
 	return cfg.(types.Config), r, err
 }
 
-// TranslateBytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
+// ToIgn3_0Bytes translates from a v1.0 fcc to a v3.0.0 Ignition config. It returns a report of any errors or
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
-func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+func ToIgn3_0Bytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	return util.TranslateBytes(input, &Config{}, "ToIgn3_0", options)
 }
