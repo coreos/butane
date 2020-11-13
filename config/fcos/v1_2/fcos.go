@@ -18,7 +18,6 @@ import (
 	base_0_3 "github.com/coreos/fcct/base/v0_3"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
-	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_2/types"
@@ -28,24 +27,14 @@ import (
 type Config struct {
 	common.Common   `yaml:",inline"`
 	base_0_3.Config `yaml:",inline"`
-	fcos_0_1.Fcos   `yaml:",inline"`
 }
 
 func (c Config) Translate(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
-	cfg, baseTranslations, baseReport := c.Config.ToIgn3_2(options.BaseOptions)
-	if baseReport.IsFatal() {
-		return types.Config{}, translate.TranslationSet{}, baseReport
+	cfg, translations, report := c.Config.ToIgn3_2(options.BaseOptions)
+	if report.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, report
 	}
-
-	finalcfg, distroTranslations, distroReport := c.Fcos.ToIgn3_2(cfg, options.BaseOptions)
-	baseReport.Merge(distroReport)
-	if baseReport.IsFatal() {
-		return types.Config{}, translate.TranslationSet{}, baseReport
-	}
-
-	baseTranslations.Merge(distroTranslations)
-
-	return finalcfg, baseTranslations, baseReport
+	return cfg, translations, report
 }
 
 // TranslateBytes translates from a v1.2 fcc to a v3.2.0 Ignition config. It returns a report of any errors or
