@@ -19,6 +19,7 @@ import (
 
 	base_0_2 "github.com/coreos/fcct/base/v0_2"
 	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/config/util"
 	fcos_0_1 "github.com/coreos/fcct/distro/fcos/v0_1"
 	"github.com/coreos/fcct/translate"
 
@@ -58,7 +59,7 @@ func (c Config) Translate(options common.TranslateOptions) (types.Config, transl
 func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
 	cfg := Config{}
 
-	contextTree, err := common.Unmarshal(input, &cfg, options.Strict)
+	contextTree, err := util.Unmarshal(input, &cfg, options.Strict)
 	if err != nil {
 		return nil, report.Report{}, err
 	}
@@ -82,13 +83,13 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 
 	// Check for invalid duplicated keys.
 	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
-	common.TranslateReportPaths(&dupsReport, translations)
+	util.TranslateReportPaths(&dupsReport, translations)
 	dupsReport.Correlate(contextTree)
 	r.Merge(dupsReport)
 
 	// Validate JSON semantics.
 	jsonReport := validate.Validate(final, "json")
-	common.TranslateReportPaths(&jsonReport, translations)
+	util.TranslateReportPaths(&jsonReport, translations)
 	jsonReport.Correlate(contextTree)
 	r.Merge(jsonReport)
 
@@ -96,6 +97,6 @@ func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, repo
 		return nil, r, common.ErrInvalidGeneratedConfig
 	}
 
-	outbytes, err := common.Marshal(final, options.Pretty)
+	outbytes, err := util.Marshal(final, options.Pretty)
 	return outbytes, r, err
 }
