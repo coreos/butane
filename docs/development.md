@@ -30,18 +30,17 @@ Up to this point in FCCT development, FCC versions and `base` versions have been
 
 ### Bump config version
 
-- Rename `config/vC_exp` to `config/vC` and update `package` statements. Update imports.
-- Drop `-experimental` from `registry` in `config/config.go`.
+- Rename `config/fcos/vC_exp` to `config/fcos/vC` and update `package` statements. Update imports.
+- Drop `-experimental` from `init()` in `config/config.go`.
 - Drop `-experimental` from examples in `docs/`.
-- Copy `config/vC` to `config/vC+1_exp`.
-- Update `package` statements in `config/vC+1_exp`. Bump its base dependency to `base/vB+1_exp`.
-- Import `config/vC+1_exp` in `config/config.go` and add `fcos+C+1-experimental` to `registry`.
+- Copy `config/fcos/vC` to `config/fcos/vC+1_exp`.
+- Update `package` statements in `config/fcos/vC+1_exp`. Bump its base dependency to `base/vB+1_exp`.
+- Import `config/vC+1_exp` in `config/config.go` and add `fcos` `C+1-experimental` to `init()`.
 
 ### Bump Ignition spec version
 
-- Add translation function for experimental spec `I+1` to `distro/fcos/vF`. Revendor Ignition.
 - Bump Ignition types imports and rename `ToIgnI` and `TestToIgnI` functions in `base/vB+1_exp`. Bump Ignition spec versions in `base/vB+1_exp/translate_test.go`.
-- Bump Ignition types imports in `config/vC+1_exp`. Update `Translate` to call `ToIgnI+1` functions. Update versions in `TranslateBytes` comment.
+- Bump Ignition types imports in `config/fcos/vC+1_exp`. Update `ToIgnI` function names, `util` calls, and header comments to `ToIgnI+1`.
 
 ### Update docs
 
