@@ -38,7 +38,7 @@ func main() {
 		helpFlag    bool
 		versionFlag bool
 	)
-	options := common.TranslateOptions{}
+	options := common.TranslateBytesOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
 	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
 	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")

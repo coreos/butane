@@ -52,11 +52,11 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 // translators take a raw config and translate it to a raw Ignition config. The report returned should include any
 // errors, warnings, etc and may or may not be fatal. If report is fatal, or other errors are encountered while translating
 // translators should return an error.
-type translator func([]byte, common.TranslateOptions) ([]byte, report.Report, error)
+type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Report, error)
 
 // Translate wraps all of the actual translate functions in a switch that determines the correct one to call.
 // Translate returns an error if the report had fatal errors or if other errors occured during translation.
-func Translate(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
+func Translate(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	// first determine version. This will ignore most fields, so don't use strict
 	ver := common.Common{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {

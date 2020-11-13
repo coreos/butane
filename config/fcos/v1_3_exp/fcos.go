@@ -30,7 +30,7 @@ type Config struct {
 }
 
 func (c Config) Translate(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
-	cfg, translations, report := c.Config.ToIgn3_3(options.BaseOptions)
+	cfg, translations, report := c.Config.ToIgn3_3(options)
 	if report.IsFatal() {
 		return types.Config{}, translate.TranslationSet{}, report
 	}
@@ -40,6 +40,6 @@ func (c Config) Translate(options common.TranslateOptions) (types.Config, transl
 // TranslateBytes translates from a v1.3 fcc to a v3.3.0 Ignition config. It returns a report of any errors or
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
-func TranslateBytes(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
+func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	return util.TranslateBytes(input, &Config{}, options)
 }

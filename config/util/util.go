@@ -45,7 +45,7 @@ var (
 // a report of any errors or warnings in the source and resultant config.
 // If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
-func TranslateBytes(input []byte, container interface{}, options common.TranslateOptions) ([]byte, report.Report, error) {
+func TranslateBytes(input []byte, container interface{}, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	cfg := container
 
 	// Unmarshal the YAML.
@@ -66,7 +66,7 @@ func TranslateBytes(input []byte, container interface{}, options common.Translat
 	}
 
 	// Perform the translation.
-	translateRet := reflect.ValueOf(cfg).MethodByName("Translate").Call([]reflect.Value{reflect.ValueOf(options)})
+	translateRet := reflect.ValueOf(cfg).MethodByName("Translate").Call([]reflect.Value{reflect.ValueOf(options.TranslateOptions)})
 	final := translateRet[0].Interface()
 	translations := translateRet[1].Interface().(translate.TranslationSet)
 	translateReport := translateRet[2].Interface().(report.Report)

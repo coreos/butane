@@ -14,16 +14,15 @@
 
 package common
 
-import (
-	"github.com/coreos/fcct/base"
-)
-
-type BaseOptions = base.TranslateOptions
-
 type TranslateOptions struct {
+	FilesDir                  string // allow embedding local files relative to this directory
+	NoResourceAutoCompression bool   // skip automatic compression of inline/local resources
+}
+
+type TranslateBytesOptions struct {
+	TranslateOptions
 	Pretty bool
 	Strict bool
-	BaseOptions
 }
 
 type Common struct {

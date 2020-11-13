@@ -24,7 +24,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/coreos/fcct/base"
+	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/clarketm/json"
@@ -105,14 +105,14 @@ func TestTranslateFile(t *testing.T) {
 		out        types.File
 		exceptions []translate.Translation
 		report     string
-		options    base.TranslateOptions
+		options    common.TranslateOptions
 	}{
 		{
 			File{},
 			types.File{},
 			nil,
 			"",
-			base.TranslateOptions{},
+			common.TranslateOptions{},
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
@@ -246,7 +246,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			"",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
 		},
@@ -276,7 +276,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			"",
-			base.TranslateOptions{},
+			common.TranslateOptions{},
 		},
 		// local file contents
 		{
@@ -303,7 +303,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			"",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
 		},
@@ -322,7 +322,7 @@ func TestTranslateFile(t *testing.T) {
 			},
 			[]translate.Translation{},
 			"error at $.contents.local: " + ErrNoFilesDir.Error() + "\n",
-			base.TranslateOptions{},
+			common.TranslateOptions{},
 		},
 		// attempted directory traversal
 		{
@@ -339,7 +339,7 @@ func TestTranslateFile(t *testing.T) {
 			},
 			[]translate.Translation{},
 			"error at $.contents.local: " + ErrFilesDirEscape.Error() + "\n",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
 		},
@@ -358,7 +358,7 @@ func TestTranslateFile(t *testing.T) {
 			},
 			[]translate.Translation{},
 			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": no such file or directory\n",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
 		},
@@ -461,7 +461,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			"",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
 		},
@@ -490,7 +490,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			"",
-			base.TranslateOptions{
+			common.TranslateOptions{
 				NoResourceAutoCompression: true,
 			},
 		},
@@ -560,7 +560,7 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateDirectory(test.in, base.TranslateOptions{})
+		actual, _, report := translateDirectory(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
@@ -619,7 +619,7 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateLink(test.in, base.TranslateOptions{})
+		actual, _, report := translateLink(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
@@ -675,7 +675,7 @@ func TestTranslateFilesystem(t *testing.T) {
 			},
 		}
 		expected := []types.Filesystem{test.out}
-		actual, _, report := in.ToIgn3_3(base.TranslateOptions{})
+		actual, _, report := in.ToIgn3_3(common.TranslateOptions{})
 		if !reflect.DeepEqual(actual.Storage.Filesystems, expected) {
 			t.Errorf("#%d: expected %v, got %v", i, format(expected), format(actual.Storage.Filesystems))
 		}
@@ -688,11 +688,11 @@ func TestTranslateFilesystem(t *testing.T) {
 // TestTranslateTree tests translating the FCC storage.trees.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateTree(t *testing.T) {
 	tests := []struct {
-		options    *base.TranslateOptions // defaulted if not specified
-		dirDirs    map[string]os.FileMode // relative path -> mode
-		dirFiles   map[string]os.FileMode // relative path -> mode
-		dirLinks   map[string]string      // relative path -> target
-		dirSockets []string               // relative path
+		options    *common.TranslateOptions // defaulted if not specified
+		dirDirs    map[string]os.FileMode   // relative path -> mode
+		dirFiles   map[string]os.FileMode   // relative path -> mode
+		dirLinks   map[string]string        // relative path -> target
+		dirSockets []string                 // relative path
 		inTrees    []Tree
 		inFiles    []File
 		inDirs     []Directory
@@ -990,7 +990,7 @@ func TestTranslateTree(t *testing.T) {
 		},
 		// no files-dir
 		{
-			options: &base.TranslateOptions{},
+			options: &common.TranslateOptions{},
 			inTrees: []Tree{
 				{
 					Local: "tree",
@@ -1114,7 +1114,7 @@ func TestTranslateTree(t *testing.T) {
 				Trees:       test.inTrees,
 			},
 		}
-		options := base.TranslateOptions{
+		options := common.TranslateOptions{
 			FilesDir: filesDir,
 		}
 		if test.options != nil {
@@ -1226,7 +1226,7 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := translateIgnition(test.in, base.TranslateOptions{})
+		actual, _, report := translateIgnition(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
 			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
 		}
@@ -1253,7 +1253,7 @@ func TestToIgn3_3(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_3(base.TranslateOptions{})
+		actual, _, report := test.in.ToIgn3_3(common.TranslateOptions{})
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
