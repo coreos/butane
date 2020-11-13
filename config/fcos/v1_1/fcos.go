@@ -15,7 +15,7 @@
 package v1_1
 
 import (
-	base_0_2 "github.com/coreos/fcct/base/v0_2"
+	base "github.com/coreos/fcct/base/v0_2"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
 
@@ -24,7 +24,7 @@ import (
 )
 
 type Config struct {
-	base_0_2.Config `yaml:",inline"`
+	base.Config `yaml:",inline"`
 }
 
 // ToIgn3_1 translates the config to an Ignition config.  It returns a
