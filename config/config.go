@@ -33,18 +33,31 @@ var (
 	ErrNoVariant      = errors.New("Error parsing variant. Variant must be specified")
 	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
 
-	registry = map[string]translator{
-		"fcos+1.0.0":              fcos1_0.TranslateBytes,
-		"fcos+1.1.0":              fcos1_1.TranslateBytes,
-		"fcos+1.2.0":              fcos1_2.TranslateBytes,
-		"fcos+1.3.0-experimental": fcos1_3_exp.TranslateBytes,
-	}
+	registry = map[string]translator{}
 )
 
 /// Fields that must be included in the root struct of every spec version.
 type commonFields struct {
 	Version string `yaml:"version"`
 	Variant string `yaml:"variant"`
+}
+
+func init() {
+	RegisterTranslator("fcos", "1.0.0", fcos1_0.TranslateBytes)
+	RegisterTranslator("fcos", "1.1.0", fcos1_1.TranslateBytes)
+	RegisterTranslator("fcos", "1.2.0", fcos1_2.TranslateBytes)
+	RegisterTranslator("fcos", "1.3.0-experimental", fcos1_3_exp.TranslateBytes)
+}
+
+/// RegisterTranslator registers a translator for the specified variant and
+/// version to be available for use by TranslateBytes.  This is only needed
+/// by users implementing their own translators outside the FCCT package.
+func RegisterTranslator(variant, version string, trans translator) {
+	key := fmt.Sprintf("%s+%s", variant, version)
+	if _, ok := registry[key]; ok {
+		panic("tried to reregister existing translator")
+	}
+	registry[key] = trans
 }
 
 func getTranslator(variant string, version semver.Version) (translator, error) {
