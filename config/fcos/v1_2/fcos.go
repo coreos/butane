@@ -19,11 +19,21 @@ import (
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
 
+	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/report"
 )
 
 type Config struct {
 	base_0_3.Config `yaml:",inline"`
+}
+
+// ToIgn3_2 translates the config to an Ignition config.  It returns a
+// report of any errors or warnings in the source and resultant config.  If
+// the report has fatal errors or it encounters other problems translating,
+// an error is returned.
+func (c Config) ToIgn3_2(options common.TranslateOptions) (types.Config, report.Report, error) {
+	cfg, r, err := util.Translate(c, "ToIgn3_2Unvalidated", options)
+	return cfg.(types.Config), r, err
 }
 
 // TranslateBytes translates from a v1.2 fcc to a v3.2.0 Ignition config. It returns a report of any errors or

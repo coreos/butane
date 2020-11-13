@@ -28,7 +28,7 @@ import (
 
 // ToIgn3_0 translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
-func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
+func (c Config) ToIgn3_0Unvalidated(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
 
 	tr := translate.NewTranslator("yaml", "json", options)

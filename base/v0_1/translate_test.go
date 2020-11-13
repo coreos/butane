@@ -326,7 +326,7 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_0(common.TranslateOptions{})
+		actual, _, report := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}

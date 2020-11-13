@@ -675,7 +675,7 @@ func TestTranslateFilesystem(t *testing.T) {
 			},
 		}
 		expected := []types.Filesystem{test.out}
-		actual, _, report := in.ToIgn3_3(common.TranslateOptions{})
+		actual, _, report := in.ToIgn3_3Unvalidated(common.TranslateOptions{})
 		if !reflect.DeepEqual(actual.Storage.Filesystems, expected) {
 			t.Errorf("#%d: expected %v, got %v", i, format(expected), format(actual.Storage.Filesystems))
 		}
@@ -1120,7 +1120,7 @@ func TestTranslateTree(t *testing.T) {
 		if test.options != nil {
 			options = *test.options
 		}
-		actual, _, report := config.ToIgn3_3(options)
+		actual, _, report := config.ToIgn3_3Unvalidated(options)
 
 		expectedReport := strings.ReplaceAll(test.report, "%FilesDir%", filesDir)
 		if report.String() != expectedReport {
@@ -1253,7 +1253,7 @@ func TestToIgn3_3(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_3(common.TranslateOptions{})
+		actual, _, report := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}

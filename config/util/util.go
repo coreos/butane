@@ -39,6 +39,48 @@ var (
 
 // Misc helpers
 
+// Translate translates cfg to the corresponding Ignition config version
+// using the named translation method on cfg, and returns the marshaled
+// Ignition config.  It returns a report of any errors or warnings in the
+// source and resultant config.  If the report has fatal errors or it
+// encounters other problems translating, an error is returned.
+func Translate(cfg interface{}, translateMethod string, options common.TranslateOptions) (interface{}, report.Report, error) {
+	// Get method, and zero return value for error returns.
+	method := reflect.ValueOf(cfg).MethodByName(translateMethod)
+	zeroValue := reflect.Zero(method.Type().Out(0)).Interface()
+
+	// Validate the input.
+	r := validate.Validate(cfg, "yaml")
+	if r.IsFatal() {
+		return zeroValue, r, common.ErrInvalidSourceConfig
+	}
+
+	// Perform the translation.
+	translateRet := method.Call([]reflect.Value{reflect.ValueOf(options)})
+	final := translateRet[0].Interface()
+	translations := translateRet[1].Interface().(translate.TranslationSet)
+	translateReport := translateRet[2].Interface().(report.Report)
+	r.Merge(translateReport)
+	if r.IsFatal() {
+		return zeroValue, r, common.ErrInvalidSourceConfig
+	}
+
+	// Check for invalid duplicated keys.
+	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
+	translateReportPaths(&dupsReport, translations)
+	r.Merge(dupsReport)
+
+	// Validate JSON semantics.
+	jsonReport := validate.Validate(final, "json")
+	translateReportPaths(&jsonReport, translations)
+	r.Merge(jsonReport)
+
+	if r.IsFatal() {
+		return zeroValue, r, common.ErrInvalidGeneratedConfig
+	}
+	return final, r, nil
+}
+
 // TranslateBytes unmarshals the FCC specified in input into the struct
 // pointed to by container, translates it to the corresponding Ignition
 // config version using the named translation method, and returns the
@@ -54,12 +96,11 @@ func TranslateBytes(input []byte, container interface{}, translateMethod string,
 		return nil, report.Report{}, err
 	}
 
-	// Validate it.
-	r := validate.Validate(cfg, "yaml")
+	// Check for unused keys.
 	unusedKeyCheck := func(v reflect.Value, c path.ContextPath) report.Report {
 		return ignvalidate.ValidateUnusedKeys(v, c, contextTree)
 	}
-	r.Merge(validate.ValidateCustom(cfg, "yaml", unusedKeyCheck))
+	r := validate.ValidateCustom(cfg, "yaml", unusedKeyCheck)
 	r.Correlate(contextTree)
 	if r.IsFatal() {
 		return nil, r, common.ErrInvalidSourceConfig
@@ -68,28 +109,15 @@ func TranslateBytes(input []byte, container interface{}, translateMethod string,
 	// Perform the translation.
 	translateRet := reflect.ValueOf(cfg).MethodByName(translateMethod).Call([]reflect.Value{reflect.ValueOf(options.TranslateOptions)})
 	final := translateRet[0].Interface()
-	translations := translateRet[1].Interface().(translate.TranslationSet)
-	translateReport := translateRet[2].Interface().(report.Report)
+	translateReport := translateRet[1].Interface().(report.Report)
+	errVal := translateRet[2]
 	translateReport.Correlate(contextTree)
 	r.Merge(translateReport)
+	if !errVal.IsNil() {
+		return nil, r, errVal.Interface().(error)
+	}
 	if r.IsFatal() {
 		return nil, r, common.ErrInvalidSourceConfig
-	}
-
-	// Check for invalid duplicated keys.
-	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
-	translateReportPaths(&dupsReport, translations)
-	dupsReport.Correlate(contextTree)
-	r.Merge(dupsReport)
-
-	// Validate JSON semantics.
-	jsonReport := validate.Validate(final, "json")
-	translateReportPaths(&jsonReport, translations)
-	jsonReport.Correlate(contextTree)
-	r.Merge(jsonReport)
-
-	if r.IsFatal() {
-		return nil, r, common.ErrInvalidGeneratedConfig
 	}
 
 	// Marshal the JSON.
