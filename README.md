@@ -7,40 +7,49 @@ specifications](docs/specs.md) for everything FCCs support.
 
 ### Project Layout
 
-Each config spec is composed of a base and distro component. The base components
-roughly mirror the Ignition spec and are distro agnostic. The distro components
-contain sugar for common configuration of the host (e.g. etcd) and are not
-distro-independent.
+Internally, FCCT has a versioned `base` component which contains support for
+a particular Ignition spec version, plus distro-independent sugar. New base
+functionality is added only to the experimental base package. Eventually the
+experimental base package is stabilized and a new experimental package
+created. The base component is versioned independently of any particular
+distro, and its versions are not exposed to the user. Client code should
+not need to import anything from `base`.
 
-Each distro and base component are versioned independently with each new
-version getting it's own package. These versions are not exposed to the user.
+Each FCC variant/version pair corresponds to a `config` package, which
+derives either from a `base` package or from another `config` package. New
+functionality is similarly added only to an experimental config version,
+which is eventually stabilized and a new experimental version created.
+(This will often happen when the underlying package is stabilized.) A
+`config` package can contain sugar or validation logic specific to a distro
+(for example, additional properties for configuring etcd).
 
-Each fcos config version has it's own version which is independent of the
-versions of the base and distro components that compose it. However a major
-or minor bump of either component necessitates a corresponding bump in the fcos
-config version.
-
-`internal/`
-  main, non-exported code
-
-`base/`
-  Contains distro-agnostic code. Each package here targets only one Ignition
-  spec versions.
-
-`distro/`
-  Contains distro-specific code. Each package here can target multiple Ignition
-  versions if it makes sense.
+Packages outside the FCCT repository can implement additional FCC versions
+by deriving from a `base` or `config` package and registering their
+variant/version pair with `config`.
 
 `config/`
-  Contains the top level Translate() function that determines which version to
-  parse and emit.
+  Top-level `TranslateBytes()` function that determines which config version
+  to parse and emit. Clients should typically use this to translate FCCs.
 
 `config/common/`
-  Contains the common bits and functions for all spec versions. This means the
-  (un)marshaling helpers and the version+variant struct to be included in every
-  user facing spec
+  Common definitions for all spec versions, including translate options
+  structs and error definitions.
 
-`config/vX_Y/`
-  Contains user facing definitions of the spec. Each is composed by combining a
-  base and distro package with the common version+variant. Each of the defines
-  their own translate function to be registered in the config/ package.
+`config/*/vX_Y/`
+  User facing definitions of the spec. Each is derived from another config
+  package or from a base package. Each one defines its own translate
+  functions to be registered in the `config` package. Clients can use
+  these directly if they want to translate a specific spec version.
+
+`config/util/`
+  Utility code for implementing config packages, including the
+  (un)marshaling helpers. Clients don't need to import this unless they're
+  implementing an out-of-tree config version.
+
+`base/`
+  Distro-agnostic code targeting individual Ignition spec versions. Clients
+  don't need to import this unless they're implementing an out-of-tree
+  config version.
+
+`internal/`
+  `main`, non-exported code.
