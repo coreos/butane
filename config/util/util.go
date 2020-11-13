@@ -41,11 +41,11 @@ var (
 
 // TranslateBytes unmarshals the FCC specified in input into the struct
 // pointed to by container, translates it to the corresponding Ignition
-// config version, and returns the marshaled Ignition config.  It returns
-// a report of any errors or warnings in the source and resultant config.
-// If the report has fatal errors or it encounters other problems
-// translating, an error is returned.
-func TranslateBytes(input []byte, container interface{}, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+// config version using the named translation method, and returns the
+// marshaled Ignition config.  It returns a report of any errors or warnings
+// in the source and resultant config.  If the report has fatal errors or it
+// encounters other problems translating, an error is returned.
+func TranslateBytes(input []byte, container interface{}, translateMethod string, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	cfg := container
 
 	// Unmarshal the YAML.
@@ -66,7 +66,7 @@ func TranslateBytes(input []byte, container interface{}, options common.Translat
 	}
 
 	// Perform the translation.
-	translateRet := reflect.ValueOf(cfg).MethodByName("Translate").Call([]reflect.Value{reflect.ValueOf(options.TranslateOptions)})
+	translateRet := reflect.ValueOf(cfg).MethodByName(translateMethod).Call([]reflect.Value{reflect.ValueOf(options.TranslateOptions)})
 	final := translateRet[0].Interface()
 	translations := translateRet[1].Interface().(translate.TranslationSet)
 	translateReport := translateRet[2].Interface().(report.Report)

@@ -18,9 +18,7 @@ import (
 	base_0_4 "github.com/coreos/fcct/base/v0_4_exp"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
-	"github.com/coreos/fcct/translate"
 
-	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
 	"github.com/coreos/vcontext/report"
 )
 
@@ -28,13 +26,9 @@ type Config struct {
 	base_0_4.Config `yaml:",inline"`
 }
 
-func (c Config) Translate(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
-	return c.Config.ToIgn3_3(options)
-}
-
 // TranslateBytes translates from a v1.3 fcc to a v3.3.0 Ignition config. It returns a report of any errors or
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
 func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
-	return util.TranslateBytes(input, &Config{}, options)
+	return util.TranslateBytes(input, &Config{}, "ToIgn3_3", options)
 }
