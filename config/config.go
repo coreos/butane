@@ -42,7 +42,7 @@ func init() {
 	RegisterTranslator("fcos", "1.0.0", fcos1_0.ToIgn3_0Bytes)
 	RegisterTranslator("fcos", "1.1.0", fcos1_1.ToIgn3_1Bytes)
 	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
-	RegisterTranslator("fcos", "1.3.0-experimental", fcos1_3_exp.ToIgn3_3Bytes)
+	RegisterTranslator("fcos", "1.3.0-experimental", fcos1_3_exp.ToIgn3_2Bytes)
 }
 
 /// RegisterTranslator registers a translator for the specified variant and

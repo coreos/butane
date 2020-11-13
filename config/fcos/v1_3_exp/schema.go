@@ -15,7 +15,7 @@
 package v1_3_exp
 
 import (
-	base "github.com/coreos/fcct/base/v0_4_exp"
+	base "github.com/coreos/fcct/base/v0_3"
 )
 
 type Config struct {
