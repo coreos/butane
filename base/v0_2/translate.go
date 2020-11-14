@@ -137,7 +137,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
-		src, gzipped, err := baseutil.MakeDataURL(contents, to.Compression, options.NoResourceAutoCompression)
+		src, gzipped, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -153,7 +153,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 	if from.Inline != nil {
 		c := path.New("yaml", "inline")
 
-		src, gzipped, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, options.NoResourceAutoCompression)
+		src, gzipped, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, !options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -274,7 +274,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
-			url, gzipped, err := baseutil.MakeDataURL(contents, file.Contents.Compression, options.NoResourceAutoCompression)
+			url, gzipped, err := baseutil.MakeDataURL(contents, file.Contents.Compression, !options.NoResourceAutoCompression)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil

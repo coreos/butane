@@ -23,7 +23,7 @@ import (
 	"github.com/vincent-petithory/dataurl"
 )
 
-func MakeDataURL(contents []byte, currentCompression *string, noResourceAutoCompression bool) (uri string, gzipped bool, err error) {
+func MakeDataURL(contents []byte, currentCompression *string, allowCompression bool) (uri string, gzipped bool, err error) {
 	// try three different encodings, and select the smallest one
 
 	// URL-escaped, useful for ASCII text
@@ -39,7 +39,7 @@ func MakeDataURL(contents []byte, currentCompression *string, noResourceAutoComp
 	// user already enabled compression, don't compress again.
 	// We don't try base64-encoded URL-escaped because gzipped data is
 	// binary and URL escaping is unlikely to be efficient.
-	if (currentCompression == nil || *currentCompression == "") && !noResourceAutoCompression {
+	if (currentCompression == nil || *currentCompression == "") && allowCompression {
 		var buf bytes.Buffer
 		var compressor *gzip.Writer
 		if compressor, err = gzip.NewWriterLevel(&buf, gzip.BestCompression); err != nil {
