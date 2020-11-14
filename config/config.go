@@ -15,14 +15,13 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/config/v1_0"
-	"github.com/coreos/fcct/config/v1_1"
-	"github.com/coreos/fcct/config/v1_2"
-	"github.com/coreos/fcct/config/v1_3_exp"
+	fcos1_0 "github.com/coreos/fcct/config/fcos/v1_0"
+	fcos1_1 "github.com/coreos/fcct/config/fcos/v1_1"
+	fcos1_2 "github.com/coreos/fcct/config/fcos/v1_2"
+	fcos1_3_exp "github.com/coreos/fcct/config/fcos/v1_3_exp"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
@@ -30,16 +29,32 @@ import (
 )
 
 var (
-	ErrNoVariant      = errors.New("Error parsing variant. Variant must be specified")
-	ErrInvalidVersion = errors.New("Error parsing version. Version must be a valid semver")
-
-	registry = map[string]translator{
-		"fcos+1.0.0":              v1_0.TranslateBytes,
-		"fcos+1.1.0":              v1_1.TranslateBytes,
-		"fcos+1.2.0":              v1_2.TranslateBytes,
-		"fcos+1.3.0-experimental": v1_3_exp.TranslateBytes,
-	}
+	registry = map[string]translator{}
 )
+
+/// Fields that must be included in the root struct of every spec version.
+type commonFields struct {
+	Version string `yaml:"version"`
+	Variant string `yaml:"variant"`
+}
+
+func init() {
+	RegisterTranslator("fcos", "1.0.0", fcos1_0.ToIgn3_0Bytes)
+	RegisterTranslator("fcos", "1.1.0", fcos1_1.ToIgn3_1Bytes)
+	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
+	RegisterTranslator("fcos", "1.3.0-experimental", fcos1_3_exp.ToIgn3_3Bytes)
+}
+
+/// RegisterTranslator registers a translator for the specified variant and
+/// version to be available for use by TranslateBytes.  This is only needed
+/// by users implementing their own translators outside the FCCT package.
+func RegisterTranslator(variant, version string, trans translator) {
+	key := fmt.Sprintf("%s+%s", variant, version)
+	if _, ok := registry[key]; ok {
+		panic("tried to reregister existing translator")
+	}
+	registry[key] = trans
+}
 
 func getTranslator(variant string, version semver.Version) (translator, error) {
 	t, ok := registry[fmt.Sprintf("%s+%s", variant, version.String())]
@@ -52,24 +67,24 @@ func getTranslator(variant string, version semver.Version) (translator, error) {
 // translators take a raw config and translate it to a raw Ignition config. The report returned should include any
 // errors, warnings, etc and may or may not be fatal. If report is fatal, or other errors are encountered while translating
 // translators should return an error.
-type translator func([]byte, common.TranslateOptions) ([]byte, report.Report, error)
+type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Report, error)
 
-// Translate wraps all of the actual translate functions in a switch that determines the correct one to call.
-// Translate returns an error if the report had fatal errors or if other errors occured during translation.
-func Translate(input []byte, options common.TranslateOptions) ([]byte, report.Report, error) {
+// TranslateBytes wraps all of the individual TranslateBytes functions in a switch that determines the correct one to call.
+// TranslateBytes returns an error if the report had fatal errors or if other errors occured during translation.
+func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
 	// first determine version. This will ignore most fields, so don't use strict
-	ver := common.Common{}
+	ver := commonFields{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
 		return nil, report.Report{}, fmt.Errorf("Error unmarshaling yaml: %v", err)
 	}
 
 	if ver.Variant == "" {
-		return nil, report.Report{}, ErrNoVariant
+		return nil, report.Report{}, common.ErrNoVariant
 	}
 
 	tmp, err := semver.NewVersion(ver.Version)
 	if err != nil {
-		return nil, report.Report{}, ErrInvalidVersion
+		return nil, report.Report{}, common.ErrInvalidVersion
 	}
 	version := *tmp
 

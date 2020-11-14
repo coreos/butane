@@ -18,6 +18,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/coreos/fcct/config/common"
+
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
@@ -79,7 +81,7 @@ func TestValidateResource(t *testing.T) {
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
-			ErrTooManyResourceSources,
+			common.ErrTooManyResourceSources,
 			path.New("yaml", "source"),
 		},
 		// source + local, invalid
@@ -92,7 +94,7 @@ func TestValidateResource(t *testing.T) {
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
-			ErrTooManyResourceSources,
+			common.ErrTooManyResourceSources,
 			path.New("yaml", "source"),
 		},
 		// inline + local, invalid
@@ -105,7 +107,7 @@ func TestValidateResource(t *testing.T) {
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
-			ErrTooManyResourceSources,
+			common.ErrTooManyResourceSources,
 			path.New("yaml", "inline"),
 		},
 		// source + inline + local, invalid
@@ -119,7 +121,7 @@ func TestValidateResource(t *testing.T) {
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
-			ErrTooManyResourceSources,
+			common.ErrTooManyResourceSources,
 			path.New("yaml", "source"),
 		},
 	}
@@ -142,7 +144,7 @@ func TestValidateTree(t *testing.T) {
 	}{
 		{
 			in:  Tree{},
-			out: ErrTreeNoLocal,
+			out: common.ErrTreeNoLocal,
 		},
 	}
 

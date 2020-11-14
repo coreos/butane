@@ -19,6 +19,24 @@ import (
 )
 
 var (
+	// common field parsing
+	ErrNoVariant      = errors.New("error parsing variant; must be specified")
+	ErrInvalidVersion = errors.New("error parsing version; must be a valid semver")
+
+	// high-level errors for fatal reports
 	ErrInvalidSourceConfig    = errors.New("source config is invalid")
 	ErrInvalidGeneratedConfig = errors.New("config generated was invalid")
+
+	// resources and trees
+	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
+	ErrFilesDirEscape         = errors.New("local file path traverses outside the files directory")
+	ErrFileType               = errors.New("trees may only contain files, directories, and symlinks")
+	ErrNodeExists             = errors.New("matching filesystem node has existing contents or different type")
+	ErrNoFilesDir             = errors.New("local file paths are relative to a files directory that must be specified with -d/--files-dir")
+	ErrTreeNotDirectory       = errors.New("root of tree must be a directory")
+	ErrTreeNoLocal            = errors.New("local is required")
+
+	// mount units
+	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
+	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
 )

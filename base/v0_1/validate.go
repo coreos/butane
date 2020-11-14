@@ -15,19 +15,15 @@
 package v0_1
 
 import (
-	"errors"
+	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 )
 
-var (
-	ErrInlineAndSource = errors.New("inline cannot be specified if source is specified")
-)
-
 func (f FileContents) Validate(c path.ContextPath) (r report.Report) {
 	if f.Inline != nil && f.Source != nil {
-		r.AddOnError(c.Append("inline"), ErrInlineAndSource)
+		r.AddOnError(c.Append("inline"), common.ErrTooManyResourceSources)
 	}
 	return
 }

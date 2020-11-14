@@ -38,7 +38,7 @@ func main() {
 		helpFlag    bool
 		versionFlag bool
 	)
-	options := common.TranslateOptions{}
+	options := common.TranslateBytesOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
 	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
 	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")
@@ -90,7 +90,7 @@ func main() {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}
 
-	dataOut, r, err := config.Translate(dataIn, options)
+	dataOut, r, err := config.TranslateBytes(dataIn, options)
 	fmt.Fprintf(os.Stderr, "%s", r.String())
 	if err != nil {
 		fail("Error translating config: %v\n", err)

@@ -14,88 +14,13 @@
 
 package common
 
-import (
-	"bytes"
-	"regexp"
-	"strings"
-
-	"github.com/coreos/fcct/base"
-	"github.com/coreos/fcct/translate"
-
-	"github.com/clarketm/json"
-	"github.com/coreos/vcontext/path"
-	"github.com/coreos/vcontext/report"
-	"github.com/coreos/vcontext/tree"
-	vyaml "github.com/coreos/vcontext/yaml"
-	"gopkg.in/yaml.v3"
-)
-
-var (
-	snakeRe = regexp.MustCompile("([A-Z])")
-)
-
-type BaseOptions = base.TranslateOptions
-
 type TranslateOptions struct {
+	FilesDir                  string // allow embedding local files relative to this directory
+	NoResourceAutoCompression bool   // skip automatic compression of inline/local resources
+}
+
+type TranslateBytesOptions struct {
+	TranslateOptions
 	Pretty bool
 	Strict bool
-	BaseOptions
-}
-
-type Common struct {
-	Version string `yaml:"version"`
-	Variant string `yaml:"variant"`
-}
-
-// Misc helpers
-
-// Unmarshal unmarshals the data to "to" and also returns a context tree for the source. If strict
-// is set it errors out on unused keys.
-func Unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
-	dec := yaml.NewDecoder(bytes.NewReader(data))
-	dec.KnownFields(strict)
-	if err := dec.Decode(to); err != nil {
-		return nil, err
-	}
-	return vyaml.UnmarshalToContext(data)
-}
-
-// Marshal is a wrapper for marshaling to json with or without pretty-printing the output
-func Marshal(from interface{}, pretty bool) ([]byte, error) {
-	if pretty {
-		return json.MarshalIndent(from, "", "  ")
-	}
-	return json.Marshal(from)
-}
-
-// snakePath converts a path.ContextPath with camelCase elements and returns the
-// same path but with snake_case elements instead
-func snakePath(p path.ContextPath) path.ContextPath {
-	ret := path.New(p.Tag)
-	for _, part := range p.Path {
-		if str, ok := part.(string); ok {
-			ret = ret.Append(snake(str))
-		} else {
-			ret = ret.Append(part)
-		}
-	}
-	return ret
-}
-
-// snake converts from camelCase (not CamelCase) to snake_case
-func snake(in string) string {
-	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
-}
-
-// TranslateReportPaths takes a report from a camelCase json document and a set of translations rules,
-// applies those rules and converts all camelCase to snake_case.
-func TranslateReportPaths(r *report.Report, ts translate.TranslationSet) {
-	for i, ent := range r.Entries {
-		context := ent.Context
-		if t, ok := ts.Set[context.String()]; ok {
-			context = t.From
-		}
-		context = snakePath(context)
-		r.Entries[i].Context = context
-	}
 }

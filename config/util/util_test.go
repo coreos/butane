@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc.
+// Copyright 2019 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package base
+package util
 
-type TranslateOptions struct {
-	FilesDir                  string // allow embedding local files relative to this directory
-	NoResourceAutoCompression bool   // skip automatic compression of inline/local resources
+import (
+	"testing"
+)
+
+func TestSnake(t *testing.T) {
+	tests := []struct {
+		in  string
+		out string
+	}{
+		{},
+		{
+			"foo",
+			"foo",
+		},
+		{
+			"snakeCase",
+			"snake_case",
+		},
+		{
+			"longSnakeCase",
+			"long_snake_case",
+		},
+		{
+			"snake_already",
+			"snake_already",
+		},
+	}
+
+	for i, test := range tests {
+		if snake(test.in) != test.out {
+			t.Errorf("#%d: expected %q got %q", i, test.out, snake(test.in))
+		}
+	}
 }
