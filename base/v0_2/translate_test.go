@@ -15,7 +15,6 @@
 package v0_2
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
@@ -24,55 +23,16 @@ import (
 	"strings"
 	"testing"
 
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/translate"
 
-	"github.com/clarketm/json"
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_1/types"
 	"github.com/coreos/vcontext/path"
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
-
-func format(from interface{}) string {
-	buf, err := json.MarshalIndent(from, "", "  ")
-	if err != nil {
-		return fmt.Sprintf("<Error marshaling to JSON: %v>", err)
-	}
-	return string(buf)
-}
-
-// verifyTranslations ensures all the translations are identity, unless they match a listed one,
-// and verifies that all the listed ones exist.
-// it returns the offending translation if there is one
-func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
-	exceptionSet := translate.TranslationSet{
-		FromTag: set.FromTag,
-		ToTag:   set.ToTag,
-		Set:     map[string]translate.Translation{},
-	}
-	for _, ex := range exceptions {
-		exceptionSet.AddTranslation(ex.From, ex.To)
-		if tr, ok := set.Set[ex.To.String()]; ok {
-			if !reflect.DeepEqual(tr, ex) {
-				return &ex
-			}
-		} else {
-			return &ex
-		}
-	}
-	for key, translation := range set.Set {
-		if ex, ok := exceptionSet.Set[key]; ok {
-			if !reflect.DeepEqual(translation, ex) {
-				return &ex
-			}
-		} else if !reflect.DeepEqual(translation.From.Path, translation.To.Path) {
-			return &translation
-		}
-	}
-	return nil
-}
 
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
@@ -500,14 +460,14 @@ func TestTranslateFile(t *testing.T) {
 		actual, translations, report := translateFile(test.in, test.options)
 
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(test.out), baseutil.FormatJSON(actual))
 		}
 
 		if report.String() != test.report {
 			t.Errorf("#%d: expected report '%+v', got '%+v'", i, test.report, report.String())
 		}
 
-		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
+		if errT := baseutil.VerifyTranslations(translations, test.exceptions...); errT != nil {
 			t.Errorf("#%d: bad translation: %v", i, *errT)
 		}
 	}
@@ -562,7 +522,7 @@ func TestTranslateDirectory(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateDirectory(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(test.out), baseutil.FormatJSON(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -621,7 +581,7 @@ func TestTranslateLink(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateLink(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(test.out), baseutil.FormatJSON(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -677,7 +637,7 @@ func TestTranslateFilesystem(t *testing.T) {
 		expected := []types.Filesystem{test.out}
 		actual, _, report := in.ToIgn3_1Unvalidated(common.TranslateOptions{})
 		if !reflect.DeepEqual(actual.Storage.Filesystems, expected) {
-			t.Errorf("#%d: expected %v, got %v", i, format(expected), format(actual.Storage.Filesystems))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(expected), baseutil.FormatJSON(actual.Storage.Filesystems))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -1131,15 +1091,15 @@ func TestTranslateTree(t *testing.T) {
 		}
 
 		if !reflect.DeepEqual(actual.Storage.Files, test.outFiles) {
-			t.Errorf("#%d: expected files %v, got %v", i, format(test.outFiles), format(actual.Storage.Files))
+			t.Errorf("#%d: expected files %v, got %v", i, baseutil.FormatJSON(test.outFiles), baseutil.FormatJSON(actual.Storage.Files))
 		}
 
 		if len(actual.Storage.Directories) != 0 {
-			t.Errorf("#%d: expected empty directories, got %v", i, format(actual.Storage.Directories))
+			t.Errorf("#%d: expected empty directories, got %v", i, baseutil.FormatJSON(actual.Storage.Directories))
 		}
 
 		if !reflect.DeepEqual(actual.Storage.Links, test.outLinks) {
-			t.Errorf("#%d: expected links %v, got %v", i, format(test.outLinks), format(actual.Storage.Links))
+			t.Errorf("#%d: expected links %v, got %v", i, baseutil.FormatJSON(test.outLinks), baseutil.FormatJSON(actual.Storage.Links))
 		}
 	}
 }
@@ -1228,7 +1188,7 @@ func TestTranslateIgnition(t *testing.T) {
 	for i, test := range tests {
 		actual, _, report := translateIgnition(test.in, common.TranslateOptions{})
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(test.out), baseutil.FormatJSON(actual))
 		}
 		if report.String() != "" {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
@@ -1258,7 +1218,7 @@ func TestToIgn3_1(t *testing.T) {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %v, got %v", i, format(test.out), format(actual))
+			t.Errorf("#%d: expected %v, got %v", i, baseutil.FormatJSON(test.out), baseutil.FormatJSON(actual))
 		}
 	}
 }

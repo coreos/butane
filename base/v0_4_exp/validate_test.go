@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"testing"
 
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -132,7 +133,7 @@ func TestValidateResource(t *testing.T) {
 		expected.AddOnError(test.errPath, test.out)
 
 		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %v got %v", i, format(expected), format(actual))
+			t.Errorf("#%d: expected %v got %v", i, baseutil.FormatJSON(expected), baseutil.FormatJSON(actual))
 		}
 	}
 }
@@ -154,7 +155,7 @@ func TestValidateTree(t *testing.T) {
 		expected.AddOnError(path.New("yaml"), test.out)
 
 		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %v got %v", i, format(expected), format(actual))
+			t.Errorf("#%d: expected %v got %v", i, baseutil.FormatJSON(expected), baseutil.FormatJSON(actual))
 		}
 	}
 }

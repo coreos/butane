@@ -15,17 +15,14 @@
 package v0_3
 
 import (
-	"bytes"
-	"compress/gzip"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
 
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/translate"
 
@@ -34,7 +31,6 @@ import (
 	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
-	"github.com/vincent-petithory/dataurl"
 )
 
 var (
@@ -153,7 +149,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 		// calculate file path within FilesDir and check for
 		// path traversal
 		filePath := filepath.Join(options.FilesDir, *from.Local)
-		if err := ensurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
+		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
 			r.AddOnError(c, err)
 			return
 		}
@@ -164,7 +160,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
-		src, gzipped, err := makeDataURL(contents, to.Compression, options.NoResourceAutoCompression)
+		src, gzipped, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -180,7 +176,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 	if from.Inline != nil {
 		c := path.New("yaml", "inline")
 
-		src, gzipped, err := makeDataURL([]byte(*from.Inline), to.Compression, options.NoResourceAutoCompression)
+		src, gzipped, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, !options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -192,49 +188,6 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			tm.AddTranslation(c, path.New("json", "compression"))
 		}
 	}
-	return
-}
-
-func makeDataURL(contents []byte, currentCompression *string, noResourceAutoCompression bool) (uri string, gzipped bool, err error) {
-	// try three different encodings, and select the smallest one
-
-	// URL-escaped, useful for ASCII text
-	opaque := "," + dataurl.Escape(contents)
-
-	// Base64-encoded, useful for small or incompressible binary data
-	b64 := ";base64," + base64.StdEncoding.EncodeToString(contents)
-	if len(b64) < len(opaque) {
-		opaque = b64
-	}
-
-	// Base64-encoded gzipped, useful for compressible data.  If the
-	// user already enabled compression, don't compress again.
-	// We don't try base64-encoded URL-escaped because gzipped data is
-	// binary and URL escaping is unlikely to be efficient.
-	if (currentCompression == nil || *currentCompression == "") && !noResourceAutoCompression {
-		var buf bytes.Buffer
-		var compressor *gzip.Writer
-		if compressor, err = gzip.NewWriterLevel(&buf, gzip.BestCompression); err != nil {
-			return
-		}
-		if _, err = compressor.Write(contents); err != nil {
-			return
-		}
-		if err = compressor.Close(); err != nil {
-			return
-		}
-		gz := ";base64," + base64.StdEncoding.EncodeToString(buf.Bytes())
-		// Account for space needed by "compression": "gzip".
-		if len(gz)+25 < len(opaque) {
-			opaque = gz
-			gzipped = true
-		}
-	}
-
-	uri = (&url.URL{
-		Scheme: "data",
-		Opaque: opaque,
-	}).String()
 	return
 }
 
@@ -279,7 +232,7 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 		// calculate base path within FilesDir and check for
 		// path traversal
 		srcBaseDir := filepath.Join(options.FilesDir, tree.Local)
-		if err := ensurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
+		if err := baseutil.EnsurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
 			r.AddOnError(yamlPath, err)
 			continue
 		}
@@ -344,7 +297,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
-			url, gzipped, err := makeDataURL(contents, file.Contents.Compression, options.NoResourceAutoCompression)
+			url, gzipped, err := baseutil.MakeDataURL(contents, file.Contents.Compression, !options.NoResourceAutoCompression)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil
@@ -466,19 +419,4 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
 	}
-}
-
-func ensurePathWithinFilesDir(path, filesDir string) error {
-	absBase, err := filepath.Abs(filesDir)
-	if err != nil {
-		return err
-	}
-	absPath, err := filepath.Abs(path)
-	if err != nil {
-		return err
-	}
-	if !strings.HasPrefix(absPath, absBase+string(filepath.Separator)) {
-		return common.ErrFilesDirEscape
-	}
-	return nil
 }

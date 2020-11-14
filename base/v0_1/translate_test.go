@@ -18,6 +18,7 @@ import (
 	"reflect"
 	"testing"
 
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/translate"
 
@@ -27,29 +28,6 @@ import (
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
-
-// verifyTranslations ensures all the translations are identity, unless they match a listed one
-// it returns the offending translation if there is one
-func verifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
-	exceptionSet := translate.TranslationSet{
-		FromTag: set.FromTag,
-		ToTag:   set.ToTag,
-		Set:     map[string]translate.Translation{},
-	}
-	for _, ex := range exceptions {
-		exceptionSet.AddTranslation(ex.From, ex.To)
-	}
-	for key, translation := range set.Set {
-		if ex, ok := exceptionSet.Set[key]; ok {
-			if !reflect.DeepEqual(translation, ex) {
-				return &ex
-			}
-		} else if !reflect.DeepEqual(translation.From.Path, translation.To.Path) {
-			return &translation
-		}
-	}
-	return nil
-}
 
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
@@ -162,7 +140,7 @@ func TestTranslateFile(t *testing.T) {
 			t.Errorf("#%d: got non-empty report: %v", i, report.String())
 		}
 
-		if errT := verifyTranslations(translations, test.exceptions...); errT != nil {
+		if errT := baseutil.VerifyTranslations(translations, test.exceptions...); errT != nil {
 			t.Errorf("#%d: bad translation: %v", i, *errT)
 		}
 	}
