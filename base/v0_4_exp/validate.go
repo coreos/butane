@@ -15,6 +15,7 @@
 package v0_4_exp
 
 import (
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/vcontext/path"
@@ -51,6 +52,20 @@ func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
 	}
 	if fs.Format == nil || *fs.Format == "" {
 		r.AddOnError(c.Append("format"), common.ErrMountUnitNoFormat)
+	}
+	return
+}
+
+func (d Directory) Validate(c path.ContextPath) (r report.Report) {
+	if d.Mode != nil {
+		r.AddOnWarn(c.Append("mode"), baseutil.CheckForDecimalMode(*d.Mode, true))
+	}
+	return
+}
+
+func (f File) Validate(c path.ContextPath) (r report.Report) {
+	if f.Mode != nil {
+		r.AddOnWarn(c.Append("mode"), baseutil.CheckForDecimalMode(*f.Mode, false))
 	}
 	return
 }

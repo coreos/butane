@@ -35,3 +35,112 @@ func EnsurePathWithinFilesDir(path, filesDir string) error {
 	}
 	return nil
 }
+
+/// CheckForDecimalMode fails if the specified mode appears to have been
+/// incorrectly specified in decimal instead of octal.
+func CheckForDecimalMode(mode int, directory bool) error {
+	correctedMode, ok := decimalModeToOctal(mode)
+	if !ok {
+		return nil
+	}
+	if !isTypicalMode(mode, directory) && isTypicalMode(correctedMode, directory) {
+		return common.ErrDecimalMode
+	}
+	return nil
+}
+
+/// isTypicalMode returns true if the specified mode is unsurprising.
+/// It returns false for some modes that are unusual but valid in limited
+/// cases.
+func isTypicalMode(mode int, directory bool) bool {
+	// no permissions is always reasonable (root ignores mode bits)
+	if mode == 0 {
+		return true
+	}
+
+	// test user/group/other in reverse order
+	perms := []int{mode & 0007, (mode & 0070) >> 3, (mode & 0700) >> 6}
+	hadR := false
+	hadW := false
+	hadX := false
+	for _, perm := range perms {
+		r := perm&4 != 0
+		w := perm&2 != 0
+		x := perm&1 != 0
+		// more-specific perm must have all the bits of less-specific
+		// perm (r--rw----)
+		if !r && hadR || !w && hadW || !x && hadX {
+			return false
+		}
+		// if we have executable permission, it's weird for a
+		// less-specific perm to have read but not execute (rwxr-----)
+		if x && hadR && !hadX {
+			return false
+		}
+		// -w- and --x are reasonable in special cases but they're
+		// uncommon
+		if (w || x) && !r {
+			return false
+		}
+		hadR = hadR || r
+		hadW = hadW || w
+		hadX = hadX || x
+	}
+
+	// must be readable by someone
+	if !hadR {
+		return false
+	}
+
+	if directory {
+		// must be executable by someone
+		if !hadX {
+			return false
+		}
+		// setuid forbidden
+		if mode&04000 != 0 {
+			return false
+		}
+		// setgid or sticky must be writable to someone
+		if mode&03000 != 0 && !hadW {
+			return false
+		}
+	} else {
+		// setuid or setgid
+		if mode&06000 != 0 {
+			// must be executable to someone
+			if !hadX {
+				return false
+			}
+			// world-writable permission is a bad idea
+			if mode&2 != 0 {
+				return false
+			}
+		}
+		// sticky forbidden
+		if mode&01000 != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
+/// decimalModeToOctal takes a mode written in decimal and converts it to
+/// octal, returning (0, false) on failure.
+func decimalModeToOctal(mode int) (int, bool) {
+	if mode < 0 || mode > 7777 {
+		// out of range
+		return 0, false
+	}
+	ret := 0
+	for divisor := 1000; divisor > 0; divisor /= 10 {
+		digit := (mode / divisor) % 10
+		if digit > 7 {
+			// digit not available in octal
+			return 0, false
+		}
+		ret = (ret << 3) | digit
+	}
+	return ret, true
+}

@@ -36,6 +36,9 @@ var (
 	ErrTreeNotDirectory       = errors.New("root of tree must be a directory")
 	ErrTreeNoLocal            = errors.New("local is required")
 
+	// filesystem nodes
+	ErrDecimalMode = errors.New("unreasonable mode would be reasonable if specified in octal; remember to add a leading zero")
+
 	// mount units
 	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
 	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")

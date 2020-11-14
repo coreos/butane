@@ -152,3 +152,63 @@ func TestValidateTree(t *testing.T) {
 		assert.Equal(t, expected, actual, "#%d: bad report", i)
 	}
 }
+
+func TestValidateMode(t *testing.T) {
+	fileTests := []struct {
+		in  File
+		out error
+	}{
+		{
+			in:  File{},
+			out: nil,
+		},
+		{
+			in: File{
+				Mode: util.IntToPtr(0600),
+			},
+			out: nil,
+		},
+		{
+			in: File{
+				Mode: util.IntToPtr(600),
+			},
+			out: common.ErrDecimalMode,
+		},
+	}
+
+	for i, test := range fileTests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnWarn(path.New("yaml", "mode"), test.out)
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
+	}
+
+	dirTests := []struct {
+		in  Directory
+		out error
+	}{
+		{
+			in:  Directory{},
+			out: nil,
+		},
+		{
+			in: Directory{
+				Mode: util.IntToPtr(01770),
+			},
+			out: nil,
+		},
+		{
+			in: Directory{
+				Mode: util.IntToPtr(1770),
+			},
+			out: common.ErrDecimalMode,
+		},
+	}
+
+	for i, test := range dirTests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnWarn(path.New("yaml", "mode"), test.out)
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
+	}
+}
