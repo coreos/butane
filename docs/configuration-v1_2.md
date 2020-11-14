@@ -151,6 +151,10 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **thumbprint** (string): thumbprint of a trusted signing key.
       * **_tpm2_** (bool): whether or not to use a tpm2 device.
       * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+      * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
+        * **pin** (string): the clevis pin.
+        * **config** (string): the clevis configuration JSON.
+        * **_needs_network_** (bool): whether or not the device requires networking.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
