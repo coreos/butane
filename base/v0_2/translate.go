@@ -71,7 +71,8 @@ func (c Config) ToIgn3_1Unvalidated(options common.TranslateOptions) (types.Conf
 	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
 	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
 	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
-	tm.Merge(c.addMountUnits(&ret))
+
+	c.addMountUnits(&ret, &tm)
 
 	tm2, r2 := c.processTrees(&ret, options)
 	tm.Merge(tm2)
@@ -328,41 +329,25 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 	r.AddOnError(yamlPath, err)
 }
 
-func (c Config) addMountUnits(ret *types.Config) translate.TranslationSet {
-	ts := translate.NewTranslationSet("yaml", "json")
+func (c Config) addMountUnits(config *types.Config, ts *translate.TranslationSet) {
 	if len(c.Storage.Filesystems) == 0 {
-		return ts
+		return
 	}
-	unitMap := make(map[string]int, len(ret.Systemd.Units))
-	for i, u := range ret.Systemd.Units {
-		unitMap[u.Name] = i
-	}
+	var rendered types.Config
+	renderedTranslations := translate.NewTranslationSet("yaml", "json")
 	for i, fs := range c.Storage.Filesystems {
 		if fs.WithMountUnit == nil || !*fs.WithMountUnit {
 			continue
 		}
 		fromPath := path.New("yaml", "storage", "filesystems", i, "with_mount_unit")
 		newUnit := mountUnitFromFS(fs)
-		if i, ok := unitMap[unit.UnitNamePathEscape(*fs.Path)+".mount"]; ok {
-			// user also specified a unit, only set contents and enabled if the existing unit
-			// is unspecified
-			u := &ret.Systemd.Units[i]
-			unitPath := path.New("json", "systemd", "units", i)
-			if u.Contents == nil {
-				(*u).Contents = newUnit.Contents
-				ts.AddTranslation(fromPath, unitPath.Append("contents"))
-			}
-			if u.Enabled == nil {
-				(*u).Enabled = newUnit.Enabled
-				ts.AddTranslation(fromPath, unitPath.Append("enabled"))
-			}
-		} else {
-			unitPath := path.New("json", "systemd", "units", len(ret.Systemd.Units))
-			ret.Systemd.Units = append(ret.Systemd.Units, newUnit)
-			ts.AddFromCommonSource(fromPath, unitPath, newUnit)
-		}
+		unitPath := path.New("json", "systemd", "units", len(rendered.Systemd.Units))
+		rendered.Systemd.Units = append(rendered.Systemd.Units, newUnit)
+		renderedTranslations.AddFromCommonSource(fromPath, unitPath, newUnit)
 	}
-	return ts
+	retConfig, retTranslations := baseutil.MergeTranslatedConfigs(rendered, renderedTranslations, *config, *ts)
+	*config = retConfig.(types.Config)
+	*ts = retTranslations
 }
 
 func mountUnitFromFS(fs Filesystem) types.Unit {
