@@ -15,15 +15,14 @@
 package v0_4_exp
 
 import (
-	"reflect"
 	"testing"
 
-	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestValidateResource tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
@@ -131,10 +130,7 @@ func TestValidateResource(t *testing.T) {
 		actual := test.in.Validate(path.New("yaml"))
 		expected := report.Report{}
 		expected.AddOnError(test.errPath, test.out)
-
-		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %v got %v", i, baseutil.FormatJSON(expected), baseutil.FormatJSON(actual))
-		}
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
 	}
 }
 
@@ -153,9 +149,6 @@ func TestValidateTree(t *testing.T) {
 		actual := test.in.Validate(path.New("yaml"))
 		expected := report.Report{}
 		expected.AddOnError(path.New("yaml"), test.out)
-
-		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %v got %v", i, baseutil.FormatJSON(expected), baseutil.FormatJSON(actual))
-		}
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
 	}
 }

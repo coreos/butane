@@ -15,7 +15,6 @@
 package v0_1
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/coreos/fcct/config/common"
@@ -23,6 +22,7 @@ import (
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+	"github.com/stretchr/testify/assert"
 )
 
 // TestValidateFileContents tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
@@ -73,9 +73,6 @@ func TestValidateFileContents(t *testing.T) {
 		// hardcode inline for now since that's the only place errors occur. Move into the
 		// test struct once there's more than one place
 		expected.AddOnError(path.New("yaml", "inline"), test.out)
-
-		if !reflect.DeepEqual(actual, expected) {
-			t.Errorf("#%d: expected %+v got %+v", i, expected, actual)
-		}
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
 	}
 }

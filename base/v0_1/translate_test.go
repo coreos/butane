@@ -15,7 +15,6 @@
 package v0_1
 
 import (
-	"reflect"
 	"testing"
 
 	baseutil "github.com/coreos/fcct/base/util"
@@ -25,6 +24,8 @@ import (
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
+	"github.com/stretchr/testify/assert"
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
@@ -130,19 +131,10 @@ func TestTranslateFile(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations, report := translateFile(test.in, common.TranslateOptions{})
-
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
-		}
-
-		if report.String() != "" {
-			t.Errorf("#%d: got non-empty report: %v", i, report.String())
-		}
-
-		if errT := baseutil.VerifyTranslations(translations, test.exceptions...); errT != nil {
-			t.Errorf("#%d: bad translation: %v", i, *errT)
-		}
+		actual, translations, r := translateFile(test.in, common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.Equal(t, ((*translate.Translation)(nil)), baseutil.VerifyTranslations(translations, test.exceptions...), "#%d: bad translation", i)
 	}
 }
 
@@ -193,13 +185,9 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateDirectory(test.in, common.TranslateOptions{})
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
-		}
-		if report.String() != "" {
-			t.Errorf("#%d: got non-empty report: %v", i, report.String())
-		}
+		actual, _, r := translateDirectory(test.in, common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 	}
 }
 
@@ -252,13 +240,9 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, report := translateLink(test.in, common.TranslateOptions{})
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
-		}
-		if report.String() != "" {
-			t.Errorf("#%d: got non-empty report: %v", i, report.String())
-		}
+		actual, _, r := translateLink(test.in, common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 	}
 }
 
@@ -277,13 +261,9 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := translateIgnition(test.in, common.TranslateOptions{})
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
-		}
-		if report.String() != "" {
-			t.Errorf("#%d: got non-empty report: %v", i, report.String())
-		}
+		actual, _, r := translateIgnition(test.in, common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 	}
 }
 
@@ -304,12 +284,8 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, report := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
-		if report.String() != "" {
-			t.Errorf("#%d: got non-empty report: %v", i, report.String())
-		}
-		if !reflect.DeepEqual(actual, test.out) {
-			t.Errorf("#%d: expected %+v got %+v", i, test.out, actual)
-		}
+		actual, _, r := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 	}
 }
