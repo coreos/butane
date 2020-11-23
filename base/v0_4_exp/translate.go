@@ -77,8 +77,9 @@ Options=
 RequiredBy=remote-fs.target`))
 )
 
-// ToIgn3_3 translates the config to an Ignition config. It also returns the set of translations
+// ToIgn3_3Unvalidated translates the config to an Ignition config. It also returns the set of translations
 // it did so paths in the resultant config can be tracked back to their source in the source config.
+// No config validation is performed on input or output.
 func (c Config) ToIgn3_3Unvalidated(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret := types.Config{}
 

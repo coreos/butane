@@ -15,17 +15,12 @@
 package v1_3_exp
 
 import (
-	base "github.com/coreos/fcct/base/v0_4_exp"
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/util"
 
 	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
 	"github.com/coreos/vcontext/report"
 )
-
-type Config struct {
-	base.Config `yaml:",inline"`
-}
 
 // ToIgn3_3 translates the config to an Ignition config.  It returns a
 // report of any errors or warnings in the source and resultant config.  If
