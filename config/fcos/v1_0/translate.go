@@ -16,7 +16,7 @@ package v1_0
 
 import (
 	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/config/util"
+	cutil "github.com/coreos/fcct/config/util"
 
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 	"github.com/coreos/vcontext/report"
@@ -27,7 +27,7 @@ import (
 // the report has fatal errors or it encounters other problems translating,
 // an error is returned.
 func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, report.Report, error) {
-	cfg, r, err := util.Translate(c, "ToIgn3_0Unvalidated", options)
+	cfg, r, err := cutil.Translate(c, "ToIgn3_0Unvalidated", options)
 	return cfg.(types.Config), r, err
 }
 
@@ -35,5 +35,5 @@ func (c Config) ToIgn3_0(options common.TranslateOptions) (types.Config, report.
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
 func ToIgn3_0Bytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
-	return util.TranslateBytes(input, &Config{}, "ToIgn3_0", options)
+	return cutil.TranslateBytes(input, &Config{}, "ToIgn3_0", options)
 }
