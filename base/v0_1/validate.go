@@ -15,6 +15,7 @@
 package v0_1
 
 import (
+	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/vcontext/path"
@@ -24,6 +25,20 @@ import (
 func (f FileContents) Validate(c path.ContextPath) (r report.Report) {
 	if f.Inline != nil && f.Source != nil {
 		r.AddOnError(c.Append("inline"), common.ErrTooManyResourceSources)
+	}
+	return
+}
+
+func (d Directory) Validate(c path.ContextPath) (r report.Report) {
+	if d.Mode != nil {
+		r.AddOnWarn(c.Append("mode"), baseutil.CheckForDecimalMode(*d.Mode, true))
+	}
+	return
+}
+
+func (f File) Validate(c path.ContextPath) (r report.Report) {
+	if f.Mode != nil {
+		r.AddOnWarn(c.Append("mode"), baseutil.CheckForDecimalMode(*f.Mode, false))
 	}
 	return
 }
