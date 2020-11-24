@@ -15,12 +15,9 @@
 package util
 
 import (
-	"fmt"
 	"reflect"
 
 	"github.com/coreos/fcct/translate"
-
-	"github.com/clarketm/json"
 )
 
 // helper functions for writing tests
@@ -54,14 +51,4 @@ func VerifyTranslations(set translate.TranslationSet, exceptions ...translate.Tr
 		}
 	}
 	return nil
-}
-
-/// FormatJSON serializes the input to formatted JSON for display when a
-/// test fails
-func FormatJSON(from interface{}) string {
-	buf, err := json.MarshalIndent(from, "", "  ")
-	if err != nil {
-		return fmt.Sprintf("<Error marshaling to JSON: %v>", err)
-	}
-	return string(buf)
 }
