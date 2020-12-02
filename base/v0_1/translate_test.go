@@ -134,7 +134,7 @@ func TestTranslateFile(t *testing.T) {
 		actual, translations, r := translateFile(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
-		assert.Equal(t, ((*translate.Translation)(nil)), baseutil.VerifyTranslations(translations, test.exceptions...), "#%d: bad translation", i)
+		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
 	}
 }
 
