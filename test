@@ -2,6 +2,7 @@
 set -euo pipefail
 
 export GO111MODULE=on
+export GOFLAGS=-mod=vendor
 
 SRC=$(find . -name '*.go' -not -path "./vendor/*")
 
