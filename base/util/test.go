@@ -26,11 +26,7 @@ import (
 // match a listed one, and verifies that all the listed ones exist.
 // it returns the offending translation if there is one
 func VerifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
-	exceptionSet := translate.TranslationSet{
-		FromTag: set.FromTag,
-		ToTag:   set.ToTag,
-		Set:     map[string]translate.Translation{},
-	}
+	exceptionSet := translate.NewTranslationSet(set.FromTag, set.ToTag)
 	for _, ex := range exceptions {
 		exceptionSet.AddTranslation(ex.From, ex.To)
 		if tr, ok := set.Set[ex.To.String()]; ok {
