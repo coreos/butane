@@ -103,11 +103,15 @@ func (ts TranslationSet) MergeP(prefix interface{}, from TranslationSet) {
 
 // Prefix returns a TranslationSet with all translation paths prefixed by prefix.
 func (ts TranslationSet) Prefix(prefix interface{}) TranslationSet {
+	return ts.PrefixPaths(path.New(ts.FromTag, prefix), path.New(ts.ToTag, prefix))
+}
+
+// PrefixPaths returns a TranslationSet with from translation paths prefixed by
+// fromPrefix and to translation paths prefixed by toPrefix.
+func (ts TranslationSet) PrefixPaths(fromPrefix, toPrefix path.ContextPath) TranslationSet {
 	ret := NewTranslationSet(ts.FromTag, ts.ToTag)
-	from := path.New(ts.FromTag, prefix)
-	to := path.New(ts.ToTag, prefix)
 	for _, tr := range ts.Set {
-		ret.AddTranslation(from.Append(tr.From.Path...), to.Append(tr.To.Path...))
+		ret.AddTranslation(fromPrefix.Append(tr.From.Path...), toPrefix.Append(tr.To.Path...))
 	}
 	return ret
 }

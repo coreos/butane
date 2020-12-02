@@ -15,40 +15,31 @@
 package util
 
 import (
-	"reflect"
+	"fmt"
+	"testing"
 
 	"github.com/coreos/fcct/translate"
+	"github.com/stretchr/testify/assert"
 )
 
 // helper functions for writing tests
 
 // VerifyTranslations ensures all the translations are identity, unless they
 // match a listed one, and verifies that all the listed ones exist.
-// it returns the offending translation if there is one
-func VerifyTranslations(set translate.TranslationSet, exceptions ...translate.Translation) *translate.Translation {
-	exceptionSet := translate.TranslationSet{
-		FromTag: set.FromTag,
-		ToTag:   set.ToTag,
-		Set:     map[string]translate.Translation{},
-	}
+func VerifyTranslations(t *testing.T, set translate.TranslationSet, exceptions []translate.Translation, format string, args ...interface{}) {
+	message := fmt.Sprintf(format, args...)
+	exceptionSet := translate.NewTranslationSet(set.FromTag, set.ToTag)
 	for _, ex := range exceptions {
 		exceptionSet.AddTranslation(ex.From, ex.To)
 		if tr, ok := set.Set[ex.To.String()]; ok {
-			if !reflect.DeepEqual(tr, ex) {
-				return &ex
-			}
+			assert.Equal(t, ex, tr, "%s: non-identity translation with unexpected From", message)
 		} else {
-			return &ex
+			t.Errorf("%s: missing non-identity translation %v", message, ex)
 		}
 	}
 	for key, translation := range set.Set {
-		if ex, ok := exceptionSet.Set[key]; ok {
-			if !reflect.DeepEqual(translation, ex) {
-				return &ex
-			}
-		} else if !reflect.DeepEqual(translation.From.Path, translation.To.Path) {
-			return &translation
+		if _, ok := exceptionSet.Set[key]; !ok {
+			assert.Equal(t, translation.From.Path, translation.To.Path, "%s: translation is not identity", message)
 		}
 	}
-	return nil
 }
