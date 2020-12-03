@@ -21,7 +21,7 @@ import (
 	fcos1_0 "github.com/coreos/fcct/config/fcos/v1_0"
 	fcos1_1 "github.com/coreos/fcct/config/fcos/v1_1"
 	fcos1_2 "github.com/coreos/fcct/config/fcos/v1_2"
-	fcos1_3_exp "github.com/coreos/fcct/config/fcos/v1_3_exp"
+	fcos1_3 "github.com/coreos/fcct/config/fcos/v1_3"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
@@ -42,7 +42,7 @@ func init() {
 	RegisterTranslator("fcos", "1.0.0", fcos1_0.ToIgn3_0Bytes)
 	RegisterTranslator("fcos", "1.1.0", fcos1_1.ToIgn3_1Bytes)
 	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
-	RegisterTranslator("fcos", "1.3.0-experimental", fcos1_3_exp.ToIgn3_2Bytes)
+	RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
 }
 
 /// RegisterTranslator registers a translator for the specified variant and
