@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_3
+package v1_4_exp
 
 import (
-	base "github.com/coreos/fcct/base/v0_3"
+	base "github.com/coreos/fcct/base/v0_4_exp"
 )
 
 type Config struct {
