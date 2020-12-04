@@ -228,6 +228,89 @@ storage:
       with_mount_unit: true
 ```
 
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem unlocked with a combination of a TPM2 device and a network Tang server.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  luks:
+    tpm2: true
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
+This example combines `boot_device` with a manually-specified filesystem `format` to create an encrypted root filesystem formatted with `ext4` instead of the default `xfs`.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  luks:
+    tpm2: true
+storage:
+  filesystems:
+    - device: /dev/mapper/root
+      format: ext4
+```
+
+### Mirrored boot disk
+
+This example replicates all default partitions on the boot disk across multiple disks, allowing the system to survive disk failure.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  mirror:
+    devices:
+      - /dev/sda
+      - /dev/sdb
+```
+
+This example configures a mirrored boot disk with a TPM2-encrypted root filesystem, overrides the size of the root partition replicas, and adds a mirrored `/var` partition which consumes the remainder of the disks.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  luks:
+    tpm2: true
+  mirror:
+    devices:
+      - /dev/sda
+      - /dev/sdb
+storage:
+  disks:
+    - device: /dev/sda
+      partitions:
+        - label: root-1
+          size_mib: 8192
+        - label: var-1
+    - device: /dev/sdb
+      partitions:
+        - label: root-2
+          size_mib: 8192
+        - label: var-2
+  raid:
+    - name: md-var
+      level: raid1
+      devices:
+        - /dev/disk/by-partlabel/var-1
+        - /dev/disk/by-partlabel/var-2
+  filesystems:
+    - device: /dev/md/md-var
+      path: /var
+      format: xfs
+      wipe_filesystem: true
+      with_mount_unit: true
+```
+
 ## systemd units
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
