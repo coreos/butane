@@ -1,16 +1,16 @@
 ---
 layout: default
-title: Config Spec v1.2.0
+title: RHEL CoreOS v0.1.0
 parent: Configuration specifications
-nav_order: 47
+nav_order: 99
 ---
 
-# Configuration Specification v1.2.0
+# RHEL CoreOS Specification v0.1.0
 
-The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
+The RHEL CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
-* **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for FCCT.
-* **version** (string): the semantic version of the spec for this document. This document is for version `1.2.0` and generates Ignition configs with version `3.2.0`.
+* **variant** (string): used to differentiate configs for different operating systems. Must be `rhcos` for this specification.
+* **version** (string): the semantic version of the spec for this document. This document is for version `0.1.0` and generates Ignition configs with version `3.2.0`.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
@@ -188,6 +188,16 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
     * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
+* **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
+  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
+  * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
+    * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
+      * **url** (string): url of the tang server.
+      * **thumbprint** (string): thumbprint of a trusted signing key.
+    * **_tpm2_** (bool): whether or not to use a tpm2 device.
+    * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+  * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
+    * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397

@@ -1,16 +1,16 @@
 ---
 layout: default
-title: Config Spec v1.1.0
+title: Fedora CoreOS v1.3.0
 parent: Configuration specifications
-nav_order: 48
+nav_order: 46
 ---
 
-# Configuration Specification v1.1.0
+# Fedora CoreOS Specification v1.3.0
 
 The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
-* **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for FCCT.
-* **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0` and generates Ignition configs with version `3.1.0`.
+* **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for this specification.
+* **version** (string): the semantic version of the spec for this document. This document is for version `1.3.0` and generates Ignition configs with version `3.2.0`.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
@@ -77,7 +77,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
     * **_mount_options_** (list of strings): any special options to be passed to the mount command.
-    * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`.
+    * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`. If your filesystem is located on a Tang-backed LUKS device, the unit will automatically require network access if you specify the device as `/dev/mapper/<device-name>` or `/dev/disk/by-id/dm-name-<device-name>`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.
     * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `contents` must be specified if `overwrite` is true. Defaults to false.
@@ -129,6 +129,33 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
       * **_name_** (string): the group name of the owner.
     * **target** (string): the target path of the link
     * **_hard_** (boolean): a symbolic link is created if this is false, a hard one if this is true.
+ * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
+    * **name** (string): the name of the luks device.
+    * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
+    * **_key_file_** (string): options related to the contents of the key file.
+      * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
+      * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents of the key file. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents of the key file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
+        * **name** (string): the header name.
+        * **_value_** (string): the header contents.
+      * **_verification_** (object): options related to the verification of the file contents.
+        * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
+    * **_label_** (string): the label of the luks device.
+    * **_uuid_** (string): the uuid of the luks device.
+    * **_options_** (list of strings): any additional options to be passed to the cryptsetup utility.
+    * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [the Ignition documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
+    * **_clevis_** (object): describes the clevis configuration for the luks device.
+      * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
+        * **url** (string): url of the tang server.
+        * **thumbprint** (string): thumbprint of a trusted signing key.
+      * **_tpm2_** (bool): whether or not to use a tpm2 device.
+      * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+      * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
+        * **pin** (string): the clevis pin.
+        * **config** (string): the clevis configuration JSON.
+        * **_needs_network_** (bool): whether or not the device requires networking.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
@@ -161,6 +188,16 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
     * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
+* **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
+  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
+  * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
+    * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
+      * **url** (string): url of the tang server.
+      * **thumbprint** (string): thumbprint of a trusted signing key.
+    * **_tpm2_** (bool): whether or not to use a tpm2 device.
+    * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+  * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
+    * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397
