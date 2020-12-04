@@ -20,6 +20,8 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.2.0](config-fcos-v1_2.md)
   - [v1.1.0](config-fcos-v1_1.md)
   - [v1.0.0](config-fcos-v1_0.md)
+- RHEL CoreOS (`rhcos`)
+  - [v0.1.0](config-rhcos-v0_1.md)
 
 ## Experimental specification versions
 
@@ -27,6 +29,8 @@ Do not use **experimental** specifications for anything beyond **development and
 
 - Fedora CoreOS (`fcos`)
   - [v1.4.0-experimental](config-fcos-v1_4-exp.md)
+- RHEL CoreOS (`rhcos`)
+  - [v0.2.0-experimental](config-rhcos-v0_2-exp.md)
 
 ## FCC specifications and Ignition specifications
 
@@ -39,3 +43,5 @@ Each version of the FCC specification corresponds to a version of the Ignition s
 | `fcos`      | 1.2.0              | 3.2.0              |
 | `fcos`      | 1.3.0              | 3.2.0              |
 | `fcos`      | 1.4.0-experimental | 3.3.0-experimental |
+| `rhcos`     | 0.1.0              | 3.2.0              |
+| `rhcos`     | 0.2.0-experimental | 3.3.0-experimental |
