@@ -15,7 +15,7 @@ Create a [release checklist](https://github.com/coreos/fcct/issues/new?template=
 
 ## Bumping spec versions
 
-Up to this point in FCCT development, FCC versions and `base` versions have been 1:1 mapped onto Ignition specs, and we have not had any distro-specific sugar. This checklist therefore describes bumping the Ignition spec version, `base` version, and `config` version, while leaving the distro sugar version unchanged. If your scenario is different, modify to taste.
+This checklist describes bumping the Ignition spec version, `base` version, and `config` version. If your scenario is different, modify to taste.
 
 ### Stabilize Ignition spec version
 
@@ -45,5 +45,6 @@ Up to this point in FCCT development, FCC versions and `base` versions have been
 ### Update docs
 
 - Copy the `C-exp` spec doc to `C+1-exp`. Update the header and the version numbers in the description of the `version` field.
-- Rename the `C-exp` spec doc to `C`. Update the header, delete the experimental config warning, and update the version numbers in the description of the `version` field.
+- Rename the `C-exp` spec doc to `C`. Update the header, delete the experimental config warning, and update the version numbers in the description of the `version` field. Update the `nav_order` to one less than the previous stable release.
+- Update `docs/specs.md`.
 - Update `docs/migrating-configs.md` for the new spec version. Copy the relevant section from Ignition's `doc/migrating-configs.md`, convert the configs to FCCs, convert field names to snake case, and update wording as needed. Add subsections for any new FCC-specific features.
