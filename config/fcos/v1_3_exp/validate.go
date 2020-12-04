@@ -15,26 +15,27 @@
 package v1_3_exp
 
 import (
-	base "github.com/coreos/fcct/base/v0_3"
+	"github.com/coreos/fcct/config/common"
+
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
-type Config struct {
-	base.Config `yaml:",inline"`
-	BootDevice  BootDevice `yaml:"boot_device"`
+func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
+	if d.Layout != nil {
+		switch *d.Layout {
+		case "aarch64", "ppc64le", "x86_64":
+		default:
+			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
+		}
+	}
+	r.Merge(d.Mirror.Validate(c.Append("mirror")))
+	return
 }
 
-type BootDevice struct {
-	Layout *string          `yaml:"layout"`
-	Luks   BootDeviceLuks   `yaml:"luks"`
-	Mirror BootDeviceMirror `yaml:"mirror"`
-}
-
-type BootDeviceLuks struct {
-	Tang      []base.Tang `yaml:"tang"`
-	Threshold *int        `yaml:"threshold"`
-	Tpm2      *bool       `yaml:"tpm2"`
-}
-
-type BootDeviceMirror struct {
-	Devices []string `yaml:"devices"`
+func (m BootDeviceMirror) Validate(c path.ContextPath) (r report.Report) {
+	if len(m.Devices) == 1 {
+		r.AddOnError(c.Append("devices"), common.ErrTooFewMirrorDevices)
+	}
+	return
 }

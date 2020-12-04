@@ -42,4 +42,8 @@ var (
 	// mount units
 	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
 	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
+
+	// boot device
+	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64")
+	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
 )

@@ -49,8 +49,8 @@ github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e h1:Wf6HqHfScWJN9
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=
 github.com/coreos/go-systemd/v22 v22.0.0 h1:XJIw/+VlJ+87J+doOxznsAWIdmWuViOVhkQamW5YV28=
 github.com/coreos/go-systemd/v22 v22.0.0/go.mod h1:xO0FLkIi5MaZafQlIrOotqXZ90ih+1atmu1JpKERPPk=
-github.com/coreos/ignition/v2 v2.7.1-0.20201124074945-129ef9cd9b40 h1:L2od4wU+41Zk3nXrOlz+JRkYOMsZisHLBtZR+qH1LHk=
-github.com/coreos/ignition/v2 v2.7.1-0.20201124074945-129ef9cd9b40/go.mod h1:A5lFFzA2/zvZQPVEvI1lR5WPLWRb7KZ7Q1QOeUMtcAc=
+github.com/coreos/ignition/v2 v2.8.1 h1:gKCX6NwGGFh866MvpJlq2ZCqppVbWK0DA/uflL34tDU=
+github.com/coreos/ignition/v2 v2.8.1/go.mod h1:A5lFFzA2/zvZQPVEvI1lR5WPLWRb7KZ7Q1QOeUMtcAc=
 github.com/coreos/vcontext v0.0.0-20201120045928-b0e13dab675c h1:jA28WeORitsxGFVWhyWB06sAG2HbLHPQuHwDydhU2CQ=
 github.com/coreos/vcontext v0.0.0-20201120045928-b0e13dab675c/go.mod h1:z4pMVvaUrxs98RROlIYdAQCKhEicjnTirOaVyDRH5h8=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
