@@ -7,17 +7,13 @@ has_toc: false
 
 # Configuration specifications
 
-Fedora CoreOS Configs must conform to a specific version of the `fcct` schema,
-specified with the `version: X.Y.Z` field in the configuration.
+Fedora CoreOS Configs must conform to a specific version of the `fcct` schema, specified with the `version: X.Y.Z` field in the configuration.
 
-See the [Upgrading Configs](migrating-configs.md) page for instructions to
-update a configuration to the latest specification.
+See the [Upgrading Configs](migrating-configs.md) page for instructions to update a configuration to the latest specification.
 
 ## Stable specification versions
 
-We recommend that you always use the latest **stable** specification to benefit
-from new features and bug fixes. The following **stable** specification
-versions are currently supported in `fcct`:
+We recommend that you always use the latest **stable** specification to benefit from new features and bug fixes. The following **stable** specification versions are currently supported in `fcct`:
 
 - [v1.3.0](configuration-v1_3.md)
 - [v1.2.0](configuration-v1_2.md)
@@ -26,17 +22,13 @@ versions are currently supported in `fcct`:
 
 ## Experimental specification versions
 
-Do not use the **experimental** specification for anything beyond **development
-and testing** as it is subject to change **without warning or announcement**.
-The following **experimental** specification version is currently available in
-`fcct`:
+Do not use the **experimental** specification for anything beyond **development and testing** as it is subject to change **without warning or announcement**. The following **experimental** specification version is currently available in `fcct`:
 
 - [v1.4.0-experimental](configuration-v1_4-exp.md)
 
 ## FCCT specifications and Ignition specifications
 
-Each version of the FCCT specification corresponds to a version of the Ignition
-specification:
+Each version of the FCCT specification corresponds to a version of the Ignition specification:
 
 | FCCT spec          | Igntion spec       |
 |--------------------|--------------------|
