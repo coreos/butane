@@ -19,6 +19,7 @@ We recommend that you always use the latest **stable** specification to benefit
 from new features and bug fixes. The following **stable** specification
 versions are currently supported in `fcct`:
 
+- [v1.3.0](configuration-v1_3.md)
 - [v1.2.0](configuration-v1_2.md)
 - [v1.1.0](configuration-v1_1.md)
 - [v1.0.0](configuration-v1_0.md)
@@ -30,7 +31,7 @@ and testing** as it is subject to change **without warning or announcement**.
 The following **experimental** specification version is currently available in
 `fcct`:
 
-- [v1.3.0-experimental](configuration-v1_3-exp.md)
+- [v1.4.0-experimental](configuration-v1_4-exp.md)
 
 ## FCCT specifications and Ignition specifications
 
@@ -42,4 +43,5 @@ specification:
 | 1.0.0              | 3.0.0              |
 | 1.1.0              | 3.1.0              |
 | 1.2.0              | 3.2.0              |
-| 1.3.0-experimental | 3.2.0              |
+| 1.3.0              | 3.2.0              |
+| 1.4.0-experimental | 3.3.0-experimental |

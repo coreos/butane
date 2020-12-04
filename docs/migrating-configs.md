@@ -12,6 +12,34 @@ Occasionally, there are changes made to Fedora CoreOS configuration that break b
 1. TOC
 {:toc}
 
+## From Version 1.2.0 to 1.3.0
+
+There are no breaking changes between versions 1.2.0 and 1.3.0 of the configuration specification. Any valid 1.2.0 configuration can be updated to a 1.3.0 configuration by changing the version string in the config.
+
+The following is a list of notable new features, deprecations, and changes.
+
+### Boot disk mirroring and LUKS
+
+The config gained a new top-level `boot_device` section with `luks` and `mirror` subsections, which provide a simple way to configure encryption and/or mirroring for the boot disk. When `luks` is specified, the root filesystem is encrypted and can be unlocked with any combination of a TPM2 device and network Tang servers. When `mirror` is specified, all default partitions are replicated across multiple disks, allowing the system to survive disk failure. On aarch64 or ppc64le systems, the `layout` field must be set to `aarch64` or `ppc64le` to select the correct partition layout.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  layout: ppc64le
+  mirror:
+    devices:
+      - /dev/sda
+      - /dev/sdb
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+    tpm2: true
+    threshold: 2
+```
+
 ## From Version 1.1.0 to 1.2.0
 
 There are no breaking changes between versions 1.1.0 and 1.2.0 of the configuration specification. Any valid 1.1.0 configuration can be updated to a 1.2.0 configuration by changing the version string in the config.
