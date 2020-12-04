@@ -1,15 +1,15 @@
 ---
 layout: default
-title: Config Spec v1.1.0
+title: Fedora CoreOS v1.1.0
 parent: Configuration specifications
 nav_order: 48
 ---
 
-# Configuration Specification v1.1.0
+# Fedora CoreOS Specification v1.1.0
 
 The Fedora CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
-* **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for FCCT.
+* **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0` and generates Ignition configs with version `3.1.0`.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
