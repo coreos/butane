@@ -70,10 +70,10 @@ The RHEL CoreOS configuration is a YAML document conforming to the following spe
     * **devices** (list of strings): the list of devices (referenced by their absolute path) in the array.
     * **_spares_** (integer): the number of spares (if applicable) in the array.
     * **_options_** (list of strings): any additional options to be passed to mdadm.
-  * **_filesystems_** (list of objects): the list of filesystems to be configured. `path`, `device`, and `format` all need to be specified. Every filesystem must have a unique `device`.
-    * **path** (string): the mount-point of the filesystem while Ignition is running relative to where the root filesystem will be mounted. This is not necessarily the same as where it should be mounted in the real root, but it is encouraged to make it the same.
+  * **_filesystems_** (list of objects): the list of filesystems to be configured. `device` and `format` need to be specified. Every filesystem must have a unique `device`.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **format** (string): the filesystem format (ext4, btrfs, xfs, vfat, or swap).
+    * **_path_** (string): the mount-point of the filesystem while Ignition is running relative to where the root filesystem will be mounted. This is not necessarily the same as where it should be mounted in the real root, but it is encouraged to make it the same.
     * **_wipe_filesystem_** (boolean): whether or not to wipe the device before filesystem creation, see [the documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
     * **_label_** (string): the label of the filesystem.
     * **_uuid_** (string): the uuid of the filesystem.
@@ -162,8 +162,8 @@ The RHEL CoreOS configuration is a YAML document conforming to the following spe
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
 * **_systemd_** (object): describes the desired state of the systemd units.
-  * **_units_** (list of objects): the list of systemd units.
-    * **name** (string): the name of the unit. This must be suffixed with a valid unit type (e.g. "thing.service"). Every unit must have a unique `name`.
+  * **_units_** (list of objects): the list of systemd units. Every unit must have a unique `name`.
+    * **name** (string): the name of the unit. This must be suffixed with a valid unit type (e.g. "thing.service").
     * **_enabled_** (boolean): whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section.
     * **_mask_** (boolean): whether or not the service shall be masked. When true, the service is masked by symlinking it to `/dev/null`.
     * **_contents_** (string): the contents of the unit.
