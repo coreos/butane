@@ -146,6 +146,16 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 			})
 			renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device", "mirror", "devices", i), path.New("json", "storage", "disks", len(rendered.Storage.Disks)), disk)
 			rendered.Storage.Disks = append(rendered.Storage.Disks, disk)
+
+			// add ESP filesystem
+			espFilesystem := types.Filesystem{
+				Device:         fmt.Sprintf("/dev/disk/by-partlabel/esp-%d", labelIndex),
+				Format:         util.StrToPtr("vfat"),
+				Label:          util.StrToPtr(fmt.Sprintf("esp-%d", labelIndex)),
+				WipeFilesystem: util.BoolToPtr(true),
+			}
+			renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device", "mirror", "devices", i), path.New("json", "storage", "filesystems", len(rendered.Storage.Filesystems)), espFilesystem)
+			rendered.Storage.Filesystems = append(rendered.Storage.Filesystems, espFilesystem)
 		}
 
 		// create RAIDs
@@ -158,13 +168,6 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 			return ret
 		}
 		rendered.Storage.Raid = []types.Raid{{
-			Devices: raidDevices("esp"),
-			Level:   "raid1",
-			Name:    "md-esp",
-			// put the RAID superblock at the end of the
-			// partition to avoid confusing UEFI
-			Options: []types.RaidOption{"--metadata=1.0"},
-		}, {
 			Devices: raidDevices("boot"),
 			Level:   "raid1",
 			Name:    "md-boot",
@@ -179,19 +182,15 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		}}
 		renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device", "mirror"), path.New("json", "storage", "raid"), rendered.Storage.Raid)
 
-		// create filesystems, except for root
-		rendered.Storage.Filesystems = []types.Filesystem{{
-			Device:         "/dev/md/md-esp",
-			Format:         util.StrToPtr("vfat"),
-			Label:          util.StrToPtr("EFI-SYSTEM"),
-			WipeFilesystem: util.BoolToPtr(true),
-		}, {
+		// create boot filesystem
+		bootFilesystem := types.Filesystem{
 			Device:         "/dev/md/md-boot",
 			Format:         util.StrToPtr("ext4"),
 			Label:          util.StrToPtr("boot"),
 			WipeFilesystem: util.BoolToPtr(true),
-		}}
-		renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device", "mirror"), path.New("json", "storage", "filesystems"), rendered.Storage.Filesystems)
+		}
+		renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device", "mirror"), path.New("json", "storage", "filesystems", len(rendered.Storage.Filesystems)), bootFilesystem)
+		rendered.Storage.Filesystems = append(rendered.Storage.Filesystems, bootFilesystem)
 	}
 
 	// encrypted root partition
