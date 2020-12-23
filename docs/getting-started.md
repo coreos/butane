@@ -11,22 +11,13 @@ Fedora CoreOS Configs are YAML files conforming to `fcct`'s schema. For more inf
 
 ### Getting FCCT
 
-`fcct` can be downloaded as a standalone binary or run as a container with docker or podman.
+`fcct` can be run from a container image with `podman` or `docker`, installed from Fedora package repositories or downloaded as a standalone binary.
 
-#### Standalone binary
+Using the official container images is the recommended option.
 
-Download the latest version of `fcct` and the detached signature from the [releases page](https://github.com/coreos/fcct/releases). Verify it with gpg:
+#### Container image
 
-```
-gpg --verify <detached sig> <fcct binary>
-```
-You may need to download the [Fedora signing keys](https://getfedora.org/static/fedora.gpg) and import them with `gpg --import <key>` if you have not already done so.
-
-New releases of `fcct` are backwards compatible with old releases unless otherwise noted.
-
-#### Container
-
-This example uses podman, but docker can also be used.
+This example uses `podman`, but `docker` can also be used.
 
 ```bash
 # Pull the latest release
@@ -38,6 +29,34 @@ podman run -i --rm quay.io/coreos/fcct:release --pretty --strict < your_config.f
 # Run fcct using files.
 podman run --rm -v /path/to/your_config.fcc:/config.fcc:z quay.io/coreos/fcct:release --pretty --strict /config.fcc > transpiled_config.ign
 ```
+
+You may also add the following alias in your shell configuration:
+
+```
+alias fcct='podman run --rm --tty --interactive \
+            --security-opt label=disable        \
+            --volume ${PWD}:/pwd --workdir /pwd \
+            quay.io/coreos/fcct:release'
+```
+
+#### Distribution packages
+
+`fcct` is available from the Fedora package repositories:
+
+```
+$ sudo dnf install -y fcct
+```
+
+#### Standalone binary
+
+Download the latest version of `fcct` and the detached signature from the [releases page](https://github.com/coreos/fcct/releases). Verify it with gpg:
+
+```
+gpg --verify <detached sig> <fcct binary>
+```
+You may need to download the [Fedora signing keys](https://getfedora.org/static/fedora.gpg) and import them with `gpg --import <key>` if you have not already done so.
+
+New releases of `fcct` are backwards compatible with old releases unless otherwise noted.
 
 ### Writing and using Fedora CoreOS Configs
 
