@@ -1,15 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-export GO111MODULE=on
-export GOFLAGS=-mod=vendor
-
 SRC=$(find . -name '*.go' -not -path "./vendor/*")
 
 echo "checking gofmt"
 res=$(gofmt -d $SRC)
 echo "$res"
 test -z "$res"
+
+source ./build
 
 echo "Running tests"
 go test ./... -cover
@@ -33,7 +32,7 @@ do
 	do
 		echo "Checking $i"
 		cat "$i" | tail -n +3 | head -n -1 \
-			| go run internal/main.go --strict --files-dir tmpdocs/files-dir > /dev/null \
+			| ${BIN_PATH}/${NAME} --strict --files-dir tmpdocs/files-dir > /dev/null \
 			|| (cat -n "$i" && false)
 	done
 	rm -f tmpdocs/fcc_*
