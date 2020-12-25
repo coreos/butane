@@ -47,11 +47,10 @@ func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
 	if fs.WithMountUnit == nil || !*fs.WithMountUnit {
 		return
 	}
-	if fs.Path == nil || *fs.Path == "" {
-		r.AddOnError(c.Append("path"), common.ErrMountUnitNoPath)
-	}
 	if fs.Format == nil || *fs.Format == "" {
 		r.AddOnError(c.Append("format"), common.ErrMountUnitNoFormat)
+	} else if *fs.Format != "swap" && (fs.Path == nil || *fs.Path == "") {
+		r.AddOnError(c.Append("path"), common.ErrMountUnitNoPath)
 	}
 	return
 }

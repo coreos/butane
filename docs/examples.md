@@ -186,6 +186,28 @@ storage:
       with_mount_unit: true
 ```
 
+### Swap areas
+
+This example creates a swap partition spanning all of the `sdb` device, creates a swap area on it, and creates a systemd swap unit so the swap area is enabled on boot.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.4.0-experimental
+storage:
+  disks:
+    - device: /dev/sdb
+      wipe_table: true
+      partitions:
+        - number: 1
+          label: swap
+  filesystems:
+    - device: /dev/disk/by-partlabel/swap
+      format: swap
+      wipe_filesystem: true
+      with_mount_unit: true
+```
+
 ### LUKS encrypted storage
 
 This example creates three LUKS2 encrypted storage volumes: one unlocked with a static key file, one with a TPM2 device via Clevis, and one with a network Tang server via Clevis. Volumes can be unlocked with any combination of these methods, or with a custom Clevis PIN and CFG. If a key file is not specified for a device, an ephemeral one will be created.
