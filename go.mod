@@ -1,6 +1,6 @@
 module github.com/coreos/fcct
 
-go 1.12
+go 1.16
 
 require (
 	github.com/clarketm/json v1.14.1
