@@ -14,10 +14,16 @@
 
 package common
 
+import "io/fs"
+
 type TranslateOptions struct {
-	FilesDir                  string // allow embedding local files relative to this directory
-	NoResourceAutoCompression bool   // skip automatic compression of inline/local resources
-	DebugPrintTranslations    bool   // report translations to stderr
+	// FS allows embedding local files.
+	FS fs.FS
+	// NoResourceAutoCompression disables automatic compression
+	// of inline/local resources.
+	NoResourceAutoCompression bool
+	// DebugPrintTranslations reports translations to stderr.
+	DebugPrintTranslations    bool
 }
 
 type TranslateBytesOptions struct {

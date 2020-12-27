@@ -23,6 +23,7 @@ import (
 
 	"github.com/coreos/fcct/config"
 	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/internal/fsutil"
 	"github.com/coreos/fcct/internal/version"
 )
 
@@ -33,10 +34,11 @@ func fail(format string, args ...interface{}) {
 
 func main() {
 	var (
-		input       string
-		output      string
-		helpFlag    bool
-		versionFlag bool
+		input        string
+		output       string
+		helpFlag     bool
+		versionFlag  bool
+		filesDirFlag string
 	)
 	options := common.TranslateBytesOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
@@ -49,7 +51,7 @@ func main() {
 	pflag.Lookup("input").Deprecated = "specify filename directly on command line"
 	pflag.Lookup("input").Hidden = true
 	pflag.StringVarP(&output, "output", "o", "", "write to output file instead of stdout")
-	pflag.StringVarP(&options.FilesDir, "files-dir", "d", "", "allow embedding local files from this directory")
+	pflag.StringVarP(&filesDirFlag, "files-dir", "d", "", "allow embedding local files from this directory")
 
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] [input-file]\n", os.Args[0])
@@ -74,6 +76,10 @@ func main() {
 	if versionFlag {
 		fmt.Println(version.String)
 		os.Exit(0)
+	}
+
+	if filesDirFlag != "" {
+		options.FS = fsutil.DirFS(filesDirFlag)
 	}
 
 	var infile *os.File = os.Stdin

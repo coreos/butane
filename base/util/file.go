@@ -15,22 +15,14 @@
 package util
 
 import (
-	"path/filepath"
+	"path"
 	"strings"
 
 	"github.com/coreos/fcct/config/common"
 )
 
-func EnsurePathWithinFilesDir(path, filesDir string) error {
-	absBase, err := filepath.Abs(filesDir)
-	if err != nil {
-		return err
-	}
-	absPath, err := filepath.Abs(path)
-	if err != nil {
-		return err
-	}
-	if !strings.HasPrefix(absPath, absBase+string(filepath.Separator)) {
+func EnsurePathWithinFS(name string) error {
+	if name = path.Clean(name); strings.HasPrefix(name, "..") {
 		return common.ErrFilesDirEscape
 	}
 	return nil

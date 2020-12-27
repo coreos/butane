@@ -15,14 +15,16 @@
 package v0_2
 
 import (
-	"io/ioutil"
+	"io/fs"
 	"os"
+	gopath "path"
 	"path/filepath"
 	"strings"
 	"text/template"
 
 	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/internal/fsutil"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/go-systemd/unit"
@@ -122,20 +124,18 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 	if from.Local != nil {
 		c := path.New("yaml", "local")
 
-		if options.FilesDir == "" {
+		if options.FS == nil {
 			r.AddOnError(c, common.ErrNoFilesDir)
 			return
 		}
 
-		// calculate file path within FilesDir and check for
-		// path traversal
-		filePath := filepath.Join(options.FilesDir, *from.Local)
-		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
+		filePath := gopath.Clean(*from.Local)
+		if err := baseutil.EnsurePathWithinFS(filePath); err != nil {
 			r.AddOnError(c, err)
 			return
 		}
 
-		contents, err := ioutil.ReadFile(filePath)
+		contents, err := fs.ReadFile(options.FS, filePath)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -205,19 +205,18 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 
 	for i, tree := range c.Storage.Trees {
 		yamlPath := path.New("yaml", "storage", "trees", i)
-		if options.FilesDir == "" {
+		if options.FS == nil {
 			r.AddOnError(yamlPath, common.ErrNoFilesDir)
 			return ts, r
 		}
 
-		// calculate base path within FilesDir and check for
-		// path traversal
-		srcBaseDir := filepath.Join(options.FilesDir, tree.Local)
-		if err := baseutil.EnsurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
+		srcBaseDir := gopath.Clean(tree.Local)
+		if err := baseutil.EnsurePathWithinFS(srcBaseDir); err != nil {
 			r.AddOnError(yamlPath, err)
 			continue
 		}
-		info, err := os.Stat(srcBaseDir)
+
+		info, err := fsutil.Stat(options.FS, srcBaseDir)
 		if err != nil {
 			r.AddOnError(yamlPath, err)
 			continue
@@ -240,7 +239,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 	// The strategy for errors within WalkFunc is to add an error to
 	// the report and return nil, so walking continues but translation
 	// will fail afterward.
-	err := filepath.Walk(srcBaseDir, func(srcPath string, info os.FileInfo, err error) error {
+	err := fs.WalkDir(options.FS, srcBaseDir, func(srcPath string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			r.AddOnError(yamlPath, err)
 			return nil
@@ -252,9 +251,11 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 		}
 		destPath := filepath.Join(destBaseDir, relPath)
 
-		if info.Mode().IsDir() {
+		switch typ := entry.Type(); {
+		case typ.IsDir():
 			return nil
-		} else if info.Mode().IsRegular() {
+
+		case typ.IsRegular():
 			i, file := t.GetFile(destPath)
 			if file != nil {
 				if file.Contents.Source != nil && *file.Contents.Source != "" {
@@ -276,7 +277,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					ts.AddTranslation(yamlPath, path.New("json", "storage", "files"))
 				}
 			}
-			contents, err := ioutil.ReadFile(srcPath)
+			contents, err := fs.ReadFile(options.FS, srcPath)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil
@@ -294,13 +295,18 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 			}
 			if file.Mode == nil {
 				mode := 0644
-				if info.Mode()&0111 != 0 {
+				if info, err := entry.Info(); err != nil {
+					r.AddOnError(yamlPath, err)
+					return nil
+				} else if info.Mode().Perm()&0111 != 0 {
 					mode = 0755
 				}
 				file.Mode = &mode
 				ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "mode"))
 			}
-		} else if info.Mode()&os.ModeType == os.ModeSymlink {
+			return nil
+
+		case typ&os.ModeType == fs.ModeSymlink:
 			i, link := t.GetLink(destPath)
 			if link != nil {
 				if link.Target != "" {
@@ -322,17 +328,18 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					ts.AddTranslation(yamlPath, path.New("json", "storage", "links"))
 				}
 			}
-			link.Target, err = os.Readlink(srcPath)
+			link.Target, err = fsutil.ReadLink(options.FS, srcPath)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
 			ts.AddTranslation(yamlPath, path.New("json", "storage", "links", i, "target"))
-		} else {
+			return nil
+
+		default:
 			r.AddOnError(yamlPath, common.ErrFileType)
 			return nil
 		}
-		return nil
 	})
 	r.AddOnError(yamlPath, err)
 }
