@@ -1,3 +1,17 @@
+2021-01-05 FCCT 0.9.0
+
+  Bug Fixes:
+
+    - Avoid ESP RAID desynchronization by creating independent ESP filesystems
+  
+  Docs Changes:
+    
+    - Clarify semantics of systemd.units.name
+    - Correctly document storage.filesystems.path as optional
+    - Fix nesting of storage.luks and storage.trees sections
+    - Move codebase layout info from README to developer docs
+    - Recommend container image or distro package over standalone binary 
+
 2020-12-04 FCCT 0.8.0
 
   Breaking Changes:
