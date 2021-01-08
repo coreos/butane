@@ -40,7 +40,7 @@ var (
 	ErrDecimalMode = errors.New("unreasonable mode would be reasonable if specified in octal; remember to add a leading zero")
 
 	// mount units
-	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true")
+	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true and format is not swap")
 	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
 
 	// boot device

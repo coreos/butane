@@ -212,3 +212,67 @@ func TestValidateMode(t *testing.T) {
 		assert.Equal(t, expected, actual, "#%d: bad report", i)
 	}
 }
+
+func TestValidateFilesystem(t *testing.T) {
+	tests := []struct {
+		in      Filesystem
+		out     error
+		errPath path.ContextPath
+	}{
+		{
+			Filesystem{},
+			nil,
+			path.New("yaml"),
+		},
+		{
+			Filesystem{
+				Device: "/dev/foo",
+			},
+			nil,
+			path.New("yaml"),
+		},
+		{
+			Filesystem{
+				Device:        "/dev/foo",
+				Format:        util.StrToPtr("zzz"),
+				Path:          util.StrToPtr("/z"),
+				WithMountUnit: util.BoolToPtr(true),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		{
+			Filesystem{
+				Device:        "/dev/foo",
+				Format:        util.StrToPtr("swap"),
+				WithMountUnit: util.BoolToPtr(true),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		{
+			Filesystem{
+				Device:        "/dev/foo",
+				WithMountUnit: util.BoolToPtr(true),
+			},
+			common.ErrMountUnitNoFormat,
+			path.New("yaml", "format"),
+		},
+		{
+			Filesystem{
+				Device:        "/dev/foo",
+				Format:        util.StrToPtr("zzz"),
+				WithMountUnit: util.BoolToPtr(true),
+			},
+			common.ErrMountUnitNoPath,
+			path.New("yaml", "path"),
+		},
+	}
+
+	for i, test := range tests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnError(test.errPath, test.out)
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
+	}
+}

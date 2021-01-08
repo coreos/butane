@@ -164,7 +164,7 @@ storage:
 
 ### Filesystems and partitions
 
-This example creates a single partition spanning all of the sdb device then creates a btrfs filesystem on it to use as /var. Finally it creates the mount unit for systemd so it gets mounted on boot.
+This example creates a single partition spanning all of the `sdb` device then creates a btrfs filesystem on it to use as `/var`. Finally it creates the mount unit for systemd so it gets mounted on boot.
 
 <!-- fedora-coreos-config -->
 ```yaml
@@ -183,6 +183,28 @@ storage:
       format: btrfs
       wipe_filesystem: true
       label: var
+      with_mount_unit: true
+```
+
+### Swap areas
+
+This example creates a swap partition spanning all of the `sdb` device, creates a swap area on it, and creates a systemd swap unit so the swap area is enabled on boot.
+
+<!-- fedora-coreos-config -->
+```yaml
+variant: fcos
+version: 1.4.0-experimental
+storage:
+  disks:
+    - device: /dev/sdb
+      wipe_table: true
+      partitions:
+        - number: 1
+          label: swap
+  filesystems:
+    - device: /dev/disk/by-partlabel/swap
+      format: swap
+      wipe_filesystem: true
       with_mount_unit: true
 ```
 
