@@ -63,6 +63,9 @@ const (
 // validation is performed on input or output.
 func (c Config) ToIgn3_3Unvalidated(options common.TranslateOptions) (types.Config, translate.TranslationSet, report.Report) {
 	ret, ts, r := c.Config.ToIgn3_3Unvalidated(options)
+	if r.IsFatal() {
+		return types.Config{}, translate.TranslationSet{}, r
+	}
 	r.Merge(c.processBootDevice(&ret, &ts, options))
 	return ret, ts, r
 }
