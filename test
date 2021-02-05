@@ -8,6 +8,12 @@ res=$(gofmt -d $SRC)
 echo -n "$res"
 test -z "$res"
 
+echo "checking govet"
+PKG_VET=$(go list ./... | grep --invert-match vendor)
+# tests widely use unkeyed fields in composite literals.  golangci-lint
+# in CI does a more nuanced check.
+go vet -composites=false $PKG_VET
+
 source ./build
 
 echo "Running tests"
