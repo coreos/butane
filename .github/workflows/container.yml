@@ -1,0 +1,17 @@
+name: Container
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-container:
+    name: "Build container image"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Build container image
+        run: podman build .
