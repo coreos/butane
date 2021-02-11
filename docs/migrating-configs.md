@@ -58,7 +58,8 @@ storage:
   disks:
     - device: /dev/sda
       partitions:
-        - label: root
+        - number: 4
+          label: root
           size_mib: 16384
           resize: true
 ```
