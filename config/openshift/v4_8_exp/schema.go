@@ -15,7 +15,7 @@
 package v4_8_exp
 
 import (
-	fcos "github.com/coreos/fcct/config/fcos/v1_4_exp"
+	fcos "github.com/coreos/fcct/config/fcos/v1_3"
 )
 
 type Config struct {

@@ -43,5 +43,5 @@ Each version of the FCC specification corresponds to a version of the Ignition s
 | `fcos`      | 1.2.0              | 3.2.0              |
 | `fcos`      | 1.3.0              | 3.2.0              |
 | `fcos`      | 1.4.0-experimental | 3.3.0-experimental |
-| `openshift` | 4.8.0-experimental | 3.3.0-experimental |
+| `openshift` | 4.8.0-experimental | 3.2.0              |
 | `rhcos`     | 0.1.0              | 3.2.0              |
