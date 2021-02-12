@@ -17,6 +17,7 @@ package translate
 import (
 	"fmt"
 	"reflect"
+	"sort"
 
 	"github.com/coreos/vcontext/path"
 )
@@ -27,6 +28,10 @@ import (
 type Translation struct {
 	From path.ContextPath
 	To   path.ContextPath
+}
+
+func (t Translation) String() string {
+	return fmt.Sprintf("%s → %s", t.From, t.To)
 }
 
 // TranslationSet represents all of the translations that occurred. They're stored in a map from a string representation
@@ -48,9 +53,28 @@ func NewTranslationSet(fromTag, toTag string) TranslationSet {
 }
 
 func (ts TranslationSet) String() string {
-	str := fmt.Sprintf("from: %v\nto: %v\n", ts.FromTag, ts.ToTag)
+	type entry struct {
+		sortKey   string
+		formatted string
+	}
+	var entries []entry
 	for k, v := range ts.Set {
-		str += fmt.Sprintf("%s: %v -> %v\n", k, v.From.String(), v.To.String())
+		formatted := v.String()
+		// lookup key should always match To path; report if it doesn't
+		if k != v.To.String() {
+			formatted += fmt.Sprintf(" (key: %s)", k)
+		}
+		entries = append(entries, entry{
+			sortKey:   v.To.String(),
+			formatted: formatted,
+		})
+	}
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[i].sortKey < entries[j].sortKey
+	})
+	str := fmt.Sprintf("TranslationSet: %v → %v\n", ts.FromTag, ts.ToTag)
+	for _, entry := range entries {
+		str += entry.formatted + "\n"
 	}
 	return str
 }
