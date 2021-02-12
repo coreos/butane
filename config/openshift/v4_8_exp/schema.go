@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_2_exp
+package v4_8_exp
 
 import (
 	fcos "github.com/coreos/fcct/config/fcos/v1_4_exp"
