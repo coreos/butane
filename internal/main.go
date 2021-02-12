@@ -41,6 +41,8 @@ func main() {
 	options := common.TranslateBytesOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
 	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
+	pflag.BoolVarP(&options.DebugPrintTranslations, "debug", "D", false, "log translations")
+	pflag.Lookup("debug").Hidden = true
 	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
