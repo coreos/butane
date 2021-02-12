@@ -5,8 +5,10 @@ SRC=$(find . -name '*.go' -not -path "./vendor/*")
 
 echo "checking gofmt"
 res=$(gofmt -d $SRC)
-echo -n "$res"
-test -z "$res"
+if [ -n "$res" ]; then
+    echo "$res"
+    exit 1
+fi
 
 echo "checking govet"
 PKG_VET=$(go list ./... | grep --invert-match vendor)
