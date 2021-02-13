@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2021 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_3
+package v1_1
 
 import (
 	"testing"
 
-	base "github.com/coreos/fcct/base/v0_3"
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
-	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/vcontext/path"
-	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -115,70 +111,10 @@ func TestReportCorrelation(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		_, r, _ := ToIgn3_2Bytes([]byte(test.in), common.TranslateBytesOptions{})
+		_, r, _ := ToIgn3_1Bytes([]byte(test.in), common.TranslateBytesOptions{})
 		assert.Len(t, r.Entries, 1, "#%d: unexpected report length", i)
 		assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error", i)
 		assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil", i)
 		assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line", i)
-	}
-}
-
-// TestValidateBootDevice tests boot device validation
-func TestValidateBootDevice(t *testing.T) {
-	tests := []struct {
-		in      BootDevice
-		out     error
-		errPath path.ContextPath
-	}{
-		// empty config
-		{
-			BootDevice{},
-			nil,
-			path.New("yaml"),
-		},
-		// complete config
-		{
-			BootDevice{
-				Layout: util.StrToPtr("x86_64"),
-				Luks: BootDeviceLuks{
-					Tang: []base.Tang{{
-						URL:        "https://example.com/",
-						Thumbprint: util.StrToPtr("x"),
-					}},
-					Threshold: util.IntToPtr(2),
-					Tpm2:      util.BoolToPtr(true),
-				},
-				Mirror: BootDeviceMirror{
-					Devices: []string{"/dev/vda", "/dev/vdb"},
-				},
-			},
-			nil,
-			path.New("yaml"),
-		},
-		// invalid layout
-		{
-			BootDevice{
-				Layout: util.StrToPtr("sparc"),
-			},
-			common.ErrUnknownBootDeviceLayout,
-			path.New("yaml", "layout"),
-		},
-		// only one mirror device
-		{
-			BootDevice{
-				Mirror: BootDeviceMirror{
-					Devices: []string{"/dev/vda"},
-				},
-			},
-			common.ErrTooFewMirrorDevices,
-			path.New("yaml", "mirror", "devices"),
-		},
-	}
-
-	for i, test := range tests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		expected.AddOnError(test.errPath, test.out)
-		assert.Equal(t, expected, actual, "#%d: bad validation report", i)
 	}
 }
