@@ -16,6 +16,8 @@ package util
 
 import (
 	"bytes"
+	"fmt"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -63,6 +65,9 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 	r.Merge(translateReport)
 	if r.IsFatal() {
 		return zeroValue, r, common.ErrInvalidSourceConfig
+	}
+	if options.DebugPrintTranslations {
+		fmt.Fprint(os.Stderr, translations)
 	}
 
 	// Check for invalid duplicated keys.

@@ -20,11 +20,108 @@ import (
 	base "github.com/coreos/fcct/base/v0_4_exp"
 	"github.com/coreos/fcct/config/common"
 
+	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
 )
+
+// TestReportCorrelation tests that errors are correctly correlated to their source lines
+func TestReportCorrelation(t *testing.T) {
+	tests := []struct {
+		in      string
+		message string
+		line    int64
+	}{
+		// FCCT unused key check
+		{
+			`storage:
+                           files:
+                           - path: /z
+                             q: z`,
+			"Unused key q",
+			4,
+		},
+		// FCCT YAML validation error
+		{
+			`storage:
+                           files:
+                           - path: /z
+                             contents:
+                               source: https://example.com
+                               inline: z`,
+			common.ErrTooManyResourceSources.Error(),
+			5,
+		},
+		// FCCT YAML validation warning
+		{
+			`storage:
+                           files:
+                           - path: /z
+                             mode: 644`,
+			common.ErrDecimalMode.Error(),
+			4,
+		},
+		// FCCT translation error
+		{
+			`storage:
+                           files:
+                           - path: /z
+                             contents:
+                               local: z`,
+			common.ErrNoFilesDir.Error(),
+			5,
+		},
+		// Ignition validation error, leaf node
+		{
+			`storage:
+                           files:
+                           - path: z`,
+			errors.ErrPathRelative.Error(),
+			3,
+		},
+		// Ignition validation error, partition
+		{
+			`storage:
+                           disks:
+                           - device: /dev/z
+                             partitions:
+                               - start_mib: 5`,
+			errors.ErrNeedLabelOrNumber.Error(),
+			5,
+		},
+		// Ignition validation error, partition list
+		{
+			`storage:
+                           disks:
+                           - device: /dev/z
+                             partitions:
+                               - number: 1
+                                 should_exist: false
+                               - label: z`,
+			errors.ErrZeroesWithShouldNotExist.Error(),
+			5,
+		},
+		// Ignition duplicate key check, paths
+		{
+			`storage:
+                           files:
+                           - path: /z
+                           - path: /z`,
+			errors.ErrDuplicate.Error(),
+			4,
+		},
+	}
+
+	for i, test := range tests {
+		_, r, _ := ToIgn3_3Bytes([]byte(test.in), common.TranslateBytesOptions{})
+		assert.Len(t, r.Entries, 1, "#%d: unexpected report length", i)
+		assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error", i)
+		assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil", i)
+		assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line", i)
+	}
+}
 
 // TestValidateBootDevice tests boot device validation
 func TestValidateBootDevice(t *testing.T) {
