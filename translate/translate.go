@@ -135,6 +135,7 @@ func (t translator) translateSameType(vFrom, vTo reflect.Value, fromPath, toPath
 		for i := 0; i < vFrom.Len(); i++ {
 			t.translate(vFrom.Index(i), vTo.Index(i), fromPath.Append(i), toPath.Append(i))
 		}
+		t.translations.AddTranslation(fromPath, toPath)
 	case k == reflect.Struct:
 		for i := 0; i < vFrom.NumField(); i++ {
 			if vFrom.Type().Field(i).Tag.Get(TAG_KEY) == TAG_AUTO_SKIP {
