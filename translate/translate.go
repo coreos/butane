@@ -179,6 +179,9 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 		// handle all the translations and "rebase" them to our current place
 		retSet := returns[1].Interface().(TranslationSet)
 		t.translations.Merge(retSet.PrefixPaths(fromPath, toPath))
+		if len(retSet.Set) > 0 {
+			t.translations.AddTranslation(fromPath, toPath)
+		}
 
 		// likewise for the report entries
 		retReport := returns[2].Interface().(report.Report)
