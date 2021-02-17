@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
 
 	"github.com/coreos/vcontext/path"
 )
@@ -106,7 +107,7 @@ func (ts TranslationSet) AddIdentity(paths ...string) {
 // config being translated.
 func (ts TranslationSet) AddFromCommonSource(common path.ContextPath, toPrefix path.ContextPath, to interface{}) {
 	v := reflect.ValueOf(to)
-	vPaths := prefixPaths(getAllPaths(v, ts.ToTag), toPrefix.Path...)
+	vPaths := prefixPaths(getAllPaths(v, ts.ToTag, true), toPrefix.Path...)
 	for _, path := range vPaths {
 		ts.AddTranslation(common, path)
 	}
@@ -138,4 +139,20 @@ func (ts TranslationSet) PrefixPaths(fromPrefix, toPrefix path.ContextPath) Tran
 		ret.AddTranslation(fromPrefix.Append(tr.From.Path...), toPrefix.Append(tr.To.Path...))
 	}
 	return ret
+}
+
+// DebugVerifyCoverage recursively checks whether every non-zero field in v
+// has a translation.  If translations are missing, it returns a multi-line
+// error listing them.
+func (ts TranslationSet) DebugVerifyCoverage(v interface{}) error {
+	var missingPaths []string
+	for _, path := range getAllPaths(reflect.ValueOf(v), ts.ToTag, false) {
+		if _, ok := ts.Set[path.String()]; !ok {
+			missingPaths = append(missingPaths, path.String())
+		}
+	}
+	if len(missingPaths) > 0 {
+		return fmt.Errorf("Missing paths in TranslationSet:\n%v\n", strings.Join(missingPaths, "\n"))
+	}
+	return nil
 }
