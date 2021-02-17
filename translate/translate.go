@@ -158,6 +158,9 @@ func (t translator) translateSameType(vFrom, vTo reflect.Value, fromPath, toPath
 			}
 			t.translate(vFrom.Field(i), vToField, from, to)
 		}
+		if !vFrom.IsZero() {
+			t.translations.AddTranslation(fromPath, toPath)
+		}
 	default:
 		panic("Encountered types that are not the same when they should be. This is a bug, please file a report")
 	}
