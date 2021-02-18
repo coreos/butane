@@ -46,7 +46,9 @@ func TestTranslateBootDevice(t *testing.T) {
 					Version: "3.3.0-experimental",
 				},
 			},
-			[]translate.Translation{},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+			},
 		},
 		// LUKS, x86_64
 		{
@@ -94,6 +96,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "luks", "tang", 0, "url"), path.New("json", "storage", "luks", 0, "clevis", "tang", 0, "url")},
 				{path.New("yaml", "boot_device", "luks", "tang", 0, "thumbprint"), path.New("json", "storage", "luks", 0, "clevis", "tang", 0, "thumbprint")},
 				{path.New("yaml", "boot_device", "luks", "tang", 0), path.New("json", "storage", "luks", 0, "clevis", "tang", 0)},
@@ -247,6 +250,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "device")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
@@ -494,6 +498,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "device")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
@@ -712,6 +717,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "device")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
@@ -890,6 +896,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "device")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
@@ -1112,6 +1119,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0, "typeGuid")},
