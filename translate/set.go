@@ -111,6 +111,7 @@ func (ts TranslationSet) AddFromCommonSource(common path.ContextPath, toPrefix p
 	for _, path := range vPaths {
 		ts.AddTranslation(common, path)
 	}
+	ts.AddTranslation(common, toPrefix)
 }
 
 // Merge adds all the entries to the set. It mutates the Set in place.
