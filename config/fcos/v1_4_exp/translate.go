@@ -259,5 +259,9 @@ func translateBootDeviceLuks(from BootDeviceLuks, options common.TranslateOption
 	tm, r = translate.Prefixed(tr, "tang", &from.Tang, &to.Tang)
 	translate.MergeP(tr, tm, &r, "threshold", &from.Threshold, &to.Threshold)
 	translate.MergeP(tr, tm, &r, "tpm2", &from.Tpm2, &to.Tpm2)
+	// we're being called manually, not via the translate package's
+	// custom translator mechanism, so we have to add the base
+	// translation ourselves
+	tm.AddTranslation(path.New("yaml"), path.New("json"))
 	return
 }
