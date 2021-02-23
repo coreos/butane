@@ -59,14 +59,10 @@ func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
 	case k == reflect.Slice:
 		ret := []path.ContextPath{}
 		for i := 0; i < v.Len(); i++ {
-			paths := getAllPaths(v.Index(i), tag)
-			if len(paths) > 0 {
-				// struct, pointer to struct, etc.; add children
-				ret = append(ret, prefixPaths(paths, i)...)
-			} else {
-				// primitive type; add slice entry
-				ret = append(ret, path.New(tag, i))
-			}
+			// for struct, pointer to struct, etc., add any children
+			ret = append(ret, prefixPaths(getAllPaths(v.Index(i), tag), i)...)
+			// add slice entry
+			ret = append(ret, path.New(tag, i))
 		}
 		return ret
 	case k == reflect.Struct:
