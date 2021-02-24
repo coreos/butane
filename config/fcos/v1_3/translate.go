@@ -167,6 +167,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 				rendered.Storage.Filesystems = append(rendered.Storage.Filesystems, espFilesystem)
 			}
 		}
+		renderedTranslations.AddTranslation(path.New("yaml", "boot_device", "mirror", "devices"), path.New("json", "storage", "disks"))
 
 		// create RAIDs
 		raidDevices := func(labelPrefix string) []types.Device {
@@ -223,6 +224,8 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		for _, f := range []string{"device", "label", "name", "wipeVolume"} {
 			renderedTranslations.AddTranslation(lpath, rpath.Append(f))
 		}
+		renderedTranslations.AddTranslation(lpath, rpath)
+		renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
 		r.Merge(r2)
 	}
 
@@ -245,9 +248,11 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		WipeFilesystem: util.BoolToPtr(true),
 	}
 	renderedTranslations.AddFromCommonSource(path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems", len(rendered.Storage.Filesystems)), rootFilesystem)
+	renderedTranslations.AddTranslation(path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems"))
 	rendered.Storage.Filesystems = append(rendered.Storage.Filesystems, rootFilesystem)
 
 	// merge with translated config
+	renderedTranslations.AddTranslation(path.New("yaml", "boot_device"), path.New("json", "storage"))
 	retConfig, retTranslations := baseutil.MergeTranslatedConfigs(rendered, renderedTranslations, *config, *ts)
 	*config = retConfig.(types.Config)
 	*ts = retTranslations
@@ -259,5 +264,9 @@ func translateBootDeviceLuks(from BootDeviceLuks, options common.TranslateOption
 	tm, r = translate.Prefixed(tr, "tang", &from.Tang, &to.Tang)
 	translate.MergeP(tr, tm, &r, "threshold", &from.Threshold, &to.Threshold)
 	translate.MergeP(tr, tm, &r, "tpm2", &from.Tpm2, &to.Tpm2)
+	// we're being called manually, not via the translate package's
+	// custom translator mechanism, so we have to add the base
+	// translation ourselves
+	tm.AddTranslation(path.New("yaml"), path.New("json"))
 	return
 }

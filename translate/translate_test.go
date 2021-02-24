@@ -62,6 +62,7 @@ func TestTranslateTrivial(t *testing.T) {
 		C: true,
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("A"), fp("A"),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
@@ -96,6 +97,7 @@ func TestTranslateNested(t *testing.T) {
 		},
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("A"), fp("A"),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
@@ -125,6 +127,7 @@ func TestTranslateTrivialReordered(t *testing.T) {
 		C: true,
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("A"), fp("A"),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
@@ -152,6 +155,7 @@ func TestTranslateTrivialSkip(t *testing.T) {
 		C: true,
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
 	)
@@ -199,6 +203,7 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 		},
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("A"), fp("A"),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
@@ -232,6 +237,7 @@ func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
 		C: true,
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
 		fp("A"), fp("A"),
 		fp("B"), fp("B"),
 		fp("C"), fp("C"),
@@ -296,6 +302,9 @@ func TestCustomTranslatorList(t *testing.T) {
 		},
 	}
 	exTrans := mkTrans(
+		fp(), fp(),
+		fp("L"), fp("L"),
+		fp("L", 0), fp("L", 0),
 		fp("L", 0, "A"), fp("L", 0, "A"),
 		fp("L", 0, "B"), fp("L", 0, "B"),
 		fp("L", 0, "C"), fp("L", 0, "C"),

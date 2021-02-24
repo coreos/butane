@@ -135,6 +135,7 @@ func (t translator) translateSameType(vFrom, vTo reflect.Value, fromPath, toPath
 		for i := 0; i < vFrom.Len(); i++ {
 			t.translate(vFrom.Index(i), vTo.Index(i), fromPath.Append(i), toPath.Append(i))
 		}
+		t.translations.AddTranslation(fromPath, toPath)
 	case k == reflect.Struct:
 		for i := 0; i < vFrom.NumField(); i++ {
 			if vFrom.Type().Field(i).Tag.Get(TAG_KEY) == TAG_AUTO_SKIP {
@@ -157,6 +158,9 @@ func (t translator) translateSameType(vFrom, vTo reflect.Value, fromPath, toPath
 			}
 			t.translate(vFrom.Field(i), vToField, from, to)
 		}
+		if !vFrom.IsZero() {
+			t.translations.AddTranslation(fromPath, toPath)
+		}
 	default:
 		panic("Encountered types that are not the same when they should be. This is a bug, please file a report")
 	}
@@ -178,6 +182,9 @@ func (t translator) translate(vFrom, vTo reflect.Value, fromPath, toPath path.Co
 		// handle all the translations and "rebase" them to our current place
 		retSet := returns[1].Interface().(TranslationSet)
 		t.translations.Merge(retSet.PrefixPaths(fromPath, toPath))
+		if len(retSet.Set) > 0 {
+			t.translations.AddTranslation(fromPath, toPath)
+		}
 
 		// likewise for the report entries
 		retReport := returns[2].Interface().(report.Report)

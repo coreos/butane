@@ -68,6 +68,9 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 	}
 	if options.DebugPrintTranslations {
 		fmt.Fprint(os.Stderr, translations)
+		if err := translations.DebugVerifyCoverage(final); err != nil {
+			fmt.Fprintf(os.Stderr, "\n%s", err)
+		}
 	}
 
 	// Check for invalid duplicated keys.

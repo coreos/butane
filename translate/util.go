@@ -45,7 +45,7 @@ func prefixPaths(ps []path.ContextPath, prefix ...interface{}) []path.ContextPat
 	return ret
 }
 
-func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
+func getAllPaths(v reflect.Value, tag string, includeZeroFields bool) []path.ContextPath {
 	k := v.Kind()
 	t := v.Type()
 	switch {
@@ -55,18 +55,14 @@ func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
 		if v.IsNil() {
 			return nil
 		}
-		return getAllPaths(v.Elem(), tag)
+		return getAllPaths(v.Elem(), tag, includeZeroFields)
 	case k == reflect.Slice:
 		ret := []path.ContextPath{}
 		for i := 0; i < v.Len(); i++ {
-			paths := getAllPaths(v.Index(i), tag)
-			if len(paths) > 0 {
-				// struct, pointer to struct, etc.; add children
-				ret = append(ret, prefixPaths(paths, i)...)
-			} else {
-				// primitive type; add slice entry
-				ret = append(ret, path.New(tag, i))
-			}
+			// for struct, pointer to struct, etc., add any children
+			ret = append(ret, prefixPaths(getAllPaths(v.Index(i), tag, includeZeroFields), i)...)
+			// add slice entry
+			ret = append(ret, path.New(tag, i))
 		}
 		return ret
 	case k == reflect.Struct:
@@ -74,10 +70,13 @@ func getAllPaths(v reflect.Value, tag string) []path.ContextPath {
 		for i := 0; i < t.NumField(); i++ {
 			name := fieldName(v, i, tag)
 			field := v.Field(i)
+			if !includeZeroFields && field.IsZero() {
+				continue
+			}
 			if t.Field(i).Anonymous {
-				ret = append(ret, getAllPaths(field, tag)...)
+				ret = append(ret, getAllPaths(field, tag, includeZeroFields)...)
 			} else {
-				ret = append(ret, prefixPaths(getAllPaths(field, tag), name)...)
+				ret = append(ret, prefixPaths(getAllPaths(field, tag, includeZeroFields), name)...)
 				ret = append(ret, path.New(tag, name))
 			}
 		}
