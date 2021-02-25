@@ -212,7 +212,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		}
 		clevis, ts2, r2 := translateBootDeviceLuks(c.BootDevice.Luks, options)
 		rendered.Storage.Luks = []types.Luks{{
-			Clevis:     &clevis,
+			Clevis:     clevis,
 			Device:     &luksDevice,
 			Label:      util.StrToPtr("luks-root"),
 			Name:       "root",

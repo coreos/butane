@@ -709,7 +709,7 @@ RequiredBy=local-fs.target`),
 						{
 							Name:   "foo-bar",
 							Device: util.StrToPtr("/dev/bar"),
-							Clevis: &Clevis{
+							Clevis: Clevis{
 								Tang: []Tang{
 									{
 										URL: "http://example.com",
@@ -737,7 +737,7 @@ RequiredBy=local-fs.target`),
 						{
 							Name:   "foo-bar",
 							Device: util.StrToPtr("/dev/bar"),
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{
 									{
 										URL: "http://example.com",

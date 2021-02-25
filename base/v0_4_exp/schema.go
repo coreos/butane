@@ -15,10 +15,16 @@
 package v0_4_exp
 
 type Clevis struct {
-	Custom    *Custom `yaml:"custom"`
-	Tang      []Tang  `yaml:"tang"`
-	Threshold *int    `yaml:"threshold"`
-	Tpm2      *bool   `yaml:"tpm2"`
+	Custom    ClevisCustom `yaml:"custom"`
+	Tang      []Tang       `yaml:"tang"`
+	Threshold *int         `yaml:"threshold"`
+	Tpm2      *bool        `yaml:"tpm2"`
+}
+
+type ClevisCustom struct {
+	Config       string `yaml:"config"`
+	NeedsNetwork *bool  `yaml:"needs_network"`
+	Pin          string `yaml:"pin"`
 }
 
 type Config struct {
@@ -28,12 +34,6 @@ type Config struct {
 	Passwd   Passwd   `yaml:"passwd"`
 	Storage  Storage  `yaml:"storage"`
 	Systemd  Systemd  `yaml:"systemd"`
-}
-
-type Custom struct {
-	Config       string `yaml:"config"`
-	NeedsNetwork *bool  `yaml:"needs_network"`
-	Pin          string `yaml:"pin"`
 }
 
 type Device string
@@ -112,7 +112,7 @@ type Link struct {
 }
 
 type Luks struct {
-	Clevis     *Clevis      `yaml:"clevis"`
+	Clevis     Clevis       `yaml:"clevis"`
 	Device     *string      `yaml:"device"`
 	KeyFile    Resource     `yaml:"key_file"`
 	Label      *string      `yaml:"label"`
