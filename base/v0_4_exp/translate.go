@@ -373,7 +373,7 @@ func (c Config) addMountUnits(config *types.Config, ts *translate.TranslationSet
 			for _, luks := range c.Storage.Luks {
 				// LUKS devices are opened with their name specified
 				if fs.Device == fmt.Sprintf("/dev/mapper/%s", luks.Name) || fs.Device == fmt.Sprintf("/dev/disk/by-id/dm-name-%s", luks.Name) {
-					if luks.Clevis != nil && len(luks.Clevis.Tang) > 0 {
+					if len(luks.Clevis.Tang) > 0 {
 						remote = true
 						break
 					}

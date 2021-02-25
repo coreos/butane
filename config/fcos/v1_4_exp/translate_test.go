@@ -71,7 +71,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				Storage: types.Storage{
 					Luks: []types.Luks{
 						{
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{{
 									URL:        "https://example.com/",
 									Thumbprint: util.StrToPtr("z"),
@@ -471,7 +471,7 @@ func TestTranslateBootDevice(t *testing.T) {
 					},
 					Luks: []types.Luks{
 						{
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{{
 									URL:        "https://example.com/",
 									Thumbprint: util.StrToPtr("z"),
@@ -710,7 +710,7 @@ func TestTranslateBootDevice(t *testing.T) {
 					},
 					Luks: []types.Luks{
 						{
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{{
 									URL:        "https://example.com/",
 									Thumbprint: util.StrToPtr("z"),
@@ -912,7 +912,7 @@ func TestTranslateBootDevice(t *testing.T) {
 					},
 					Luks: []types.Luks{
 						{
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{{
 									URL:        "https://example.com/",
 									Thumbprint: util.StrToPtr("z"),
@@ -1136,7 +1136,7 @@ func TestTranslateBootDevice(t *testing.T) {
 					},
 					Luks: []types.Luks{
 						{
-							Clevis: &types.Clevis{
+							Clevis: types.Clevis{
 								Tang: []types.Tang{{
 									URL:        "https://example.com/",
 									Thumbprint: util.StrToPtr("z"),
