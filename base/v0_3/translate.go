@@ -283,6 +283,9 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "files", i), file)
+				if i == 0 {
+					ts.AddTranslation(yamlPath, path.New("json", "storage", "files"))
+				}
 			}
 			contents, err := ioutil.ReadFile(srcPath)
 			if err != nil {
@@ -326,6 +329,9 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "links", i), link)
+				if i == 0 {
+					ts.AddTranslation(yamlPath, path.New("json", "storage", "links"))
+				}
 			}
 			link.Target, err = os.Readlink(srcPath)
 			if err != nil {

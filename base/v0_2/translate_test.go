@@ -997,6 +997,58 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 		},
+		// TranslationSet completeness without overrides
+		{
+			dirFiles: map[string]os.FileMode{
+				"tree/file":        0600,
+				"tree/subdir/file": 0644,
+			},
+			dirDirs: map[string]os.FileMode{
+				"tree/dir": 0700,
+			},
+			dirLinks: map[string]string{
+				"tree/subdir/link": "../file",
+			},
+			inTrees: []Tree{
+				{
+					Local: "tree",
+				},
+			},
+			outFiles: []types.File{
+				{
+					Node: types.Node{
+						Path: "/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source: util.StrToPtr("data:,tree%2Ffile"),
+						},
+						Mode: util.IntToPtr(0644),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/subdir/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source: util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+						},
+						Mode: util.IntToPtr(0644),
+					},
+				},
+			},
+			outLinks: []types.Link{
+				{
+					Node: types.Node{
+						Path: "/subdir/link",
+					},
+					LinkEmbedded1: types.LinkEmbedded1{
+						Target: "../file",
+					},
+				},
+			},
+		},
 		// collisions
 		{
 			dirFiles: map[string]os.FileMode{
