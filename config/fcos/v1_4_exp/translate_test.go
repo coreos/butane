@@ -1276,5 +1276,6 @@ func TestTranslateBootDevice(t *testing.T) {
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }

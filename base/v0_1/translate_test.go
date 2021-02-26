@@ -135,6 +135,7 @@ func TestTranslateFile(t *testing.T) {
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -185,9 +186,10 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, r := translateDirectory(test.in, common.TranslateOptions{})
+		actual, translations, r := translateDirectory(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -240,9 +242,10 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, r := translateLink(test.in, common.TranslateOptions{})
+		actual, translations, r := translateLink(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -261,9 +264,14 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, r := translateIgnition(test.in, common.TranslateOptions{})
+		actual, translations, r := translateIgnition(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		// DebugVerifyCoverage wants to see a translation for $.version but
+		// translateIgnition doesn't create one; ToIgn3_*Unvalidated handles
+		// that since it has access to the FCC version
+		translations.AddTranslation(path.New("yaml", "bogus"), path.New("json", "version"))
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -284,8 +292,9 @@ func TestToIgn3_0(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, r := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
