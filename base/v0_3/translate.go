@@ -348,6 +348,8 @@ func (c Config) addMountUnits(config *types.Config, ts *translate.TranslationSet
 	}
 	var rendered types.Config
 	renderedTranslations := translate.NewTranslationSet("yaml", "json")
+	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd"))
+	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd", "units"))
 	for i, fs := range c.Storage.Filesystems {
 		if fs.WithMountUnit == nil || !*fs.WithMountUnit {
 			continue
