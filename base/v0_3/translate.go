@@ -80,6 +80,7 @@ func (c Config) ToIgn3_2Unvalidated(options common.TranslateOptions) (types.Conf
 
 	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
 	tm.AddTranslation(path.New("yaml", "version"), path.New("json", "ignition", "version"))
+	tm.AddTranslation(path.New("yaml", "ignition"), path.New("json", "ignition"))
 	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
 	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
 	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
