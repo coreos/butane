@@ -69,6 +69,7 @@ func (c Config) ToIgn3_1Unvalidated(options common.TranslateOptions) (types.Conf
 
 	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
 	tm.AddTranslation(path.New("yaml", "version"), path.New("json", "ignition", "version"))
+	tm.AddTranslation(path.New("yaml", "ignition"), path.New("json", "ignition"))
 	translate.MergeP(tr, tm, &r, "passwd", &c.Passwd, &ret.Passwd)
 	translate.MergeP(tr, tm, &r, "storage", &c.Storage, &ret.Storage)
 	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
@@ -271,6 +272,9 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "files", i), file)
+				if i == 0 {
+					ts.AddTranslation(yamlPath, path.New("json", "storage", "files"))
+				}
 			}
 			contents, err := ioutil.ReadFile(srcPath)
 			if err != nil {
@@ -314,6 +318,9 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "links", i), link)
+				if i == 0 {
+					ts.AddTranslation(yamlPath, path.New("json", "storage", "links"))
+				}
 			}
 			link.Target, err = os.Readlink(srcPath)
 			if err != nil {
@@ -336,6 +343,8 @@ func (c Config) addMountUnits(config *types.Config, ts *translate.TranslationSet
 	}
 	var rendered types.Config
 	renderedTranslations := translate.NewTranslationSet("yaml", "json")
+	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd"))
+	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd", "units"))
 	for i, fs := range c.Storage.Filesystems {
 		if fs.WithMountUnit == nil || !*fs.WithMountUnit {
 			continue

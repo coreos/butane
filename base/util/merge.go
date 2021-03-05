@@ -54,6 +54,20 @@ func MergeTranslatedConfigs(parent interface{}, parentTranslations translate.Tra
 			// left mapping
 			continue
 		}
+		if _, ok := ts.Set[rightEntry.To.String()]; ok && rightEntry.From.Tag != merge.TAG_CHILD {
+			// For result fields which are produced by combining
+			// the parent and child, there will be two
+			// transcript entries, one for each side.  We want
+			// to prefer the child because the parent is
+			// probably a desugared config whose source is
+			// textually unrelated to the result config.
+			//
+			// Currently Ignition always reports parent before
+			// child, but that isn't necessarily contractual, so
+			// we don't assume it.  Here, we've found the second
+			// entry and it's not from the child; skip it.
+			continue
+		}
 		rightEntry.To.Tag = leftEntry.To.Tag
 		ts.AddTranslation(leftEntry.From, rightEntry.To)
 	}

@@ -76,6 +76,7 @@ func TestTranslateTrivial(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestTranslateNested(t *testing.T) {
@@ -112,6 +113,7 @@ func TestTranslateNested(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestTranslateTrivialReordered(t *testing.T) {
@@ -141,6 +143,7 @@ func TestTranslateTrivialReordered(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestTranslateTrivialSkip(t *testing.T) {
@@ -168,6 +171,7 @@ func TestTranslateTrivialSkip(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestCustomTranslatorTrivial(t *testing.T) {
@@ -219,6 +223,7 @@ func TestCustomTranslatorTrivial(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "info at $.A: info\n", "bad report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
@@ -261,6 +266,7 @@ func TestCustomTranslatorTrivialWithAutomaticResume(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestCustomTranslatorList(t *testing.T) {
@@ -320,6 +326,7 @@ func TestCustomTranslatorList(t *testing.T) {
 	assert.Equal(t, got, expected, "bad translation")
 	assert.Equal(t, ts, exTrans, "bad translation")
 	assert.Equal(t, r.String(), "", "non-empty report")
+	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
 
 func TestAddIdentity(t *testing.T) {

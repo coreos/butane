@@ -19,6 +19,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -462,6 +463,7 @@ func TestTranslateFile(t *testing.T) {
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, test.report, r.String(), "#%d: bad report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -512,9 +514,10 @@ func TestTranslateDirectory(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, r := translateDirectory(test.in, common.TranslateOptions{})
+		actual, translations, r := translateDirectory(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -567,9 +570,10 @@ func TestTranslateLink(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, _, r := translateLink(test.in, common.TranslateOptions{})
+		actual, translations, r := translateLink(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -619,9 +623,20 @@ func TestTranslateFilesystem(t *testing.T) {
 			},
 		}
 		expected := []types.Filesystem{test.out}
-		actual, _, r := in.ToIgn3_2Unvalidated(common.TranslateOptions{})
+		actual, translations, r := in.ToIgn3_2Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, expected, actual.Storage.Filesystems, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		// FIXME: Zero values are pruned from merge transcripts and
+		// TranslationSets to make them more compact in debug output
+		// and tests.  As a result, if the user specifies an empty
+		// struct in a list, the translation coverage will be
+		// incomplete and the report entry marker will end up
+		// pointing to the base of the list, or to a parent if the
+		// struct is the only entry in the list.  Skip the coverage
+		// test for this case.
+		if !reflect.ValueOf(test.out).IsZero() {
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
+		}
 	}
 }
 
@@ -871,9 +886,10 @@ RequiredBy=local-fs.target`),
 	}
 
 	for i, test := range tests {
-		out, _, r := test.in.ToIgn3_2Unvalidated(common.TranslateOptions{})
+		out, translations, r := test.in.ToIgn3_2Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, out, "#%d: bad output", i)
 		assert.Equal(t, report.Report{}, r, "#%d: expected empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(out), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -1051,6 +1067,58 @@ func TestTranslateTree(t *testing.T) {
 						Target: "../nonexistent",
 					},
 				},
+				{
+					Node: types.Node{
+						Path: "/subdir/link",
+					},
+					LinkEmbedded1: types.LinkEmbedded1{
+						Target: "../file",
+					},
+				},
+			},
+		},
+		// TranslationSet completeness without overrides
+		{
+			dirFiles: map[string]os.FileMode{
+				"tree/file":        0600,
+				"tree/subdir/file": 0644,
+			},
+			dirDirs: map[string]os.FileMode{
+				"tree/dir": 0700,
+			},
+			dirLinks: map[string]string{
+				"tree/subdir/link": "../file",
+			},
+			inTrees: []Tree{
+				{
+					Local: "tree",
+				},
+			},
+			outFiles: []types.File{
+				{
+					Node: types.Node{
+						Path: "/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source: util.StrToPtr("data:,tree%2Ffile"),
+						},
+						Mode: util.IntToPtr(0644),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/subdir/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source: util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+						},
+						Mode: util.IntToPtr(0644),
+					},
+				},
+			},
+			outLinks: []types.Link{
 				{
 					Node: types.Node{
 						Path: "/subdir/link",
@@ -1312,13 +1380,14 @@ func TestTranslateTree(t *testing.T) {
 		if test.options != nil {
 			options = *test.options
 		}
-		actual, _, r := config.ToIgn3_2Unvalidated(options)
+		actual, translations, r := config.ToIgn3_2Unvalidated(options)
 
 		expectedReport := strings.ReplaceAll(test.report, "%FilesDir%", filesDir)
 		assert.Equal(t, expectedReport, r.String(), "#%d: bad report", i)
 		if expectedReport != "" {
 			continue
 		}
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 
 		assert.Equal(t, test.outFiles, actual.Storage.Files, "#%d: files mismatch", i)
 		assert.Equal(t, []types.Directory(nil), actual.Storage.Directories, "#%d: directories mismatch", i)
@@ -1408,9 +1477,14 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, r := translateIgnition(test.in, common.TranslateOptions{})
+		actual, translations, r := translateIgnition(test.in, common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		// DebugVerifyCoverage wants to see a translation for $.version but
+		// translateIgnition doesn't create one; ToIgn3_*Unvalidated handles
+		// that since it has access to the FCC version
+		translations.AddTranslation(path.New("yaml", "bogus"), path.New("json", "version"))
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
 
@@ -1431,8 +1505,9 @@ func TestToIgn3_2(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		actual, _, r := test.in.ToIgn3_2Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToIgn3_2Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
