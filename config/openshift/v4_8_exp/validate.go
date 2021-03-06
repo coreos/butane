@@ -1,4 +1,4 @@
-// Copyright 2020 Red Hat, Inc
+// Copyright 2021 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
 package v4_8_exp
 
 import (
-	fcos "github.com/coreos/fcct/config/fcos/v1_3"
+	"github.com/coreos/fcct/config/common"
+
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 )
 
-type Config struct {
-	fcos.Config `yaml:",inline"`
-	Metadata    Metadata `yaml:"metadata"`
-}
-
-type Metadata struct {
-	Name   string            `yaml:"name"`
-	Labels map[string]string `yaml:"labels,omitempty"`
+func (m Metadata) Validate(c path.ContextPath) (r report.Report) {
+	if m.Name == "" {
+		r.AddOnError(c.Append("name"), common.ErrNameRequired)
+	}
+	return
 }

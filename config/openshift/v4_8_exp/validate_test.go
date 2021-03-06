@@ -20,8 +20,32 @@ import (
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestValidateMetadata(t *testing.T) {
+	tests := []struct {
+		in      Metadata
+		out     error
+		errPath path.ContextPath
+	}{
+		// missing name
+		{
+			Metadata{},
+			common.ErrNameRequired,
+			path.New("yaml", "name"),
+		},
+	}
+
+	for i, test := range tests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnError(test.errPath, test.out)
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
+	}
+}
 
 // TestReportCorrelation tests that errors are correctly correlated to their source lines
 func TestReportCorrelation(t *testing.T) {
@@ -32,64 +56,85 @@ func TestReportCorrelation(t *testing.T) {
 	}{
 		// FCCT unused key check
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: /z
                              q: z`,
 			"Unused key q",
-			4,
+			7,
 		},
 		// FCCT YAML validation error
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: /z
                              contents:
                                source: https://example.com
                                inline: z`,
 			common.ErrTooManyResourceSources.Error(),
-			5,
+			8,
 		},
 		// FCCT YAML validation warning
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: /z
                              mode: 644`,
 			common.ErrDecimalMode.Error(),
-			4,
+			7,
 		},
 		// FCCT translation error
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: /z
                              contents:
                                local: z`,
 			common.ErrNoFilesDir.Error(),
-			5,
+			8,
 		},
 		// Ignition validation error, leaf node
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: z`,
 			errors.ErrPathRelative.Error(),
-			3,
+			6,
 		},
 		// Ignition validation error, partition
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            disks:
                            - device: /dev/z
                              partitions:
                                - start_mib: 5`,
 			errors.ErrNeedLabelOrNumber.Error(),
-			5,
+			8,
 		},
 		// Ignition validation error, partition list
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            disks:
                            - device: /dev/z
                              partitions:
@@ -97,16 +142,19 @@ func TestReportCorrelation(t *testing.T) {
                                  should_exist: false
                                - label: z`,
 			errors.ErrZeroesWithShouldNotExist.Error(),
-			5,
+			8,
 		},
 		// Ignition duplicate key check, paths
 		{
-			`storage:
+			`
+                         metadata:
+                           name: something
+                         storage:
                            files:
                            - path: /z
                            - path: /z`,
 			errors.ErrDuplicate.Error(),
-			4,
+			7,
 		},
 	}
 
