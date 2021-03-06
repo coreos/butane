@@ -82,7 +82,7 @@ func getAllPaths(v reflect.Value, tag string, includeZeroFields bool) []path.Con
 		}
 		return ret
 	default:
-		panic("Encountered types that are not the same when they should be. This is a bug, please file a report")
+		panic("Encountered unexpected type. This is a bug, please file a report")
 	}
 }
 
