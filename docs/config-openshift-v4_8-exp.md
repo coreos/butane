@@ -13,6 +13,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `rhcos` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `4.8.0-experimental` and generates Ignition configs with version `3.2.0`.
+* **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
+  * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
+  * **_labels_** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
@@ -202,6 +205,8 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 
+[k8s-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+[k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397
 [systemd-escape]: https://www.freedesktop.org/software/systemd/man/systemd-escape.html

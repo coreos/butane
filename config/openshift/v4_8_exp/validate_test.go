@@ -159,10 +159,14 @@ func TestReportCorrelation(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		_, r, _ := ToIgn3_2Bytes([]byte(test.in), common.TranslateBytesOptions{})
-		assert.Len(t, r.Entries, 1, "#%d: unexpected report length", i)
-		assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error", i)
-		assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil", i)
-		assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line", i)
+		for _, raw := range []bool{false, true} {
+			_, r, _ := ToConfigBytes([]byte(test.in), common.TranslateBytesOptions{
+				Raw: raw,
+			})
+			assert.Len(t, r.Entries, 1, "#%d: unexpected report length, raw %v", i, raw)
+			assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error, raw %v", i, raw)
+			assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil, raw %v", i, raw)
+			assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line, raw %v", i, raw)
+		}
 	}
 }

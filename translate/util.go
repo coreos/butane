@@ -81,6 +81,19 @@ func getAllPaths(v reflect.Value, tag string, includeZeroFields bool) []path.Con
 			}
 		}
 		return ret
+	case k == reflect.Map:
+		// we don't have these in FCCs or Ignition configs, but
+		// we need to support validating translations of
+		// metadata.labels in MachineConfig output
+		ret := []path.ContextPath{}
+		iter := v.MapRange()
+		for iter.Next() {
+			// for struct, pointer to struct, etc., add any children
+			ret = append(ret, prefixPaths(getAllPaths(iter.Value(), tag, includeZeroFields), iter.Key())...)
+			// add map entry
+			ret = append(ret, path.New(tag, iter.Key()))
+		}
+		return ret
 	default:
 		panic("Encountered unexpected type. This is a bug, please file a report")
 	}

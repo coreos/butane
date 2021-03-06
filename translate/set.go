@@ -142,6 +142,27 @@ func (ts TranslationSet) PrefixPaths(fromPrefix, toPrefix path.ContextPath) Tran
 	return ret
 }
 
+// Descend returns the subtree of translations rooted at the specified To path.
+func (ts TranslationSet) Descend(to path.ContextPath) TranslationSet {
+	ret := NewTranslationSet(ts.FromTag, ts.ToTag)
+OUTER:
+	for _, tr := range ts.Set {
+		if len(tr.To.Path) < len(to.Path) {
+			// can't be in the requested subtree; skip
+			continue
+		}
+		for i, e := range to.Path {
+			if tr.To.Path[i] != e {
+				// not in the requested subtree; skip
+				continue OUTER
+			}
+		}
+		subtreePath := path.New(tr.To.Tag, tr.To.Path[len(to.Path):]...)
+		ret.AddTranslation(tr.From, subtreePath)
+	}
+	return ret
+}
+
 // DebugVerifyCoverage recursively checks whether every non-zero field in v
 // has a translation.  If translations are missing, it returns a multi-line
 // error listing them.

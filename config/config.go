@@ -47,7 +47,7 @@ func init() {
 	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.4.0-experimental", fcos1_4_exp.ToIgn3_3Bytes)
-	RegisterTranslator("openshift", "4.8.0-experimental", openshift4_8_exp.ToIgn3_2Bytes)
+	RegisterTranslator("openshift", "4.8.0-experimental", openshift4_8_exp.ToConfigBytes)
 	RegisterTranslator("rhcos", "0.1.0", rhcos0_1.ToIgn3_2Bytes)
 }
 
