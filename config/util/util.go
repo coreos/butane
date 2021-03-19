@@ -75,13 +75,11 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 
 	// Check for invalid duplicated keys.
 	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
-	translateReportPaths(&dupsReport, translations)
-	r.Merge(dupsReport)
+	r.Merge(TranslateReportPaths(dupsReport, translations))
 
 	// Validate JSON semantics.
 	jsonReport := validate.Validate(final, "json")
-	translateReportPaths(&jsonReport, translations)
-	r.Merge(jsonReport)
+	r.Merge(TranslateReportPaths(jsonReport, translations))
 
 	if r.IsFatal() {
 		return zeroValue, r, common.ErrInvalidGeneratedConfig
@@ -198,15 +196,18 @@ func snake(in string) string {
 	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
 }
 
-// translateReportPaths takes a report from a camelCase json document and a set of translations rules,
+// TranslateReportPaths takes a report from a camelCase json document and a set of translations rules,
 // applies those rules and converts all camelCase to snake_case.
-func translateReportPaths(r *report.Report, ts translate.TranslationSet) {
-	for i, ent := range r.Entries {
+func TranslateReportPaths(r report.Report, ts translate.TranslationSet) report.Report {
+	var ret report.Report
+	ret.Merge(r)
+	for i, ent := range ret.Entries {
 		context := ent.Context
 		if t, ok := ts.Set[context.String()]; ok {
 			context = t.From
 		}
 		context = snakePath(context)
-		r.Entries[i].Context = context
+		ret.Entries[i].Context = context
 	}
+	return ret
 }

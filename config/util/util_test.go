@@ -16,6 +16,13 @@ package util
 
 import (
 	"testing"
+
+	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/fcct/translate"
+
+	"github.com/coreos/vcontext/path"
+	"github.com/coreos/vcontext/report"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSnake(t *testing.T) {
@@ -47,4 +54,24 @@ func TestSnake(t *testing.T) {
 			t.Errorf("#%d: expected %q got %q", i, test.out, snake(test.in))
 		}
 	}
+}
+
+func TestTranslateReportPaths(t *testing.T) {
+	ts := translate.NewTranslationSet("yaml", "json")
+	ts.AddTranslation(path.New("yaml", "a", "b", "c"), path.New("json", "d", "e", "f"))
+	makeReport := func(source bool) report.Report {
+		var r report.Report
+		var p path.ContextPath
+		if source {
+			p = path.New("yaml", "a", "b", "c")
+		} else {
+			p = path.New("json", "d", "e", "f")
+		}
+		r.AddOnError(p, common.ErrDecimalMode)
+		return r
+	}
+	r := makeReport(false)
+	r2 := TranslateReportPaths(r, ts)
+	assert.Equal(t, makeReport(false), r, "TranslateReportPaths changed original report")
+	assert.Equal(t, makeReport(true), r2, "TranslateReportPaths returned incorrect report")
 }
