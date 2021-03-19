@@ -25,5 +25,8 @@ func (m Metadata) Validate(c path.ContextPath) (r report.Report) {
 	if m.Name == "" {
 		r.AddOnError(c.Append("name"), common.ErrNameRequired)
 	}
+	if m.Labels[ROLE_LABEL_KEY] == "" {
+		r.AddOnError(c.Append("labels", ROLE_LABEL_KEY), common.ErrRoleRequired)
+	}
 	return
 }

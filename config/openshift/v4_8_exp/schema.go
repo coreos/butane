@@ -18,6 +18,8 @@ import (
 	fcos "github.com/coreos/fcct/config/fcos/v1_3"
 )
 
+const ROLE_LABEL_KEY = "machineconfiguration.openshift.io/role"
+
 type Config struct {
 	fcos.Config `yaml:",inline"`
 	Metadata    Metadata `yaml:"metadata"`

@@ -49,4 +49,5 @@ var (
 
 	// MachineConfigs
 	ErrNameRequired = errors.New("metadata.name is required")
+	ErrRoleRequired = errors.New("machineconfiguration.openshift.io/role label is required")
 )

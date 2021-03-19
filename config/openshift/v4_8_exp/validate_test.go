@@ -33,9 +33,32 @@ func TestValidateMetadata(t *testing.T) {
 	}{
 		// missing name
 		{
-			Metadata{},
+			Metadata{
+				Labels: map[string]string{
+					ROLE_LABEL_KEY: "r",
+				},
+			},
 			common.ErrNameRequired,
 			path.New("yaml", "name"),
+		},
+		// missing role
+		{
+			Metadata{
+				Name: "n",
+			},
+			common.ErrRoleRequired,
+			path.New("yaml", "labels", ROLE_LABEL_KEY),
+		},
+		// empty role
+		{
+			Metadata{
+				Name: "n",
+				Labels: map[string]string{
+					ROLE_LABEL_KEY: "",
+				},
+			},
+			common.ErrRoleRequired,
+			path.New("yaml", "labels", ROLE_LABEL_KEY),
 		},
 	}
 
@@ -59,18 +82,22 @@ func TestReportCorrelation(t *testing.T) {
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: /z
                              q: z`,
 			"Unused key q",
-			7,
+			9,
 		},
 		// FCCT YAML validation error
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: /z
@@ -78,62 +105,72 @@ func TestReportCorrelation(t *testing.T) {
                                source: https://example.com
                                inline: z`,
 			common.ErrTooManyResourceSources.Error(),
-			8,
+			10,
 		},
 		// FCCT YAML validation warning
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: /z
                              mode: 644`,
 			common.ErrDecimalMode.Error(),
-			7,
+			9,
 		},
 		// FCCT translation error
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: /z
                              contents:
                                local: z`,
 			common.ErrNoFilesDir.Error(),
-			8,
+			10,
 		},
 		// Ignition validation error, leaf node
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: z`,
 			errors.ErrPathRelative.Error(),
-			6,
+			8,
 		},
 		// Ignition validation error, partition
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            disks:
                            - device: /dev/z
                              partitions:
                                - start_mib: 5`,
 			errors.ErrNeedLabelOrNumber.Error(),
-			8,
+			10,
 		},
 		// Ignition validation error, partition list
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            disks:
                            - device: /dev/z
@@ -142,19 +179,21 @@ func TestReportCorrelation(t *testing.T) {
                                  should_exist: false
                                - label: z`,
 			errors.ErrZeroesWithShouldNotExist.Error(),
-			8,
+			10,
 		},
 		// Ignition duplicate key check, paths
 		{
 			`
                          metadata:
                            name: something
+                           labels:
+                             machineconfiguration.openshift.io/role: r
                          storage:
                            files:
                            - path: /z
                            - path: /z`,
 			errors.ErrDuplicate.Error(),
-			7,
+			9,
 		},
 	}
 
