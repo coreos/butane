@@ -15,7 +15,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
 * **version** (string): the semantic version of the spec for this document. This document is for version `4.8.0-experimental` and generates Ignition configs with version `3.2.0`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
-  * **_labels_** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource.
+  * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
