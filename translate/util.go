@@ -100,7 +100,7 @@ func getAllPaths(v reflect.Value, tag string, includeZeroFields bool) []path.Con
 }
 
 // Return a copy of the report, with the context paths prefixed by prefix.
-func prefixReport(r report.Report, prefix interface{}) report.Report {
+func PrefixReport(r report.Report, prefix interface{}) report.Report {
 	var ret report.Report
 	ret.Merge(r)
 	for i := range ret.Entries {
@@ -114,7 +114,7 @@ func prefixReport(r report.Report, prefix interface{}) report.Report {
 // TranslationSet and Report.
 func Prefixed(tr Translator, prefix interface{}, from interface{}, to interface{}) (TranslationSet, report.Report) {
 	tm, r := tr.Translate(from, to)
-	return tm.Prefix(prefix), prefixReport(r, prefix)
+	return tm.Prefix(prefix), PrefixReport(r, prefix)
 }
 
 // Utility function to run a translation and merge the result, with the
@@ -129,5 +129,5 @@ func MergeP2(tr Translator, tm TranslationSet, r *report.Report, fromPrefix inte
 	translations, report := tr.Translate(from, to)
 	tm.MergeP2(fromPrefix, toPrefix, translations)
 	// translation report paths are on the from side
-	r.Merge(prefixReport(report, fromPrefix))
+	r.Merge(PrefixReport(report, fromPrefix))
 }
