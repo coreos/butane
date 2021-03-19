@@ -158,6 +158,28 @@ func TranslateBytesYAML(input []byte, container interface{}, translateMethod str
 	return yamlCfg, r, err
 }
 
+// Report an ErrFieldElided warning for any non-zero top-level fields in the
+// specified output struct.  The caller will probably want to use
+// translate.PrefixReport() to reparent the report into the right place in
+// the `json` hierarchy, and then TranslateReportPaths() to map back into
+// `yaml` space.
+func CheckForElidedFields(struct_ interface{}) report.Report {
+	v := reflect.ValueOf(struct_)
+	t := v.Type()
+	if t.Kind() != reflect.Struct {
+		panic("struct type required")
+	}
+	var r report.Report
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		if f.IsValid() && !f.IsZero() {
+			tag := strings.Split(t.Field(i).Tag.Get("json"), ",")[0]
+			r.AddOnWarn(path.New("json", tag), common.ErrFieldElided)
+		}
+	}
+	return r
+}
+
 // unmarshal unmarshals the data to "to" and also returns a context tree for the source. If strict
 // is set it errors out on unused keys.
 func unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
