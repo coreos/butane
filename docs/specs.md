@@ -29,8 +29,8 @@ Do not use **experimental** specifications for anything beyond **development and
 
 - Fedora CoreOS (`fcos`)
   - [v1.4.0-experimental](config-fcos-v1_4-exp.md)
-- RHEL CoreOS (`rhcos`)
-  - [v0.2.0-experimental](config-rhcos-v0_2-exp.md)
+- OpenShift (`openshift`)
+  - [v4.8.0-experimental](config-openshift-v4_8-exp.md)
 
 ## FCC specifications and Ignition specifications
 
@@ -43,5 +43,5 @@ Each version of the FCC specification corresponds to a version of the Ignition s
 | `fcos`      | 1.2.0              | 3.2.0              |
 | `fcos`      | 1.3.0              | 3.2.0              |
 | `fcos`      | 1.4.0-experimental | 3.3.0-experimental |
+| `openshift` | 4.8.0-experimental | 3.2.0              |
 | `rhcos`     | 0.1.0              | 3.2.0              |
-| `rhcos`     | 0.2.0-experimental | 3.3.0-experimental |

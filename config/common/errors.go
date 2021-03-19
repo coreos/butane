@@ -46,4 +46,7 @@ var (
 	// boot device
 	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64")
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
+
+	// MachineConfigs
+	ErrNameRequired = errors.New("metadata.name is required")
 )

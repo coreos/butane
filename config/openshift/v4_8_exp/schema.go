@@ -1,4 +1,4 @@
-// Copyright 2019 Red Hat, Inc
+// Copyright 2020 Red Hat, Inc
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package common
+package v4_8_exp
 
-type TranslateOptions struct {
-	FilesDir                  string // allow embedding local files relative to this directory
-	NoResourceAutoCompression bool   // skip automatic compression of inline/local resources
-	DebugPrintTranslations    bool   // report translations to stderr
+import (
+	fcos "github.com/coreos/fcct/config/fcos/v1_3"
+)
+
+type Config struct {
+	fcos.Config `yaml:",inline"`
+	Metadata    Metadata `yaml:"metadata"`
 }
 
-type TranslateBytesOptions struct {
-	TranslateOptions
-	Pretty bool
-	Raw    bool // encode only the Ignition config, not any wrapper
-	Strict bool
+type Metadata struct {
+	Name   string            `yaml:"name"`
+	Labels map[string]string `yaml:"labels,omitempty"`
 }

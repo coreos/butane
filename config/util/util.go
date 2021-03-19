@@ -133,6 +133,33 @@ func TranslateBytes(input []byte, container interface{}, translateMethod string,
 	return outbytes, r, err
 }
 
+func TranslateBytesYAML(input []byte, container interface{}, translateMethod string, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+	// marshal to JSON, unmarshal, remarshal to YAML.  there's no other
+	// good way to respect the `json` struct tags.
+	// https://github.com/go-yaml/yaml/issues/424
+	jsonCfg, r, err := TranslateBytes(input, container, translateMethod, options)
+	if err != nil {
+		return jsonCfg, r, err
+	}
+
+	var ifaceCfg interface{}
+	if err := json.Unmarshal(jsonCfg, &ifaceCfg); err != nil {
+		return []byte{}, r, err
+	}
+
+	var yamlCfgBuf bytes.Buffer
+	encoder := yaml.NewEncoder(&yamlCfgBuf)
+	encoder.SetIndent(2)
+	if err := encoder.Encode(ifaceCfg); err != nil {
+		return []byte{}, r, err
+	}
+	if err := encoder.Close(); err != nil {
+		return []byte{}, r, err
+	}
+	yamlCfg := bytes.Trim(yamlCfgBuf.Bytes(), "\n")
+	return yamlCfg, r, err
+}
+
 // unmarshal unmarshals the data to "to" and also returns a context tree for the source. If strict
 // is set it errors out on unused keys.
 func unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
