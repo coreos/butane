@@ -20,6 +20,7 @@ import (
 	"github.com/coreos/fcct/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
+	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -59,6 +60,36 @@ func TestValidateMetadata(t *testing.T) {
 			},
 			common.ErrRoleRequired,
 			path.New("yaml", "labels", ROLE_LABEL_KEY),
+		},
+	}
+
+	for i, test := range tests {
+		actual := test.in.Validate(path.New("yaml"))
+		expected := report.Report{}
+		expected.AddOnError(test.errPath, test.out)
+		assert.Equal(t, expected, actual, "#%d: bad report", i)
+	}
+}
+
+func TestValidateOpenShift(t *testing.T) {
+	tests := []struct {
+		in      OpenShift
+		out     error
+		errPath path.ContextPath
+	}{
+		// empty struct
+		{
+			OpenShift{},
+			nil,
+			path.New("yaml"),
+		},
+		// bad kernel type
+		{
+			OpenShift{
+				KernelType: util.StrToPtr("hurd"),
+			},
+			common.ErrInvalidKernelType,
+			path.New("yaml", "kernel_type"),
 		},
 	}
 

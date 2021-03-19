@@ -35,5 +35,9 @@ type Metadata struct {
 }
 
 type Spec struct {
-	Config types.Config `json:"config"`
+	Config          types.Config `json:"config"`
+	KernelArguments []string     `json:"kernelArguments,omitempty"`
+	Extensions      []string     `json:"extensions,omitempty"`
+	FIPS            *bool        `json:"fips,omitempty"`
+	KernelType      *string      `json:"kernelType,omitempty"`
 }

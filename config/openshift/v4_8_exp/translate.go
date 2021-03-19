@@ -62,6 +62,17 @@ func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (
 		ts.AddTranslation(path.New("yaml", "metadata", "labels"), path.New("json", "metadata", "labels"))
 	}
 
+	// translate OpenShift fields
+	tr := translate.NewTranslator("yaml", "json", options)
+	from := &c.OpenShift
+	to := &mc.Spec
+	ts2, r2 := translate.Prefixed(tr, "extensions", &from.Extensions, &to.Extensions)
+	translate.MergeP(tr, ts2, &r2, "fips", &from.FIPS, &to.FIPS)
+	translate.MergeP2(tr, ts2, &r2, "kernel_arguments", &from.KernelArguments, "kernelArguments", &to.KernelArguments)
+	translate.MergeP2(tr, ts2, &r2, "kernel_type", &from.KernelType, "kernelType", &to.KernelType)
+	ts.MergeP2("openshift", "spec", ts2)
+	r.Merge(r2)
+
 	return mc, ts, r
 }
 

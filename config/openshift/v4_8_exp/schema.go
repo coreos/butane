@@ -22,10 +22,18 @@ const ROLE_LABEL_KEY = "machineconfiguration.openshift.io/role"
 
 type Config struct {
 	fcos.Config `yaml:",inline"`
-	Metadata    Metadata `yaml:"metadata"`
+	Metadata    Metadata  `yaml:"metadata"`
+	OpenShift   OpenShift `yaml:"openshift"`
 }
 
 type Metadata struct {
 	Name   string            `yaml:"name"`
 	Labels map[string]string `yaml:"labels,omitempty"`
+}
+
+type OpenShift struct {
+	KernelArguments []string `yaml:"kernel_arguments"`
+	Extensions      []string `yaml:"extensions"`
+	FIPS            *bool    `yaml:"fips"`
+	KernelType      *string  `yaml:"kernel_type"`
 }
