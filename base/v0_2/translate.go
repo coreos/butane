@@ -292,6 +292,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 				file.Contents.Compression = util.StrToPtr("gzip")
 				ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "contents", "compression"))
 			}
+			ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "contents"))
 			if file.Mode == nil {
 				mode := 0644
 				if info.Mode()&0111 != 0 {
