@@ -38,8 +38,8 @@ func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (
 	// wrap
 	ts = ts.PrefixPaths(path.New("yaml"), path.New("json", "spec", "config"))
 	mc := result.MachineConfig{
-		ApiVersion: "machineconfiguration.openshift.io/v1",
-		Kind:       "MachineConfig",
+		ApiVersion: result.MC_API_VERSION,
+		Kind:       result.MC_KIND,
 		Metadata: result.Metadata{
 			Name:   c.Metadata.Name,
 			Labels: make(map[string]string),

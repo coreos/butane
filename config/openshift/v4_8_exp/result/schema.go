@@ -18,6 +18,11 @@ import (
 	"github.com/coreos/ignition/v2/config/v3_2/types"
 )
 
+const (
+	MC_API_VERSION = "machineconfiguration.openshift.io/v1"
+	MC_KIND        = "MachineConfig"
+)
+
 // We round-trip through JSON because Ignition uses `json` struct tags,
 // so all struct tags need to be `json` even though we're ultimately
 // writing YAML.
