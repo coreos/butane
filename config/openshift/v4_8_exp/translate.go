@@ -15,14 +15,24 @@
 package v4_8_exp
 
 import (
+	"strings"
+
 	"github.com/coreos/fcct/config/common"
 	"github.com/coreos/fcct/config/openshift/v4_8_exp/result"
 	cutil "github.com/coreos/fcct/config/util"
 	"github.com/coreos/fcct/translate"
 
+	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+)
+
+const (
+	// FIPS 140-2 doesn't allow the default XTS mode
+	fipsCipherOption      = types.LuksOption("--cipher")
+	fipsCipherShortOption = types.LuksOption("-c")
+	fipsCipherArgument    = types.LuksOption("aes-cbc-essiv:sha256")
 )
 
 // ToMachineConfig4_8Unvalidated translates the config to a MachineConfig.  It also
@@ -70,6 +80,9 @@ func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (
 	translate.MergeP2(tr, ts2, &r2, "kernel_type", &from.KernelType, "kernelType", &to.KernelType)
 	ts.MergeP2("openshift", "spec", ts2)
 	r.Merge(r2)
+
+	// apply FIPS options to LUKS volumes
+	ts.Merge(addLuksFipsOptions(&mc))
 
 	return mc, ts, r
 }
@@ -120,4 +133,34 @@ func ToConfigBytes(input []byte, options common.TranslateBytesOptions) ([]byte, 
 	} else {
 		return cutil.TranslateBytesYAML(input, &Config{}, "ToMachineConfig4_8", options)
 	}
+}
+
+func addLuksFipsOptions(mc *result.MachineConfig) translate.TranslationSet {
+	ts := translate.NewTranslationSet("yaml", "json")
+	if !util.IsTrue(mc.Spec.FIPS) {
+		return ts
+	}
+
+OUTER:
+	for i := range mc.Spec.Config.Storage.Luks {
+		luks := &mc.Spec.Config.Storage.Luks[i]
+		// Only add options if the user hasn't already specified
+		// a cipher option.  Do this in-place, since config merging
+		// doesn't support conditional logic.
+		for _, option := range luks.Options {
+			if option == fipsCipherOption ||
+				strings.HasPrefix(string(option), string(fipsCipherOption)+"=") ||
+				option == fipsCipherShortOption {
+				continue OUTER
+			}
+		}
+		for j := 0; j < 2; j++ {
+			ts.AddTranslation(path.New("yaml", "openshift", "fips"), path.New("json", "spec", "config", "storage", "luks", i, "options", len(luks.Options)+j))
+		}
+		if len(luks.Options) == 0 {
+			ts.AddTranslation(path.New("yaml", "openshift", "fips"), path.New("json", "spec", "config", "storage", "luks", i, "options"))
+		}
+		luks.Options = append(luks.Options, fipsCipherOption, fipsCipherArgument)
+	}
+	return ts
 }
