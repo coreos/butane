@@ -52,14 +52,12 @@ func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (
 	ts.AddTranslation(path.New("yaml", "version"), path.New("json", "kind"))
 	ts.AddTranslation(path.New("yaml", "metadata"), path.New("json", "metadata"))
 	ts.AddTranslation(path.New("yaml", "metadata", "name"), path.New("json", "metadata", "name"))
+	ts.AddTranslation(path.New("yaml", "metadata", "labels"), path.New("json", "metadata", "labels"))
 	ts.AddTranslation(path.New("yaml", "version"), path.New("json", "spec"))
 	ts.AddTranslation(path.New("yaml"), path.New("json", "spec", "config"))
 	for k, v := range c.Metadata.Labels {
 		mc.Metadata.Labels[k] = v
 		ts.AddTranslation(path.New("yaml", "metadata", "labels", k), path.New("json", "metadata", "labels", k))
-	}
-	if len(mc.Metadata.Labels) > 0 {
-		ts.AddTranslation(path.New("yaml", "metadata", "labels"), path.New("json", "metadata", "labels"))
 	}
 
 	// translate OpenShift fields
