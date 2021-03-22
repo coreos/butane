@@ -20,6 +20,7 @@ import (
 	"encoding/base64"
 	"net/url"
 
+	"github.com/coreos/ignition/v2/config/util"
 	"github.com/vincent-petithory/dataurl"
 )
 
@@ -39,7 +40,7 @@ func MakeDataURL(contents []byte, currentCompression *string, allowCompression b
 	// user already enabled compression, don't compress again.
 	// We don't try base64-encoded URL-escaped because gzipped data is
 	// binary and URL escaping is unlikely to be efficient.
-	if (currentCompression == nil || *currentCompression == "") && allowCompression {
+	if util.NilOrEmpty(currentCompression) && allowCompression {
 		var buf bytes.Buffer
 		var compressor *gzip.Writer
 		if compressor, err = gzip.NewWriterLevel(&buf, gzip.BestCompression); err != nil {

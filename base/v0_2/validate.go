@@ -18,6 +18,7 @@ import (
 	baseutil "github.com/coreos/fcct/base/util"
 	"github.com/coreos/fcct/config/common"
 
+	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 )
@@ -44,13 +45,13 @@ func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
 }
 
 func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
-	if fs.WithMountUnit == nil || !*fs.WithMountUnit {
+	if !util.IsTrue(fs.WithMountUnit) {
 		return
 	}
-	if fs.Path == nil || *fs.Path == "" {
+	if util.NilOrEmpty(fs.Path) {
 		r.AddOnError(c.Append("path"), common.ErrMountUnitNoPath)
 	}
-	if fs.Format == nil || *fs.Format == "" {
+	if util.NilOrEmpty(fs.Format) {
 		r.AddOnError(c.Append("format"), common.ErrMountUnitNoFormat)
 	}
 	return

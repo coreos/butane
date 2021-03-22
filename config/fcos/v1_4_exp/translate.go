@@ -92,7 +92,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var r report.Report
 
 	// check for high-level features
-	wantLuks := (c.BootDevice.Luks.Tpm2 != nil && *c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0
+	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0
 	wantMirror := len(c.BootDevice.Mirror.Devices) > 0
 	if !wantLuks && !wantMirror {
 		return r

@@ -238,7 +238,7 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 			continue
 		}
 		destBaseDir := "/"
-		if tree.Path != nil && *tree.Path != "" {
+		if util.NotEmpty(tree.Path) {
 			destBaseDir = *tree.Path
 		}
 
@@ -268,7 +268,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 		} else if info.Mode().IsRegular() {
 			i, file := t.GetFile(destPath)
 			if file != nil {
-				if file.Contents.Source != nil && *file.Contents.Source != "" {
+				if util.NotEmpty(file.Contents.Source) {
 					r.AddOnError(yamlPath, common.ErrNodeExists)
 					return nil
 				}
@@ -357,7 +357,7 @@ func (c Config) addMountUnits(config *types.Config, ts *translate.TranslationSet
 	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd"))
 	renderedTranslations.AddTranslation(path.New("yaml", "storage", "filesystems"), path.New("json", "systemd", "units"))
 	for i, fs := range c.Storage.Filesystems {
-		if fs.WithMountUnit == nil || !*fs.WithMountUnit {
+		if !util.IsTrue(fs.WithMountUnit) {
 			continue
 		}
 		fromPath := path.New("yaml", "storage", "filesystems", i, "with_mount_unit")
