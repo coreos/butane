@@ -328,35 +328,3 @@ func TestCustomTranslatorList(t *testing.T) {
 	assert.Equal(t, r.String(), "", "non-empty report")
 	assert.NoError(t, ts.DebugVerifyCoverage(&got), "incomplete TranslationSet coverage")
 }
-
-func TestAddIdentity(t *testing.T) {
-	ts := NewTranslationSet("1", "2")
-	ts.AddIdentity("foo", "bar")
-	expectedFoo := Translation{
-		From: path.New("1", "foo"),
-		To:   path.New("2", "foo"),
-	}
-	expectedBar := Translation{
-		From: path.New("1", "bar"),
-		To:   path.New("2", "bar"),
-	}
-	expectedFoo2 := Translation{
-		From: path.New("1", "pre", "foo"),
-		To:   path.New("2", "pre", "foo"),
-	}
-	expectedBar2 := Translation{
-		From: path.New("1", "pre", "bar"),
-		To:   path.New("2", "pre", "bar"),
-	}
-	ts2 := NewTranslationSet("1", "2")
-	ts2.MergeP("pre", ts)
-	ts3 := NewTranslationSet("1", "2")
-	ts3.Merge(ts.Prefix("pre"))
-
-	assert.Equal(t, ts.Set["$.foo"], expectedFoo, "foo not added correctly")
-	assert.Equal(t, ts.Set["$.bar"], expectedBar, "bar not added correctly")
-	assert.Equal(t, ts2.Set["$.pre.foo"], expectedFoo2, "foo not added correctly")
-	assert.Equal(t, ts3.Set["$.pre.bar"], expectedBar2, "bar not added correctly")
-	assert.Equal(t, ts3.Set["$.pre.foo"], expectedFoo2, "foo not added correctly")
-	assert.Equal(t, ts2.Set["$.pre.bar"], expectedBar2, "bar not added correctly")
-}

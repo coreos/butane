@@ -93,15 +93,6 @@ func (ts TranslationSet) AddTranslation(from, to path.ContextPath) {
 	ts.Set[toString] = translation
 }
 
-// Shortcut for AddTranslation for identity translations
-func (ts TranslationSet) AddIdentity(paths ...string) {
-	for _, p := range paths {
-		from := path.New(ts.FromTag, p)
-		to := path.New(ts.ToTag, p)
-		ts.AddTranslation(from, to)
-	}
-}
-
 // AddFromCommonSource adds translations for all of the paths in to from a single common path. This is useful
 // if one part of a config generates a large struct and all of the large struct should map to one path in the
 // config being translated.

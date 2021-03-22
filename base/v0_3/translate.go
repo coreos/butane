@@ -115,10 +115,9 @@ func translateFile(from File, options common.TranslateOptions) (to types.File, t
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	translate.MergeP(tr, tm, &r, "append", &from.Append, &to.Append)
 	translate.MergeP(tr, tm, &r, "contents", &from.Contents, &to.Contents)
-	to.Overwrite = from.Overwrite
-	to.Path = from.Path
-	to.Mode = from.Mode
-	tm.AddIdentity("overwrite", "path", "mode")
+	translate.MergeP(tr, tm, &r, "overwrite", &from.Overwrite, &to.Overwrite)
+	translate.MergeP(tr, tm, &r, "path", &from.Path, &to.Path)
+	translate.MergeP(tr, tm, &r, "mode", &from.Mode, &to.Mode)
 	return
 }
 
@@ -126,9 +125,8 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	translate.MergeP(tr, tm, &r, "httpHeaders", &from.HTTPHeaders, &to.HTTPHeaders)
-	to.Source = from.Source
-	to.Compression = from.Compression
-	tm.AddIdentity("source", "compression")
+	translate.MergeP(tr, tm, &r, "source", &from.Source, &to.Source)
+	translate.MergeP(tr, tm, &r, "compression", &from.Compression, &to.Compression)
 
 	if from.Local != nil {
 		c := path.New("yaml", "local")
@@ -187,10 +185,9 @@ func translateDirectory(from Directory, options common.TranslateOptions) (to typ
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
-	to.Overwrite = from.Overwrite
-	to.Path = from.Path
-	to.Mode = from.Mode
-	tm.AddIdentity("overwrite", "path", "mode")
+	translate.MergeP(tr, tm, &r, "overwrite", &from.Overwrite, &to.Overwrite)
+	translate.MergeP(tr, tm, &r, "path", &from.Path, &to.Path)
+	translate.MergeP(tr, tm, &r, "mode", &from.Mode, &to.Mode)
 	return
 }
 
@@ -198,11 +195,10 @@ func translateLink(from Link, options common.TranslateOptions) (to types.Link, t
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
-	to.Target = from.Target
-	to.Hard = from.Hard
-	to.Overwrite = from.Overwrite
-	to.Path = from.Path
-	tm.AddIdentity("target", "hard", "overwrite", "path")
+	translate.MergeP(tr, tm, &r, "target", &from.Target, &to.Target)
+	translate.MergeP(tr, tm, &r, "hard", &from.Hard, &to.Hard)
+	translate.MergeP(tr, tm, &r, "overwrite", &from.Overwrite, &to.Overwrite)
+	translate.MergeP(tr, tm, &r, "path", &from.Path, &to.Path)
 	return
 }
 
@@ -303,6 +299,7 @@ func walkTree(yamlPath path.ContextPath, tree Tree, ts *translate.TranslationSet
 				file.Contents.Compression = util.StrToPtr("gzip")
 				ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "contents", "compression"))
 			}
+			ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "contents"))
 			if file.Mode == nil {
 				mode := 0644
 				if info.Mode()&0111 != 0 {
