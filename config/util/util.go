@@ -75,13 +75,11 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 
 	// Check for invalid duplicated keys.
 	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
-	translateReportPaths(&dupsReport, translations)
-	r.Merge(dupsReport)
+	r.Merge(TranslateReportPaths(dupsReport, translations))
 
 	// Validate JSON semantics.
 	jsonReport := validate.Validate(final, "json")
-	translateReportPaths(&jsonReport, translations)
-	r.Merge(jsonReport)
+	r.Merge(TranslateReportPaths(jsonReport, translations))
 
 	if r.IsFatal() {
 		return zeroValue, r, common.ErrInvalidGeneratedConfig
@@ -160,6 +158,28 @@ func TranslateBytesYAML(input []byte, container interface{}, translateMethod str
 	return yamlCfg, r, err
 }
 
+// Report an ErrFieldElided warning for any non-zero top-level fields in the
+// specified output struct.  The caller will probably want to use
+// translate.PrefixReport() to reparent the report into the right place in
+// the `json` hierarchy, and then TranslateReportPaths() to map back into
+// `yaml` space.
+func CheckForElidedFields(struct_ interface{}) report.Report {
+	v := reflect.ValueOf(struct_)
+	t := v.Type()
+	if t.Kind() != reflect.Struct {
+		panic("struct type required")
+	}
+	var r report.Report
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
+		if f.IsValid() && !f.IsZero() {
+			tag := strings.Split(t.Field(i).Tag.Get("json"), ",")[0]
+			r.AddOnWarn(path.New("json", tag), common.ErrFieldElided)
+		}
+	}
+	return r
+}
+
 // unmarshal unmarshals the data to "to" and also returns a context tree for the source. If strict
 // is set it errors out on unused keys.
 func unmarshal(data []byte, to interface{}, strict bool) (tree.Node, error) {
@@ -198,15 +218,18 @@ func snake(in string) string {
 	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
 }
 
-// translateReportPaths takes a report from a camelCase json document and a set of translations rules,
+// TranslateReportPaths takes a report from a camelCase json document and a set of translations rules,
 // applies those rules and converts all camelCase to snake_case.
-func translateReportPaths(r *report.Report, ts translate.TranslationSet) {
-	for i, ent := range r.Entries {
+func TranslateReportPaths(r report.Report, ts translate.TranslationSet) report.Report {
+	var ret report.Report
+	ret.Merge(r)
+	for i, ent := range ret.Entries {
 		context := ent.Context
 		if t, ok := ts.Set[context.String()]; ok {
 			context = t.From
 		}
 		context = snakePath(context)
-		r.Entries[i].Context = context
+		ret.Entries[i].Context = context
 	}
+	return ret
 }

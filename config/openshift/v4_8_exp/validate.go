@@ -30,3 +30,14 @@ func (m Metadata) Validate(c path.ContextPath) (r report.Report) {
 	}
 	return
 }
+
+func (os OpenShift) Validate(c path.ContextPath) (r report.Report) {
+	if os.KernelType != nil {
+		switch *os.KernelType {
+		case "", "default", "realtime":
+		default:
+			r.AddOnError(c.Append("kernel_type"), common.ErrInvalidKernelType)
+		}
+	}
+	return
+}

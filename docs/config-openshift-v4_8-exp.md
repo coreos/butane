@@ -204,6 +204,11 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
+* **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
+  * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
+  * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
+  * **_extensions_** (list of strings): RHCOS extensions to be installed on the node.
+  * **_fips_** (bool): whether or not to enable FIPS 140-2 compatibility. If omitted, defaults to false.
 
 [k8s-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
 [k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/

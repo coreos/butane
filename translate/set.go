@@ -121,9 +121,15 @@ func (ts TranslationSet) Merge(from TranslationSet) {
 	}
 }
 
-// MergeP is like Merge, but first it calls Prefix on the set being merged in.
+// MergeP is like Merge, but it adds a prefix to the set being merged in.
 func (ts TranslationSet) MergeP(prefix interface{}, from TranslationSet) {
-	from = from.Prefix(prefix)
+	ts.MergeP2(prefix, prefix, from)
+}
+
+// MergeP2 is like Merge, but it adds distinct prefixes to each side of the
+// set being merged in.
+func (ts TranslationSet) MergeP2(fromPrefix interface{}, toPrefix interface{}, from TranslationSet) {
+	from = from.PrefixPaths(path.New(from.FromTag, fromPrefix), path.New(from.ToTag, toPrefix))
 	ts.Merge(from)
 }
 

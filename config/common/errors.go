@@ -48,6 +48,8 @@ var (
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
 
 	// MachineConfigs
-	ErrNameRequired = errors.New("metadata.name is required")
-	ErrRoleRequired = errors.New("machineconfiguration.openshift.io/role label is required")
+	ErrFieldElided       = errors.New("field ignored in raw mode")
+	ErrNameRequired      = errors.New("metadata.name is required")
+	ErrRoleRequired      = errors.New("machineconfiguration.openshift.io/role label is required")
+	ErrInvalidKernelType = errors.New("must be empty, \"default\", or \"realtime\"")
 )
