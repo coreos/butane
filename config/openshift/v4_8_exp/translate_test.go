@@ -280,3 +280,153 @@ func TestTranslateConfig(t *testing.T) {
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }
+
+// Test post-translation validation of MCO support for Ignition config fields.
+func TestValidateMCOSupport(t *testing.T) {
+	type entry struct {
+		kind report.EntryKind
+		err  error
+		path path.ContextPath
+	}
+	tests := []struct {
+		in      Config
+		entries []entry
+	}{
+		// empty-ish config
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+			},
+			[]entry{},
+		},
+		// core user with only accepted fields
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Passwd: base.Passwd{
+							Users: []base.PasswdUser{
+								{
+									Name:              "core",
+									SSHAuthorizedKeys: []base.SSHAuthorizedKey{"value"},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]entry{},
+		},
+		// all the warnings/errors
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Files: []base.File{
+								{
+									Path: "/f",
+								},
+								{
+									Path: "/g",
+									Append: []base.Resource{
+										{
+											Inline: util.StrToPtr("z"),
+										},
+									},
+								},
+							},
+							Directories: []base.Directory{
+								{
+									Path: "/d",
+								},
+							},
+							Links: []base.Link{
+								{
+									Path:   "/l",
+									Target: "/t",
+								},
+							},
+						},
+						Passwd: base.Passwd{
+							Users: []base.PasswdUser{
+								{
+									Name:  "core",
+									Gecos: util.StrToPtr("mercury delay line"),
+									Groups: []base.Group{
+										"z",
+									},
+									HomeDir:           util.StrToPtr("/home/drum"),
+									NoCreateHome:      util.BoolToPtr(true),
+									NoLogInit:         util.BoolToPtr(true),
+									NoUserGroup:       util.BoolToPtr(true),
+									PasswordHash:      util.StrToPtr("corned beef"),
+									PrimaryGroup:      util.StrToPtr("wheel"),
+									SSHAuthorizedKeys: []base.SSHAuthorizedKey{"value"},
+									Shell:             util.StrToPtr("/bin/tcsh"),
+									ShouldExist:       util.BoolToPtr(false),
+									System:            util.BoolToPtr(true),
+									UID:               util.IntToPtr(42),
+								},
+								{
+									Name: "bovik",
+								},
+							},
+							Groups: []base.PasswdGroup{
+								{
+									Name: "mock",
+								},
+							},
+						},
+					},
+				},
+			},
+			[]entry{
+				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
+				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
+				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
+				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "groups")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "home_dir")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_create_home")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_log_init")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_user_group")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "password_hash")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "primary_group")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "shell")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "should_exist")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
+				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
+				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1)},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		var expectedReport report.Report
+		for _, entry := range test.entries {
+			expectedReport.AddOn(entry.path, entry.err, entry.kind)
+		}
+		actual, translations, r := test.in.ToMachineConfig4_8Unvalidated(common.TranslateOptions{})
+		assert.Equal(t, expectedReport, r, "#%d: report mismatch", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
+	}
+}
