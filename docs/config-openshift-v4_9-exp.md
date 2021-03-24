@@ -147,6 +147,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_users_** (list of objects): the list of accounts that shall exist. All users must have a unique `name`.
     * **name** (string): the username for the account. Must be `core`.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added to `.ssh/authorized_keys` in the user's home directory. All SSH keys must be unique.
+* **_kernel_arguments_** (object): describes the desired kernel arguments.
+  * **_should_exist_** (list of strings): the list of kernel arguments that should exist.
+  * **_should_not_exist_** (list of strings): the list of kernel arguments that should not exist.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.

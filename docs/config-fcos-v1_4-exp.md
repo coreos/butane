@@ -191,6 +191,9 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
     * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
+* **_kernel_arguments_** (object): describes the desired kernel arguments.
+  * **_should_exist_** (list of strings): the list of kernel arguments that should exist.
+  * **_should_not_exist_** (list of strings): the list of kernel arguments that should not exist.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
