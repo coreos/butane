@@ -227,8 +227,20 @@ func TranslateReportPaths(r report.Report, ts translate.TranslationSet) report.R
 		context := ent.Context
 		if t, ok := ts.Set[context.String()]; ok {
 			context = t.From
+		} else {
+			// Missing translation.  As a fallback, convert
+			// camelCase path elements to snake_case and hope
+			// there's a 1:1 mapping between the YAML and JSON
+			// hierarchies.  Notably, that's not true for
+			// MachineConfig output, since the Ignition config
+			// is reparented to a grandchild of the root.
+			// See also https://github.com/coreos/fcct/issues/213.
+			// This is hacky (notably, it leaves context.Tag as
+			// `json`) but sometimes it's enough to help us find
+			// a Marker, and when it isn't, the path still
+			// provides some feedback to the user.
+			context = snakePath(context)
 		}
-		context = snakePath(context)
 		ret.Entries[i].Context = context
 	}
 	return ret
