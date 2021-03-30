@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_8
+package v4_9_exp
 
 import (
 	"testing"
 
 	baseutil "github.com/coreos/fcct/base/util"
-	base "github.com/coreos/fcct/base/v0_3"
+	base "github.com/coreos/fcct/base/v0_4_exp"
 	"github.com/coreos/fcct/config/common"
-	fcos "github.com/coreos/fcct/config/fcos/v1_3"
-	"github.com/coreos/fcct/config/openshift/v4_8/result"
+	fcos "github.com/coreos/fcct/config/fcos/v1_4_exp"
+	"github.com/coreos/fcct/config/openshift/v4_9_exp/result"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_2/types"
+	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +50,7 @@ func TestElidedFieldWarning(t *testing.T) {
 	expected.AddOnWarn(path.New("yaml", "openshift", "fips"), common.ErrFieldElided)
 	expected.AddOnWarn(path.New("yaml", "openshift", "kernel_type"), common.ErrFieldElided)
 
-	_, _, r := in.ToIgn3_2Unvalidated(common.TranslateOptions{})
+	_, _, r := in.ToIgn3_3Unvalidated(common.TranslateOptions{})
 	assert.Equal(t, expected, r, "report mismatch")
 }
 
@@ -82,7 +82,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.2.0",
+							Version: "3.3.0-experimental",
 						},
 					},
 				},
@@ -157,7 +157,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.2.0",
+							Version: "3.3.0-experimental",
 						},
 						Storage: types.Storage{
 							Filesystems: []types.Filesystem{
@@ -175,7 +175,7 @@ func TestTranslateConfig(t *testing.T) {
 									Label:      util.StrToPtr("luks-root"),
 									WipeVolume: util.BoolToPtr(true),
 									Options:    []types.LuksOption{fipsCipherOption, fipsCipherArgument},
-									Clevis: &types.Clevis{
+									Clevis: types.Clevis{
 										Tpm2: util.BoolToPtr(true),
 									},
 								},
@@ -273,7 +273,7 @@ func TestTranslateConfig(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations, r := test.in.ToMachineConfig4_8Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToMachineConfig4_9Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
@@ -425,7 +425,7 @@ func TestValidateMCOSupport(t *testing.T) {
 		for _, entry := range test.entries {
 			expectedReport.AddOn(entry.path, entry.err, entry.kind)
 		}
-		actual, translations, r := test.in.ToMachineConfig4_8Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToMachineConfig4_9Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, expectedReport, r, "#%d: report mismatch", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_8
+package v4_9_exp
 
 import (
-	fcos "github.com/coreos/fcct/config/fcos/v1_3"
+	fcos "github.com/coreos/fcct/config/fcos/v1_4_exp"
 )
 
 const ROLE_LABEL_KEY = "machineconfiguration.openshift.io/role"
