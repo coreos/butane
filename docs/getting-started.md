@@ -62,7 +62,7 @@ New releases of `fcct` are backwards compatible with old releases unless otherwi
 
 As a simple example, let's use `fcct` to set the authorized ssh key for the `core` user on a Fedora CoreOS machine.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0

@@ -15,7 +15,7 @@ Here you can find a bunch of simple examples for using `fcct`, with some explana
 
 This example modifies the existing `core` user and sets its ssh key.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -28,7 +28,7 @@ passwd:
 
 This example creates one user, `user1` and sets up one ssh public key for the user. The user is also given the home directory `/home/user1`, but it's not created, the user is added to the `wheel` and `plugdev` groups, and the user's shell is set to `/bin/bash`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -49,7 +49,7 @@ passwd:
 
 You can use a Fedora CoreOS Config to set a password for a local user. Building on the previous example, we can configure the `password_hash` for one or more users:
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -85,7 +85,7 @@ For more information, see the Fedora CoreOS documentation on [Authentication][fc
 
 This example creates a file at `/opt/file` with the contents `Hello, world!`, permissions 0644 (so readable and writable by the owner, and only readable by everyone else), and the file is owned by user uid 500 and gid 501.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -103,7 +103,7 @@ storage:
 
 This example fetches a gzip-compressed file from `http://example.com/file2`, makes sure that the _uncompressed_ contents match the provided sha512 hash, and writes it to `/opt/file2`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -120,7 +120,7 @@ storage:
 
 This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running FCCT. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to FCCT.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -145,7 +145,7 @@ directory/symlink -> ../file
 
 This example copies that directory tree to `/etc/files` on the target system. The ownership and mode for `overridden-file` are explicitly set by the config. All other filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. The example must be transpiled with `--files-dir ~/fcc`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -166,7 +166,7 @@ storage:
 
 This example creates a single partition spanning all of the `sdb` device then creates a btrfs filesystem on it to use as `/var`. Finally it creates the mount unit for systemd so it gets mounted on boot.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -190,7 +190,7 @@ storage:
 
 This example creates a swap partition spanning all of the `sdb` device, creates a swap area on it, and creates a systemd swap unit so the swap area is enabled on boot.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.4.0-experimental
@@ -212,7 +212,7 @@ storage:
 
 This example creates three LUKS2 encrypted storage volumes: one unlocked with a static key file, one with a TPM2 device via Clevis, and one with a network Tang server via Clevis. Volumes can be unlocked with any combination of these methods, or with a custom Clevis PIN and CFG. If a key file is not specified for a device, an ephemeral one will be created.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.2.0
@@ -252,7 +252,7 @@ storage:
 
 This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem unlocked with a combination of a TPM2 device and a network Tang server.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.3.0
@@ -266,7 +266,7 @@ boot_device:
 
 This example combines `boot_device` with a manually-specified filesystem `format` to create an encrypted root filesystem formatted with `ext4` instead of the default `xfs`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.3.0
@@ -283,7 +283,7 @@ storage:
 
 This example replicates all default partitions on the boot disk across multiple disks, allowing the system to survive disk failure.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.3.0
@@ -296,7 +296,7 @@ boot_device:
 
 This example configures a mirrored boot disk with a TPM2-encrypted root filesystem, overrides the size of the root partition replicas, and adds a mirrored `/var` partition which consumes the remainder of the disks.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.3.0
@@ -337,7 +337,7 @@ storage:
 
 This example adds a drop-in for the `serial-getty@ttyS0` unit, turning on autologin on `ttyS0` by overriding the `ExecStart=` defined in the default unit. More information on systemd dropins can be found in [the systemd docs][dropins].
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -355,7 +355,7 @@ systemd:
 
 This example creates a new systemd unit called hello.service, enables it so it will run on boot, and defines the contents to simply echo `"Hello, World!"`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
