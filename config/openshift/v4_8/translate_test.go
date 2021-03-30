@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_8_exp
+package v4_8
 
 import (
 	"testing"
@@ -21,7 +21,7 @@ import (
 	base "github.com/coreos/fcct/base/v0_3"
 	"github.com/coreos/fcct/config/common"
 	fcos "github.com/coreos/fcct/config/fcos/v1_3"
-	"github.com/coreos/fcct/config/openshift/v4_8_exp/result"
+	"github.com/coreos/fcct/config/openshift/v4_8/result"
 	"github.com/coreos/fcct/translate"
 
 	"github.com/coreos/ignition/v2/config/util"

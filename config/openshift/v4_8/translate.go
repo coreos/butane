@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_8_exp
+package v4_8
 
 import (
 	"reflect"
 	"strings"
 
 	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/config/openshift/v4_8_exp/result"
+	"github.com/coreos/fcct/config/openshift/v4_8/result"
 	cutil "github.com/coreos/fcct/config/util"
 	"github.com/coreos/fcct/translate"
 
