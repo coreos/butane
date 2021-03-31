@@ -17,10 +17,10 @@ package v1_4_exp
 import (
 	"fmt"
 
-	baseutil "github.com/coreos/fcct/base/util"
-	"github.com/coreos/fcct/config/common"
-	cutil "github.com/coreos/fcct/config/util"
-	"github.com/coreos/fcct/translate"
+	baseutil "github.com/coreos/butane/base/util"
+	"github.com/coreos/butane/config/common"
+	cutil "github.com/coreos/butane/config/util"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"

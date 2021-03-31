@@ -17,10 +17,10 @@ package v1_3
 import (
 	"testing"
 
-	baseutil "github.com/coreos/fcct/base/util"
-	base "github.com/coreos/fcct/base/v0_3"
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/translate"
+	baseutil "github.com/coreos/butane/base/util"
+	base "github.com/coreos/butane/base/v0_3"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_2/types"

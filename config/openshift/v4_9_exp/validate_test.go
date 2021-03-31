@@ -17,7 +17,7 @@ package v4_9_exp
 import (
 	"testing"
 
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"

@@ -1,4 +1,4 @@
-module github.com/coreos/fcct
+module github.com/coreos/butane
 
 go 1.12
 

@@ -15,7 +15,7 @@
 package v4_8
 
 import (
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"

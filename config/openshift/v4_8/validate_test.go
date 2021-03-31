@@ -17,7 +17,7 @@ package v4_8
 import (
 	"testing"
 
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"

@@ -22,8 +22,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/translate"
 
 	"github.com/clarketm/json"
 	ignvalidate "github.com/coreos/ignition/v2/config/validate"

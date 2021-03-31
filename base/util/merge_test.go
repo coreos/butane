@@ -17,7 +17,7 @@ package util
 import (
 	"testing"
 
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	// config version doesn't matter; just pick one

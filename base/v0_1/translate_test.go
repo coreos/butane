@@ -17,9 +17,9 @@ package v0_1
 import (
 	"testing"
 
-	baseutil "github.com/coreos/fcct/base/util"
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/translate"
+	baseutil "github.com/coreos/butane/base/util"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_0/types"

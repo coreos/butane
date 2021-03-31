@@ -17,8 +17,8 @@ package v0_1
 import (
 	"net/url"
 
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_0/types"
 	"github.com/coreos/vcontext/path"

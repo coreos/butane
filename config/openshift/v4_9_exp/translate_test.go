@@ -17,12 +17,12 @@ package v4_9_exp
 import (
 	"testing"
 
-	baseutil "github.com/coreos/fcct/base/util"
-	base "github.com/coreos/fcct/base/v0_4_exp"
-	"github.com/coreos/fcct/config/common"
-	fcos "github.com/coreos/fcct/config/fcos/v1_4_exp"
-	"github.com/coreos/fcct/config/openshift/v4_9_exp/result"
-	"github.com/coreos/fcct/translate"
+	baseutil "github.com/coreos/butane/base/util"
+	base "github.com/coreos/butane/base/v0_4_exp"
+	"github.com/coreos/butane/config/common"
+	fcos "github.com/coreos/butane/config/fcos/v1_4_exp"
+	"github.com/coreos/butane/config/openshift/v4_9_exp/result"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"

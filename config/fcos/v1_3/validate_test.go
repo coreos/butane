@@ -17,8 +17,8 @@ package v1_3
 import (
 	"testing"
 
-	base "github.com/coreos/fcct/base/v0_3"
-	"github.com/coreos/fcct/config/common"
+	base "github.com/coreos/butane/base/v0_3"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"

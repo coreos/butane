@@ -18,7 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 )
 
 func EnsurePathWithinFilesDir(path, filesDir string) error {

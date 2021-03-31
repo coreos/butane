@@ -15,7 +15,7 @@
 package v1_2
 
 import (
-	base "github.com/coreos/fcct/base/v0_3"
+	base "github.com/coreos/butane/base/v0_3"
 )
 
 type Config struct {

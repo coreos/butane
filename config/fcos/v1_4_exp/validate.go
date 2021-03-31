@@ -15,7 +15,7 @@
 package v1_4_exp
 
 import (
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"

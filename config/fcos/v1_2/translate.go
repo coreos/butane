@@ -15,8 +15,8 @@
 package v1_2
 
 import (
-	"github.com/coreos/fcct/config/common"
-	cutil "github.com/coreos/fcct/config/util"
+	"github.com/coreos/butane/config/common"
+	cutil "github.com/coreos/butane/config/util"
 
 	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/report"

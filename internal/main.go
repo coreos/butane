@@ -21,9 +21,9 @@ import (
 
 	"github.com/spf13/pflag"
 
-	"github.com/coreos/fcct/config"
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/internal/version"
+	"github.com/coreos/butane/config"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/internal/version"
 )
 
 func fail(format string, args ...interface{}) {
