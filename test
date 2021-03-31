@@ -32,7 +32,7 @@ touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
 for doc in docs/*md
 do
 	echo "Checking $doc"
-	# split each doc into a bunch of tmpfiles then run fcct on them
+	# split each doc into a bunch of tmpfiles then run butane on them
 	sed -n '/^<!-- butane-config -->/,/^```$/ p' < ${doc} \
 		| csplit - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
 

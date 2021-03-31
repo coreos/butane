@@ -19,5 +19,5 @@ COMMIT=$2
 
 source ./build
 
-git tag --sign --message "Fedora CoreOS Config Transpiler ${VER}" "${VER}" "${COMMIT}"
+git tag --sign --message "Butane ${VER}" "${VER}" "${COMMIT}"
 git verify-tag --verbose "${VER}"

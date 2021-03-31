@@ -55,7 +55,7 @@ func init() {
 
 /// RegisterTranslator registers a translator for the specified variant and
 /// version to be available for use by TranslateBytes.  This is only needed
-/// by users implementing their own translators outside the FCCT package.
+/// by users implementing their own translators outside the Butane package.
 func RegisterTranslator(variant, version string, trans translator) {
 	key := fmt.Sprintf("%s+%s", variant, version)
 	if _, ok := registry[key]; ok {

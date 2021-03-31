@@ -14,7 +14,7 @@ if [ -z ${BIN_PATH+a} ]; then
 fi
 
 build_release() {
-    export NAME="fcct-${1}"
+    export NAME="butane-${1}"
     echo "building ${NAME}"
     go build -o ${BIN_PATH}/${NAME} -ldflags "$LDFLAGS" internal/main.go
 }

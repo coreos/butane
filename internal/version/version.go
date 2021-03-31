@@ -20,5 +20,5 @@ import (
 
 var (
 	Raw    = "was not built properly"
-	String = fmt.Sprintf("Fedora CoreOS Config Transpiler %s", Raw)
+	String = fmt.Sprintf("Butane %s", Raw)
 )

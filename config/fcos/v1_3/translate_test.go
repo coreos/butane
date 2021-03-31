@@ -31,7 +31,7 @@ import (
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
-// TestTranslateBootDevice tests translating the FCC boot_device section.
+// TestTranslateBootDevice tests translating the Butane config boot_device section.
 func TestTranslateBootDevice(t *testing.T) {
 	tests := []struct {
 		in         Config

@@ -269,7 +269,7 @@ func TestTranslateIgnition(t *testing.T) {
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		// DebugVerifyCoverage wants to see a translation for $.version but
 		// translateIgnition doesn't create one; ToIgn3_*Unvalidated handles
-		// that since it has access to the FCC version
+		// that since it has access to the Butane config version
 		translations.AddTranslation(path.New("yaml", "bogus"), path.New("json", "version"))
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}

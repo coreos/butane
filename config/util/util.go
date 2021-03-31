@@ -87,8 +87,8 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 	return final, r, nil
 }
 
-// TranslateBytes unmarshals the FCC specified in input into the struct
-// pointed to by container, translates it to the corresponding Ignition
+// TranslateBytes unmarshals the Butane config specified in input into the
+// struct pointed to by container, translates it to the corresponding Ignition
 // config version using the named translation method, and returns the
 // marshaled Ignition config.  It returns a report of any errors or warnings
 // in the source and resultant config.  If the report has fatal errors or it
@@ -234,7 +234,7 @@ func TranslateReportPaths(r report.Report, ts translate.TranslationSet) report.R
 			// hierarchies.  Notably, that's not true for
 			// MachineConfig output, since the Ignition config
 			// is reparented to a grandchild of the root.
-			// See also https://github.com/coreos/fcct/issues/213.
+			// See also https://github.com/coreos/butane/issues/213.
 			// This is hacky (notably, it leaves context.Tag as
 			// `json`) but sometimes it's enough to help us find
 			// a Marker, and when it isn't, the path still
