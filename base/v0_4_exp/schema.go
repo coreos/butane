@@ -76,7 +76,7 @@ type Filesystem struct {
 	Path           *string  `yaml:"path"`
 	UUID           *string  `yaml:"uuid"`
 	WipeFilesystem *bool    `yaml:"wipe_filesystem"`
-	WithMountUnit  *bool    `yaml:"with_mount_unit" fcct:"auto_skip"` // Added, not in Ignition spec
+	WithMountUnit  *bool    `yaml:"with_mount_unit" butane:"auto_skip"` // Added, not in Ignition spec
 }
 
 type FilesystemOption string
@@ -215,7 +215,7 @@ type Storage struct {
 	Links       []Link       `yaml:"links"`
 	Luks        []Luks       `yaml:"luks"`
 	Raid        []Raid       `yaml:"raid"`
-	Trees       []Tree       `yaml:"trees" fcct:"auto_skip"` // Added, not in ignition spec
+	Trees       []Tree       `yaml:"trees" butane:"auto_skip"` // Added, not in ignition spec
 }
 
 type Systemd struct {
