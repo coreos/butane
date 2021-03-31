@@ -1,11 +1,13 @@
 ---
 layout: default
-nav_order: 5
+title: Fedora CoreOS
+parent: Upgrading configs
+nav_order: 1
 ---
 
-# Upgrading Configs
+# Upgrading Fedora CoreOS configs
 
-Occasionally, there are changes made to Fedora CoreOS configuration that break backward compatibility. While this is not a concern for running machines (since Ignition only runs one time during first boot), it is a concern for those who maintain configuration files. This document serves to detail each of the breaking changes and tries to provide some reasoning for the change. This does not cover all of the changes to the spec - just those that need to be considered when migrating from one version to the next.
+Occasionally, changes are made to Fedora CoreOS Butane configs (those that specify `variant: fcos`) that break backward compatibility. While this is not a concern for running machines, since Ignition only runs one time during first boot, it is a concern for those who maintain configuration files. This document serves to detail each of the breaking changes and tries to provide some reasoning for the change. This does not cover all of the changes to the spec - just those that need to be considered when migrating from one version to the next.
 
 {: .no_toc }
 
@@ -14,7 +16,7 @@ Occasionally, there are changes made to Fedora CoreOS configuration that break b
 
 ## From Version 1.2.0 to 1.3.0
 
-There are no breaking changes between versions 1.2.0 and 1.3.0 of the configuration specification. Any valid 1.2.0 configuration can be updated to a 1.3.0 configuration by changing the version string in the config.
+There are no breaking changes between versions 1.2.0 and 1.3.0 of the `fcos` configuration specification. Any valid 1.2.0 configuration can be updated to a 1.3.0 configuration by changing the version string in the config.
 
 The following is a list of notable new features, deprecations, and changes.
 
@@ -42,7 +44,7 @@ boot_device:
 
 ## From Version 1.1.0 to 1.2.0
 
-There are no breaking changes between versions 1.1.0 and 1.2.0 of the configuration specification. Any valid 1.1.0 configuration can be updated to a 1.2.0 configuration by changing the version string in the config.
+There are no breaking changes between versions 1.1.0 and 1.2.0 of the `fcos` configuration specification. Any valid 1.1.0 configuration can be updated to a 1.2.0 configuration by changing the version string in the config.
 
 The following is a list of notable new features, deprecations, and changes.
 
@@ -141,7 +143,7 @@ storage:
 
 ## From Version 1.0.0 to 1.1.0
 
-There are no breaking changes between versions 1.0.0 and 1.1.0 of the configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.
+There are no breaking changes between versions 1.0.0 and 1.1.0 of the `fcos` configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.
 
 The following is a list of notable new features, deprecations, and changes.
 

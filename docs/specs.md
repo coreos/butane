@@ -9,7 +9,7 @@ has_toc: false
 
 Butane Configs must conform to a specific variant and version of the Butane schema, specified with the `variant` and `version` fields in the configuration.
 
-See the [Upgrading Configs](migrating-configs.md) page for instructions to update a configuration to the latest specification.
+See the [Upgrading Configs](upgrading.md) page for instructions to update a configuration to the latest specification.
 
 ## Stable specification versions
 
