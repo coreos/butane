@@ -9,7 +9,7 @@ nav_order: 3
 1. TOC
 {:toc}
 
-Here you can find a bunch of simple examples for using `fcct`, with some explanations about what they do. The examples here are in no way comprehensive, for a full list of all the options present in `fcct` check out the [configuration specification][spec].
+Here you can find a bunch of simple examples for using Butane, with some explanations about what they do. The examples here are in no way comprehensive, for a full list of all the options present in Butane check out the [configuration specification][spec].
 
 ## Users and groups
 
@@ -47,7 +47,7 @@ passwd:
 
 ### Using password authentication
 
-You can use a Fedora CoreOS Config to set a password for a local user. Building on the previous example, we can configure the `password_hash` for one or more users:
+You can use a Butane config to set a password for a local user. Building on the previous example, we can configure the `password_hash` for one or more users:
 
 <!-- butane-config -->
 ```yaml
@@ -118,7 +118,7 @@ storage:
       mode: 0644
 ```
 
-This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running FCCT. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to FCCT.
+This example creates a file at `/opt/file3` whose contents are read from a local file `local-file3` on the system running Butane. The path of the local file is relative to a _files-dir_ which must be specified via the `-d`/`--files-dir` option to Butane.
 
 <!-- butane-config -->
 ```yaml
@@ -134,7 +134,7 @@ storage:
 
 ### Directory trees
 
-Consider a directory tree at `~/fcc/tree` on the system running FCCT:
+Consider a directory tree at `~/conf/tree` on the system running Butane:
 
 ```
 file
@@ -143,7 +143,7 @@ directory/file
 directory/symlink -> ../file
 ```
 
-This example copies that directory tree to `/etc/files` on the target system. The ownership and mode for `overridden-file` are explicitly set by the config. All other filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. The example must be transpiled with `--files-dir ~/fcc`.
+This example copies that directory tree to `/etc/files` on the target system. The ownership and mode for `overridden-file` are explicitly set by the config. All other filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. The example must be transpiled with `--files-dir ~/conf`.
 
 <!-- butane-config -->
 ```yaml

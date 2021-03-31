@@ -147,7 +147,7 @@ The following is a list of notable new features, deprecations, and changes.
 
 ### Embedding local files in configs
 
-The config `merge` and `replace` sections, the `certificate_authorities` section, and the files `contents` and `append` sections gained a new field called `local`, which is mutually exclusive with the `source` and `inline` fields. It causes the contents of a file from the system running FCCT to be embedded in the config. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
+The config `merge` and `replace` sections, the `certificate_authorities` section, and the files `contents` and `append` sections gained a new field called `local`, which is mutually exclusive with the `source` and `inline` fields. It causes the contents of a file from the system running Butane to be embedded in the config. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
 
 <!-- butane-config -->
 ```yaml
@@ -173,9 +173,9 @@ storage:
 
 ### Embedding directory trees in configs
 
-The `storage` section gained a new subsection called `trees`. It is a list of directory trees on the system running FCCT whose files, directories, and symlinks will be embedded in the config. By default, the resulting filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating an entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+The `storage` section gained a new subsection called `trees`. It is a list of directory trees on the system running Butane whose files, directories, and symlinks will be embedded in the config. By default, the resulting filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating an entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
 
-Tree paths are relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
+Tree paths are relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
 
 <!-- butane-config -->
 ```yaml

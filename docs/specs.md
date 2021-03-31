@@ -7,13 +7,13 @@ has_toc: false
 
 # Configuration specifications
 
-CoreOS Configs must conform to a specific variant and version of the `fcct` schema, specified with the `variant` and `version` fields in the configuration.
+Butane Configs must conform to a specific variant and version of the Butane schema, specified with the `variant` and `version` fields in the configuration.
 
 See the [Upgrading Configs](migrating-configs.md) page for instructions to update a configuration to the latest specification.
 
 ## Stable specification versions
 
-We recommend that you always use the latest **stable** specification for your operating system to benefit from new features and bug fixes. The following **stable** specification versions are currently supported in `fcct`:
+We recommend that you always use the latest **stable** specification for your operating system to benefit from new features and bug fixes. The following **stable** specification versions are currently supported in Butane:
 
 - Fedora CoreOS (`fcos`)
   - [v1.3.0](config-fcos-v1_3.md)
@@ -27,24 +27,24 @@ We recommend that you always use the latest **stable** specification for your op
 
 ## Experimental specification versions
 
-Do not use **experimental** specifications for anything beyond **development and testing** as they are subject to change **without warning or announcement**. The following **experimental** specification versions are currently available in `fcct`:
+Do not use **experimental** specifications for anything beyond **development and testing** as they are subject to change **without warning or announcement**. The following **experimental** specification versions are currently available in Butane:
 
 - Fedora CoreOS (`fcos`)
   - [v1.4.0-experimental](config-fcos-v1_4-exp.md)
 - OpenShift (`openshift`)
   - [v4.9.0-experimental](config-openshift-v4_9-exp.md)
 
-## FCC specifications and Ignition specifications
+## Butane specifications and Ignition specifications
 
-Each version of the FCC specification corresponds to a version of the Ignition specification:
+Each version of the Butane specification corresponds to a version of the Ignition specification:
 
-| FCC variant | FCC version        | Ignition spec      |
-|-------------|--------------------|--------------------|
-| `fcos`      | 1.0.0              | 3.0.0              |
-| `fcos`      | 1.1.0              | 3.1.0              |
-| `fcos`      | 1.2.0              | 3.2.0              |
-| `fcos`      | 1.3.0              | 3.2.0              |
-| `fcos`      | 1.4.0-experimental | 3.3.0-experimental |
-| `openshift` | 4.8.0              | 3.2.0              |
-| `openshift` | 4.9.0-experimental | 3.3.0-experimental |
-| `rhcos`     | 0.1.0              | 3.2.0              |
+| Butane variant | Butane version     | Ignition spec      |
+|----------------|--------------------|--------------------|
+| `fcos`         | 1.0.0              | 3.0.0              |
+| `fcos`         | 1.1.0              | 3.1.0              |
+| `fcos`         | 1.2.0              | 3.2.0              |
+| `fcos`         | 1.3.0              | 3.2.0              |
+| `fcos`         | 1.4.0-experimental | 3.3.0-experimental |
+| `openshift`    | 4.8.0              | 3.2.0              |
+| `openshift`    | 4.9.0-experimental | 3.3.0-experimental |
+| `rhcos`        | 0.1.0              | 3.2.0              |

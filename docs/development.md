@@ -3,7 +3,7 @@ layout: default
 nav_order: 9
 ---
 
-# Developing FCCT
+# Developing Butane
 {: .no_toc }
 
 1. TOC
@@ -11,7 +11,7 @@ nav_order: 9
 
 ## Project layout
 
-Internally, FCCT has a versioned `base` component which contains support for
+Internally, Butane has a versioned `base` component which contains support for
 a particular Ignition spec version, plus distro-independent sugar. New base
 functionality is added only to the experimental base package. Eventually the
 experimental base package is stabilized and a new experimental package
@@ -19,7 +19,7 @@ created. The base component is versioned independently of any particular
 distro, and its versions are not exposed to the user. Client code should
 not need to import anything from `base`.
 
-Each FCC variant/version pair corresponds to a `config` package, which
+Each config variant/version pair corresponds to a `config` package, which
 derives either from a `base` package or from another `config` package. New
 functionality is similarly added only to an experimental config version,
 which is eventually stabilized and a new experimental version created.
@@ -27,13 +27,13 @@ which is eventually stabilized and a new experimental version created.
 `config` package can contain sugar or validation logic specific to a distro
 (for example, additional properties for configuring etcd).
 
-Packages outside the FCCT repository can implement additional FCC versions
+Packages outside the Butane repository can implement additional config versions
 by deriving from a `base` or `config` package and registering their
 variant/version pair with `config`.
 
 - `config/` &mdash;
   Top-level `TranslateBytes()` function that determines which config version
-  to parse and emit. Clients should typically use this to translate FCCs.
+  to parse and emit. Clients should typically use this to translate configs.
 
 - `config/common/` &mdash;
   Common definitions for all spec versions, including translate options
@@ -60,7 +60,7 @@ variant/version pair with `config`.
 
 ## Creating a release
 
-Create a [release checklist](https://github.com/coreos/fcct/issues/new?template=release-checklist.md) and follow those steps.
+Create a [release checklist](https://github.com/coreos/butane/issues/new?template=release-checklist.md) and follow those steps.
 
 ## Bumping spec versions
 
@@ -96,4 +96,4 @@ This checklist describes bumping the Ignition spec version, `base` version, and 
 - Copy the `C-exp` spec doc to `C+1-exp`. Update the header and the version numbers in the description of the `version` field.
 - Rename the `C-exp` spec doc to `C`. Update the header, delete the experimental config warning, and update the version numbers in the description of the `version` field. Update the `nav_order` to one less than the previous stable release.
 - Update `docs/specs.md`.
-- Update `docs/migrating-configs.md` for the new spec version. Copy the relevant section from Ignition's `doc/migrating-configs.md`, convert the configs to FCCs, convert field names to snake case, and update wording as needed. Add subsections for any new FCC-specific features.
+- Update `docs/migrating-configs.md` for the new spec version. Copy the relevant section from Ignition's `doc/migrating-configs.md`, convert the configs to Butane configs, convert field names to snake case, and update wording as needed. Add subsections for any new Butane-specific features.
