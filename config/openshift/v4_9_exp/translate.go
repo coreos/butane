@@ -18,10 +18,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/coreos/fcct/config/common"
-	"github.com/coreos/fcct/config/openshift/v4_9_exp/result"
-	cutil "github.com/coreos/fcct/config/util"
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/config/common"
+	"github.com/coreos/butane/config/openshift/v4_9_exp/result"
+	cutil "github.com/coreos/butane/config/util"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"

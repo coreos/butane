@@ -22,7 +22,7 @@ The following is a list of notable new features, deprecations, and changes.
 
 The config gained a new top-level `boot_device` section with `luks` and `mirror` subsections, which provide a simple way to configure encryption and/or mirroring for the boot disk. When `luks` is specified, the root filesystem is encrypted and can be unlocked with any combination of a TPM2 device and network Tang servers. When `mirror` is specified, all default partitions are replicated across multiple disks, allowing the system to survive disk failure. On aarch64 or ppc64le systems, the `layout` field must be set to `aarch64` or `ppc64le` to select the correct partition layout.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.3.0
@@ -50,7 +50,7 @@ The following is a list of notable new features, deprecations, and changes.
 
 The `partition` section gained a new `resize` field. When true, Ignition will resize an existing partition if it matches the config in all respects except the partition size.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.2.0
@@ -68,7 +68,7 @@ storage:
 
 Ignition now supports creating LUKS2 encrypted storage volumes. Volumes can be configured to allow unlocking with any combination of a TPM2 device via Clevis, network Tang servers via Clevis, and static key files. Alternatively, the Clevis configuration can be manually specified with a custom PIN and CFG. If a key file is not specified for a device, an ephemeral one will be created.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.2.0
@@ -110,7 +110,7 @@ storage:
 
 The `passwd` `users` and `groups` sections have a new field `should_exist`. If specified and false, Ignition will delete the specified user or group if it exists.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.2.0
@@ -127,7 +127,7 @@ passwd:
 
 The sections which allow fetching a remote URL now accept Google Cloud Storage (`gs://`) URLs in the `source` field.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.2.0
@@ -147,9 +147,9 @@ The following is a list of notable new features, deprecations, and changes.
 
 ### Embedding local files in configs
 
-The config `merge` and `replace` sections, the `certificate_authorities` section, and the files `contents` and `append` sections gained a new field called `local`, which is mutually exclusive with the `source` and `inline` fields. It causes the contents of a file from the system running FCCT to be embedded in the config. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
+The config `merge` and `replace` sections, the `certificate_authorities` section, and the files `contents` and `append` sections gained a new field called `local`, which is mutually exclusive with the `source` and `inline` fields. It causes the contents of a file from the system running Butane to be embedded in the config. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -173,11 +173,11 @@ storage:
 
 ### Embedding directory trees in configs
 
-The `storage` section gained a new subsection called `trees`. It is a list of directory trees on the system running FCCT whose files, directories, and symlinks will be embedded in the config. By default, the resulting filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating an entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+The `storage` section gained a new subsection called `trees`. It is a list of directory trees on the system running Butane whose files, directories, and symlinks will be embedded in the config. By default, the resulting filesystem objects are owned by `root:root`, directory modes are set to 0755, and file modes are set to 0755 if the source file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating an entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
 
-Tree paths are relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to FCCT. If no _files-dir_ is specified, this functionality is unavailable.
+Tree paths are relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -198,7 +198,7 @@ storage:
 
 The `certificate_authorities` section now supports inline contents via the `inline` field. The config `merge` and `replace` sections also now support `inline`, but using this functionality is not recommended.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -235,7 +235,7 @@ ignition:
 
 The config `merge` and `replace` sections and the `certificate_authorities` section now support gzip-compressed resources via the `compression` field. `gzip` compression is supported for all URL schemes except `s3`.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -255,7 +255,7 @@ ignition:
 
 All `verification.hash` fields now support the `sha256` hash type.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -273,7 +273,7 @@ storage:
 
 The `filesystems` section gained a new `with_mount_unit` field. If `true`, a generic mount unit will be automatically generated for the specified filesystem.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -289,7 +289,7 @@ storage:
 
 The `filesystems` section gained a new `mount_options` field. It is a list of options Ignition should pass to `mount -o` when mounting the specified filesystem. This is useful for mounting btrfs subvolumes. If the `with_mount_unit` field is `true`, this field also affects mount options used by the provisioned system when mounting the filesystem.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -310,7 +310,7 @@ The sections which allow fetching a remote URL &mdash; config `merge` and `repla
 
 During config merging, if a child config specifies a header `name` but not a corresponding `value`, any header with that `name` in the parent config will be removed.
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0
@@ -341,7 +341,7 @@ The `https_proxy` field specifies the proxy URL for HTTPS requests. The `http_pr
 
 IP addresses and domain names can also include a port number (`1.2.3.4:80`).
 
-<!-- fedora-coreos-config -->
+<!-- butane-config -->
 ```yaml
 variant: fcos
 version: 1.1.0

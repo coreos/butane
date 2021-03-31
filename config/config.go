@@ -17,15 +17,15 @@ package config
 import (
 	"fmt"
 
-	"github.com/coreos/fcct/config/common"
-	fcos1_0 "github.com/coreos/fcct/config/fcos/v1_0"
-	fcos1_1 "github.com/coreos/fcct/config/fcos/v1_1"
-	fcos1_2 "github.com/coreos/fcct/config/fcos/v1_2"
-	fcos1_3 "github.com/coreos/fcct/config/fcos/v1_3"
-	fcos1_4_exp "github.com/coreos/fcct/config/fcos/v1_4_exp"
-	openshift4_8 "github.com/coreos/fcct/config/openshift/v4_8"
-	openshift4_9_exp "github.com/coreos/fcct/config/openshift/v4_9_exp"
-	rhcos0_1 "github.com/coreos/fcct/config/rhcos/v0_1"
+	"github.com/coreos/butane/config/common"
+	fcos1_0 "github.com/coreos/butane/config/fcos/v1_0"
+	fcos1_1 "github.com/coreos/butane/config/fcos/v1_1"
+	fcos1_2 "github.com/coreos/butane/config/fcos/v1_2"
+	fcos1_3 "github.com/coreos/butane/config/fcos/v1_3"
+	fcos1_4_exp "github.com/coreos/butane/config/fcos/v1_4_exp"
+	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
+	openshift4_9_exp "github.com/coreos/butane/config/openshift/v4_9_exp"
+	rhcos0_1 "github.com/coreos/butane/config/rhcos/v0_1"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
@@ -55,7 +55,7 @@ func init() {
 
 /// RegisterTranslator registers a translator for the specified variant and
 /// version to be available for use by TranslateBytes.  This is only needed
-/// by users implementing their own translators outside the FCCT package.
+/// by users implementing their own translators outside the Butane package.
 func RegisterTranslator(variant, version string, trans translator) {
 	key := fmt.Sprintf("%s+%s", variant, version)
 	if _, ok := registry[key]; ok {

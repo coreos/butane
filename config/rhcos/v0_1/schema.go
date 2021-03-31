@@ -15,7 +15,7 @@
 package v0_1
 
 import (
-	fcos "github.com/coreos/fcct/config/fcos/v1_3"
+	fcos "github.com/coreos/butane/config/fcos/v1_3"
 )
 
 type Config struct {

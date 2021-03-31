@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/translate"
 	"github.com/stretchr/testify/assert"
 )
 

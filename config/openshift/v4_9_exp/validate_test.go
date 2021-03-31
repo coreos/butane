@@ -17,7 +17,7 @@ package v4_9_exp
 import (
 	"testing"
 
-	"github.com/coreos/fcct/config/common"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
@@ -108,7 +108,7 @@ func TestReportCorrelation(t *testing.T) {
 		message string
 		line    int64
 	}{
-		// FCCT unused key check
+		// Butane unused key check
 		{
 			`
                          metadata:
@@ -122,7 +122,7 @@ func TestReportCorrelation(t *testing.T) {
 			"Unused key q",
 			9,
 		},
-		// FCCT YAML validation error
+		// Butane YAML validation error
 		{
 			`
                          metadata:
@@ -138,7 +138,7 @@ func TestReportCorrelation(t *testing.T) {
 			common.ErrTooManyResourceSources.Error(),
 			10,
 		},
-		// FCCT YAML validation warning
+		// Butane YAML validation warning
 		{
 			`
                          metadata:
@@ -152,7 +152,7 @@ func TestReportCorrelation(t *testing.T) {
 			common.ErrDecimalMode.Error(),
 			9,
 		},
-		// FCCT translation error
+		// Butane translation error
 		{
 			`
                          metadata:

@@ -17,7 +17,7 @@ package util
 import (
 	"fmt"
 
-	"github.com/coreos/fcct/translate"
+	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/merge"
 )

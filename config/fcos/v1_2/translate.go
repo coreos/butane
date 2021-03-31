@@ -15,8 +15,8 @@
 package v1_2
 
 import (
-	"github.com/coreos/fcct/config/common"
-	cutil "github.com/coreos/fcct/config/util"
+	"github.com/coreos/butane/config/common"
+	cutil "github.com/coreos/butane/config/util"
 
 	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/report"
@@ -31,7 +31,7 @@ func (c Config) ToIgn3_2(options common.TranslateOptions) (types.Config, report.
 	return cfg.(types.Config), r, err
 }
 
-// ToIgn3_2Bytes translates from a v1.2 fcc to a v3.2.0 Ignition config. It returns a report of any errors or
+// ToIgn3_2Bytes translates from a v1.2 Butane config to a v3.2.0 Ignition config. It returns a report of any errors or
 // warnings in the source and resultant config. If the report has fatal errors or it encounters other problems
 // translating, an error is returned.
 func ToIgn3_2Bytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {

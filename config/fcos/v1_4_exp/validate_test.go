@@ -17,8 +17,8 @@ package v1_4_exp
 import (
 	"testing"
 
-	base "github.com/coreos/fcct/base/v0_4_exp"
-	"github.com/coreos/fcct/config/common"
+	base "github.com/coreos/butane/base/v0_4_exp"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
@@ -34,7 +34,7 @@ func TestReportCorrelation(t *testing.T) {
 		message string
 		line    int64
 	}{
-		// FCCT unused key check
+		// Butane unused key check
 		{
 			`storage:
                            files:
@@ -43,7 +43,7 @@ func TestReportCorrelation(t *testing.T) {
 			"Unused key q",
 			4,
 		},
-		// FCCT YAML validation error
+		// Butane YAML validation error
 		{
 			`storage:
                            files:
@@ -54,7 +54,7 @@ func TestReportCorrelation(t *testing.T) {
 			common.ErrTooManyResourceSources.Error(),
 			5,
 		},
-		// FCCT YAML validation warning
+		// Butane YAML validation warning
 		{
 			`storage:
                            files:
@@ -63,7 +63,7 @@ func TestReportCorrelation(t *testing.T) {
 			common.ErrDecimalMode.Error(),
 			4,
 		},
-		// FCCT translation error
+		// Butane translation error
 		{
 			`storage:
                            files:

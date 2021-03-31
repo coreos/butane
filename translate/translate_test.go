@@ -18,8 +18,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/coreos/fcct/translate/tests/pkga"
-	"github.com/coreos/fcct/translate/tests/pkgb"
+	"github.com/coreos/butane/translate/tests/pkga"
+	"github.com/coreos/butane/translate/tests/pkgb"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"

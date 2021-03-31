@@ -15,8 +15,8 @@
 package v0_1
 
 import (
-	baseutil "github.com/coreos/fcct/base/util"
-	"github.com/coreos/fcct/config/common"
+	baseutil "github.com/coreos/butane/base/util"
+	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"

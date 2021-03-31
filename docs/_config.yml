@@ -1,6 +1,6 @@
-title: coreos/fcct
-description: Fedora CoreOS Config Transpiler documentation
-baseurl: "/fcct"
+title: coreos/butane
+description: Butane documentation
+baseurl: "/butane"
 url: "https://coreos.github.io"
 # Comment above and use below for local development
 # url: "http://localhost:4000"
@@ -14,8 +14,8 @@ color_scheme: coreos
 
 # Aux links for the upper right navigation
 aux_links:
-  "FCCT on GitHub":
-    - "https://github.com/coreos/fcct"
+  "Butane on GitHub":
+    - "https://github.com/coreos/butane"
 
 footer_content: "Copyright &copy; <a href=\"https://www.redhat.com\">Red Hat, Inc.</a> and <a href=\"https://github.com/coreos\">others</a>."
 
@@ -26,7 +26,7 @@ last_edit_time_format: "%b %e %Y at %I:%M %p"
 # Footer "Edit this page on GitHub" link text
 gh_edit_link: true
 gh_edit_link_text: "Edit this page on GitHub"
-gh_edit_repository: "https://github.com/coreos/fcct"
+gh_edit_repository: "https://github.com/coreos/butane"
 gh_edit_branch: "main"
 gh_edit_view_mode: "tree"
 

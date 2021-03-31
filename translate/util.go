@@ -82,7 +82,7 @@ func getAllPaths(v reflect.Value, tag string, includeZeroFields bool) []path.Con
 		}
 		return ret
 	case k == reflect.Map:
-		// we don't have these in FCCs or Ignition configs, but
+		// we don't have these in Butane or Ignition configs, but
 		// we need to support validating translations of
 		// metadata.labels in MachineConfig output
 		ret := []path.ContextPath{}

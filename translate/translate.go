@@ -36,7 +36,7 @@ import (
  */
 
 const (
-	TAG_KEY       = "fcct"
+	TAG_KEY       = "butane"
 	TAG_AUTO_SKIP = "auto_skip"
 )
 

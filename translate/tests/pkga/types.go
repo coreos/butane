@@ -36,7 +36,7 @@ type HasList struct {
 }
 
 type TrivialSkip struct {
-	A string `fcct:"auto_skip"`
+	A string `butane:"auto_skip"`
 	B int
 	C bool
 }

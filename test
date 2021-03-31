@@ -32,18 +32,18 @@ touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
 for doc in docs/*md
 do
 	echo "Checking $doc"
-	# split each doc into a bunch of tmpfiles then run fcct on them
-	sed -n '/^<!-- fedora-coreos-config -->/,/^```$/ p' < ${doc} \
-		| csplit - '/<!-- fedora-coreos-config -->/' '{*}' -z --prefix "tmpdocs/fcc_$(basename ${doc%.*})_" -q
+	# split each doc into a bunch of tmpfiles then run butane on them
+	sed -n '/^<!-- butane-config -->/,/^```$/ p' < ${doc} \
+		| csplit - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
 
-	for i in tmpdocs/fcc_*
+	for i in tmpdocs/config_*
 	do
 		echo "Checking $i"
 		cat "$i" | tail -n +3 | head -n -1 \
 			| ${BIN_PATH}/${NAME} --strict --files-dir tmpdocs/files-dir > /dev/null \
 			|| (cat -n "$i" && false)
 	done
-	rm -f tmpdocs/fcc_*
+	rm -f tmpdocs/config_*
 done
 
 echo ok
