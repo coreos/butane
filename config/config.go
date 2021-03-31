@@ -23,7 +23,8 @@ import (
 	fcos1_2 "github.com/coreos/fcct/config/fcos/v1_2"
 	fcos1_3 "github.com/coreos/fcct/config/fcos/v1_3"
 	fcos1_4_exp "github.com/coreos/fcct/config/fcos/v1_4_exp"
-	openshift4_8_exp "github.com/coreos/fcct/config/openshift/v4_8_exp"
+	openshift4_8 "github.com/coreos/fcct/config/openshift/v4_8"
+	openshift4_9_exp "github.com/coreos/fcct/config/openshift/v4_9_exp"
 	rhcos0_1 "github.com/coreos/fcct/config/rhcos/v0_1"
 
 	"github.com/coreos/go-semver/semver"
@@ -47,7 +48,8 @@ func init() {
 	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.4.0-experimental", fcos1_4_exp.ToIgn3_3Bytes)
-	RegisterTranslator("openshift", "4.8.0-experimental", openshift4_8_exp.ToConfigBytes)
+	RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
+	RegisterTranslator("openshift", "4.9.0-experimental", openshift4_9_exp.ToConfigBytes)
 	RegisterTranslator("rhcos", "0.1.0", rhcos0_1.ToIgn3_2Bytes)
 }
 

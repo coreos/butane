@@ -1,16 +1,19 @@
 ---
 layout: default
-title: RHEL CoreOS v0.1.0
+title: OpenShift v4.8.0
 parent: Configuration specifications
-nav_order: 99
+nav_order: 98
 ---
 
-# RHEL CoreOS Specification v0.1.0
+# OpenShift Specification v4.8.0
 
-The RHEL CoreOS configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
+The OpenShift configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
-* **variant** (string): used to differentiate configs for different operating systems. Must be `rhcos` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `0.1.0` and generates Ignition configs with version `3.2.0`.
+* **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.8.0` and generates Ignition configs with version `3.2.0`.
+* **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
+  * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
+  * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
 * **ignition** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
@@ -78,7 +81,7 @@ The RHEL CoreOS configuration is a YAML document conforming to the following spe
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
     * **_mount_options_** (list of strings): any special options to be passed to the mount command.
-    * **_with_mount_unit_** (bool): Whether to generate a generic mount unit for this filesystem as well. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path`. If your filesystem is located on a Tang-backed LUKS device, the unit will automatically require network access if you specify the device as `/dev/mapper/<device-name>` or `/dev/disk/by-id/dm-name-<device-name>`.
+    * **_with_mount_unit_** (bool): whether to additionally generate a generic mount unit for this filesystem or a swap unit for this swap area. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path` or `device`, depending on the unit type. If your filesystem is located on a Tang-backed LUKS device, the unit will automatically require network access if you specify the device as `/dev/mapper/<device-name>` or `/dev/disk/by-id/dm-name-<device-name>`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.
     * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `contents` must be specified if `overwrite` is true. Defaults to false.
@@ -199,7 +202,14 @@ The RHEL CoreOS configuration is a YAML document conforming to the following spe
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
+* **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
+  * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
+  * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
+  * **_extensions_** (list of strings): RHCOS extensions to be installed on the node.
+  * **_fips_** (bool): whether or not to enable FIPS 140-2 compatibility. If omitted, defaults to false.
 
+[k8s-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+[k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397
 [systemd-escape]: https://www.freedesktop.org/software/systemd/man/systemd-escape.html

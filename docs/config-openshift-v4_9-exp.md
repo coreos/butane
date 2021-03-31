@@ -1,18 +1,18 @@
 ---
 layout: default
-title: OpenShift v4.8.0-experimental
+title: OpenShift v4.9.0-experimental
 parent: Configuration specifications
 nav_order: 100
 ---
 
-# OpenShift Specification v4.8.0-experimental
+# OpenShift Specification v4.9.0-experimental
 
 **Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
 
 The OpenShift configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
-* **variant** (string): used to differentiate configs for different operating systems. Must be `rhcos` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `4.8.0-experimental` and generates Ignition configs with version `3.2.0`.
+* **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.9.0-experimental` and generates Ignition configs with version `3.3.0-experimental`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
@@ -135,7 +135,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_name_** (string): the group name of the owner.
     * **target** (string): the target path of the link
     * **_hard_** (boolean): a symbolic link is created if this is false, a hard one if this is true.
- * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
+  * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **_key_file_** (string): options related to the contents of the key file.
