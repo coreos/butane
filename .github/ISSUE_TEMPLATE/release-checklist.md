@@ -20,7 +20,7 @@ Packaging:
  - [ ] Run `kinit your_fas_account@FEDORAPROJECT.ORG`
  - [ ] Run `fedpkg new-sources tarball-name`
  - [ ] PR the changes in [Fedora](https://src.fedoraproject.org/rpms/fedora-coreos-config-transpiler)
- - [ ] Once the PR merges to master, merge master into the other relevant branches (e.g. f30) then push those
+ - [ ] Once the PR merges to rawhide, merge rawhide into the other relevant branches (e.g. f30) then push those
  - [ ] On each of those branches run `fedpkg build`
  - [ ] Once the builds have finished, submit them to [bodhi](https://bodhi.fedoraproject.org/updates/new), filling in:
    - `fedora-coreos-config-transpiler` for `Packages`
