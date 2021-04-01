@@ -97,16 +97,6 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **_value_** (string): the header contents.
       * **_verification_** (object): options related to the verification of the file contents.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
-    * **_append_** (list of objects): list of contents to be appended to the file. Follows the same stucture as `contents`
-      * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the contents to append. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
-      * **_inline_** (string): the contents to append. Mutually exclusive with `source` and `local`.
-      * **_local_** (string): a local path to the contents to append, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
-      * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
-        * **name** (string): the header name.
-        * **_value_** (string): the header contents.
-      * **_verification_** (object): options related to the verification of the appended contents.
-        * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_mode_** (integer): the file's permission mode. If not specified, the permission mode for files defaults to 0644 or the existing file's permissions if `overwrite` is false, `contents` is unspecified, and a file already exists at the path.
     * **_user_** (object): specifies the file's owner.
       * **_id_** (integer): the user ID of the owner.
@@ -114,27 +104,6 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_group_** (object): specifies the group of the owner.
       * **_id_** (integer): the group ID of the owner.
       * **_name_** (string): the group name of the owner.
-  * **_directories_** (list of objects): the list of directories to be created. Every file, directory, and link must have a unique `path`.
-    * **path** (string): the absolute path to the directory.
-    * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. If false and a directory already exists at the path, Ignition will only set its permissions. If false and a non-directory exists at that path, Ignition will fail. Defaults to false.
-    * **_mode_** (integer): the directory's permission mode. If not specified, the permission mode for directories defaults to 0755 or the mode of an existing directory if `overwrite` is false and a directory already exists at the path.
-    * **_user_** (object): specifies the directory's owner.
-      * **_id_** (integer): the user ID of the owner.
-      * **_name_** (string): the user name of the owner.
-    * **_group_** (object): specifies the group of the owner.
-      * **_id_** (integer): the group ID of the owner.
-      * **_name_** (string): the group name of the owner.
-  * **_links_** (list of objects): the list of links to be created. Every file, directory, and link must have a unique `path`.
-    * **path** (string): the absolute path to the link
-    * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. If overwrite is false and a matching link exists at the path, Ignition will only set the owner and group. Defaults to false.
-    * **_user_** (object): specifies the symbolic link's owner.
-      * **_id_** (integer): the user ID of the owner.
-      * **_name_** (string): the user name of the owner.
-    * **_group_** (object): specifies the group of the owner.
-      * **_id_** (integer): the group ID of the owner.
-      * **_name_** (string): the group name of the owner.
-    * **target** (string): the target path of the link
-    * **_hard_** (boolean): a symbolic link is created if this is false, a hard one if this is true.
   * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
@@ -162,7 +131,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
         * **_needs_network_** (bool): whether or not the device requires networking.
-  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Symlinks must not be present. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. File attributes can be overridden by creating a corresponding entry in the `files` section; such entries must omit `contents`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
 * **_systemd_** (object): describes the desired state of the systemd units.
@@ -176,24 +145,8 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_contents_** (string): the contents of the drop-in.
 * **_passwd_** (object): describes the desired additions to the passwd database.
   * **_users_** (list of objects): the list of accounts that shall exist. All users must have a unique `name`.
-    * **name** (string): the username for the account.
-    * **_password_hash_** (string): the hashed password for the account.
-    * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
-    * **_uid_** (integer): the user ID of the account.
-    * **_gecos_** (string): the GECOS field of the account.
-    * **_home_dir_** (string): the home directory of the account.
-    * **_no_create_home_** (boolean): whether or not to create the user's home directory. This only has an effect if the account doesn't exist yet.
-    * **_primary_group_** (string): the name of the primary group of the account.
-    * **_groups_** (list of strings): the list of supplementary groups of the account.
-    * **_no_user_group_** (boolean): whether or not to create a group with the same name as the user. This only has an effect if the account doesn't exist yet.
-    * **_no_log_init_** (boolean): whether or not to add the user to the lastlog and faillog databases. This only has an effect if the account doesn't exist yet.
-    * **_shell_** (string): the login shell of the new account.
-    * **_system_** (bool): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
-  * **_groups_** (list of objects): the list of groups to be added. All groups must have a unique `name`.
-    * **name** (string): the name of the group.
-    * **_gid_** (integer): the group ID of the new group.
-    * **_password_hash_** (string): the hashed password of the new group.
-    * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
+    * **name** (string): the username for the account. Must be `core`.
+    * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added to `.ssh/authorized_keys` in the user's home directory. All SSH keys must be unique.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
