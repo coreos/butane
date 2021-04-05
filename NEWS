@@ -1,3 +1,35 @@
+2021-04-05 Butane 0.11.0
+
+  Breaking Changes:
+
+    - Rename project to Butane and binary to butane
+    - Change package path to github.com/coreos/butane (Go API)
+    - Remove translate.AddIdentity() in favor of translate.MergeP() (Go API)
+
+  Features:
+
+    - Add OpenShift spec 4.8.0, targeting Ignition spec 3.2.0
+    - Output MachineConfig unless -r/--raw specified (openshift 4.8.0)
+    - Error on Ignition fields discouraged by OpenShift (openshift 4.8.0)
+    - Add metadata section for MachineConfig metadata (openshift 4.8.0)
+    - Add openshift section for MachineConfig configuration (openshift 4.8.0)
+    - Set appropriate LUKS cipher if openshift.fips enabled (openshift 4.8.0)
+    - Add OpenShift spec 4.9.0-experimental, targeting Ignition spec
+      3.3.0-experimental
+
+  Misc Changes:
+
+    - Remove RHEL CoreOS spec 0.2.0-experimental
+    - Refactor translation tracking for report entries
+    - Add undocumented -D/--debug option to report translation map
+
+  Docs Changes:
+
+    - Provide separate config upgrade guide for each variant
+    - Document storage.filesystems.resize
+    - Fix filesystem resize example in upgrade docs
+    - Document default for storage.filesystems.wipe_filesystem
+
 2021-02-01 FCCT 0.10.0
 
   Features:
