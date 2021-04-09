@@ -12,18 +12,18 @@ Tagging:
 Packaging:
  - [ ] Update the Butane spec file in [Fedora](https://src.fedoraproject.org/rpms/butane):
    - Bump the `Version`
-   - Switch the `Release` back to `1.git%{shortcommit}%{?dist}`
+   - Switch the `Release` back to `1%{?dist}`
    - Remove any patches obsoleted by the new release
    - Run `go-mods-to-bundled-provides.py | sort` while inside of the butane directory you ran `./tag_release` from & copy output into spec file in `# Main package provides` section
    - Update change log
- - [ ] Run `spectool -g -S fedora-coreos-config-transpiler.spec`
+ - [ ] Run `spectool -g -S butane.spec`
  - [ ] Run `kinit your_fas_account@FEDORAPROJECT.ORG`
  - [ ] Run `fedpkg new-sources tarball-name`
- - [ ] PR the changes in [Fedora](https://src.fedoraproject.org/rpms/fedora-coreos-config-transpiler)
+ - [ ] PR the changes in [Fedora](https://src.fedoraproject.org/rpms/butane)
  - [ ] Once the PR merges to rawhide, merge rawhide into the other relevant branches (e.g. f30) then push those
  - [ ] On each of those branches run `fedpkg build`
  - [ ] Once the builds have finished, submit them to [bodhi](https://bodhi.fedoraproject.org/updates/new), filling in:
-   - `fedora-coreos-config-transpiler` for `Packages`
+   - `butane` for `Packages`
    - Selecting the build(s) that just completed, except for the rawhide one (which gets submitted automatically)
    - Writing brief release notes like "New upstream release. See release notes at `link to NEWS on GH tag`"
    - Leave `Update name` blank
@@ -32,7 +32,7 @@ Packaging:
 
 GitHub release:
  - [ ] Wait until the Bodhi update shows "Signed :heavy_check_mark:" in the Metadata box.
- - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/9489).
+ - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/10086).
    - [ ] Update the script and test it locally by dropping the `sigul` lines.
  - [ ] Ping `mboddu` in Freenode `#fedora-coreos`, linking to the ticket
  - [ ] Wait for the ticket to be closed
