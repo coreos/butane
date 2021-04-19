@@ -52,6 +52,7 @@ var (
 	ErrNameRequired      = errors.New("metadata.name is required")
 	ErrRoleRequired      = errors.New("machineconfiguration.openshift.io/role label is required")
 	ErrInvalidKernelType = errors.New("must be empty, \"default\", or \"realtime\"")
+	ErrBtrfsSupport      = errors.New("btrfs is not supported in this spec version")
 	ErrDirectorySupport  = errors.New("directories are not supported in this spec version")
 	ErrFileAppendSupport = errors.New("appending to files is not supported in this spec version")
 	ErrLinkSupport       = errors.New("links are not supported in this spec version")
