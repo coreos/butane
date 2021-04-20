@@ -281,8 +281,8 @@ func TestTranslateConfig(t *testing.T) {
 	}
 }
 
-// Test post-translation validation of MCO support for Ignition config fields.
-func TestValidateMCOSupport(t *testing.T) {
+// Test post-translation validation of RHCOS/MCO support for Ignition config fields.
+func TestValidateSupport(t *testing.T) {
 	type entry struct {
 		kind report.EntryKind
 		err  error
@@ -353,6 +353,12 @@ func TestValidateMCOSupport(t *testing.T) {
 									},
 								},
 							},
+							Filesystems: []base.Filesystem{
+								{
+									Device: "/dev/vda4",
+									Format: util.StrToPtr("btrfs"),
+								},
+							},
 							Directories: []base.Directory{
 								{
 									Path: "/d",
@@ -399,6 +405,7 @@ func TestValidateMCOSupport(t *testing.T) {
 				},
 			},
 			[]entry{
+				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
