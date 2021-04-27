@@ -13,9 +13,5 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Work around Podman breakage
-        run: |
-          mkdir -vp ~/.config/containers
-          echo -e "[storage.options]\nmount_program=\"/usr/bin/fuse-overlayfs\"" > ~/.config/containers/storage.conf
       - name: Build container image
         run: podman build .
