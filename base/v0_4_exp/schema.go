@@ -28,12 +28,13 @@ type ClevisCustom struct {
 }
 
 type Config struct {
-	Version  string   `yaml:"version"`
-	Variant  string   `yaml:"variant"`
-	Ignition Ignition `yaml:"ignition"`
-	Passwd   Passwd   `yaml:"passwd"`
-	Storage  Storage  `yaml:"storage"`
-	Systemd  Systemd  `yaml:"systemd"`
+	Version         string          `yaml:"version"`
+	Variant         string          `yaml:"variant"`
+	Ignition        Ignition        `yaml:"ignition"`
+	KernelArguments KernelArguments `yaml:"kernel_arguments"`
+	Passwd          Passwd          `yaml:"passwd"`
+	Storage         Storage         `yaml:"storage"`
+	Systemd         Systemd         `yaml:"systemd"`
 }
 
 type Device string
@@ -100,6 +101,13 @@ type Ignition struct {
 type IgnitionConfig struct {
 	Merge   []Resource `yaml:"merge"`
 	Replace Resource   `yaml:"replace"`
+}
+
+type KernelArgument string
+
+type KernelArguments struct {
+	ShouldExist    []KernelArgument `yaml:"should_exist"`
+	ShouldNotExist []KernelArgument `yaml:"should_not_exist"`
 }
 
 type Link struct {
