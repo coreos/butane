@@ -35,7 +35,7 @@ const (
 
 	// The partition layout implemented in this file replicates
 	// the layout of the OS image defined in:
-	// https://github.com/coreos/coreos-assembler/blob/master/src/create_disk.sh
+	// https://github.com/coreos/coreos-assembler/blob/main/src/create_disk.sh
 	//
 	// Exception: we don't try to skip unused partition numbers,
 	// because specifying a partition number would prevent child
