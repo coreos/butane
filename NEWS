@@ -1,3 +1,18 @@
+2021-06-08 Butane 0.12.0
+
+  Features:
+
+    - Add kernel_arguments section (fcos 1.4.0-exp, openshift 4.9.0-exp)
+  
+  Bug Fixes:
+    
+    - Fix incorrect config paths in validation reports on 386 architecture 
+
+  Misc Changes:
+    
+    - Fail on btrfs filesystem format (openshift 4.8.0, openshift 4.9.0-exp)
+    - Add comment to MachineConfig output noting that the config is machine-generated
+
 2021-04-05 Butane 0.11.0
 
   Breaking Changes:
