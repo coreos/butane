@@ -41,6 +41,10 @@ const (
 // can be tracked back to their source in the source config.  No config
 // validation is performed on input or output.
 func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (result.MachineConfig, translate.TranslationSet, report.Report) {
+	// disable inline resource compression since the MCO doesn't support it
+	// https://bugzilla.redhat.com/show_bug.cgi?id=1970218
+	options.NoResourceAutoCompression = true
+
 	cfg, ts, r := c.Config.ToIgn3_2Unvalidated(options)
 	if r.IsFatal() {
 		return result.MachineConfig{}, ts, r
