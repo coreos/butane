@@ -351,6 +351,10 @@ func TestValidateSupport(t *testing.T) {
 											Inline: util.StrToPtr("z"),
 										},
 									},
+									Contents: base.Resource{
+										Inline:      util.StrToPtr("z"),
+										Compression: util.StrToPtr("gzip"),
+									},
 								},
 							},
 							Filesystems: []base.Filesystem{
@@ -408,6 +412,7 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
+				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
 				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
