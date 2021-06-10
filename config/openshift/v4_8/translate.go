@@ -41,6 +41,10 @@ const (
 // can be tracked back to their source in the source config.  No config
 // validation is performed on input or output.
 func (c Config) ToMachineConfig4_8Unvalidated(options common.TranslateOptions) (result.MachineConfig, translate.TranslationSet, report.Report) {
+	// disable inline resource compression since the MCO doesn't support it
+	// https://bugzilla.redhat.com/show_bug.cgi?id=1970218
+	options.NoResourceAutoCompression = true
+
 	cfg, ts, r := c.Config.ToIgn3_2Unvalidated(options)
 	if r.IsFatal() {
 		return result.MachineConfig{}, ts, r
@@ -212,6 +216,10 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 	// is provisioned, and the struct contains unsupported fields, MCD
 	// will mark the node degraded, even if the change only affects
 	// supported fields.  We reject these.
+	//
+	// BUGGED - Ignored by the MCD but not by Ignition.  Ignition
+	// correctly applies the setting, but the MCD doesn't, and writes
+	// incorrect state to the node.
 
 	var r report.Report
 	for i := range mc.Spec.Config.Storage.Directories {
@@ -222,6 +230,11 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 		if len(file.Append) > 0 {
 			// FORBIDDEN
 			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "append"), common.ErrFileAppendSupport)
+		}
+		if util.NotEmpty(file.Contents.Compression) {
+			// BUGGED
+			// https://bugzilla.redhat.com/show_bug.cgi?id=1970218
+			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "contents", "compression"), common.ErrFileCompressionSupport)
 		}
 	}
 	for i := range mc.Spec.Config.Storage.Links {

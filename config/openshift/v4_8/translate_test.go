@@ -55,6 +55,7 @@ func TestElidedFieldWarning(t *testing.T) {
 }
 
 func TestTranslateConfig(t *testing.T) {
+	zzz := "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
 	tests := []struct {
 		in         Config
 		out        result.MachineConfig
@@ -94,6 +95,76 @@ func TestTranslateConfig(t *testing.T) {
 				{path.New("yaml"), path.New("json", "spec", "config")},
 				{path.New("yaml", "ignition"), path.New("json", "spec", "config", "ignition")},
 				{path.New("yaml", "version"), path.New("json", "spec", "config", "ignition", "version")},
+			},
+		},
+		// ensure automatic compression is disabled
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Files: []base.File{
+								{
+									Path: "/z",
+									Contents: base.Resource{
+										Inline: util.StrToPtr(zzz),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			result.MachineConfig{
+				ApiVersion: result.MC_API_VERSION,
+				Kind:       result.MC_KIND,
+				Metadata: result.Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Spec: result.Spec{
+					Config: types.Config{
+						Ignition: types.Ignition{
+							Version: "3.2.0",
+						},
+						Storage: types.Storage{
+							Files: []types.File{
+								{
+									Node: types.Node{
+										Path: "/z",
+									},
+									FileEmbedded1: types.FileEmbedded1{
+										Contents: types.Resource{
+											Source: util.StrToPtr("data:," + zzz),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "apiVersion")},
+				{path.New("yaml", "version"), path.New("json", "kind")},
+				{path.New("yaml", "version"), path.New("json", "spec")},
+				{path.New("yaml"), path.New("json", "spec", "config")},
+				{path.New("yaml", "ignition"), path.New("json", "spec", "config", "ignition")},
+				{path.New("yaml", "version"), path.New("json", "spec", "config", "ignition", "version")},
+				{path.New("yaml", "storage"), path.New("json", "spec", "config", "storage")},
+				{path.New("yaml", "storage", "files"), path.New("json", "spec", "config", "storage", "files")},
+				{path.New("yaml", "storage", "files", 0), path.New("json", "spec", "config", "storage", "files", 0)},
+				{path.New("yaml", "storage", "files", 0, "path"), path.New("json", "spec", "config", "storage", "files", 0, "path")},
+				{path.New("yaml", "storage", "files", 0, "contents"), path.New("json", "spec", "config", "storage", "files", 0, "contents")},
+				{path.New("yaml", "storage", "files", 0, "contents", "inline"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "source")},
 			},
 		},
 		// FIPS
@@ -351,6 +422,10 @@ func TestValidateSupport(t *testing.T) {
 											Inline: util.StrToPtr("z"),
 										},
 									},
+									Contents: base.Resource{
+										Inline:      util.StrToPtr("z"),
+										Compression: util.StrToPtr("gzip"),
+									},
 								},
 							},
 							Filesystems: []base.Filesystem{
@@ -408,6 +483,7 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
+				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
 				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
