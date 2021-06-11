@@ -32,7 +32,7 @@ Packaging:
 
 GitHub release:
  - [ ] Wait until the Bodhi update shows "Signed :heavy_check_mark:" in the Metadata box.
- - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/10086).
+ - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/10158).
    - [ ] Update the script and test it locally by dropping the `sigul` lines.
  - [ ] Ping `mboddu` in Freenode `#fedora-coreos`, linking to the ticket
  - [ ] Wait for the ticket to be closed
