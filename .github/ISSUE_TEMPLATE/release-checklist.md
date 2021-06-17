@@ -34,12 +34,14 @@ GitHub release:
  - [ ] Wait until the Bodhi update shows "Signed :heavy_check_mark:" in the Metadata box.
  - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/10158).
    - [ ] Update the script and test it locally by dropping the `sigul` lines.
+     - [ ] If a new Fedora release has gone stable, update the signing key in the script to use the new Fedora signing key [found here](https://getfedora.org/security).
  - [ ] Ping `mboddu` in Freenode `#fedora-coreos`, linking to the ticket
  - [ ] Wait for the ticket to be closed
  - [ ] Download the artifacts and signatures
  - [ ] Verify the signatures
  - [ ] Find the new tag in the [GitHub tag list](https://github.com/coreos/butane/tags) and click the triple dots menu, and create a draft release for it.
  - [ ] Upload all the release artifacts and their signatures. Copy and paste the release notes from NEWS here as well.
+   - [ ] If the signing key has changed, note the change in the GitHub release notes as done [here](https://github.com/coreos/butane/releases/tag/v0.12.0).
  - [ ] Publish the release
 
 Quay release:
