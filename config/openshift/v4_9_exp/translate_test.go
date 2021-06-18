@@ -442,7 +442,7 @@ func TestValidateSupport(t *testing.T) {
 							Links: []base.Link{
 								{
 									Path:   "/l",
-									Target: "/t",
+									Target: util.StrToPtr("/t"),
 								},
 							},
 						},

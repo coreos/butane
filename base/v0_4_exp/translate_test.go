@@ -545,7 +545,7 @@ func TestTranslateLink(t *testing.T) {
 					Name: util.StrToPtr("bazquux"),
 				},
 				Overwrite: util.BoolToPtr(true),
-				Target:    "/bar",
+				Target:    util.StrToPtr("/bar"),
 				Hard:      util.BoolToPtr(false),
 			},
 			types.Link{
@@ -562,7 +562,7 @@ func TestTranslateLink(t *testing.T) {
 					Overwrite: util.BoolToPtr(true),
 				},
 				LinkEmbedded1: types.LinkEmbedded1{
-					Target: "/bar",
+					Target: util.StrToPtr("/bar"),
 					Hard:   util.BoolToPtr(false),
 				},
 			},
@@ -1141,7 +1141,7 @@ func TestTranslateTree(t *testing.T) {
 						},
 					},
 					LinkEmbedded1: types.LinkEmbedded1{
-						Target: "../file",
+						Target: util.StrToPtr("../file"),
 					},
 				},
 				{
@@ -1149,7 +1149,7 @@ func TestTranslateTree(t *testing.T) {
 						Path: "/subdir/bad-link",
 					},
 					LinkEmbedded1: types.LinkEmbedded1{
-						Target: "../nonexistent",
+						Target: util.StrToPtr("../nonexistent"),
 					},
 				},
 				{
@@ -1157,7 +1157,7 @@ func TestTranslateTree(t *testing.T) {
 						Path: "/subdir/link",
 					},
 					LinkEmbedded1: types.LinkEmbedded1{
-						Target: "../file",
+						Target: util.StrToPtr("../file"),
 					},
 				},
 			},
@@ -1209,7 +1209,7 @@ func TestTranslateTree(t *testing.T) {
 						Path: "/subdir/link",
 					},
 					LinkEmbedded1: types.LinkEmbedded1{
-						Target: "../file",
+						Target: util.StrToPtr("../file"),
 					},
 				},
 			},
@@ -1305,7 +1305,7 @@ func TestTranslateTree(t *testing.T) {
 			inLinks: []Link{
 				{
 					Path:   "/link",
-					Target: "file",
+					Target: util.StrToPtr("file"),
 				},
 				{
 					Path: "/link-partial",

@@ -22,9 +22,9 @@ type Clevis struct {
 }
 
 type ClevisCustom struct {
-	Config       string `yaml:"config"`
-	NeedsNetwork *bool  `yaml:"needs_network"`
-	Pin          string `yaml:"pin"`
+	Config       *string `yaml:"config"`
+	NeedsNetwork *bool   `yaml:"needs_network"`
+	Pin          *string `yaml:"pin"`
 }
 
 type Config struct {
@@ -116,7 +116,7 @@ type Link struct {
 	Path      string    `yaml:"path"`
 	User      NodeUser  `yaml:"user"`
 	Hard      *bool     `yaml:"hard"`
-	Target    string    `yaml:"target"`
+	Target    *string   `yaml:"target"`
 }
 
 type Luks struct {
@@ -192,7 +192,7 @@ type Proxy struct {
 
 type Raid struct {
 	Devices []Device     `yaml:"devices"`
-	Level   string       `yaml:"level"`
+	Level   *string      `yaml:"level"`
 	Name    string       `yaml:"name"`
 	Options []RaidOption `yaml:"options"`
 	Spares  *int         `yaml:"spares"`
