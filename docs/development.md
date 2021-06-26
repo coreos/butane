@@ -64,7 +64,7 @@ Create a [release checklist](https://github.com/coreos/butane/issues/new?templat
 
 ## Bumping spec versions
 
-This checklist describes bumping the Ignition spec version, `base` version, and `config` version. If your scenario is different, modify to taste.
+This checklist describes bumping the Ignition spec version, `base` version, and distro versions. If your scenario is different, modify to taste.
 
 ### Stabilize Ignition spec version
 
@@ -77,19 +77,19 @@ This checklist describes bumping the Ignition spec version, `base` version, and 
 - Copy `base/vB` to `base/vB+1_exp`.
 - Update `package` statements in `base/vB+1_exp`.
 
-### Bump config version
+### Bump distro version
 
-- Rename `config/fcos/vC_exp` to `config/fcos/vC` and update `package` statements. Update imports.
+- Rename `config/distro/vD_exp` to `config/distro/vD` and update `package` statements. Update imports.
 - Drop `-experimental` from `init()` in `config/config.go`.
 - Drop `-experimental` from examples in `docs/`.
-- Copy `config/fcos/vC` to `config/fcos/vC+1_exp`.
-- Update `package` statements in `config/fcos/vC+1_exp`. Bump its base dependency to `base/vB+1_exp`.
-- Import `config/vC+1_exp` in `config/config.go` and add `fcos` `C+1-experimental` to `init()`.
+- Copy `config/distro/vD` to `config/distro/vD+1_exp`.
+- Update `package` statements in `config/distro/vD+1_exp`. Bump its base dependency to `base/vB+1_exp`.
+- Import `config/vD+1_exp` in `config/config.go` and add `distro` `C+1-experimental` to `init()`.
 
 ### Bump Ignition spec version
 
 - Bump Ignition types imports and rename `ToIgnI` and `TestToIgnI` functions in `base/vB+1_exp`. Bump Ignition spec versions in `base/vB+1_exp/translate_test.go`.
-- Bump Ignition types imports in `config/fcos/vC+1_exp`. Update `ToIgnI` function names, `util` calls, and header comments to `ToIgnI+1`.
+- Bump Ignition types imports in `config/distro/vD+1_exp`. Update `ToIgnI` function names, `util` calls, and header comments to `ToIgnI+1`.
 
 ### Update docs
 
