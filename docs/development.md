@@ -69,7 +69,7 @@ This checklist describes bumping the Ignition spec version, `base` version, and 
 ### Stabilize Ignition spec version
 
 - Bump `go.mod` for new Ignition release and update vendor.
-- Update imports. Drop `-experimental` from Ignition spec versions in `base/vB_exp/translate_test.go`.
+- Update imports. Drop `-experimental` from Ignition spec versions in `*/translate_test.go`.
 
 ### Bump base version
 
