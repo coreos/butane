@@ -17,7 +17,7 @@ package v1_4_exp
 import (
 	"testing"
 
-	base "github.com/coreos/butane/base/v0_4_exp"
+	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"

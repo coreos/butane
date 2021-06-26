@@ -18,7 +18,7 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_4_exp"
+	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/translate"
 
