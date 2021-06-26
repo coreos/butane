@@ -28,7 +28,7 @@ import (
 
 	"github.com/coreos/go-systemd/unit"
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_3/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 )
