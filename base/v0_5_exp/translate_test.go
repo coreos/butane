@@ -28,7 +28,7 @@ import (
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_3/types"
+	"github.com/coreos/ignition/v2/config/v3_4_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -623,7 +623,7 @@ func TestTranslateFilesystem(t *testing.T) {
 			},
 		}
 		expected := []types.Filesystem{test.out}
-		actual, translations, r := in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+		actual, translations, r := in.ToIgn3_4Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, expected, actual.Storage.Filesystems, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		// FIXME: Zero values are pruned from merge transcripts and
@@ -671,7 +671,7 @@ func TestTranslateMountUnit(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -737,7 +737,7 @@ RequiredBy=local-fs.target`),
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -803,7 +803,7 @@ RequiredBy=remote-fs.target`),
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -861,7 +861,7 @@ RequiredBy=local-fs.target`),
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -898,7 +898,7 @@ RequiredBy=local-fs.target`),
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -940,7 +940,7 @@ RequiredBy=swap.target`),
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -971,7 +971,7 @@ RequiredBy=swap.target`),
 	}
 
 	for i, test := range tests {
-		out, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+		out, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, out, "#%d: bad output", i)
 		assert.Equal(t, report.Report{}, r, "#%d: expected empty report", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(out), "#%d: incomplete TranslationSet coverage", i)
@@ -1465,7 +1465,7 @@ func TestTranslateTree(t *testing.T) {
 		if test.options != nil {
 			options = *test.options
 		}
-		actual, translations, r := config.ToIgn3_3Unvalidated(options)
+		actual, translations, r := config.ToIgn3_4Unvalidated(options)
 
 		expectedReport := strings.ReplaceAll(test.report, "%FilesDir%", filesDir)
 		assert.Equal(t, expectedReport, r.String(), "#%d: bad report", i)
@@ -1490,7 +1490,7 @@ func TestTranslateIgnition(t *testing.T) {
 		{
 			Ignition{},
 			types.Ignition{
-				Version: "3.3.0",
+				Version: "3.4.0-experimental",
 			},
 		},
 		{
@@ -1507,7 +1507,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.3.0",
+				Version: "3.4.0-experimental",
 				Config: types.IgnitionConfig{
 					Merge: []types.Resource{
 						{
@@ -1528,7 +1528,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.3.0",
+				Version: "3.4.0-experimental",
 				Proxy: types.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []types.NoProxyItem{types.NoProxyItem("example.com")},
@@ -1548,7 +1548,7 @@ func TestTranslateIgnition(t *testing.T) {
 				},
 			},
 			types.Ignition{
-				Version: "3.3.0",
+				Version: "3.4.0-experimental",
 				Security: types.Security{
 					TLS: types.TLS{
 						CertificateAuthorities: []types.Resource{
@@ -1573,9 +1573,9 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
-// TestToIgn3_3 tests the config.ToIgn3_3 function ensuring it will generate a valid config even when empty. Not much else is
+// TestToIgn3_4 tests the config.ToIgn3_4 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has it's own set of tests.
-func TestToIgn3_3(t *testing.T) {
+func TestToIgn3_4(t *testing.T) {
 	tests := []struct {
 		in  Config
 		out types.Config
@@ -1584,13 +1584,13 @@ func TestToIgn3_3(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 			},
 		},
 	}
 	for i, test := range tests {
-		actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
