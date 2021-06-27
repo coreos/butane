@@ -18,12 +18,12 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_4_exp"
+	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_3_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_3/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -43,7 +43,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 			},
 			[]translate.Translation{
@@ -66,7 +66,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Luks: []types.Luks{
@@ -130,7 +130,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -374,7 +374,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -648,7 +648,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -850,7 +850,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1062,7 +1062,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0-experimental",
+					Version: "3.3.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
