@@ -22,8 +22,6 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.0.0](config-fcos-v1_0.md)
 - OpenShift (`openshift`)
   - [v4.8.0](config-openshift-v4_8.md)
-- RHEL CoreOS (`rhcos`) (deprecated)
-  - [v0.1.0](config-rhcos-v0_1.md)
 
 ## Experimental specification versions
 
@@ -33,6 +31,13 @@ Do not use **experimental** specifications for anything beyond **development and
   - [v1.4.0-experimental](config-fcos-v1_4-exp.md)
 - OpenShift (`openshift`)
   - [v4.9.0-experimental](config-openshift-v4_9-exp.md)
+
+## Deprecated specification versions
+
+The following configuration specifications are still accepted by Butane but are deprecated and will be removed in a future release:
+
+- RHEL CoreOS (`rhcos`)
+  - [v0.1.0](config-rhcos-v0_1.md)
 
 ## Butane specifications and Ignition specifications
 
