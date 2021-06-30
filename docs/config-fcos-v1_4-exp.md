@@ -154,7 +154,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **url** (string): url of the tang server.
         * **thumbprint** (string): thumbprint of a trusted signing key.
       * **_tpm2_** (bool): whether or not to use a tpm2 device.
-      * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+      * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
       * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
@@ -201,7 +201,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
       * **url** (string): url of the tang server.
       * **thumbprint** (string): thumbprint of a trusted signing key.
     * **_tpm2_** (bool): whether or not to use a tpm2 device.
-    * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device.
+    * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 
