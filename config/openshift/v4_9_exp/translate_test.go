@@ -476,6 +476,14 @@ func TestValidateSupport(t *testing.T) {
 								},
 							},
 						},
+						KernelArguments: base.KernelArguments{
+							ShouldExist: []base.KernelArgument{
+								"foo",
+							},
+							ShouldNotExist: []base.KernelArgument{
+								"bar",
+							},
+						},
 					},
 				},
 			},
@@ -499,6 +507,8 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
 				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1)},
+				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_exist", 0)},
+				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_not_exist", 0)},
 			},
 		},
 	}
