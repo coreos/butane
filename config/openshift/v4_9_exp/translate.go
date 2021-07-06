@@ -229,6 +229,12 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 	// incorrect state to the node.
 
 	var r report.Report
+	for i, fs := range mc.Spec.Config.Storage.Filesystems {
+		if fs.Format != nil && *fs.Format == "none" {
+			// UNPARSABLE
+			r.AddOnError(path.New("json", "spec", "config", "storage", "filesystems", i, "format"), common.ErrFilesystemNoneSupport)
+		}
+	}
 	for i := range mc.Spec.Config.Storage.Directories {
 		// IMMUTABLE
 		r.AddOnError(path.New("json", "spec", "config", "storage", "directories", i), common.ErrDirectorySupport)

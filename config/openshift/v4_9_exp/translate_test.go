@@ -433,6 +433,10 @@ func TestValidateSupport(t *testing.T) {
 									Device: "/dev/vda4",
 									Format: util.StrToPtr("btrfs"),
 								},
+								{
+									Device: "/dev/vda5",
+									Format: util.StrToPtr("none"),
+								},
 							},
 							Directories: []base.Directory{
 								{
@@ -489,6 +493,7 @@ func TestValidateSupport(t *testing.T) {
 			},
 			[]entry{
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
+				{report.Error, common.ErrFilesystemNoneSupport, path.New("yaml", "storage", "filesystems", 1, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
