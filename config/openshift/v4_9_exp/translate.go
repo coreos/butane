@@ -203,8 +203,15 @@ func validateRHCOSSupport(mc result.MachineConfig, ts translate.TranslationSet) 
 func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) report.Report {
 	// Error classes for the purposes of this function:
 	//
+	// UNPARSABLE - Cannot be rendered into a config by the MCC.  If
+	// present in MC, MCC will mark the pool degraded.  We reject these.
+	//
 	// FORBIDDEN - Not supported by the MCD.  If present in MC, MCD will
 	// mark the node degraded.  We reject these.
+	//
+	// REDUNDANT - Feature is also provided by a MachineConfig-specific
+	// field with different semantics.  To reduce confusion, disable
+	// this implementation.
 	//
 	// IMMUTABLE - Permitted in MC, passed through to Ignition, but not
 	// supported by the MCD.  MCD will mark the node degraded if the
@@ -222,6 +229,12 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 	// incorrect state to the node.
 
 	var r report.Report
+	for i, fs := range mc.Spec.Config.Storage.Filesystems {
+		if fs.Format != nil && *fs.Format == "none" {
+			// UNPARSABLE
+			r.AddOnError(path.New("json", "spec", "config", "storage", "filesystems", i, "format"), common.ErrFilesystemNoneSupport)
+		}
+	}
 	for i := range mc.Spec.Config.Storage.Directories {
 		// IMMUTABLE
 		r.AddOnError(path.New("json", "spec", "config", "storage", "directories", i), common.ErrDirectorySupport)
@@ -271,6 +284,14 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 			// TRIPWIRE
 			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i), common.ErrUserNameSupport)
 		}
+	}
+	for i := range mc.Spec.Config.KernelArguments.ShouldExist {
+		// UNPARSABLE, REDUNDANT
+		r.AddOnError(path.New("json", "spec", "config", "kernelArguments", "shouldExist", i), common.ErrKernelArgumentSupport)
+	}
+	for i := range mc.Spec.Config.KernelArguments.ShouldNotExist {
+		// UNPARSABLE, REDUNDANT
+		r.AddOnError(path.New("json", "spec", "config", "kernelArguments", "shouldNotExist", i), common.ErrKernelArgumentSupport)
 	}
 	return cutil.TranslateReportPaths(r, ts)
 }

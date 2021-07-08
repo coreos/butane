@@ -1573,6 +1573,49 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
+// TestTranslateKernelArguments tests translating the butane kernel_arguments.{should_exist,should_not_exist}.[i] entries to
+// ignition kernelArguments.{shouldExist,shouldNotExist}.[i] entries.
+//
+// KernelArguments do not use a custom translation function (it utilizes the MergeP2 functionality) so pass an entire config
+func TestTranslateKernelArguments(t *testing.T) {
+	tests := []struct {
+		in  Config
+		out types.Config
+	}{
+		{
+			Config{
+				KernelArguments: KernelArguments{
+					ShouldExist: []KernelArgument{
+						"foo",
+					},
+					ShouldNotExist: []KernelArgument{
+						"bar",
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.3.0",
+				},
+				KernelArguments: types.KernelArguments{
+					ShouldExist: []types.KernelArgument{
+						"foo",
+					},
+					ShouldNotExist: []types.KernelArgument{
+						"bar",
+					},
+				},
+			},
+		},
+	}
+	for i, test := range tests {
+		actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
+	}
+}
+
 // TestToIgn3_3 tests the config.ToIgn3_3 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has it's own set of tests.
 func TestToIgn3_3(t *testing.T) {

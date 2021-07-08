@@ -433,6 +433,10 @@ func TestValidateSupport(t *testing.T) {
 									Device: "/dev/vda4",
 									Format: util.StrToPtr("btrfs"),
 								},
+								{
+									Device: "/dev/vda5",
+									Format: util.StrToPtr("none"),
+								},
 							},
 							Directories: []base.Directory{
 								{
@@ -476,11 +480,20 @@ func TestValidateSupport(t *testing.T) {
 								},
 							},
 						},
+						KernelArguments: base.KernelArguments{
+							ShouldExist: []base.KernelArgument{
+								"foo",
+							},
+							ShouldNotExist: []base.KernelArgument{
+								"bar",
+							},
+						},
 					},
 				},
 			},
 			[]entry{
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
+				{report.Error, common.ErrFilesystemNoneSupport, path.New("yaml", "storage", "filesystems", 1, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
@@ -499,6 +512,8 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
 				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1)},
+				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_exist", 0)},
+				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_not_exist", 0)},
 			},
 		},
 	}
