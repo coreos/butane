@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_9_exp
+package v4_9
 
 import (
 	"testing"
@@ -20,8 +20,8 @@ import (
 	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
-	fcos "github.com/coreos/butane/config/fcos/v1_4_exp"
-	"github.com/coreos/butane/config/openshift/v4_9_exp/result"
+	fcos "github.com/coreos/butane/config/fcos/v1_4"
+	"github.com/coreos/butane/config/openshift/v4_9/result"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"

@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_9_exp
+package v4_9
 
 import (
 	"reflect"
 	"strings"
 
 	"github.com/coreos/butane/config/common"
-	"github.com/coreos/butane/config/openshift/v4_9_exp/result"
+	"github.com/coreos/butane/config/openshift/v4_9/result"
 	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 

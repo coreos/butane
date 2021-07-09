@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_4_exp
+package v1_4
 
 import (
 	base "github.com/coreos/butane/base/v0_4"
