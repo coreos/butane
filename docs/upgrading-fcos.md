@@ -14,6 +14,47 @@ Occasionally, changes are made to Fedora CoreOS Butane configs (those that speci
 1. TOC
 {:toc}
 
+## From Version 1.3.0 to 1.4.0
+
+There are no breaking changes between versions 1.3.0 and 1.4.0 of the `fcos` configuration specification. Any valid 1.3.0 configuration can be updated to a 1.4.0 configuration by changing the version string in the config.
+
+The following is a list of notable new features, deprecations, and changes.
+
+### Kernel arguments
+
+The config gained a new top-level `kernel_arguments` section. It allows specifying arguments that should be included or excluded from the kernel command line.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.4.0
+kernel_arguments:
+  should_exist:
+    - foobar
+    - baz boo
+  should_not_exist:
+    - raboof
+```
+
+The config above will ensure that the kernel argument `foobar` is present, and the kernel argument `raboof` is absent. It will also ensure that the kernel arguments `baz boo` are present exactly in that order.
+
+### New filesystem format `none`
+
+The `format` field of the `filesystems` section can now be set to `none`. This setting erases an existing filesystem signature without creating a new filesystem (if `wipe_filesystem` is true), or fails if there is any existing filesystem (if `wipe_filesystem` is false).
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.4.0
+storage:
+  filesystems:
+    - device: /dev/vdb1
+      wipe_filesystem: true
+      format: none
+```
+
+Refer to the [Ignition filesystem reuse semantics](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
+
 ## From Version 1.2.0 to 1.3.0
 
 There are no breaking changes between versions 1.2.0 and 1.3.0 of the `fcos` configuration specification. Any valid 1.2.0 configuration can be updated to a 1.3.0 configuration by changing the version string in the config.
