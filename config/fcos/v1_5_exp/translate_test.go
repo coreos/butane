@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_4
+package v1_5_exp
 
 import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_4"
+	base "github.com/coreos/butane/base/v0_5_exp"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_3/types"
+	"github.com/coreos/ignition/v2/config/v3_4_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -43,7 +43,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 			},
 			[]translate.Translation{
@@ -66,7 +66,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Luks: []types.Luks{
@@ -130,7 +130,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -374,7 +374,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -648,7 +648,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -850,7 +850,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1062,7 +1062,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.3.0",
+					Version: "3.4.0-experimental",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1272,7 +1272,7 @@ func TestTranslateBootDevice(t *testing.T) {
 	assert.Equal(t, bootV1SizeMiB, 384)
 
 	for i, test := range tests {
-		actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
