@@ -14,6 +14,10 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 1. TOC
 {:toc}
 
+## From Version 4.8.0 to Version 4.9.0
+
+There are no functionality changes between versions 4.8.0 and 4.9.0 of the `openshift` configuration specification. Any valid 4.8.0 configuration can be updated to a 4.9.0 configuration by changing the version string in the config.
+
 ## From `rhcos` Version 0.1.0 to `openshift` Version 4.8.0
 
 The new `openshift` config variant is intended to work both on the OpenShift Container Platform with RHEL CoreOS, and on OKD with Fedora CoreOS. The `rhcos` variant is still accepted by Butane but will not receive new features.

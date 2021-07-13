@@ -193,7 +193,7 @@ This example creates a swap partition spanning all of the `sdb` device, creates 
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.4.0-experimental
+version: 1.4.0
 storage:
   disks:
     - device: /dev/sdb
