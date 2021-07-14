@@ -1,3 +1,31 @@
+2021-07-13 Butane 0.13.0
+
+  Features:
+
+    - Stabilize Fedora CoreOS spec 1.4.0, targeting Ignition spec 3.3.0
+    - Add Fedora CoreOS spec 1.5.0-experimental, targeting Ignition spec
+      3.4.0-experimental
+    - Stabilize OpenShift spec 4.9.0, targeting Ignition spec 3.3.0
+    - Add OpenShift spec 4.10.0-experimental, targeting Ignition spec
+      3.4.0-experimental
+    - Support "none" filesystem format (fcos 1.4.0+)
+
+  Bug Fixes:
+
+    - Correctly track input line/column in kernel_arguments section
+
+  Misc Changes:
+
+    - Deprecate rhcos 0.1.0 spec in favor of openshift variant
+    - Disable kernel_arguments section in favor of openshift.kernel_arguments
+      (openshift 4.9.0+)
+    - Convert ClevisCustom.Config, ClevisCustom.Pin, Link.Target, and
+      Raid.Level Go fields to pointers (fcos 1.4.0+, openshift 4.9.0+)
+
+  Docs Changes:
+
+    - Document default value for Clevis threshold
+
 2021-06-10 Butane 0.12.1
 
   Bug Fixes:
