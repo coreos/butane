@@ -51,4 +51,10 @@ Quay release:
  - [ ] Click the gear next to the tag, select "Add New Tag", enter `release`, and confirm
 
 Housekeeping:
+ - Update Butane package for the current RHCOS development release
+   - [ ] Update the dist-git repo, following the instructions above
+   - [ ] PR the changes
+   - [ ] When the PR lands, build the package
+ - [ ] File ticket similar to [this one](https://issues.redhat.com/browse/ART-3043) to sync the new version to mirror.openshift.com
+ - [ ] Ask bgilbert to update the [MacPorts package](https://github.com/macports/macports-ports/tree/master/sysutils/butane)
  - [ ] Vendor the new Butane version in [mantle](https://github.com/coreos/coreos-assembler/tree/main/mantle)
