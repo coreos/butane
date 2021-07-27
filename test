@@ -27,7 +27,7 @@ mkdir tmpdocs
 trap 'rm -r tmpdocs' EXIT
 # Create files-dir contents expected by configs
 mkdir -p tmpdocs/files-dir/tree
-touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
+touch tmpdocs/files-dir/{base.ign,config.ign,ca.pem,file,file-epilogue,local-file3}
 
 for doc in docs/*md
 do

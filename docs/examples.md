@@ -374,6 +374,29 @@ systemd:
         WantedBy=multi-user.target
 ```
 
+## Creating derived configs
+
+A common scenario will be to have a "base" Ignition config, and then you want to create machine-specific versions that e.g. contain static IP addressing or a static `/etc/hostname`, etc.
+
+Another common scenario is to have a pool of bare metal machines where some have e.g. SATA disks, other newer machines have NVMe drives, etc.
+
+In the following, the `base.ign` is an Ignition config file you have locally.  It could be generated via whatever mechanism you prefer (could also be butane, or not).  These examples just change the value of `/etc/hostname`, but everything above (storage configuration etc.) can be added too.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.1.0
+ignition:
+  config:
+    merge:
+      - local: base.ign
+storage:
+  files:
+    - path: /etc/hostname
+      contents:
+        inline: foo.example.com
+```
+
 [spec]: specs.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
 [fcos-auth-docs]: https://docs.fedoraproject.org/en-US/fedora-coreos/authentication
