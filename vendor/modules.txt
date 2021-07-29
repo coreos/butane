@@ -1,14 +1,18 @@
 # github.com/clarketm/json v1.14.1
+## explicit
 github.com/clarketm/json
 # github.com/coreos/go-json v0.0.0-20170920214419-6a2fe990e083
 github.com/coreos/go-json
 # github.com/coreos/go-semver v0.3.0
+## explicit
 github.com/coreos/go-semver/semver
 # github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
+## explicit
 github.com/coreos/go-systemd/unit
 # github.com/coreos/go-systemd/v22 v22.0.0
 github.com/coreos/go-systemd/v22/unit
 # github.com/coreos/ignition/v2 v2.11.0
+## explicit
 github.com/coreos/ignition/v2/config/merge
 github.com/coreos/ignition/v2/config/shared/errors
 github.com/coreos/ignition/v2/config/shared/validations
@@ -20,6 +24,7 @@ github.com/coreos/ignition/v2/config/v3_3/types
 github.com/coreos/ignition/v2/config/v3_4_experimental/types
 github.com/coreos/ignition/v2/config/validate
 # github.com/coreos/vcontext v0.0.0-20210407161507-4ee6c745c8bd
+## explicit
 github.com/coreos/vcontext/json
 github.com/coreos/vcontext/path
 github.com/coreos/vcontext/report
@@ -27,16 +32,23 @@ github.com/coreos/vcontext/tree
 github.com/coreos/vcontext/validate
 github.com/coreos/vcontext/yaml
 # github.com/davecgh/go-spew v1.1.1
+## explicit
 github.com/davecgh/go-spew/spew
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
 # github.com/spf13/pflag v1.0.5
+## explicit
 github.com/spf13/pflag
 # github.com/stretchr/testify v1.5.1
+## explicit
 github.com/stretchr/testify/assert
 # github.com/vincent-petithory/dataurl v0.0.0-20160330182126-9a301d65acbb
+## explicit
 github.com/vincent-petithory/dataurl
+# gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15
+## explicit
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20191010095647-fc94e3f71652
+## explicit
 gopkg.in/yaml.v3

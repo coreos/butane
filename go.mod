@@ -1,6 +1,6 @@
 module github.com/coreos/butane
 
-go 1.13
+go 1.15
 
 require (
 	github.com/clarketm/json v1.14.1
