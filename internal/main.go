@@ -53,8 +53,8 @@ func main() {
 	pflag.StringVarP(&options.FilesDir, "files-dir", "d", "", "allow embedding local files from this directory")
 
 	pflag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: %s [options] [input-file]\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "Options:\n")
+		fmt.Fprintf(pflag.CommandLine.Output(), "Usage: %s [options] [input-file]\n", os.Args[0])
+		fmt.Fprintf(pflag.CommandLine.Output(), "Options:\n")
 		pflag.PrintDefaults()
 	}
 	pflag.Parse()
@@ -68,6 +68,7 @@ func main() {
 	}
 
 	if helpFlag {
+		pflag.CommandLine.SetOutput(os.Stdout)
 		pflag.Usage()
 		os.Exit(0)
 	}
