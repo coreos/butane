@@ -1,3 +1,17 @@
+2021-08-04 Butane 0.13.1
+
+  Misc Changes:
+
+    - Roll back to Ignition spec 3.2.0, since 3.3.0 support didn't make
+      it into OpenShift 4.9. No 3.3.0 features were permitted in this
+      config version, so this shouldn't break configs. (openshift 4.9.0)
+    - Send --help output to stdout
+    - Drop support for Go 1.13 and 1.14
+
+  Docs Changes:
+
+    - Correctly snake-case ignition.proxy fields
+
 2021-07-13 Butane 0.13.0
 
   Features:
