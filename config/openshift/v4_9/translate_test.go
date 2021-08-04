@@ -18,14 +18,14 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_4"
+	base "github.com/coreos/butane/base/v0_3"
 	"github.com/coreos/butane/config/common"
-	fcos "github.com/coreos/butane/config/fcos/v1_4"
+	fcos "github.com/coreos/butane/config/fcos/v1_3"
 	"github.com/coreos/butane/config/openshift/v4_9/result"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_3/types"
+	"github.com/coreos/ignition/v2/config/v3_2/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +50,7 @@ func TestElidedFieldWarning(t *testing.T) {
 	expected.AddOnWarn(path.New("yaml", "openshift", "fips"), common.ErrFieldElided)
 	expected.AddOnWarn(path.New("yaml", "openshift", "kernel_type"), common.ErrFieldElided)
 
-	_, _, r := in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+	_, _, r := in.ToIgn3_2Unvalidated(common.TranslateOptions{})
 	assert.Equal(t, expected, r, "report mismatch")
 }
 
@@ -83,7 +83,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.3.0",
+							Version: "3.2.0",
 						},
 					},
 				},
@@ -133,7 +133,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.3.0",
+							Version: "3.2.0",
 						},
 						Storage: types.Storage{
 							Files: []types.File{
@@ -228,7 +228,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.3.0",
+							Version: "3.2.0",
 						},
 						Storage: types.Storage{
 							Filesystems: []types.Filesystem{
@@ -246,7 +246,7 @@ func TestTranslateConfig(t *testing.T) {
 									Label:      util.StrToPtr("luks-root"),
 									WipeVolume: util.BoolToPtr(true),
 									Options:    []types.LuksOption{fipsCipherOption, fipsCipherArgument},
-									Clevis: types.Clevis{
+									Clevis: &types.Clevis{
 										Tpm2: util.BoolToPtr(true),
 									},
 								},
@@ -433,10 +433,6 @@ func TestValidateSupport(t *testing.T) {
 									Device: "/dev/vda4",
 									Format: util.StrToPtr("btrfs"),
 								},
-								{
-									Device: "/dev/vda5",
-									Format: util.StrToPtr("none"),
-								},
 							},
 							Directories: []base.Directory{
 								{
@@ -446,7 +442,7 @@ func TestValidateSupport(t *testing.T) {
 							Links: []base.Link{
 								{
 									Path:   "/l",
-									Target: util.StrToPtr("/t"),
+									Target: "/t",
 								},
 							},
 						},
@@ -480,20 +476,11 @@ func TestValidateSupport(t *testing.T) {
 								},
 							},
 						},
-						KernelArguments: base.KernelArguments{
-							ShouldExist: []base.KernelArgument{
-								"foo",
-							},
-							ShouldNotExist: []base.KernelArgument{
-								"bar",
-							},
-						},
 					},
 				},
 			},
 			[]entry{
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
-				{report.Error, common.ErrFilesystemNoneSupport, path.New("yaml", "storage", "filesystems", 1, "format")},
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
@@ -512,8 +499,6 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
 				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1)},
-				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_exist", 0)},
-				{report.Error, common.ErrKernelArgumentSupport, path.New("yaml", "kernel_arguments", "should_not_exist", 0)},
 			},
 		},
 	}
