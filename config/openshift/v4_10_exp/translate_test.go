@@ -15,6 +15,7 @@
 package v4_10_exp
 
 import (
+	"fmt"
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
@@ -525,6 +526,247 @@ func TestValidateSupport(t *testing.T) {
 		}
 		actual, translations, r := test.in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, expectedReport, r, "#%d: report mismatch", i)
+		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
+	}
+}
+
+func TestTranslateKdump(t *testing.T) {
+	type entry struct {
+		kind report.EntryKind
+		err  error
+		path path.ContextPath
+	}
+	tests := []struct {
+		in             Kdump
+		outConfig      string
+		outSysconf     string
+		outCrashKernel string
+		isFatal        bool
+		entries        []entry
+	}{
+		// default
+		{
+			Kdump{
+				Enabled: true,
+			},
+			`path /var/crash
+core_collector makedumpfile -l --message-level 7 -d 31
+`,
+			`KDUMP_COMMANDLINE_REMOVE="hugepages hugepagesz slub_debug quiet log_buf_len swiotlb"
+KDUMP_COMMANDLINE_APPEND="irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nokaslr novmcoredd hest_disable"
+KEXEC_ARGS="-s"
+KDUMP_IMG="vmlinuz"
+`,
+			"auto",
+			false,
+			[]entry{},
+		},
+		// local path
+		{
+			Kdump{
+				Enabled: true,
+				Target: KdumpTarget{
+					Local: Local{
+						Path: "/path/to/dump",
+					},
+				},
+				ReservedMemory: "128M",
+			},
+			`path /path/to/dump
+core_collector makedumpfile -l --message-level 7 -d 31
+`,
+			`KDUMP_COMMANDLINE_REMOVE="hugepages hugepagesz slub_debug quiet log_buf_len swiotlb"
+KDUMP_COMMANDLINE_APPEND="irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nokaslr novmcoredd hest_disable"
+KEXEC_ARGS="-s"
+KDUMP_IMG="vmlinuz"
+`,
+			"128M",
+			false,
+			[]entry{},
+		},
+		// NFS
+		{
+			Kdump{
+				Enabled: true,
+				Target: KdumpTarget{
+					NFS: NFS{
+						Share: "my.server.com:/export/tmp",
+					},
+				},
+				ReservedMemory: "256M",
+			},
+			`nfs my.server.com:/export/tmp
+path /
+core_collector makedumpfile -l --message-level 7 -d 31
+`,
+			`KDUMP_COMMANDLINE_REMOVE="hugepages hugepagesz slub_debug quiet log_buf_len swiotlb"
+KDUMP_COMMANDLINE_APPEND="irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nokaslr novmcoredd hest_disable"
+KEXEC_ARGS="-s"
+KDUMP_IMG="vmlinuz"
+`,
+			"256M",
+			false,
+			[]entry{},
+		},
+		// NFS subdir
+		{
+			Kdump{
+				Enabled: true,
+				Target: KdumpTarget{
+					NFS: NFS{
+						Share: "my.server.com:/export/tmp",
+						Path:  "subdir/to/dump",
+					},
+				},
+			},
+			`nfs my.server.com:/export/tmp
+path subdir/to/dump
+core_collector makedumpfile -l --message-level 7 -d 31
+`,
+			`KDUMP_COMMANDLINE_REMOVE="hugepages hugepagesz slub_debug quiet log_buf_len swiotlb"
+KDUMP_COMMANDLINE_APPEND="irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nokaslr novmcoredd hest_disable"
+KEXEC_ARGS="-s"
+KDUMP_IMG="vmlinuz"
+`,
+			"auto",
+			false,
+			[]entry{},
+		},
+		// Error: Local and NFS
+		{
+			Kdump{
+				Enabled: true,
+				Target: KdumpTarget{
+					Local: Local{
+						Path: "/path/to/dump",
+					},
+					NFS: NFS{
+						Share: "my.server.com:/export/tmp",
+					},
+				},
+			},
+			"",
+			"",
+			"",
+			true,
+			[]entry{
+				{report.Error, common.ErrKdumpTooManyTarget, path.New("yaml", "openshift", "kdump", "target")},
+			},
+		},
+	}
+
+	for i, test := range tests {
+		in := Config{
+			Metadata: Metadata{
+				Name: "z",
+				Labels: map[string]string{
+					ROLE_LABEL_KEY: "z",
+				},
+			},
+			OpenShift: OpenShift{
+				Kdump: test.in,
+			},
+		}
+		expectedConfig, _, _ := baseutil.MakeDataURL([]byte(test.outConfig), nil, false)
+		expectedSysconf, _, _ := baseutil.MakeDataURL([]byte(test.outSysconf), nil, false)
+		expect := result.MachineConfig{}
+		expectedExceptions := []translate.Translation{}
+		if !test.isFatal {
+			expect = result.MachineConfig{
+				ApiVersion: result.MC_API_VERSION,
+				Kind:       result.MC_KIND,
+				Metadata: result.Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Spec: result.Spec{
+					Config: types.Config{
+						Ignition: types.Ignition{
+							Version: "3.4.0-experimental",
+						},
+						Storage: types.Storage{
+							Files: []types.File{
+								{
+									Node: types.Node{
+										Path:      "/etc/kdump.conf",
+										Overwrite: util.BoolToPtr(true),
+									},
+									FileEmbedded1: types.FileEmbedded1{
+										Contents: types.Resource{
+											Source: util.StrToPtr(expectedConfig),
+										},
+										Mode: util.IntToPtr(0644),
+									},
+								},
+								{
+									Node: types.Node{
+										Path:      "/etc/sysconfig/kdump",
+										Overwrite: util.BoolToPtr(true),
+									},
+									FileEmbedded1: types.FileEmbedded1{
+										Contents: types.Resource{
+											Source: util.StrToPtr(expectedSysconf),
+										},
+										Mode: util.IntToPtr(0644),
+									},
+								},
+							},
+						},
+						Systemd: types.Systemd{
+							Units: []types.Unit{
+								{
+									Name:    "kdump.service",
+									Enabled: util.BoolToPtr(true),
+								},
+							},
+						},
+					},
+					KernelArguments: []string{
+						fmt.Sprintf("crashkernel=%v", test.outCrashKernel),
+					},
+				},
+			}
+			expectedExceptions = []translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "apiVersion")},
+				{path.New("yaml", "version"), path.New("json", "kind")},
+				{path.New("yaml", "version"), path.New("json", "spec")},
+				{path.New("yaml"), path.New("json", "spec", "config")},
+				{path.New("yaml", "ignition"), path.New("json", "spec", "config", "ignition")},
+				{path.New("yaml", "version"), path.New("json", "spec", "config", "ignition", "version")},
+				{path.New("yaml", "storage"), path.New("json", "spec", "config", "storage")},
+				{path.New("yaml", "storage", "files"), path.New("json", "spec", "config", "storage", "files")},
+				{path.New("yaml", "storage", "files", 0), path.New("json", "spec", "config", "storage", "files", 0)},
+				{path.New("yaml", "storage", "files", 0, "path"), path.New("json", "spec", "config", "storage", "files", 0, "path")},
+				{path.New("yaml", "storage", "files", 0, "mode"), path.New("json", "spec", "config", "storage", "files", 0, "mode")},
+				{path.New("yaml", "storage", "files", 0, "overwrite"), path.New("json", "spec", "config", "storage", "files", 0, "overwrite")},
+				{path.New("yaml", "storage", "files", 0, "contents"), path.New("json", "spec", "config", "storage", "files", 0, "contents")},
+				{path.New("yaml", "storage", "files", 0, "contents", "inline"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "source")},
+				{path.New("yaml", "storage", "files", 1), path.New("json", "spec", "config", "storage", "files", 1)},
+				{path.New("yaml", "storage", "files", 1, "path"), path.New("json", "spec", "config", "storage", "files", 1, "path")},
+				{path.New("yaml", "storage", "files", 1, "mode"), path.New("json", "spec", "config", "storage", "files", 1, "mode")},
+				{path.New("yaml", "storage", "files", 1, "overwrite"), path.New("json", "spec", "config", "storage", "files", 1, "overwrite")},
+				{path.New("yaml", "storage", "files", 1, "contents"), path.New("json", "spec", "config", "storage", "files", 1, "contents")},
+				{path.New("yaml", "storage", "files", 1, "contents", "inline"), path.New("json", "spec", "config", "storage", "files", 1, "contents", "source")},
+				{path.New("yaml", "openshift", "kernel_arguments"), path.New("json", "spec", "kernelArguments")},
+				{path.New("yaml", "openshift", "kernel_arguments", 0), path.New("json", "spec", "kernelArguments", 0)},
+				{path.New("yaml", "systemd"), path.New("json", "spec", "config", "systemd")},
+				{path.New("yaml", "systemd", "units"), path.New("json", "spec", "config", "systemd", "units")},
+				{path.New("yaml", "systemd", "units", 0), path.New("json", "spec", "config", "systemd", "units", 0)},
+				{path.New("yaml", "systemd", "units", 0, "name"), path.New("json", "spec", "config", "systemd", "units", 0, "name")},
+				{path.New("yaml", "systemd", "units", 0, "enabled"), path.New("json", "spec", "config", "systemd", "units", 0, "enabled")},
+			}
+		}
+		var expectedReport report.Report
+		for _, entry := range test.entries {
+			expectedReport.AddOn(entry.path, entry.err, entry.kind)
+		}
+
+		actual, translations, r := in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
+		assert.Equal(t, expect, actual, "#%d: translation mismatch", i)
+		assert.Equal(t, expectedReport, r, "#%d: report mismatch", i)
+		baseutil.VerifyTranslations(t, translations, expectedExceptions, "#%d", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
 }

@@ -36,4 +36,25 @@ type OpenShift struct {
 	Extensions      []string `yaml:"extensions"`
 	FIPS            *bool    `yaml:"fips"`
 	KernelType      *string  `yaml:"kernel_type"`
+	Kdump           Kdump    `yaml:"kdump"`
+}
+
+type Kdump struct {
+	Enabled        bool        `yaml:"enabled"`
+	ReservedMemory string      `yaml:"reserved_memory"`
+	Target         KdumpTarget `yaml:"target"`
+}
+
+type KdumpTarget struct {
+	Local Local `yaml:"local"`
+	NFS   NFS   `yaml:"nfs"`
+}
+
+type Local struct {
+	Path string `yaml:"path"`
+}
+
+type NFS struct {
+	Share string `yaml:"share"`
+	Path  string `yaml:"path"`
 }

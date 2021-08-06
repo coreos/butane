@@ -162,6 +162,15 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
   * **_extensions_** (list of strings): RHCOS extensions to be installed on the node.
   * **_fips_** (bool): whether or not to enable FIPS 140-2 compatibility. If omitted, defaults to false.
+  * **_kdump_** (object): describes the kdump configuration. If omitted, kdump is not configured.
+    * **_enabled_** (bool): whether or not to enable kdump.
+    * **_reserved_memory_** (string): memory size to be reserved for the kdump kernel. You can specify the size with a unit like `128M` for reserving 128MB. If omitted, the size is calculated automatically.
+    * **_target_** (object): describes where to save the kernel dump. You can set one of the following supported location(`local` or `nfs`). If omitted, the kernel dump is saved to the local directory `/var/crash`.
+      * **_local_** (object): specified to save the kernel dump to a local directory.
+        * **_path_** (string): an absolute path from root to the directory where the kernel dump is saved.
+      * **_nfs_** (object): specified to save the kernel dump to a remote NFS server.
+        * **_share_** (string): a location of NFS share, which consists of the NFS host and the exported directory like 'my.server.com:/export/tmp'.
+        * **_path_** (string): a relative path from the specified `share`. This is optional.
 
 [k8s-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
 [k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/

@@ -15,6 +15,8 @@
 package v4_10_exp
 
 import (
+	"bytes"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -34,6 +36,16 @@ const (
 	fipsCipherOption      = types.LuksOption("--cipher")
 	fipsCipherShortOption = types.LuksOption("-c")
 	fipsCipherArgument    = types.LuksOption("aes-cbc-essiv:sha256")
+	// kdump default from kexec-tools 2.0.20
+	kdumpDefaultCrashKernel   = "auto"
+	kdumpDefaultPath          = "/var/crash"
+	kdumpDefaultDumpLevel     = 31
+	kdumpDefaultMessageLevel  = 7
+	kdumpDefaultCompressFlag  = "-l"
+	kdumpDefaultCmdLineRemove = "hugepages hugepagesz slub_debug quiet log_buf_len swiotlb"
+	kdumpDefaultCmdLineAppend = "irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 rootflags=nofail acpi_no_memhotplug transparent_hugepage=never nokaslr novmcoredd hest_disable"
+	kdumpDefaultKexecArgs     = "-s"
+	kdumpDefaultKdumpImage    = "vmlinuz"
 )
 
 // ToMachineConfig4_10Unvalidated translates the config to a MachineConfig.  It also
@@ -45,10 +57,17 @@ func (c Config) ToMachineConfig4_10Unvalidated(options common.TranslateOptions) 
 	// https://bugzilla.redhat.com/show_bug.cgi?id=1970218
 	options.NoResourceAutoCompression = true
 
-	cfg, ts, r := c.Config.ToIgn3_4Unvalidated(options)
+	// translate OpenShift.Kdump field to other fields
+	r := c.translateKdump()
 	if r.IsFatal() {
-		return result.MachineConfig{}, ts, r
+		return result.MachineConfig{}, translate.TranslationSet{}, r
 	}
+
+	cfg, ts, r3 := c.Config.ToIgn3_4Unvalidated(options)
+	if r3.IsFatal() {
+		return result.MachineConfig{}, ts, r3
+	}
+	r.Merge(r3)
 
 	// wrap
 	ts = ts.PrefixPaths(path.New("yaml"), path.New("json", "spec", "config"))
@@ -294,4 +313,76 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 		r.AddOnError(path.New("json", "spec", "config", "kernelArguments", "shouldNotExist", i), common.ErrKernelArgumentSupport)
 	}
 	return cutil.TranslateReportPaths(r, ts)
+}
+
+// translateKdump converts OpenShift.Kdump field to other core fields.
+func (c *Config) translateKdump() (r report.Report) {
+	kdump := &c.OpenShift.Kdump
+	if !kdump.Enabled {
+		return r
+	}
+
+	// Enable kdump.service
+	unit := reflect.New(reflect.TypeOf(c.Systemd.Units).Elem()).Elem()
+	unit.FieldByName("Enabled").Set(reflect.ValueOf(util.BoolToPtr(true)))
+	unit.FieldByName("Name").SetString("kdump.service")
+	units := reflect.ValueOf(&c.Systemd.Units).Elem()
+	units.Set(reflect.Append(units, unit))
+
+	// Set kernel arguments
+	crashkernel := kdumpDefaultCrashKernel
+	if kdump.ReservedMemory != "" {
+		crashkernel = kdump.ReservedMemory
+	}
+	kargs := reflect.ValueOf(&c.OpenShift.KernelArguments).Elem()
+	kargs.Set(reflect.Append(kargs, reflect.ValueOf(fmt.Sprintf("crashkernel=%v", crashkernel))))
+
+	// Create /etc/kdump.conf
+	var kdumpconf bytes.Buffer
+	targetCount := 0
+	if kdump.Target.Local.Path != "" {
+		targetCount++
+		kdumpconf.WriteString(fmt.Sprintf("path %v\n", kdump.Target.Local.Path))
+	}
+	if kdump.Target.NFS.Share != "" {
+		targetCount++
+		kdumpconf.WriteString(fmt.Sprintf("nfs %v\n", kdump.Target.NFS.Share))
+		if kdump.Target.NFS.Path != "" {
+			kdumpconf.WriteString(fmt.Sprintf("path %v\n", kdump.Target.NFS.Path))
+		} else {
+			// Need to set "/". Otherwise, the default "/var/crash" is used as a relative path from the NFS mount point.
+			kdumpconf.WriteString("path /\n")
+		}
+	}
+	if targetCount > 1 {
+		r.AddOnError(path.New("yaml", "openshift", "kdump", "target"), common.ErrKdumpTooManyTarget)
+		return r
+	}
+	if targetCount == 0 {
+		kdumpconf.WriteString(fmt.Sprintf("path %v\n", kdumpDefaultPath))
+	}
+	kdumpconf.WriteString(fmt.Sprintf("core_collector makedumpfile %v --message-level %v -d %v\n", kdumpDefaultCompressFlag, kdumpDefaultMessageLevel, kdumpDefaultDumpLevel))
+	c.addFile("/etc/kdump.conf", true, 0644, kdumpconf.String())
+
+	// Create /etc/sysconfig/kdump
+	var sysconfig bytes.Buffer
+	sysconfig.WriteString(fmt.Sprintf("KDUMP_COMMANDLINE_REMOVE=\"%v\"\n", kdumpDefaultCmdLineRemove))
+	sysconfig.WriteString(fmt.Sprintf("KDUMP_COMMANDLINE_APPEND=\"%v\"\n", kdumpDefaultCmdLineAppend))
+	sysconfig.WriteString(fmt.Sprintf("KEXEC_ARGS=\"%v\"\n", kdumpDefaultKexecArgs))
+	sysconfig.WriteString(fmt.Sprintf("KDUMP_IMG=\"%v\"\n", kdumpDefaultKdumpImage))
+	c.addFile("/etc/sysconfig/kdump", true, 0644, sysconfig.String())
+
+	return r
+}
+
+func (c *Config) addFile(path string, overwrite bool, mode int, inline string) {
+	file := reflect.New(reflect.TypeOf(c.Storage.Files).Elem()).Elem()
+	file.FieldByName("Path").SetString(path)
+	file.FieldByName("Overwrite").Set(reflect.ValueOf(util.BoolToPtr(overwrite)))
+	file.FieldByName("Mode").Set(reflect.ValueOf(util.IntToPtr(mode)))
+	contents := reflect.New(file.FieldByName("Contents").Type()).Elem()
+	contents.FieldByName("Inline").Set(reflect.ValueOf(util.StrToPtr(inline)))
+	file.FieldByName("Contents").Set(contents)
+	files := reflect.ValueOf(&c.Storage.Files).Elem()
+	files.Set(reflect.Append(files, file))
 }
