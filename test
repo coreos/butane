@@ -29,6 +29,24 @@ trap 'rm -r tmpdocs' EXIT
 mkdir -p tmpdocs/files-dir/tree
 touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
 
+tmpd=$(mktemp -d)
+${BIN_PATH}/${NAME} --strict --output ${tmpd}/foo.ign << 'EOF'
+variant: fcos
+version: 1.1.0
+storage:
+  files:
+    - path: /etc/somesecret
+      mode: 0600
+      contents:
+        source: https://example.com/etc/somesecret
+EOF
+m=$(stat -c '%a' ${tmpd}/foo.ign)
+rm -rf "${tmpd}"
+if test "${m}" != 600; then
+	echo "Unexpected ignition mode: ${m}" 1>&2
+	exit 1
+fi
+
 for doc in docs/*md
 do
 	echo "Checking $doc"

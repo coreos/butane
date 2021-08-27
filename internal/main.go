@@ -102,7 +102,9 @@ func main() {
 
 	if output != "" {
 		var err error
-		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		// Because the config is commonly expected to have secret values, use mode 0600.
+		// xref https://github.com/coreos/fedora-coreos-docs/issues/306
+		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 		if err != nil {
 			fail("failed to open %s: %v\n", output, err)
 		}
