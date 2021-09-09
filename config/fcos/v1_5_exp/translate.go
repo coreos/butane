@@ -29,18 +29,14 @@ import (
 )
 
 const (
-	biosTypeGuid = "21686148-6449-6E6F-744E-656564454649"
-	prepTypeGuid = "9E1A2D38-C612-4316-AA26-8B49521E5A8B"
-	espTypeGuid  = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
+	reservedTypeGuid = "8DA63339-0007-60C0-C436-083AC8230908"
+	biosTypeGuid     = "21686148-6449-6E6F-744E-656564454649"
+	prepTypeGuid     = "9E1A2D38-C612-4316-AA26-8B49521E5A8B"
+	espTypeGuid      = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B"
 
 	// The partition layout implemented in this file replicates
 	// the layout of the OS image defined in:
 	// https://github.com/coreos/coreos-assembler/blob/main/src/create_disk.sh
-	//
-	// Exception: we don't try to skip unused partition numbers,
-	// because specifying a partition number would prevent child
-	// configs from overriding partition fields using the partition
-	// label as the lookup key.
 	//
 	// It's not critical that we match that layout exactly; the hard
 	// constraints are:
@@ -51,10 +47,11 @@ const (
 	//
 	// Do not change these constants!  New partition layouts must be
 	// encoded into new layout templates.
-	biosV1SizeMiB = 1
-	prepV1SizeMiB = 4
-	espV1SizeMiB  = 127
-	bootV1SizeMiB = 384
+	reservedV1SizeMiB = 1
+	biosV1SizeMiB     = 1
+	prepV1SizeMiB     = 4
+	espV1SizeMiB      = 127
+	bootV1SizeMiB     = 384
 )
 
 // ToIgn3_4Unvalidated translates the config to an Ignition config.  It also
@@ -131,12 +128,17 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 					SizeMiB:  util.IntToPtr(biosV1SizeMiB),
 					TypeGUID: util.StrToPtr(biosTypeGuid),
 				})
-			}
-			if wantPRePPart {
+			} else if wantPRePPart {
 				disk.Partitions = append(disk.Partitions, types.Partition{
 					Label:    util.StrToPtr(fmt.Sprintf("prep-%d", labelIndex)),
 					SizeMiB:  util.IntToPtr(prepV1SizeMiB),
 					TypeGUID: util.StrToPtr(prepTypeGuid),
+				})
+			} else {
+				disk.Partitions = append(disk.Partitions, types.Partition{
+					Label:    util.StrToPtr(fmt.Sprintf("reserved-%d", labelIndex)),
+					SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+					TypeGUID: util.StrToPtr(reservedTypeGuid),
 				})
 			}
 			if wantEFIPart {
@@ -144,6 +146,12 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 					Label:    util.StrToPtr(fmt.Sprintf("esp-%d", labelIndex)),
 					SizeMiB:  util.IntToPtr(espV1SizeMiB),
 					TypeGUID: util.StrToPtr(espTypeGuid),
+				})
+			} else {
+				disk.Partitions = append(disk.Partitions, types.Partition{
+					Label:    util.StrToPtr(fmt.Sprintf("reserved-%d", labelIndex)),
+					SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+					TypeGUID: util.StrToPtr(reservedTypeGuid),
 				})
 			}
 			disk.Partitions = append(disk.Partitions, types.Partition{
