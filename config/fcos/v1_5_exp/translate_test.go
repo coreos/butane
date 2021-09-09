@@ -656,6 +656,11 @@ func TestTranslateBootDevice(t *testing.T) {
 							Device: "/dev/vda",
 							Partitions: []types.Partition{
 								{
+									Label:    util.StrToPtr("reserved-1"),
+									SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+									TypeGUID: util.StrToPtr(reservedTypeGuid),
+								},
+								{
 									Label:    util.StrToPtr("esp-1"),
 									SizeMiB:  util.IntToPtr(espV1SizeMiB),
 									TypeGUID: util.StrToPtr(espTypeGuid),
@@ -673,6 +678,11 @@ func TestTranslateBootDevice(t *testing.T) {
 						{
 							Device: "/dev/vdb",
 							Partitions: []types.Partition{
+								{
+									Label:    util.StrToPtr("reserved-2"),
+									SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+									TypeGUID: util.StrToPtr(reservedTypeGuid),
+								},
 								{
 									Label:    util.StrToPtr("esp-2"),
 									SizeMiB:  util.IntToPtr(espV1SizeMiB),
@@ -758,9 +768,13 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "typeGuid")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2, "sizeMiB")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2)},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 3, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 3)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "wipeTable")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0)},
@@ -776,9 +790,13 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 0)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "typeGuid")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2, "sizeMiB")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2)},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 3, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 3)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "wipeTable")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1)},
@@ -863,6 +881,11 @@ func TestTranslateBootDevice(t *testing.T) {
 									TypeGUID: util.StrToPtr(prepTypeGuid),
 								},
 								{
+									Label:    util.StrToPtr("reserved-1"),
+									SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+									TypeGUID: util.StrToPtr(reservedTypeGuid),
+								},
+								{
 									Label:   util.StrToPtr("boot-1"),
 									SizeMiB: util.IntToPtr(bootV1SizeMiB),
 								},
@@ -879,6 +902,11 @@ func TestTranslateBootDevice(t *testing.T) {
 									Label:    util.StrToPtr("prep-2"),
 									SizeMiB:  util.IntToPtr(prepV1SizeMiB),
 									TypeGUID: util.StrToPtr(prepTypeGuid),
+								},
+								{
+									Label:    util.StrToPtr("reserved-2"),
+									SizeMiB:  util.IntToPtr(reservedV1SizeMiB),
+									TypeGUID: util.StrToPtr(reservedTypeGuid),
 								},
 								{
 									Label:   util.StrToPtr("boot-2"),
@@ -950,9 +978,13 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 0)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1, "typeGuid")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 1)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2, "sizeMiB")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 2)},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 3, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions", 3)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "partitions")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0, "wipeTable")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 0), path.New("json", "storage", "disks", 0)},
@@ -963,9 +995,13 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 0)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "label")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1, "typeGuid")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 1)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2, "sizeMiB")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 2)},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 3, "label")},
+				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions", 3)},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "partitions")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1, "wipeTable")},
 				{path.New("yaml", "boot_device", "mirror", "devices", 1), path.New("json", "storage", "disks", 1)},
@@ -1266,6 +1302,7 @@ func TestTranslateBootDevice(t *testing.T) {
 	// The partition sizes of existing layouts must never change, but
 	// we use the constants in tests for clarity.  Ensure no one has
 	// changed them.
+	assert.Equal(t, reservedV1SizeMiB, 1)
 	assert.Equal(t, biosV1SizeMiB, 1)
 	assert.Equal(t, prepV1SizeMiB, 4)
 	assert.Equal(t, espV1SizeMiB, 127)
