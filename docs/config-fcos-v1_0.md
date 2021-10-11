@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Fedora CoreOS v1.0.0
 parent: Configuration specifications
 nav_order: 49

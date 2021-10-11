@@ -1,5 +1,4 @@
 ---
-layout: default
 title: RHEL CoreOS v0.1.0
 parent: Configuration specifications
 nav_order: 99
