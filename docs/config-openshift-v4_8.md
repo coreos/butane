@@ -1,5 +1,4 @@
 ---
-layout: default
 title: OpenShift v4.8.0
 parent: Configuration specifications
 nav_order: 98

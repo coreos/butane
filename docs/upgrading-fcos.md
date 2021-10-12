@@ -1,5 +1,4 @@
 ---
-layout: default
 title: Fedora CoreOS
 parent: Upgrading configs
 nav_order: 1

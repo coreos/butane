@@ -5,6 +5,11 @@ url: "https://coreos.github.io"
 # Comment above and use below for local development
 # url: "http://localhost:4000"
 permalink: /:title/
+markdown: kramdown
+kramdown:
+  typographic_symbols:
+    ndash: "--"
+    mdash: "---"
 
 remote_theme: coreos/just-the-docs
 plugins:

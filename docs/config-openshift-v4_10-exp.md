@@ -1,5 +1,4 @@
 ---
-layout: default
 title: OpenShift v4.10.0-experimental
 parent: Configuration specifications
 nav_order: 100

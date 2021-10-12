@@ -1,5 +1,4 @@
 ---
-layout: default
 title: OpenShift
 parent: Upgrading configs
 nav_order: 2
