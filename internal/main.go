@@ -99,6 +99,9 @@ func main() {
 	if err != nil {
 		fail("Error translating config: %v\n", err)
 	}
+	if options.Strict && len(r.Entries) > 0 {
+		fail("Config produced warnings and --strict was specified\n")
+	}
 
 	if output != "" {
 		var err error
