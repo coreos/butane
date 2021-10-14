@@ -84,7 +84,7 @@ type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Repor
 // TranslateBytes wraps all of the individual TranslateBytes functions in a switch that determines the correct one to call.
 // TranslateBytes returns an error if the report had fatal errors or if other errors occured during translation.
 func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
-	// first determine version. This will ignore most fields, so don't use strict
+	// first determine version; this will ignore most fields
 	ver := commonFields{}
 	if err := yaml.Unmarshal(input, &ver); err != nil {
 		return nil, report.Report{}, fmt.Errorf("Error unmarshaling yaml: %v", err)
