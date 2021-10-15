@@ -35,6 +35,7 @@ func main() {
 	var (
 		input       string
 		output      string
+		strict      bool
 		helpFlag    bool
 		versionFlag bool
 	)
@@ -43,7 +44,7 @@ func main() {
 	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
 	pflag.BoolVarP(&options.DebugPrintTranslations, "debug", "D", false, "log translations")
 	pflag.Lookup("debug").Hidden = true
-	pflag.BoolVarP(&options.Strict, "strict", "s", false, "fail on any warning")
+	pflag.BoolVarP(&strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.BoolVarP(&options.Raw, "raw", "r", false, "never wrap in a MachineConfig; force Ignition output")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
@@ -98,6 +99,9 @@ func main() {
 	fmt.Fprintf(os.Stderr, "%s", r.String())
 	if err != nil {
 		fail("Error translating config: %v\n", err)
+	}
+	if strict && len(r.Entries) > 0 {
+		fail("Config produced warnings and --strict was specified\n")
 	}
 
 	if output != "" {
