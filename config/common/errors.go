@@ -27,6 +27,9 @@ var (
 	ErrInvalidSourceConfig    = errors.New("source config is invalid")
 	ErrInvalidGeneratedConfig = errors.New("config generated was invalid")
 
+	// deprecated variant/version
+	ErrRhcosVariantDeprecated = errors.New("this variant is deprecated and will be removed in a future release; use openshift variant instead")
+
 	// resources and trees
 	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
 	ErrFilesDirEscape         = errors.New("local file path traverses outside the files directory")
