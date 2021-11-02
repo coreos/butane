@@ -57,4 +57,3 @@ Housekeeping:
    - [ ] When the PR lands, build the package
  - [ ] File ticket similar to [this one](https://issues.redhat.com/browse/ART-3043) to sync the new version to mirror.openshift.com
  - [ ] Ask bgilbert to update the [MacPorts package](https://github.com/macports/macports-ports/tree/master/sysutils/butane)
- - [ ] Vendor the new Butane version in [mantle](https://github.com/coreos/coreos-assembler/tree/main/mantle)
