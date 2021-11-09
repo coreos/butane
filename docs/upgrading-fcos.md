@@ -54,6 +54,22 @@ storage:
 
 Refer to the [Ignition filesystem reuse semantics](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
 
+### Automatic generation of systemd swap units
+
+The `with_mount_unit` field of the `filesystems` section can now be set to `true` if the `format` field is set to `swap`. Butane will generate a systemd swap unit for the specified swap area.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.4.0
+storage:
+  filesystems:
+    - device: /dev/vdb1
+      format: swap
+      wipe_filesystem: true
+      with_mount_unit: true
+```
+
 ## From Version 1.2.0 to 1.3.0
 
 There are no breaking changes between versions 1.2.0 and 1.3.0 of the `fcos` configuration specification. Any valid 1.2.0 configuration can be updated to a 1.3.0 configuration by changing the version string in the config.
