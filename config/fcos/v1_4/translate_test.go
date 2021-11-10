@@ -37,6 +37,7 @@ func TestTranslateBootDevice(t *testing.T) {
 		in         Config
 		out        types.Config
 		exceptions []translate.Translation
+		report     report.Report
 	}{
 		// empty config
 		{
@@ -48,6 +49,100 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			[]translate.Translation{
 				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+			},
+			report.Report{},
+		},
+		// partition number for the `root` label is incorrect
+		{
+			Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										SizeMiB: util.IntToPtr(12000),
+										Resize:  util.BoolToPtr(true),
+									},
+									{
+										Label:   util.StrToPtr("var-home"),
+										SizeMiB: util.IntToPtr(10240),
+									},
+								},
+							},
+						},
+						Filesystems: []base.Filesystem{
+							{
+								Device:         "/dev/disk/by-partlabel/var-home",
+								Format:         util.StrToPtr("xfs"),
+								Path:           util.StrToPtr("/var/home"),
+								Label:          util.StrToPtr("var-home"),
+								WipeFilesystem: util.BoolToPtr(false),
+							},
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.3.0",
+				},
+				Storage: types.Storage{
+					Disks: []types.Disk{
+						{
+							Device: "/dev/vda",
+							Partitions: []types.Partition{
+								{
+									Label:   util.StrToPtr("root"),
+									SizeMiB: util.IntToPtr(12000),
+									Resize:  util.BoolToPtr(true),
+								},
+								{
+									Label:   util.StrToPtr("var-home"),
+									SizeMiB: util.IntToPtr(10240),
+								},
+							},
+						},
+					},
+					Filesystems: []types.Filesystem{
+						{
+							Device:         "/dev/disk/by-partlabel/var-home",
+							Format:         util.StrToPtr("xfs"),
+							Path:           util.StrToPtr("/var/home"),
+							Label:          util.StrToPtr("var-home"),
+							WipeFilesystem: util.BoolToPtr(false),
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "resize"), path.New("json", "storage", "disks", 0, "partitions", 0, "resize")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "label"), path.New("json", "storage", "disks", 0, "partitions", 1, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0), path.New("json", "storage", "disks", 0, "partitions", 0)},
+				{path.New("yaml", "storage", "disks", 0), path.New("json", "storage", "disks", 0)},
+				{path.New("yaml", "storage", "filesystems", 0, "device"), path.New("json", "storage", "filesystems", 0, "device")},
+				{path.New("yaml", "storage", "filesystems", 0, "format"), path.New("json", "storage", "filesystems", 0, "format")},
+				{path.New("yaml", "storage", "filesystems", 0, "path"), path.New("json", "storage", "filesystems", 0, "path")},
+				{path.New("yaml", "storage", "filesystems", 0, "label"), path.New("json", "storage", "filesystems", 0, "label")},
+				{path.New("yaml", "storage", "filesystems", 0, "wipe_filesystem"), path.New("json", "storage", "filesystems", 0, "wipeFilesystem")},
+				{path.New("yaml", "storage", "filesystems", 0), path.New("json", "storage", "filesystems", 0)},
+				{path.New("yaml", "storage", "filesystems"), path.New("json", "storage", "filesystems")},
+				{path.New("yaml", "storage"), path.New("json", "storage")},
+			},
+			report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrWrongPartitionNumber.Error(),
+						Context: path.New("json", "storage", "disks", 0, "partitions", 0, "label"),
+					},
+				},
 			},
 		},
 		// LUKS, x86_64
@@ -118,6 +213,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "boot_device"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 		// 3-disk mirror, x86_64
 		{
@@ -354,6 +450,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "boot_device"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 		// 3-disk mirror + LUKS, x86_64
 		{
@@ -627,6 +724,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "boot_device"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 		// 2-disk mirror + LUKS, aarch64
 		{
@@ -847,6 +945,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "boot_device"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 		// 2-disk mirror + LUKS, ppc64le
 		{
@@ -1047,6 +1146,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "boot_device"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "boot_device"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 		// 2-disk mirror + LUKS with overridden root partition size
 		// and filesystem type, x86_64
@@ -1296,6 +1396,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{path.New("yaml", "storage", "filesystems"), path.New("json", "storage", "filesystems")},
 				{path.New("yaml", "storage"), path.New("json", "storage")},
 			},
+			report.Report{},
 		},
 	}
 
@@ -1311,7 +1412,7 @@ func TestTranslateBootDevice(t *testing.T) {
 	for i, test := range tests {
 		actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
-		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
+		assert.Equal(t, test.report, r, "#%d: report mismatch", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
