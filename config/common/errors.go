@@ -50,6 +50,9 @@ var (
 	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64")
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
 
+	// partition
+	ErrWrongPartitionNumber = errors.New("incorrect partition number; a new partition will be created using reserved label")
+
 	// MachineConfigs
 	ErrFieldElided            = errors.New("field ignored in raw mode")
 	ErrNameRequired           = errors.New("metadata.name is required")

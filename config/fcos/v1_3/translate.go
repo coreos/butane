@@ -64,6 +64,20 @@ func (c Config) ToIgn3_2Unvalidated(options common.TranslateOptions) (types.Conf
 		return types.Config{}, translate.TranslationSet{}, r
 	}
 	r.Merge(c.processBootDevice(&ret, &ts, options))
+	for i, disk := range ret.Storage.Disks {
+		// In the boot_device.mirror case, nothing specifies partition numbers
+		// so match existing partitions only when `wipeTable` is false
+		if disk.WipeTable == nil {
+			for j, partition := range disk.Partitions {
+				// check for reserved partlabels
+				if partition.Label != nil {
+					if (*partition.Label == "BIOS-BOOT" && partition.Number != 1) || (*partition.Label == "PowerPC-PReP-boot" && partition.Number != 1) || (*partition.Label == "EFI-SYSTEM" && partition.Number != 2) || (*partition.Label == "boot" && partition.Number != 3) || (*partition.Label == "root" && partition.Number != 4) {
+						r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", j, "label"), common.ErrWrongPartitionNumber)
+					}
+				}
+			}
+		}
+	}
 	return ret, ts, r
 }
 
