@@ -67,7 +67,7 @@ func (c Config) ToIgn3_3Unvalidated(options common.TranslateOptions) (types.Conf
 	for i, disk := range ret.Storage.Disks {
 		// In the boot_device.mirror case, nothing specifies partition numbers
 		// so match existing partitions only when `wipeTable` is false
-		if disk.WipeTable == nil {
+		if !util.IsTrue(disk.WipeTable) {
 			for j, partition := range disk.Partitions {
 				// check for reserved partlabels
 				if partition.Label != nil {
