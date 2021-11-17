@@ -12,7 +12,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `fcos` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.5.0-experimental` and generates Ignition configs with version `3.4.0-experimental`.
-* **ignition** (object): metadata about the configuration itself.
+* **_ignition_** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
       * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
