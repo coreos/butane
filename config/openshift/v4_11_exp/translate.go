@@ -238,9 +238,9 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "append"), common.ErrFileAppendSupport)
 		}
 		if file.Contents.Source != nil {
-			url, err := url.Parse(*file.Contents.Source)
+			fileSource, err := url.Parse(*file.Contents.Source)
 			// parse errors will be caught by normal config validation
-			if err == nil && url.Scheme != "data" {
+			if err == nil && fileSource.Scheme != "data" {
 				// FORBIDDEN
 				r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "contents", "source"), common.ErrFileSchemeSupport)
 			}
