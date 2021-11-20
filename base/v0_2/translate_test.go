@@ -1316,7 +1316,7 @@ func TestTranslateTree(t *testing.T) {
 }
 
 // TestTranslateIgnition tests translating the ct config.ignition to the ignition config.ignition section.
-// It ensure that the version is set as well.
+// It ensures that the version is set as well.
 func TestTranslateIgnition(t *testing.T) {
 	tests := []struct {
 		in  Ignition
@@ -1409,7 +1409,7 @@ func TestTranslateIgnition(t *testing.T) {
 }
 
 // TestToIgn3_1 tests the config.ToIgn3_1 function ensuring it will generate a valid config even when empty. Not much else is
-// tested since it uses the Ignition translation code which has it's own set of tests.
+// tested since it uses the Ignition translation code which has its own set of tests.
 func TestToIgn3_1(t *testing.T) {
 	tests := []struct {
 		in  Config
