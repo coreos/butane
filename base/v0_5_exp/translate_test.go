@@ -1402,19 +1402,19 @@ func TestTranslateTree(t *testing.T) {
 				return
 			}
 		}
-		for path, mode := range test.dirFiles {
-			absPath := filepath.Join(filesDir, path)
+		for testPath, mode := range test.dirFiles {
+			absPath := filepath.Join(filesDir, testPath)
 			if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 				t.Error(err)
 				return
 			}
-			if err := ioutil.WriteFile(absPath, []byte(path), mode); err != nil {
+			if err := ioutil.WriteFile(absPath, []byte(testPath), mode); err != nil {
 				t.Error(err)
 				return
 			}
 		}
-		for path, target := range test.dirLinks {
-			absPath := filepath.Join(filesDir, path)
+		for testPath, target := range test.dirLinks {
+			absPath := filepath.Join(filesDir, testPath)
 			if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 				t.Error(err)
 				return
@@ -1424,8 +1424,8 @@ func TestTranslateTree(t *testing.T) {
 				return
 			}
 		}
-		for _, path := range test.dirSockets {
-			absPath := filepath.Join(filesDir, path)
+		for _, testPath := range test.dirSockets {
+			absPath := filepath.Join(filesDir, testPath)
 			if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 				t.Error(err)
 				return
