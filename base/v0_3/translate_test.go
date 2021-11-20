@@ -43,12 +43,7 @@ func TestTranslateFile(t *testing.T) {
 	random := "\xc0\x9cl\x01\x89i\xa5\xbfW\xe4\x1b\xf4J_\xb79P\xa3#\xa7"
 	random_b64 := "data:;base64,wJxsAYlppb9X5Bv0Sl+3OVCjI6c="
 
-	filesDir, err := ioutil.TempDir("", "translate-test-")
-	if err != nil {
-		t.Error(err)
-		return
-	}
-	defer os.RemoveAll(filesDir)
+	filesDir := t.TempDir()
 	fileContents := map[string]string{
 		"file-1": "file contents\n",
 		"file-2": zzz,
@@ -1310,14 +1305,9 @@ func TestTranslateTree(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		filesDir, err := ioutil.TempDir("", "translate-test-")
-		if err != nil {
-			t.Error(err)
-			return
-		}
-		defer os.RemoveAll(filesDir)
-		for path, mode := range test.dirDirs {
-			absPath := filepath.Join(filesDir, path)
+		filesDir := t.TempDir()
+		for testPath, mode := range test.dirDirs {
+			absPath := filepath.Join(filesDir, testPath)
 			if err := os.MkdirAll(absPath, 0755); err != nil {
 				t.Error(err)
 				return
