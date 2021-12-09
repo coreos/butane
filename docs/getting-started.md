@@ -32,11 +32,24 @@ podman run --rm -v /path/to/your_config.bu:/config.bu:z quay.io/coreos/butane:re
 You may also add the following alias in your shell configuration:
 
 ```
-alias butane='podman run --rm --interactive       \
-              --security-opt label=disable        \
-              --volume ${PWD}:/pwd --workdir /pwd \
+alias butane='podman run --rm --interactive         \
+              --security-opt label=disable          \
+              --volume "${PWD}":/pwd --workdir /pwd \
               quay.io/coreos/butane:release'
 ```
+
+Alternatively you may also create a wrapper script at `~/.local/bin/butane`:
+
+```bash
+#!/bin/sh
+exec podman run --rm --interactive         \
+     --security-opt label=disable          \
+     --volume "${PWD}":/pwd --workdir /pwd \
+     quay.io/coreos/butane:release         \
+     "${@}"
+```
+
+Make sure that `~/.local/bin` is in your `$PATH`, or choose another path like `/usr/local/bin`.
 
 #### Distribution packages
 
