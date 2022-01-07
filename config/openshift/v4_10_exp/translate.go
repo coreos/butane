@@ -15,6 +15,7 @@
 package v4_10_exp
 
 import (
+	"net/url"
 	"reflect"
 	"strings"
 
@@ -235,6 +236,14 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 		if len(file.Append) > 0 {
 			// FORBIDDEN
 			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "append"), common.ErrFileAppendSupport)
+		}
+		if file.Contents.Source != nil {
+			url, err := url.Parse(*file.Contents.Source)
+			// parse errors will be caught by normal config validation
+			if err == nil && url.Scheme != "data" {
+				// FORBIDDEN
+				r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "contents", "source"), common.ErrFileSchemeSupport)
+			}
 		}
 	}
 	for i := range mc.Spec.Config.Storage.Links {
