@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_10_exp
+package v4_10
 
 import (
 	"net/url"
@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/coreos/butane/config/common"
-	"github.com/coreos/butane/config/openshift/v4_10_exp/result"
+	"github.com/coreos/butane/config/openshift/v4_10/result"
 	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
