@@ -399,6 +399,32 @@ func TestValidateSupport(t *testing.T) {
 			},
 			[]entry{},
 		},
+		// valid data URL
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Files: []base.File{
+								{
+									Path: "/f",
+									Contents: base.Resource{
+										Source: util.StrToPtr("data:,foo"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]entry{},
+		},
 		// all the warnings/errors
 		{
 			Config{
@@ -425,6 +451,12 @@ func TestValidateSupport(t *testing.T) {
 									Contents: base.Resource{
 										Inline:      util.StrToPtr("z"),
 										Compression: util.StrToPtr("gzip"),
+									},
+								},
+								{
+									Path: "/h",
+									Contents: base.Resource{
+										Source: util.StrToPtr("https://example.com/"),
 									},
 								},
 							},
@@ -484,6 +516,7 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
+				{report.Error, common.ErrFileSchemeSupport, path.New("yaml", "storage", "files", 2, "contents", "source")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
 				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
