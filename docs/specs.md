@@ -21,6 +21,7 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.1.0](config-fcos-v1_1.md)
   - [v1.0.0](config-fcos-v1_0.md)
 - OpenShift (`openshift`)
+  - [v4.10.0](config-openshift-v4_10.md)
   - [v4.9.0](config-openshift-v4_9.md)
   - [v4.8.0](config-openshift-v4_8.md)
 
@@ -31,7 +32,7 @@ Do not use **experimental** specifications for anything beyond **development and
 - Fedora CoreOS (`fcos`)
   - [v1.5.0-experimental](config-fcos-v1_5-exp.md)
 - OpenShift (`openshift`)
-  - [v4.10.0-experimental](config-openshift-v4_10-exp.md)
+  - [v4.11.0-experimental](config-openshift-v4_11-exp.md)
 
 ## Deprecated specification versions
 
@@ -54,5 +55,6 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `fcos`         | 1.5.0-experimental  | 3.4.0-experimental |
 | `openshift`    | 4.8.0               | 3.2.0              |
 | `openshift`    | 4.9.0               | 3.2.0              |
-| `openshift`    | 4.10.0-experimental | 3.4.0-experimental |
+| `openshift`    | 4.10.0              | 3.4.0-experimental |
+| `openshift`    | 4.11.0-experimental | 3.4.0-experimental |
 | `rhcos`        | 0.1.0               | 3.2.0              |
