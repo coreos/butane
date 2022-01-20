@@ -13,6 +13,31 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 1. TOC
 {:toc}
 
+## From Version 4.9.0 to 4.10.0
+
+There are no breaking changes between versions 4.9.0 and 4.10.0 of the `openshift` configuration specification. Any valid 4.9.0 configuration can be updated to a 4.10.0 configuration by changing the version string in the config. 
+
+### Resource compression
+
+Resource compression, which was disabled in all `openshift` specs in Butane 0.12.1, is re-introduced in this spec version. The `compression` field can be set to `gzip` to decompress gzip-compressed resources. In addition, Butane may automatically compress resources specified with `inline` or `local`.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.10.0
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: config-openshift
+storage:
+  files:
+    - path: /opt/file2
+      contents:
+        source: data:;base64,H4sIAAAAAAAC/zSQQY4bMQwE7/OKfsBgXpHccs0DGKntEJBIWSINP3+htfcmQECxq/74ZIeOlR3Vm08sDUhnnChuiyUYOSFVh66idgebxonFiuoHNVf3imAfPqFWtGpNC2SgyT+fBOONJrrcTSBNHykX8DcOmnZIRdf9eNJU+olH6oL5ipkVfHEWDQl1Q7YmvfgbreswXbpPfTN1gC9QULx3r/42eKTEBfzaTMkgdObkx1btmByT/2mVUwNqeHrLERLEc7uCaxFFW/tpRDBxy7tKHLYXYchUiZwX8PtVOIK5S1rASxEWCZQcWiUkYG4Y07XS4jzWjqWGkm3INoffblpUULk492/3tnfITqQVXJ+02a/jKwAA//+jjAk6wQEAAA==
+        compression: gzip
+      mode: 0644
+```
+
 ## From Version 4.8.0 to Version 4.9.0
 
 There are no functionality changes between versions 4.8.0 and 4.9.0 of the `openshift` configuration specification. Any valid 4.8.0 configuration can be updated to a 4.9.0 configuration by changing the version string in the config.
