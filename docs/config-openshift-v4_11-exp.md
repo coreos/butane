@@ -21,6 +21,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
@@ -30,6 +31,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
@@ -44,6 +46,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
         * **_inline_** (string): the contents of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
         * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
+        * **_compression_** (string): the type of compression used on the certificate (null or gzip). Compression cannot be used with S3.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
           * **name** (string): the header name.
           * **_value_** (string): the header contents.
