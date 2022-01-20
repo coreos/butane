@@ -25,6 +25,7 @@ import (
 	fcos1_4 "github.com/coreos/butane/config/fcos/v1_4"
 	fcos1_5_exp "github.com/coreos/butane/config/fcos/v1_5_exp"
 	openshift4_10 "github.com/coreos/butane/config/openshift/v4_10"
+	openshift4_11_exp "github.com/coreos/butane/config/openshift/v4_11_exp"
 	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
 	openshift4_9 "github.com/coreos/butane/config/openshift/v4_9"
 	rhcos0_1 "github.com/coreos/butane/config/rhcos/v0_1"
@@ -54,6 +55,7 @@ func init() {
 	RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
 	RegisterTranslator("openshift", "4.9.0", openshift4_9.ToConfigBytes)
 	RegisterTranslator("openshift", "4.10.0", openshift4_10.ToConfigBytes)
+	RegisterTranslator("openshift", "4.11.0-experimental", openshift4_11_exp.ToConfigBytes)
 	RegisterTranslator("rhcos", "0.1.0", rhcos0_1.ToIgn3_2Bytes)
 }
 

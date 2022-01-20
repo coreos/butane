@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_10
+package v4_11_exp
 
 import (
 	"testing"
@@ -21,7 +21,7 @@ import (
 	base "github.com/coreos/butane/base/v0_5_exp"
 	"github.com/coreos/butane/config/common"
 	fcos "github.com/coreos/butane/config/fcos/v1_5_exp"
-	"github.com/coreos/butane/config/openshift/v4_10/result"
+	"github.com/coreos/butane/config/openshift/v4_11_exp/result"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -273,7 +273,7 @@ func TestTranslateConfig(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual, translations, r := test.in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToMachineConfig4_11Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
 		assert.Equal(t, report.Report{}, r, "#%d: non-empty report", i)
 		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
@@ -480,7 +480,7 @@ func TestValidateSupport(t *testing.T) {
 		for _, entry := range test.entries {
 			expectedReport.AddOn(entry.path, entry.err, entry.kind)
 		}
-		actual, translations, r := test.in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
+		actual, translations, r := test.in.ToMachineConfig4_11Unvalidated(common.TranslateOptions{})
 		assert.Equal(t, expectedReport, r, "#%d: report mismatch", i)
 		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
 	}
