@@ -15,6 +15,7 @@
 package v4_8
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/coreos/butane/config/common"
@@ -64,10 +65,12 @@ func TestValidateMetadata(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		expected.AddOnError(test.errPath, test.out)
-		assert.Equal(t, expected, actual, "#%d: bad report", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
 	}
 }
 
@@ -94,10 +97,12 @@ func TestValidateOpenShift(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		expected.AddOnError(test.errPath, test.out)
-		assert.Equal(t, expected, actual, "#%d: bad report", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
 	}
 }
 
@@ -229,14 +234,16 @@ func TestReportCorrelation(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		for _, raw := range []bool{false, true} {
-			_, r, _ := ToConfigBytes([]byte(test.in), common.TranslateBytesOptions{
-				Raw: raw,
-			})
-			assert.Len(t, r.Entries, 1, "#%d: unexpected report length, raw %v", i, raw)
-			assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error, raw %v", i, raw)
-			assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil, raw %v", i, raw)
-			assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line, raw %v", i, raw)
-		}
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			for _, raw := range []bool{false, true} {
+				_, r, _ := ToConfigBytes([]byte(test.in), common.TranslateBytesOptions{
+					Raw: raw,
+				})
+				assert.Len(t, r.Entries, 1, "unexpected report length, raw %v", raw)
+				assert.Equal(t, test.message, r.Entries[0].Message, "bad error, raw %v", raw)
+				assert.NotNil(t, r.Entries[0].Marker.StartP, "marker start is nil, raw %v", raw)
+				assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "incorrect error line, raw %v", raw)
+			}
+		})
 	}
 }

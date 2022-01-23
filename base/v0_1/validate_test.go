@@ -15,6 +15,7 @@
 package v0_1
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/coreos/butane/config/common"
@@ -68,16 +69,18 @@ func TestValidateFileContents(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		// hardcode inline for now since that's the only place errors occur. Move into the
-		// test struct once there's more than one place
-		expected.AddOnError(path.New("yaml", "inline"), test.out)
-		assert.Equal(t, expected, actual, "#%d: bad report", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			// hardcode inline for now since that's the only place errors occur. Move into the
+			// test struct once there's more than one place
+			expected.AddOnError(path.New("yaml", "inline"), test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
 	}
 }
 
-func TestValidateMode(t *testing.T) {
+func TestValidateFileMode(t *testing.T) {
 	fileTests := []struct {
 		in  File
 		out error
@@ -101,12 +104,16 @@ func TestValidateMode(t *testing.T) {
 	}
 
 	for i, test := range fileTests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		expected.AddOnWarn(path.New("yaml", "mode"), test.out)
-		assert.Equal(t, expected, actual, "#%d: bad report", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnWarn(path.New("yaml", "mode"), test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
 	}
+}
 
+func TestValidateDirMode(t *testing.T) {
 	dirTests := []struct {
 		in  Directory
 		out error
@@ -130,9 +137,11 @@ func TestValidateMode(t *testing.T) {
 	}
 
 	for i, test := range dirTests {
-		actual := test.in.Validate(path.New("yaml"))
-		expected := report.Report{}
-		expected.AddOnWarn(path.New("yaml", "mode"), test.out)
-		assert.Equal(t, expected, actual, "#%d: bad report", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnWarn(path.New("yaml", "mode"), test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
 	}
 }

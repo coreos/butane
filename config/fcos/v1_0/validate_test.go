@@ -15,6 +15,7 @@
 package v1_0
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/coreos/butane/config/common"
@@ -101,10 +102,12 @@ func TestReportCorrelation(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		_, r, _ := ToIgn3_0Bytes([]byte(test.in), common.TranslateBytesOptions{})
-		assert.Len(t, r.Entries, 1, "#%d: unexpected report length", i)
-		assert.Equal(t, test.message, r.Entries[0].Message, "#%d: bad error", i)
-		assert.NotNil(t, r.Entries[0].Marker.StartP, "#%d: marker start is nil", i)
-		assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "#%d: incorrect error line", i)
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			_, r, _ := ToIgn3_0Bytes([]byte(test.in), common.TranslateBytesOptions{})
+			assert.Len(t, r.Entries, 1, "unexpected report length")
+			assert.Equal(t, test.message, r.Entries[0].Message, "bad error")
+			assert.NotNil(t, r.Entries[0].Marker.StartP, "marker start is nil")
+			assert.Equal(t, test.line, r.Entries[0].Marker.StartP.Line, "incorrect error line")
+		})
 	}
 }
