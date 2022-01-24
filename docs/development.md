@@ -61,6 +61,16 @@ variant/version pair with `config`.
 
 Create a [release checklist](https://github.com/coreos/butane/issues/new?template=release-checklist.md) and follow those steps.
 
+## The build process
+
+Note that the binaries released in this repository are not built using the `build` script from this repository
+but using a `butane.spec` maintained in [Fedora rpms/butane](https://src.fedoraproject.org/rpms/butane).
+This build process uses the [go-rpm-macros](https://pagure.io/go-rpm-macros) to set up the Go build environment and is
+subject to the [Golang Packaging Guidelines](https://docs.fedoraproject.org/en-US/packaging-guidelines/Golang/).
+
+Consult the [Package Maintenance Guide](https://docs.fedoraproject.org/en-US/package-maintainers/Package_Maintenance_Guide/)
+if you want to contribute to the build process.
+
 ## Bumping spec versions
 
 This checklist describes bumping the Ignition spec version, `base` version, and distro versions. If your scenario is different, modify to taste.
