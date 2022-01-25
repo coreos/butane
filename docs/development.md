@@ -69,7 +69,10 @@ This build process uses the [go-rpm-macros](https://pagure.io/go-rpm-macros) to 
 subject to the [Golang Packaging Guidelines](https://docs.fedoraproject.org/en-US/packaging-guidelines/Golang/).
 
 Consult the [Package Maintenance Guide](https://docs.fedoraproject.org/en-US/package-maintainers/Package_Maintenance_Guide/)
-if you want to contribute to the build process.
+and the [Pull Requests Guide](https://docs.fedoraproject.org/en-US/ci/pull-requests/) if you want to contribute to the build process.
+
+In case you have trouble with the aforementioned standard Pull Request Guide, consult the Pagure documentation on the 
+[Remote Git to Pagure pull request](https://docs.pagure.org/pagure/usage/pull_requests.html#remote-git-to-pagure-pull-request) workflow.
 
 ## Bumping spec versions
 
