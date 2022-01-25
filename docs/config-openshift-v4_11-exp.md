@@ -156,6 +156,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
+* **_extensions_** (list of strings): a list of packages to layer on top of the OS.
 * **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.

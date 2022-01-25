@@ -1420,3 +1420,61 @@ func TestTranslateBootDevice(t *testing.T) {
 		})
 	}
 }
+
+// TestTranslateExtensions tests translating the Butane config extensions section.
+func TestTranslateExtensions(t *testing.T) {
+	tests := []struct {
+		in         Config
+		out        types.Config
+		exceptions []translate.Translation
+		report     report.Report
+	}{
+		// config with two extensions/packages
+		{
+			Config{
+				Extensions: []string{"strace", "zsh"},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/etc/rpm-ostree/origin.d/extensions-e2ecf66.yaml",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Contents: types.Resource{
+									Source: util.StrToPtr("data:;base64,IyBHZW5lcmF0ZWQgYnkgQnV0YW5lCgpwYWNrYWdlczoKICAgIC0gc3RyYWNlCiAgICAtIHpzaAo="),
+								},
+								Mode: util.IntToPtr(420),
+							},
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+				{path.New("yaml", "extensions"), path.New("json", "storage")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0)},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "path")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "mode")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "contents")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "contents", "source")},
+			},
+			report.Report{},
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			assert.Equal(t, test.report, r, "report mismatch")
+			baseutil.VerifyTranslations(t, translations, test.exceptions)
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
+	}
+}
