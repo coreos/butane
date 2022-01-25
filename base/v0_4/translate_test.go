@@ -459,7 +459,7 @@ func TestTranslateFile(t *testing.T) {
 			actual, translations, r := translateFile(test.in, test.options)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, test.report, r.String(), "bad report")
-			baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
+			baseutil.VerifyTranslations(t, translations, test.exceptions)
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
 	}
