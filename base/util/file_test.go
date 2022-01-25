@@ -101,12 +101,15 @@ var (
 func TestCheckForDecimalMode(t *testing.T) {
 	// test decimal to octal conversion
 	for i := -1; i < 10001; i++ {
-		iStr := fmt.Sprintf("%d", i)
-		result, ok := decimalModeToOctal(i)
-		assert.Equal(t, i >= 0 && i <= 7777 && !strings.ContainsAny(iStr, "89"), ok, "converting %d to octal returned incorrect ok", i)
-		if ok {
-			assert.Equal(t, iStr, fmt.Sprintf("%o", result), "converting %d to octal failed", i)
-		}
+		t.Run(fmt.Sprintf("mode %d", i), func(t *testing.T) {
+			iStr := fmt.Sprintf("%d", i)
+			result, ok := decimalModeToOctal(i)
+
+			assert.Equal(t, i >= 0 && i <= 7777 && !strings.ContainsAny(iStr, "89"), ok, "converting to octal returned incorrect ok")
+			if ok {
+				assert.Equal(t, iStr, fmt.Sprintf("%o", result), "converting to octal failed")
+			}
+		})
 	}
 
 	// check the checker against a hardcoded list

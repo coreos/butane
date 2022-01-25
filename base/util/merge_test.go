@@ -15,6 +15,7 @@
 package util
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/coreos/butane/translate"
@@ -141,9 +142,11 @@ func TestMergeTranslatedConfigs(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		c, ts := MergeTranslatedConfigs(test.parent, test.parentTranslations, test.child, test.childTranslations)
-		assert.Equal(t, test.merged, c, "#%d: bad config", i)
-		assert.Equal(t, test.mergedTranslations, ts, "#%d: bad translations", i)
+		t.Run(fmt.Sprintf("merge %d", i), func(t *testing.T) {
+			c, ts := MergeTranslatedConfigs(test.parent, test.parentTranslations, test.child, test.childTranslations)
+			assert.Equal(t, test.merged, c, "bad config")
+			assert.Equal(t, test.mergedTranslations, ts, "bad translations")
+		})
 	}
 }
 

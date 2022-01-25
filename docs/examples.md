@@ -163,7 +163,7 @@ storage:
 
 ### Filesystems and partitions
 
-This example creates a single partition spanning all of the `sdb` device then creates a btrfs filesystem on it to use as `/var`. Finally it creates the mount unit for systemd so it gets mounted on boot.
+This example creates a single partition spanning all of the `sdb` device then creates a btrfs filesystem on it to use as `/var`. Finally, it creates the mount unit for systemd so it gets mounted on boot.
 
 <!-- butane-config -->
 ```yaml

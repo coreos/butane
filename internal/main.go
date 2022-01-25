@@ -79,8 +79,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	var infile *os.File = os.Stdin
-	var outfile *os.File = os.Stdout
+	infile := os.Stdin
+	outfile := os.Stdout
 	if input != "" {
 		var err error
 		infile, err = os.Open(input)

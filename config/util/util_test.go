@@ -15,6 +15,7 @@
 package util
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/coreos/butane/config/common"
@@ -50,9 +51,11 @@ func TestSnake(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		if snake(test.in) != test.out {
-			t.Errorf("#%d: expected %q got %q", i, test.out, snake(test.in))
-		}
+		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+			if snake(test.in) != test.out {
+				t.Errorf("expected %q got %q", test.out, snake(test.in))
+			}
+		})
 	}
 }
 

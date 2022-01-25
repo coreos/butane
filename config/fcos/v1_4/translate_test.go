@@ -15,6 +15,7 @@
 package v1_4
 
 import (
+	"fmt"
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
@@ -1410,10 +1411,12 @@ func TestTranslateBootDevice(t *testing.T) {
 	assert.Equal(t, bootV1SizeMiB, 384)
 
 	for i, test := range tests {
-		actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
-		assert.Equal(t, test.out, actual, "#%d: translation mismatch", i)
-		assert.Equal(t, test.report, r, "#%d: report mismatch", i)
-		baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
-		assert.NoError(t, translations.DebugVerifyCoverage(actual), "#%d: incomplete TranslationSet coverage", i)
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			assert.Equal(t, test.report, r, "report mismatch")
+			baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
 	}
 }
