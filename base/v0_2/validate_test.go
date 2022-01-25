@@ -222,5 +222,4 @@ func TestValidateDirMode(t *testing.T) {
 			assert.Equal(t, expected, actual, "bad report")
 		})
 	}
-
 }
