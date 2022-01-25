@@ -1414,7 +1414,7 @@ func TestTranslateBootDevice(t *testing.T) {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
 			assert.Equal(t, test.out, actual, "translation mismatch")
-			assert.Equal(t, test.report, r, "report mimatch")
+			assert.Equal(t, test.report, r, "report mismatch")
 			baseutil.VerifyTranslations(t, translations, test.exceptions, "#%d", i)
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
