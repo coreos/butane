@@ -187,3 +187,44 @@ func TestValidateBootDevice(t *testing.T) {
 		})
 	}
 }
+
+// TestValidateExtension tests extension validation
+func TestValidateExtension(t *testing.T) {
+	tests := []struct {
+		in      Extension
+		out     error
+		errPath path.ContextPath
+	}{
+		// No name field
+		{
+			Extension{},
+			common.ErrExtensionNameRequired,
+			path.New("yaml", "name"),
+		},
+		// complete config
+		{
+			Extension{
+				Name: "strace",
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// empty string as name
+		{
+			Extension{
+				Name: "",
+			},
+			common.ErrExtensionNameRequired,
+			path.New("yaml", "name"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad validation report")
+		})
+	}
+}

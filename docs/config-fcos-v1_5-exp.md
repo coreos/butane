@@ -206,7 +206,8 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
-* **_extensions_** (list of strings): a list of packages to layer on top of the OS.
+* **_extensions_** (list of objects): the list of additional packages to be installed.
+  * **name** (string): the name of the package.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397

@@ -309,11 +309,14 @@ func (c Config) processPackages(options common.TranslateOptions) (types.Config, 
 	if len(c.Extensions) == 0 {
 		return ret, ts, r
 	}
-
+	var extensions []string
+	for _, ex := range c.Extensions {
+		extensions = append(extensions, ex.Name)
+	}
 	treeFileContents, err := yaml.Marshal(&struct {
 		Packages []string `yaml:"packages"`
 	}{
-		Packages: c.Extensions,
+		Packages: extensions,
 	})
 	if err != nil {
 		r.AddOnError(yamlPath, err)

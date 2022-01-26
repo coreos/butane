@@ -1432,7 +1432,14 @@ func TestTranslateExtensions(t *testing.T) {
 		// config with two extensions/packages
 		{
 			Config{
-				Extensions: []string{"strace", "zsh"},
+				Extensions: []Extension{
+					{
+						Name: "strace",
+					},
+					{
+						Name: "zsh",
+					},
+				},
 			},
 			types.Config{
 				Ignition: types.Ignition{
