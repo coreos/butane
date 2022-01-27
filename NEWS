@@ -1,3 +1,41 @@
+2022-01-27 Butane 0.14.0
+
+  Breaking Changes:
+
+    - Drop TranslateBytesOptions.Strict field; callers should fail on
+      non-empty reports instead (Go API)
+
+  Features:
+
+    - Stabilize OpenShift spec 4.10.0, targeting Ignition spec 3.2.0
+    - Add OpenShift spec 4.11.0-experimental, targeting Ignition spec
+      3.4.0-experimental
+    - Warn on incorrect partition numbers for reserved labels (fcos, openshift)
+    - Require storage.files.contents.source URLs to use data scheme (openshift)
+    - Re-enable automatic and manual resource compression (openshift 4.10.0,
+      openshift 4.11.0-exp)
+    - Add extensions section (fcos 1.5.0-exp, openshift 4.11.0-exp)
+
+  Bug Fixes:
+
+    - Correctly fail on validation warnings if --strict is specified
+
+  Misc Changes:
+
+    - Roll back to Ignition spec 3.2.0 (openshift 4.10.0)
+    - Add deprecation warning for rhcos variant
+    - Add aarch64/ppc64le reserved partitions to boot_device.mirror layouts
+      (fcos, openshift)
+
+  Docs Changes:
+
+    - Improve getting-started instructions for running in container
+    - Document availability of gs URL scheme
+    - Correctly document availability of compression fields
+    - Correctly document ignition section as optional
+    - Add with_mount_unit swap support to migration guide (fcos 1.4.0)
+    - Document build process and contribution flow for release binaries
+
 2021-08-04 Butane 0.13.1
 
   Misc Changes:
