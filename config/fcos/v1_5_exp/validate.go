@@ -39,3 +39,10 @@ func (m BootDeviceMirror) Validate(c path.ContextPath) (r report.Report) {
 	}
 	return
 }
+
+func (e Extension) Validate(c path.ContextPath) (r report.Report) {
+	if e.Name == "" {
+		r.AddOnError(c.Append("name"), common.ErrExtensionNameRequired)
+	}
+	return
+}
