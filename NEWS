@@ -12,8 +12,7 @@
       3.4.0-experimental
     - Warn on incorrect partition numbers for reserved labels (fcos, openshift)
     - Require storage.files.contents.source URLs to use data scheme (openshift)
-    - Re-enable automatic and manual resource compression (openshift 4.10.0,
-      openshift 4.11.0-exp)
+    - Re-enable automatic and manual resource compression (openshift 4.10.0+)
     - Add extensions section (fcos 1.5.0-exp, openshift 4.11.0-exp)
 
   Bug Fixes:
@@ -24,7 +23,7 @@
 
     - Roll back to Ignition spec 3.2.0 (openshift 4.10.0)
     - Add deprecation warning for rhcos variant
-    - Add aarch64/ppc64le reserved partitions to boot_device.mirror layouts
+    - Add reserved partitions to aarch64/ppc64le boot_device.mirror layouts
       (fcos, openshift)
 
   Docs Changes:
