@@ -21,29 +21,34 @@ source ./build
 echo "Running tests"
 go test ./... -cover
 
-echo "Checking docs"
-shopt -s nullglob
-mkdir tmpdocs
-trap 'rm -r tmpdocs' EXIT
-# Create files-dir contents expected by configs
-mkdir -p tmpdocs/files-dir/tree
-touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
+if [ "$(go env GOOS)" = linux ]; then
+    echo "Checking docs"
+    shopt -s nullglob
+    mkdir tmpdocs
+    trap 'rm -r tmpdocs' EXIT
+    # Create files-dir contents expected by configs
+    mkdir -p tmpdocs/files-dir/tree
+    touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
 
-for doc in docs/*md
-do
-	echo "Checking $doc"
-	# split each doc into a bunch of tmpfiles then run butane on them
-	sed -n '/^<!-- butane-config -->/,/^```$/ p' < ${doc} \
-		| csplit - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
+    for doc in docs/*md
+    do
+            echo "Checking $doc"
+            # split each doc into a bunch of tmpfiles then run butane on them
+            sed -n '/^<!-- butane-config -->/,/^```$/ p' < ${doc} \
+                    | csplit - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
 
-	for i in tmpdocs/config_*
-	do
-		echo "Checking $i"
-		cat "$i" | tail -n +3 | head -n -1 \
-			| ${BIN_PATH}/${NAME} --strict --files-dir tmpdocs/files-dir > /dev/null \
-			|| (cat -n "$i" && false)
-	done
-	rm -f tmpdocs/config_*
-done
+            for i in tmpdocs/config_*
+            do
+                    echo "Checking $i"
+                    cat "$i" | tail -n +3 | head -n -1 \
+                            | ${BIN_PATH}/${NAME} --strict --files-dir tmpdocs/files-dir > /dev/null \
+                            || (cat -n "$i" && false)
+            done
+            rm -f tmpdocs/config_*
+    done
+else
+    # Avoid dealing with presence/behavior of csplit
+    echo "skipping docs check on non-Linux"
+fi
 
 echo ok
