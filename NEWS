@@ -18,6 +18,7 @@
   Bug Fixes:
 
     - Correctly fail on validation warnings if --strict is specified
+    - Statically link official Linux binaries
 
   Misc Changes:
 
