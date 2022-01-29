@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	slashpath "path"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -138,7 +139,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 
 		// calculate file path within FilesDir and check for
 		// path traversal
-		filePath := filepath.Join(options.FilesDir, *from.Local)
+		filePath := filepath.Join(options.FilesDir, filepath.FromSlash(*from.Local))
 		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
 			r.AddOnError(c, err)
 			return
@@ -219,7 +220,7 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 
 		// calculate base path within FilesDir and check for
 		// path traversal
-		srcBaseDir := filepath.Join(options.FilesDir, tree.Local)
+		srcBaseDir := filepath.Join(options.FilesDir, filepath.FromSlash(tree.Local))
 		if err := baseutil.EnsurePathWithinFilesDir(srcBaseDir, options.FilesDir); err != nil {
 			r.AddOnError(yamlPath, err)
 			continue
@@ -257,7 +258,7 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 			r.AddOnError(yamlPath, err)
 			return nil
 		}
-		destPath := filepath.Join(destBaseDir, relPath)
+		destPath := slashpath.Join(destBaseDir, filepath.ToSlash(relPath))
 
 		if info.Mode().IsDir() {
 			return nil
@@ -330,11 +331,12 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 					ts.AddTranslation(yamlPath, path.New("json", "storage", "links"))
 				}
 			}
-			link.Target, err = os.Readlink(srcPath)
+			target, err := os.Readlink(srcPath)
 			if err != nil {
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
+			link.Target = filepath.ToSlash(target)
 			ts.AddTranslation(yamlPath, path.New("json", "storage", "links", i, "target"))
 		} else {
 			r.AddOnError(yamlPath, common.ErrFileType)

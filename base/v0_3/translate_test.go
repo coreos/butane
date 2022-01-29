@@ -46,11 +46,16 @@ func TestTranslateFile(t *testing.T) {
 
 	filesDir := t.TempDir()
 	fileContents := map[string]string{
-		"file-1": "file contents\n",
-		"file-2": zzz,
-		"file-3": random,
+		"file-1":        "file contents\n",
+		"file-2":        zzz,
+		"file-3":        random,
+		"subdir/file-4": "subdir file contents\n",
 	}
 	for name, contents := range fileContents {
+		if err := os.MkdirAll(filepath.Join(filesDir, filepath.Dir(name)), 0755); err != nil {
+			t.Error(err)
+			return
+		}
 		err := ioutil.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
 		if err != nil {
 			t.Error(err)
@@ -251,6 +256,35 @@ func TestTranslateFile(t *testing.T) {
 				FileEmbedded1: types.FileEmbedded1{
 					Contents: types.Resource{
 						Source: util.StrToPtr("data:,file%20contents%0A"),
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "local"),
+					To:   path.New("json", "contents", "source"),
+				},
+			},
+			"",
+			common.TranslateOptions{
+				FilesDir: filesDir,
+			},
+		},
+		// local file in subdirectory
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("subdir/file-4"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source: util.StrToPtr("data:,subdir%20file%20contents%0A"),
 					},
 				},
 			},
@@ -1319,7 +1353,7 @@ func TestTranslateTree(t *testing.T) {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			filesDir := t.TempDir()
 			for testPath, mode := range test.dirDirs {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(absPath, 0755); err != nil {
 					t.Error(err)
 					return
@@ -1330,7 +1364,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for testPath, mode := range test.dirFiles {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
@@ -1341,7 +1375,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for testPath, target := range test.dirLinks {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
@@ -1352,7 +1386,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for _, testPath := range test.dirSockets {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
