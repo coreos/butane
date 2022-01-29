@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -36,6 +37,21 @@ import (
 )
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
+
+var (
+	osStatName string
+	osNotFound string
+)
+
+func init() {
+	if runtime.GOOS == "windows" {
+		osStatName = "CreateFile"
+		osNotFound = "The system cannot find the file specified."
+	} else {
+		osStatName = "stat"
+		osNotFound = "no such file or directory"
+	}
+}
 
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
@@ -349,7 +365,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			[]translate.Translation{},
-			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": no such file or directory\n",
+			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": " + osNotFound + "\n",
 			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
@@ -1265,7 +1281,7 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 			report: "error at $.storage.trees.0: " + common.ErrTreeNotDirectory.Error() + "\n" +
-				"error at $.storage.trees.1: stat %FilesDir%/nonexistent: no such file or directory\n",
+				"error at $.storage.trees.1: " + osStatName + " %FilesDir%" + string(filepath.Separator) + "nonexistent: " + osNotFound + "\n",
 		},
 	}
 
