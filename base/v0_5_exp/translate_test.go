@@ -1049,6 +1049,7 @@ func TestTranslateTree(t *testing.T) {
 		outFiles   []types.File
 		outLinks   []types.Link
 		report     string
+		skip       func(t *testing.T)
 	}{
 		// smoke test
 		{},
@@ -1139,7 +1140,14 @@ func TestTranslateTree(t *testing.T) {
 						Contents: types.Resource{
 							Source: util.StrToPtr("data:,tree%2Fexecutable"),
 						},
-						Mode: util.IntToPtr(0755),
+						Mode: util.IntToPtr(func() int {
+							if runtime.GOOS != "windows" {
+								return 0755
+							} else {
+								// Windows doesn't have executable bits
+								return 0644
+							}
+						}()),
 					},
 				},
 				{
@@ -1431,6 +1439,13 @@ func TestTranslateTree(t *testing.T) {
 			report: "error at $.storage.trees.0: open %FilesDir%/tree/file: permission denied\n" +
 				"error at $.storage.trees.0: open %FilesDir%/tree/subdir: permission denied\n" +
 				"error at $.storage.trees.1: open %FilesDir%/tree2: permission denied\n",
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					// os.Chmod() only respects the writable bit and there
+					// isn't a trivial way to make inodes inaccessible
+					t.Skip("skipping test on Windows")
+				}
+			},
 		},
 		// local is not a directory
 		{
@@ -1452,6 +1467,10 @@ func TestTranslateTree(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			if test.skip != nil {
+				// give the test an opportunity to skip
+				test.skip(t)
+			}
 			filesDir := t.TempDir()
 			for testPath, mode := range test.dirDirs {
 				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
