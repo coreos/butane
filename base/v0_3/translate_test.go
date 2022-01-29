@@ -1333,6 +1333,13 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 			report: "error at $.storage.trees.0: " + common.ErrFileType.Error() + "\n",
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					// Windows supports Unix domain sockets, but os.Stat()
+					// doesn't detect them correctly.
+					t.Skip("skipping test due to https://github.com/golang/go/issues/33357")
+				}
+			},
 		},
 		// unreadable file
 		{
