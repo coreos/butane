@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -37,6 +38,21 @@ import (
 
 // Most of this is covered by the Ignition translator generic tests, so just test the custom bits
 
+var (
+	osStatName string
+	osNotFound string
+)
+
+func init() {
+	if runtime.GOOS == "windows" {
+		osStatName = "CreateFile"
+		osNotFound = "The system cannot find the file specified."
+	} else {
+		osStatName = "stat"
+		osNotFound = "no such file or directory"
+	}
+}
+
 // TestTranslateFile tests translating the ct storage.files.[i] entries to ignition storage.files.[i] entries.
 func TestTranslateFile(t *testing.T) {
 	zzz := "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
@@ -46,11 +62,16 @@ func TestTranslateFile(t *testing.T) {
 
 	filesDir := t.TempDir()
 	fileContents := map[string]string{
-		"file-1": "file contents\n",
-		"file-2": zzz,
-		"file-3": random,
+		"file-1":        "file contents\n",
+		"file-2":        zzz,
+		"file-3":        random,
+		"subdir/file-4": "subdir file contents\n",
 	}
 	for name, contents := range fileContents {
+		if err := os.MkdirAll(filepath.Join(filesDir, filepath.Dir(name)), 0755); err != nil {
+			t.Error(err)
+			return
+		}
 		err := ioutil.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
 		if err != nil {
 			t.Error(err)
@@ -265,6 +286,35 @@ func TestTranslateFile(t *testing.T) {
 				FilesDir: filesDir,
 			},
 		},
+		// local file in subdirectory
+		{
+			File{
+				Path: "/foo",
+				Contents: Resource{
+					Local: util.StrToPtr("subdir/file-4"),
+				},
+			},
+			types.File{
+				Node: types.Node{
+					Path: "/foo",
+				},
+				FileEmbedded1: types.FileEmbedded1{
+					Contents: types.Resource{
+						Source: util.StrToPtr("data:,subdir%20file%20contents%0A"),
+					},
+				},
+			},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents", "local"),
+					To:   path.New("json", "contents", "source"),
+				},
+			},
+			"",
+			common.TranslateOptions{
+				FilesDir: filesDir,
+			},
+		},
 		// filesDir not specified
 		{
 			File{
@@ -315,7 +365,7 @@ func TestTranslateFile(t *testing.T) {
 				},
 			},
 			[]translate.Translation{},
-			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": no such file or directory\n",
+			"error at $.contents.local: open " + filepath.Join(filesDir, "file-missing") + ": " + osNotFound + "\n",
 			common.TranslateOptions{
 				FilesDir: filesDir,
 			},
@@ -914,6 +964,7 @@ func TestTranslateTree(t *testing.T) {
 		outFiles   []types.File
 		outLinks   []types.Link
 		report     string
+		skip       func(t *testing.T)
 	}{
 		// smoke test
 		{},
@@ -1004,7 +1055,14 @@ func TestTranslateTree(t *testing.T) {
 						Contents: types.Resource{
 							Source: util.StrToPtr("data:,tree%2Fexecutable"),
 						},
-						Mode: util.IntToPtr(0755),
+						Mode: util.IntToPtr(func() int {
+							if runtime.GOOS != "windows" {
+								return 0755
+							} else {
+								// Windows doesn't have executable bits
+								return 0644
+							}
+						}()),
 					},
 				},
 				{
@@ -1275,6 +1333,13 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 			report: "error at $.storage.trees.0: " + common.ErrFileType.Error() + "\n",
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					// Windows supports Unix domain sockets, but os.Stat()
+					// doesn't detect them correctly.
+					t.Skip("skipping test due to https://github.com/golang/go/issues/33357")
+				}
+			},
 		},
 		// unreadable file
 		{
@@ -1296,6 +1361,13 @@ func TestTranslateTree(t *testing.T) {
 			report: "error at $.storage.trees.0: open %FilesDir%/tree/file: permission denied\n" +
 				"error at $.storage.trees.0: open %FilesDir%/tree/subdir: permission denied\n" +
 				"error at $.storage.trees.1: open %FilesDir%/tree2: permission denied\n",
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					// os.Chmod() only respects the writable bit and there
+					// isn't a trivial way to make inodes inaccessible
+					t.Skip("skipping test on Windows")
+				}
+			},
 		},
 		// local is not a directory
 		{
@@ -1311,15 +1383,19 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 			report: "error at $.storage.trees.0: " + common.ErrTreeNotDirectory.Error() + "\n" +
-				"error at $.storage.trees.1: stat %FilesDir%/nonexistent: no such file or directory\n",
+				"error at $.storage.trees.1: " + osStatName + " %FilesDir%" + string(filepath.Separator) + "nonexistent: " + osNotFound + "\n",
 		},
 	}
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			if test.skip != nil {
+				// give the test an opportunity to skip
+				test.skip(t)
+			}
 			filesDir := t.TempDir()
 			for testPath, mode := range test.dirDirs {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(absPath, 0755); err != nil {
 					t.Error(err)
 					return
@@ -1330,7 +1406,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for testPath, mode := range test.dirFiles {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
@@ -1341,7 +1417,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for testPath, target := range test.dirLinks {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
@@ -1352,7 +1428,7 @@ func TestTranslateTree(t *testing.T) {
 				}
 			}
 			for _, testPath := range test.dirSockets {
-				absPath := filepath.Join(filesDir, testPath)
+				absPath := filepath.Join(filesDir, filepath.FromSlash(testPath))
 				if err := os.MkdirAll(filepath.Dir(absPath), 0755); err != nil {
 					t.Error(err)
 					return
