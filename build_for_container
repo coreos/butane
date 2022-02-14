@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Building for $BUILDARCH"
+
 set -euo pipefail
 
 export GO111MODULE=on
@@ -20,5 +22,5 @@ build_release() {
 }
 
 export GOOS=linux
-export GOARCH=amd64
-build_release x86_64-unknown-linux-gnu
+export GOARCH=$BUILDARCH
+build_release ${BUILDARCH}-unknown-linux-gnu
