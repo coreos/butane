@@ -66,10 +66,10 @@ passwd:
       shell: /bin/bash
 ```
 
-To generate a secure password hash, use the `mkpasswd` command:
+To generate a secure password hash, use `mkpasswd`:
 
 ```
-$ mkpasswd --method=yescrypt
+$ podman run -ti --rm quay.io/coreos/mkpasswd --method=yescrypt
 Password:
 $y$j9T$A0Y3wwVOKP69S.1K/zYGN.$S596l11UGH3XjN...
 ```
