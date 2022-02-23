@@ -9,7 +9,7 @@ Tagging:
  - [ ] Run `./tag_release.sh <vX.Y.z> <git commit hash>`
  - [ ] Push that tag to GitHub
 
-Packaging:
+Fedora packaging:
  - [ ] Update the Butane spec file in [Fedora](https://src.fedoraproject.org/rpms/butane):
    - Bump the `Version`
    - Switch the `Release` back to `1%{?dist}`
@@ -59,10 +59,20 @@ Quay release:
  - [ ] Visit the [Quay tags page](https://quay.io/repository/coreos/fcct?tab=tags) for the legacy FCCT repo and wait for a versioned tag to appear
  - [ ] Click the gear next to the tag, select "Add New Tag", enter `release`, and confirm
 
-Housekeeping:
- - Update Butane package for the current RHCOS development release
-   - [ ] Update the dist-git repo, following the instructions above
-   - [ ] PR the changes
-   - [ ] When the PR lands, build the package
+RHCOS packaging for the current RHCOS development release:
+ - [ ] Update the Butane spec file
+   - Bump the `Version`
+   - Switch the `Release` back to `1%{?dist}`
+   - Remove any patches obsoleted by the new release
+   - Run `go-mods-to-bundled-provides.py | sort` while inside of the Butane directory you ran `./tag_release` from & copy output into spec file in `# Main package provides` section
+   - Update changelog
+ - [ ] Run `spectool -g -S butane.spec`
+ - [ ] Run `kinit your_account@REDHAT.COM`
+ - [ ] Run `rhpkg new-sources tarball-name`
+ - [ ] PR the changes
+ - [ ] Get the PR reviewed and merge it
+ - [ ] Update your local repo and run `rhpkg build`
  - [ ] File ticket similar to [this one](https://issues.redhat.com/browse/ART-3711) to sync the new version to mirror.openshift.com
+
+Housekeeping:
  - [ ] Ask bgilbert to update the [MacPorts package](https://github.com/macports/macports-ports/tree/master/sysutils/butane)
