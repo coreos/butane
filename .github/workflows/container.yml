@@ -3,18 +3,31 @@ name: Container
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
 
 permissions:
   contents: read
 
+# avoid races when pushing containers built from main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   build-container:
-    name: "Build container image"
+    name: Build container image
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Build container image
-        run: podman build .
+        with:
+          # fetch tags so the compiled-in version number is useful
+          fetch-depth: 0
+      - name: Build and push container
+        uses: coreos/actions-lib/build-container@main
+        with:
+          credentials: ${{ secrets.QUAY_AUTH }}
+          push: quay.io/coreos/butane quay.io/coreos/fcct
+          # Speed up PR CI by skipping arm64
+          pr-arches: amd64
