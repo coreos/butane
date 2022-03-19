@@ -6,5 +6,5 @@ WORKDIR /butane
 RUN ./build_for_container
 
 FROM scratch
-COPY --from=builder /butane/bin/container/butane-x86_64-unknown-linux-gnu /usr/local/bin/butane
+COPY --from=builder /butane/bin/container/butane /usr/local/bin/butane
 ENTRYPOINT ["/usr/local/bin/butane"]

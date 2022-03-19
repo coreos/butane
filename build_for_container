@@ -13,12 +13,6 @@ if [ -z ${BIN_PATH+a} ]; then
 	export BIN_PATH=${PWD}/bin/container/
 fi
 
-build_release() {
-    export NAME="butane-${1}"
-    echo "building ${NAME}"
-    go build -o ${BIN_PATH}/${NAME} -ldflags "$LDFLAGS" internal/main.go
-}
-
 export GOOS=linux
 export GOARCH=amd64
-build_release x86_64-unknown-linux-gnu
+go build -o ${BIN_PATH}/butane -ldflags "$LDFLAGS" internal/main.go
