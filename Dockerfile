@@ -1,5 +1,5 @@
 FROM registry.fedoraproject.org/fedora:35 AS builder
-RUN dnf install -y golang git
+RUN dnf install -y golang git-core
 RUN mkdir /butane
 COPY . /butane
 WORKDIR /butane
