@@ -20,6 +20,8 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.2.0](config-fcos-v1_2.md)
   - [v1.1.0](config-fcos-v1_1.md)
   - [v1.0.0](config-fcos-v1_0.md)
+- Flatcar (`flatcar`)
+  - [v1.0.0](config-flatcar-v1_0.md)
 - OpenShift (`openshift`)
   - [v4.10.0](config-openshift-v4_10.md)
   - [v4.9.0](config-openshift-v4_9.md)
@@ -53,6 +55,7 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `fcos`         | 1.3.0               | 3.2.0              |
 | `fcos`         | 1.4.0               | 3.3.0              |
 | `fcos`         | 1.5.0-experimental  | 3.4.0-experimental |
+| `flatcar`      | 1.0.0               | 3.3.0              |
 | `openshift`    | 4.8.0               | 3.2.0              |
 | `openshift`    | 4.9.0               | 3.2.0              |
 | `openshift`    | 4.10.0              | 3.2.0              |
