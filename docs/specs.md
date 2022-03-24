@@ -33,6 +33,8 @@ Do not use **experimental** specifications for anything beyond **development and
 
 - Fedora CoreOS (`fcos`)
   - [v1.5.0-experimental](config-fcos-v1_5-exp.md)
+- Flatcar (`flatcar`)
+  - [v1.1.0-experimental](config-flatcar-v1_1-exp.md)
 - OpenShift (`openshift`)
   - [v4.11.0-experimental](config-openshift-v4_11-exp.md)
 
@@ -56,6 +58,7 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `fcos`         | 1.4.0               | 3.3.0              |
 | `fcos`         | 1.5.0-experimental  | 3.4.0-experimental |
 | `flatcar`      | 1.0.0               | 3.3.0              |
+| `flatcar`      | 1.1.0-experimental  | 3.4.0-experimental |
 | `openshift`    | 4.8.0               | 3.2.0              |
 | `openshift`    | 4.9.0               | 3.2.0              |
 | `openshift`    | 4.10.0              | 3.2.0              |
