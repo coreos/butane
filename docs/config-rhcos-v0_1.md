@@ -1,7 +1,7 @@
 ---
 title: RHEL CoreOS v0.1.0
 parent: Configuration specifications
-nav_order: 99
+nav_order: 149
 ---
 
 # RHEL CoreOS Specification v0.1.0
