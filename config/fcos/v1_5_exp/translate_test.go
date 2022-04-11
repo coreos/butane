@@ -1487,3 +1487,133 @@ func TestTranslateExtensions(t *testing.T) {
 		})
 	}
 }
+
+// TestTranslateGrub tests translating the Butane config Grub section.
+func TestTranslateGrub(t *testing.T) {
+	// Some tests below have the same translations
+	translations := []translate.Translation{
+		{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "filesystems")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "filesystems", 0)},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "filesystems", 0, "path")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "filesystems", 0, "device")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "filesystems", 0, "format")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0)},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0, "path")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0, "append")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0, "append", 0)},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0, "append", 0, "source")},
+		{path.New("yaml", "grub", "users"), path.New("json", "storage", "files", 0, "append", 0, "compression")},
+	}
+	tests := []struct {
+		in         Config
+		out        types.Config
+		exceptions []translate.Translation
+		report     report.Report
+	}{
+		// config with 1 user
+		{
+			Config{
+				Grub: Grub{
+					Users: []GrubUser{
+						{
+							Name:         "root",
+							PasswordHash: util.StrToPtr("grub.pbkdf2.sha512.10000.874A958E526409..."),
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Filesystems: []types.Filesystem{
+						{
+							Device: "/dev/disk/by-label/boot",
+							Format: util.StrToPtr("ext4"),
+							Path:   util.StrToPtr("/boot"),
+						},
+					},
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/boot/grub2/user.cfg",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Append: []types.Resource{
+									{
+										Source:      util.StrToPtr("data:,%23%20Generated%20by%20Butane%0A%0Aset%20superusers%3D%22root%22%0Apassword_pbkdf2%20root%20grub.pbkdf2.sha512.10000.874A958E526409...%0A"),
+										Compression: util.StrToPtr(""),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			translations,
+			report.Report{},
+		},
+		// config with 2 users (and 2 different hashes)
+		{
+			Config{
+				Grub: Grub{
+					Users: []GrubUser{
+						{
+							Name:         "root1",
+							PasswordHash: util.StrToPtr("grub.pbkdf2.sha512.10000.874A958E526409..."),
+						},
+						{
+							Name:         "root2",
+							PasswordHash: util.StrToPtr("grub.pbkdf2.sha512.10000.874B829D126209..."),
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Filesystems: []types.Filesystem{
+						{
+							Device: "/dev/disk/by-label/boot",
+							Format: util.StrToPtr("ext4"),
+							Path:   util.StrToPtr("/boot"),
+						},
+					},
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/boot/grub2/user.cfg",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Append: []types.Resource{
+									{
+										Source:      util.StrToPtr("data:;base64,H4sIAAAAAAAC/3zMsQrCMBDG8b1PcdT9SI62JoODRfExJCGngtCEuwTx7UWyiss3fH/47eDCG0uonCC+YW01bDwMyhW0FZamLHoYJedq4bs0DiWovrKka4nPdCPo8S4tYn9QH2G2hNYYY9Dtp6Of3XmmZTIeEX8C9BdYHfmTpYU68AkAAP//Mp8bt7YAAAA="),
+										Compression: util.StrToPtr("gzip"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			translations,
+			report.Report{},
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			assert.Equal(t, test.report, r, "report mismatch")
+			baseutil.VerifyTranslations(t, translations, test.exceptions)
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
+	}
+}

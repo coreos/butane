@@ -76,4 +76,8 @@ var (
 
 	// Extensions
 	ErrExtensionNameRequired = errors.New("field \"name\" is required")
+
+	// Grub
+	ErrGrubUserNameNotSpecified = errors.New("field \"name\" is required")
+	ErrGrubPasswordNotSpecified = errors.New("field \"password_hash\" is required")
 )
