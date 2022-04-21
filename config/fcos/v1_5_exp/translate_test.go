@@ -1453,7 +1453,8 @@ func TestTranslateExtensions(t *testing.T) {
 							},
 							FileEmbedded1: types.FileEmbedded1{
 								Contents: types.Resource{
-									Source: util.StrToPtr("data:;base64,IyBHZW5lcmF0ZWQgYnkgQnV0YW5lCgpwYWNrYWdlczoKICAgIC0gc3RyYWNlCiAgICAtIHpzaAo="),
+									Source:      util.StrToPtr("data:;base64,IyBHZW5lcmF0ZWQgYnkgQnV0YW5lCgpwYWNrYWdlczoKICAgIC0gc3RyYWNlCiAgICAtIHpzaAo="),
+									Compression: util.StrToPtr(""),
 								},
 								Mode: util.IntToPtr(420),
 							},
@@ -1470,6 +1471,7 @@ func TestTranslateExtensions(t *testing.T) {
 				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "mode")},
 				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "contents")},
 				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "contents", "source")},
+				{path.New("yaml", "extensions"), path.New("json", "storage", "files", 0, "contents", "compression")},
 			},
 			report.Report{},
 		},

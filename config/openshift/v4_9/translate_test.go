@@ -144,7 +144,8 @@ func TestTranslateConfig(t *testing.T) {
 									},
 									FileEmbedded1: types.FileEmbedded1{
 										Contents: types.Resource{
-											Source: util.StrToPtr("data:," + zzz),
+											Source:      util.StrToPtr("data:," + zzz),
+											Compression: util.StrToPtr(""),
 										},
 									},
 								},
@@ -166,6 +167,7 @@ func TestTranslateConfig(t *testing.T) {
 				{path.New("yaml", "storage", "files", 0, "path"), path.New("json", "spec", "config", "storage", "files", 0, "path")},
 				{path.New("yaml", "storage", "files", 0, "contents"), path.New("json", "spec", "config", "storage", "files", 0, "contents")},
 				{path.New("yaml", "storage", "files", 0, "contents", "inline"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "source")},
+				{path.New("yaml", "storage", "files", 0, "contents", "inline"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "compression")},
 			},
 		},
 		// FIPS
