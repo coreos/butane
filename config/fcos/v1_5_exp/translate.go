@@ -337,7 +337,7 @@ func (c Config) processPackages(options common.TranslateOptions) (types.Config, 
 		},
 		FileEmbedded1: types.FileEmbedded1{
 			Contents: types.Resource{
-				Source: util.StrToPtr(src),
+				Source: &src,
 			},
 			Mode: util.IntToPtr(0644),
 		},

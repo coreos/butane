@@ -294,7 +294,7 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 				r.AddOnError(yamlPath, err)
 				return nil
 			}
-			file.Contents.Source = util.StrToPtr(url)
+			file.Contents.Source = &url
 			ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "contents", "source"))
 			if gzipped {
 				file.Contents.Compression = util.StrToPtr("gzip")
