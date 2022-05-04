@@ -196,7 +196,8 @@ func TestTranslateFile(t *testing.T) {
 							},
 						},
 						{
-							Source: util.StrToPtr("data:,file%20contents%0A"),
+							Source:      util.StrToPtr("data:,file%20contents%0A"),
+							Compression: util.StrToPtr(""),
 						},
 					},
 					Contents: types.Resource{
@@ -223,6 +224,10 @@ func TestTranslateFile(t *testing.T) {
 					From: path.New("yaml", "append", 2, "local"),
 					To:   path.New("json", "append", 2, "source"),
 				},
+				{
+					From: path.New("yaml", "append", 2, "local"),
+					To:   path.New("json", "append", 2, "compression"),
+				},
 			},
 			"",
 			common.TranslateOptions{
@@ -244,7 +249,8 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Contents: types.Resource{
-						Source: util.StrToPtr("data:,xyzzy"),
+						Source:      util.StrToPtr("data:,xyzzy"),
+						Compression: util.StrToPtr(""),
 					},
 				},
 			},
@@ -252,6 +258,10 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "contents", "inline"),
 					To:   path.New("json", "contents", "source"),
+				},
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "compression"),
 				},
 			},
 			"",
@@ -271,7 +281,8 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Contents: types.Resource{
-						Source: util.StrToPtr("data:,file%20contents%0A"),
+						Source:      util.StrToPtr("data:,file%20contents%0A"),
+						Compression: util.StrToPtr(""),
 					},
 				},
 			},
@@ -279,6 +290,10 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "contents", "local"),
 					To:   path.New("json", "contents", "source"),
+				},
+				{
+					From: path.New("yaml", "contents", "local"),
+					To:   path.New("json", "contents", "compression"),
 				},
 			},
 			"",
@@ -300,7 +315,8 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Contents: types.Resource{
-						Source: util.StrToPtr("data:,subdir%20file%20contents%0A"),
+						Source:      util.StrToPtr("data:,subdir%20file%20contents%0A"),
+						Compression: util.StrToPtr(""),
 					},
 				},
 			},
@@ -308,6 +324,10 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "contents", "local"),
 					To:   path.New("json", "contents", "source"),
+				},
+				{
+					From: path.New("yaml", "contents", "local"),
+					To:   path.New("json", "contents", "compression"),
 				},
 			},
 			"",
@@ -418,10 +438,12 @@ func TestTranslateFile(t *testing.T) {
 							Compression: util.StrToPtr("gzip"),
 						},
 						{
-							Source: util.StrToPtr(random_b64),
+							Source:      util.StrToPtr(random_b64),
+							Compression: util.StrToPtr(""),
 						},
 						{
-							Source: util.StrToPtr(random_b64),
+							Source:      util.StrToPtr(random_b64),
+							Compression: util.StrToPtr(""),
 						},
 						{
 							Source:      util.StrToPtr("data:," + zzz),
@@ -456,8 +478,16 @@ func TestTranslateFile(t *testing.T) {
 					To:   path.New("json", "append", 1, "source"),
 				},
 				{
+					From: path.New("yaml", "append", 1, "inline"),
+					To:   path.New("json", "append", 1, "compression"),
+				},
+				{
 					From: path.New("yaml", "append", 2, "local"),
 					To:   path.New("json", "append", 2, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 2, "local"),
+					To:   path.New("json", "append", 2, "compression"),
 				},
 				{
 					From: path.New("yaml", "append", 3, "inline"),
@@ -487,7 +517,8 @@ func TestTranslateFile(t *testing.T) {
 				},
 				FileEmbedded1: types.FileEmbedded1{
 					Contents: types.Resource{
-						Source: util.StrToPtr("data:," + zzz),
+						Source:      util.StrToPtr("data:," + zzz),
+						Compression: util.StrToPtr(""),
 					},
 				},
 			},
@@ -495,6 +526,10 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "contents", "inline"),
 					To:   path.New("json", "contents", "source"),
+				},
+				{
+					From: path.New("yaml", "contents", "inline"),
+					To:   path.New("json", "contents", "compression"),
 				},
 			},
 			"",
@@ -1028,7 +1063,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Foverridden"),
+							Source:      util.StrToPtr("data:,tree%2Foverridden"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0600),
 					},
@@ -1042,7 +1078,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Foverridden-executable"),
+							Source:      util.StrToPtr("data:,tree%2Foverridden-executable"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0600),
 					},
@@ -1053,7 +1090,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Fexecutable"),
+							Source:      util.StrToPtr("data:,tree%2Fexecutable"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(func() int {
 							if runtime.GOOS != "windows" {
@@ -1071,7 +1109,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Ffile"),
+							Source:      util.StrToPtr("data:,tree%2Ffile"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0644),
 					},
@@ -1082,7 +1121,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+							Source:      util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0644),
 					},
@@ -1105,7 +1145,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree2%2Ffile"),
+							Source:      util.StrToPtr("data:,tree2%2Ffile"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0644),
 					},
@@ -1165,7 +1206,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Ffile"),
+							Source:      util.StrToPtr("data:,tree%2Ffile"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0644),
 					},
@@ -1176,7 +1218,8 @@ func TestTranslateTree(t *testing.T) {
 					},
 					FileEmbedded1: types.FileEmbedded1{
 						Contents: types.Resource{
-							Source: util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+							Source:      util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0644),
 					},
@@ -1505,11 +1548,13 @@ func TestTranslateIgnition(t *testing.T) {
 				Config: types.IgnitionConfig{
 					Merge: []types.Resource{
 						{
-							Source: util.StrToPtr("data:,xyzzy"),
+							Source:      util.StrToPtr("data:,xyzzy"),
+							Compression: util.StrToPtr(""),
 						},
 					},
 					Replace: types.Resource{
-						Source: util.StrToPtr("data:,xyzzy"),
+						Source:      util.StrToPtr("data:,xyzzy"),
+						Compression: util.StrToPtr(""),
 					},
 				},
 			},
@@ -1547,7 +1592,8 @@ func TestTranslateIgnition(t *testing.T) {
 					TLS: types.TLS{
 						CertificateAuthorities: []types.Resource{
 							{
-								Source: util.StrToPtr("data:,xyzzy"),
+								Source:      util.StrToPtr("data:,xyzzy"),
+								Compression: util.StrToPtr(""),
 							},
 						},
 					},
