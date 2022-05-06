@@ -245,6 +245,10 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 				r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "contents", "source"), common.ErrFileSchemeSupport)
 			}
 		}
+		if file.Mode != nil && *file.Mode & ^0777 != 0 {
+			// UNPARSABLE
+			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "mode"), common.ErrFileSpecialModeSupport)
+		}
 	}
 	for i := range mc.Spec.Config.Storage.Links {
 		// IMMUTABLE

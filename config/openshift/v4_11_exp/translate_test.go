@@ -386,6 +386,7 @@ func TestValidateSupport(t *testing.T) {
 									Contents: base.Resource{
 										Source: util.StrToPtr("https://example.com/"),
 									},
+									Mode: util.IntToPtr(04755),
 								},
 							},
 							Filesystems: []base.Filesystem{
@@ -457,6 +458,7 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileSchemeSupport, path.New("yaml", "storage", "files", 2, "contents", "source")},
+				{report.Error, common.ErrFileSpecialModeSupport, path.New("yaml", "storage", "files", 2, "mode")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
 				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
