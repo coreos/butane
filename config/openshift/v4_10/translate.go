@@ -200,6 +200,9 @@ func validateRHCOSSupport(mc result.MachineConfig, ts translate.TranslationSet) 
 func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) report.Report {
 	// Error classes for the purposes of this function:
 	//
+	// UNPARSABLE - Cannot be rendered into a config by the MCC.  If
+	// present in MC, MCC will mark the pool degraded.  We reject these.
+	//
 	// FORBIDDEN - Not supported by the MCD.  If present in MC, MCD will
 	// mark the node degraded.  We reject these.
 	//
@@ -231,6 +234,10 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 				// FORBIDDEN
 				r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "contents", "source"), common.ErrFileSchemeSupport)
 			}
+		}
+		if file.Mode != nil && *file.Mode & ^0777 != 0 {
+			// UNPARSABLE
+			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "mode"), common.ErrFileSpecialModeSupport)
 		}
 	}
 	for i := range mc.Spec.Config.Storage.Links {

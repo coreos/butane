@@ -153,7 +153,7 @@ func TestReportCorrelation(t *testing.T) {
                          storage:
                            files:
                            - path: /z
-                             mode: 644`,
+                             mode: 444`,
 			common.ErrDecimalMode.Error(),
 			9,
 		},
