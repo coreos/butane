@@ -16,7 +16,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
 * **_ignition_** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
@@ -25,7 +25,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_replace_** (object): the config that will replace the current.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
@@ -39,7 +39,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
-        * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+        * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
         * **_inline_** (string): the contents of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
         * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
@@ -101,7 +101,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **_key_file_** (string): options related to the contents of the key file.
-      * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the key file. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the key file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
