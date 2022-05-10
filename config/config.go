@@ -28,6 +28,7 @@ import (
 	flatcar1_1_exp "github.com/coreos/butane/config/flatcar/v1_1_exp"
 	openshift4_10 "github.com/coreos/butane/config/openshift/v4_10"
 	openshift4_11 "github.com/coreos/butane/config/openshift/v4_11"
+	openshift4_12_exp "github.com/coreos/butane/config/openshift/v4_12_exp"
 	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
 	openshift4_9 "github.com/coreos/butane/config/openshift/v4_9"
 	rhcos0_1 "github.com/coreos/butane/config/rhcos/v0_1"
@@ -60,6 +61,7 @@ func init() {
 	RegisterTranslator("openshift", "4.9.0", openshift4_9.ToConfigBytes)
 	RegisterTranslator("openshift", "4.10.0", openshift4_10.ToConfigBytes)
 	RegisterTranslator("openshift", "4.11.0", openshift4_11.ToConfigBytes)
+	RegisterTranslator("openshift", "4.12.0-experimental", openshift4_12_exp.ToConfigBytes)
 	RegisterTranslator("rhcos", "0.1.0", rhcos0_1.ToIgn3_2Bytes)
 }
 
