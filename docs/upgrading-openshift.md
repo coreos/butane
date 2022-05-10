@@ -38,7 +38,7 @@ storage:
       mode: 0644
 ```
 
-## From Version 4.8.0 to Version 4.9.0
+## From Version 4.8.0 to 4.9.0
 
 There are no functionality changes between versions 4.8.0 and 4.9.0 of the `openshift` configuration specification. Any valid 4.8.0 configuration can be updated to a 4.9.0 configuration by changing the version string in the config.
 
