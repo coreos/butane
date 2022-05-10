@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_11_exp
+package v4_11
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ import (
 	base "github.com/coreos/butane/base/v0_5_exp"
 	"github.com/coreos/butane/config/common"
 	fcos "github.com/coreos/butane/config/fcos/v1_5_exp"
-	"github.com/coreos/butane/config/openshift/v4_11_exp/result"
+	"github.com/coreos/butane/config/openshift/v4_11/result"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
