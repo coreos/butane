@@ -271,6 +271,89 @@ func TestTranslateConfig(t *testing.T) {
 				{path.New("yaml", "openshift", "fips"), path.New("json", "spec", "fips")},
 			},
 		},
+		// Test Grub config
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Grub: fcos.Grub{
+						Users: []fcos.GrubUser{
+							{
+								Name:         "root",
+								PasswordHash: util.StrToPtr("grub.pbkdf2.sha512.10000.874A958E526409..."),
+							},
+						},
+					},
+				},
+			},
+			result.MachineConfig{
+				ApiVersion: result.MC_API_VERSION,
+				Kind:       result.MC_KIND,
+				Metadata: result.Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Spec: result.Spec{
+					Config: types.Config{
+						Ignition: types.Ignition{
+							Version: "3.4.0-experimental",
+						},
+						Storage: types.Storage{
+							Filesystems: []types.Filesystem{
+								{
+									Device: "/dev/disk/by-label/boot",
+									Format: util.StrToPtr("ext4"),
+									Path:   util.StrToPtr("/boot"),
+								},
+							},
+							Files: []types.File{
+								{
+									Node: types.Node{
+										Path: "/boot/grub2/user.cfg",
+									},
+									FileEmbedded1: types.FileEmbedded1{
+										Contents: types.Resource{
+											Source:      util.StrToPtr("data:,%23%20Generated%20by%20Butane%0A%0Aset%20superusers%3D%22root%22%0Apassword_pbkdf2%20root%20grub.pbkdf2.sha512.10000.874A958E526409...%0A"),
+											Compression: util.StrToPtr(""),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "apiVersion")},
+				{path.New("yaml", "version"), path.New("json", "kind")},
+				{path.New("yaml", "version"), path.New("json", "spec")},
+				{path.New("yaml"), path.New("json", "spec", "config")},
+				{path.New("yaml", "ignition"), path.New("json", "spec", "config", "ignition")},
+				{path.New("yaml", "version"), path.New("json", "spec", "config", "ignition", "version")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "filesystems")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "filesystems", 0)},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "filesystems", 0, "path")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "filesystems", 0, "device")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "filesystems", 0, "format")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0)},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0, "path")},
+				// "append" field is a remnant of translations performed in fcos config
+				// TODO: add a delete function to translation.TranslationSet and delete "append" translation
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0, "append")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0, "contents")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "source")},
+				{path.New("yaml", "grub", "users"), path.New("json", "spec", "config", "storage", "files", 0, "contents", "compression")},
+			},
+		},
 	}
 
 	for i, test := range tests {
