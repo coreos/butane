@@ -17,8 +17,28 @@ package translate
 import (
 	"testing"
 
+	"github.com/coreos/vcontext/path"
 	"github.com/stretchr/testify/assert"
 )
+
+// mkTrans makes a TranslationSet with no tag in the paths consuming pairs of args. i.e:
+// mkTrans(from1, to1, from2, to2) -> a set wiht from1->to1, from2->to2
+// This is just a shorthand for making writing tests easier
+func mkTrans(paths ...path.ContextPath) TranslationSet {
+	ret := TranslationSet{Set: map[string]Translation{}}
+	if len(paths)%2 == 1 {
+		panic("Odd number of args to mkTrans")
+	}
+	for i := 0; i < len(paths); i += 2 {
+		ret.AddTranslation(paths[i], paths[i+1])
+	}
+	return ret
+}
+
+// fp means "fastpath"; super shorthand, we'll use it a lot
+func fp(parts ...interface{}) path.ContextPath {
+	return path.New("", parts...)
+}
 
 func TestTranslationSetMap(t *testing.T) {
 	create := func() TranslationSet {
