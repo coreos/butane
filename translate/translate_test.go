@@ -21,7 +21,6 @@ import (
 	"github.com/coreos/butane/translate/tests/pkga"
 	"github.com/coreos/butane/translate/tests/pkgb"
 
-	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,25 +28,6 @@ import (
 type testOptions struct{}
 
 // Note: we need different input and output types which unfortunately means a lot of tests
-
-// mkTrans makes a TranslationSet with no tag in the paths consuming pairs of args. i.e:
-// mkTrans(from1, to1, from2, to2) -> a set wiht from1->to1, from2->to2
-// This is just a shorthand for making writing tests easier
-func mkTrans(paths ...path.ContextPath) TranslationSet {
-	ret := TranslationSet{Set: map[string]Translation{}}
-	if len(paths)%2 == 1 {
-		panic("Odd number of args to mkTrans")
-	}
-	for i := 0; i < len(paths); i += 2 {
-		ret.AddTranslation(paths[i], paths[i+1])
-	}
-	return ret
-}
-
-// fp means "fastpath"; super shorthand, we'll use it a lot
-func fp(parts ...interface{}) path.ContextPath {
-	return path.New("", parts...)
-}
 
 func TestTranslateTrivial(t *testing.T) {
 	in := pkga.Trivial{
