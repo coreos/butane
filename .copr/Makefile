@@ -1,5 +1,7 @@
 srpm:
 	dnf install -y git
+	# similar to https://github.com/actions/checkout/issues/760, but for COPR
+	git config --global --add safe.directory '*'
 	curl -LOf https://src.fedoraproject.org/rpms/butane/raw/rawhide/f/butane.spec
 	version=$$(git describe --always --tags | sed -e 's,-,\.,g' -e 's,^v,,'); \
 	git archive --format=tar --prefix=butane-$$version/ HEAD | gzip > butane-$$version.tar.gz; \
