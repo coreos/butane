@@ -66,7 +66,7 @@ passwd:
       shell: /bin/bash
 ```
 
-To generate a secure password hash, use `mkpasswd`:
+To generate a secure password hash, use `mkpasswd` from the `whois` package.  Your Linux distro may ship a different `mkpasswd` implementation; you can ensure you're using the correct one by running it from a container:
 
 ```
 $ podman run -ti --rm quay.io/coreos/mkpasswd --method=yescrypt
