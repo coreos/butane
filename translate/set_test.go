@@ -78,3 +78,23 @@ func TestTranslationSetMap(t *testing.T) {
 		fp("a", 0, "b", "i"), fp("A", 0, "B", 1, "F"),
 	), result, "bad mapping")
 }
+
+func TestTranslationSetAddFromCommonSource(t *testing.T) {
+	type Sub struct {
+		C int `json:"c"`
+	}
+	type Main struct {
+		A string `json:"a"`
+		B Sub    `json:"b"`
+	}
+
+	expected := NewTranslationSet("yaml", "json")
+	expected.AddTranslation(path.New("yaml", "y"), path.New("json", "z", 0))
+	expected.AddTranslation(path.New("yaml", "y", "a"), path.New("json", "z", 0, "a"))
+	expected.AddTranslation(path.New("yaml", "y", "b"), path.New("json", "z", 0, "b"))
+	expected.AddTranslation(path.New("yaml", "y", "b", "c"), path.New("json", "z", 0, "b", "c"))
+
+	actual := NewTranslationSet("yaml", "json")
+	actual.AddFromCommonObject(path.New("yaml", "y"), path.New("json", "z", 0), &Main{})
+	assert.Equal(t, expected, actual)
+}
