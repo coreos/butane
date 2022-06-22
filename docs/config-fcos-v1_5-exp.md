@@ -208,6 +208,10 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 * **_extensions_** (list of objects): the list of additional packages to be installed.
   * **name** (string): the name of the package.
+* **_grub_** (object): describes the desired GRUB bootloader configuration.
+  * **_users_** (list of objects): the list of GRUB superusers.
+    * **name** (string): the user name.
+    * **password_hash** (string): the PBKDF2 password hash.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397

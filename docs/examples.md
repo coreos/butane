@@ -372,6 +372,20 @@ systemd:
         [Install]
         WantedBy=multi-user.target
 ```
+## GRUB password
+
+This example adds a superuser to GRUB and sets a password. Users without the given username
+and password will not be able to access GRUB command line, modify kernel command-line arguments, or boot non-default OSTree deployments.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0-experimental
+grub:
+  users:
+    - name: root
+      password_hash: grub.pbkdf2.sha512.10000.874A958E5264...
+```
 
 [spec]: specs.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description

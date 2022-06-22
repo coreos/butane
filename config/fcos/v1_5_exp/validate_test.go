@@ -228,3 +228,47 @@ func TestValidateExtension(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateGrubUser(t *testing.T) {
+	tests := []struct {
+		in      GrubUser
+		out     error
+		errPath path.ContextPath
+	}{
+		// valid user
+		{
+			in: GrubUser{
+				Name:         "name",
+				PasswordHash: util.StrToPtr("pkcs5-pass"),
+			},
+			out:     nil,
+			errPath: path.New("yaml"),
+		},
+		// username is not specified
+		{
+			in: GrubUser{
+				Name:         "",
+				PasswordHash: util.StrToPtr("pkcs5-pass"),
+			},
+			out:     common.ErrGrubUserNameNotSpecified,
+			errPath: path.New("yaml", "name"),
+		},
+		// password is not specified
+		{
+			in: GrubUser{
+				Name: "name",
+			},
+			out:     common.ErrGrubPasswordNotSpecified,
+			errPath: path.New("yaml", "password_hash"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}

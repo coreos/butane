@@ -105,6 +105,19 @@ func (ts TranslationSet) AddFromCommonSource(common path.ContextPath, toPrefix p
 	ts.AddTranslation(common, toPrefix)
 }
 
+// AddFromCommonObject adds translations for all of the paths in to. The paths being translated
+// are prefixed by fromPrefix and the translated paths are prefixed by toPrefix.
+// This is useful when we want to copy all the fields of an object to another with the same field names.
+func (ts TranslationSet) AddFromCommonObject(fromPrefix path.ContextPath, toPrefix path.ContextPath, to interface{}) {
+	vTo := reflect.ValueOf(to)
+	vPaths := getAllPaths(vTo, ts.ToTag, true)
+
+	for _, path := range vPaths {
+		ts.AddTranslation(prefixPath(path, fromPrefix.Path...), prefixPath(path, toPrefix.Path...))
+	}
+	ts.AddTranslation(fromPrefix, toPrefix)
+}
+
 // Merge adds all the entries to the set. It mutates the Set in place.
 func (ts TranslationSet) Merge(from TranslationSet) {
 	for _, t := range from.Set {
