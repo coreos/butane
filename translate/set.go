@@ -113,7 +113,7 @@ func (ts TranslationSet) AddFromCommonObject(fromPrefix path.ContextPath, toPref
 	vPaths := getAllPaths(vTo, ts.ToTag, true)
 
 	for _, path := range vPaths {
-		ts.AddTranslation(prefixPath(path, fromPrefix.Path...), prefixPath(path, toPrefix.Path...))
+		ts.AddTranslation(fromPrefix.Append(path.Path...), toPrefix.Append(path.Path...))
 	}
 	ts.AddTranslation(fromPrefix, toPrefix)
 }
