@@ -4,6 +4,48 @@ nav_order: 9
 
 # Release notes
 
+## Butane 0.15.0 (2022-06-23)
+
+### Breaking changes
+
+- Return selected `compression` field value from `MakeDataURL()` _(Go API)_
+
+### Features
+
+- Add Flatcar spec 1.0.0 and 1.1.0-experimental, targeting Ignition spec
+  3.3.0 and 3.4.0-experimental respectively
+- Stabilize OpenShift spec 4.11.0, targeting Ignition spec 3.2.0
+- Add OpenShift spec 4.12.0-experimental, targeting Ignition spec
+  3.4.0-experimental
+- Add arm64 support to container
+- Add GRUB password support _(fcos 1.5.0-exp, openshift 4.12.0-exp)_
+- Add `TranslationSet` `AddFromCommonObject()` and `Map()` methods _(Go API)_
+
+### Bug fixes
+
+- Set `compression` field for uncompressed `inline`/`local` resources, fixing
+  provisioning failure when merged with a compressed parent resource
+- Fix local file inclusion on Windows
+- Fix `build` script on Windows
+
+### Misc. changes
+
+- Derive container from Fedora image to support use in multi-stage builds
+- Fail if setuid/setgid/sticky mode bits specified _(openshift 4.10.0+)_
+- Update to Ignition 2.14.0
+- Roll back to Ignition spec 3.2.0 _(openshift 4.11.0)_
+
+### Docs changes
+
+- Support `arn` URL scheme _(fcos 1.5.0-exp, openshift 4.12.0-exp)_
+- Document support status of setuid/setgid/sticky mode bits in each spec
+- Document support for `gs` URLs _(openshift 4.8.0+)_
+- Document support for `compression` field  _(openshift 4.8.0 - 4.9.0)_
+- Correctly document supported URL schemes _(openshift 4.10.0)_ 
+- examples: Use containerized `mkpasswd`
+- Convert `NEWS` to Markdown and move to docs site
+
+
 ## Butane 0.14.0 (2022-01-27)
 
 ### Breaking changes
