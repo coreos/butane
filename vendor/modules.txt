@@ -34,14 +34,13 @@ github.com/coreos/vcontext/tree
 github.com/coreos/vcontext/validate
 github.com/coreos/vcontext/yaml
 # github.com/davecgh/go-spew v1.1.1
-## explicit
 github.com/davecgh/go-spew/spew
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
 # github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace
 ## explicit
 github.com/spf13/pflag
-# github.com/stretchr/testify v1.7.0
+# github.com/stretchr/testify v1.7.5
 ## explicit
 github.com/stretchr/testify/assert
 # github.com/vincent-petithory/dataurl v1.0.0
