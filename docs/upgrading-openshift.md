@@ -1,7 +1,7 @@
 ---
 title: OpenShift
 parent: Upgrading configs
-nav_order: 2
+nav_order: 3
 ---
 
 # Upgrading OpenShift configs
