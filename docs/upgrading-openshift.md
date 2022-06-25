@@ -13,6 +13,41 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 1. TOC
 {:toc}
 
+{% comment %}
+
+## From Version 4.12.0 to 4.13.0
+
+There are no breaking changes between versions 4.12.0 and 4.13.0 of the `openshift` configuration specification. Any valid 4.12.0 configuration can be updated to a 4.13.0 configuration by changing the version string in the config.
+
+### Local SSH key and systemd unit references
+
+SSH keys and systemd units are now embeddable via file references to local files The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.13.0-experimental
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+systemd:
+  units:
+    - name: example.service
+      contents_local: example.service
+    - name: example-drop-in.service
+      dropins:
+        - name: example-drop-in.conf
+          contents_local: example.service
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys_local:
+        - id_rsa.pub
+```
+
+{% endcomment %}
+
 ## From Version 4.11.0 to 4.12.0
 
 There are no breaking changes between versions 4.11.0 and 4.12.0 of the `openshift` configuration specification. Any valid 4.11.0 configuration can be updated to a 4.12.0 configuration by changing the version string in the config.

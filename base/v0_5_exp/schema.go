@@ -54,8 +54,9 @@ type Disk struct {
 }
 
 type Dropin struct {
-	Contents *string `yaml:"contents"`
-	Name     string  `yaml:"name"`
+	Contents      *string `yaml:"contents"`
+	ContentsLocal *string `yaml:"contents_local"`
+	Name          string  `yaml:"name"`
 }
 
 type File struct {
@@ -248,11 +249,12 @@ type Tree struct {
 }
 
 type Unit struct {
-	Contents *string  `yaml:"contents"`
-	Dropins  []Dropin `yaml:"dropins"`
-	Enabled  *bool    `yaml:"enabled"`
-	Mask     *bool    `yaml:"mask"`
-	Name     string   `yaml:"name"`
+	Contents      *string  `yaml:"contents"`
+	ContentsLocal *string  `yaml:"contents_local"`
+	Dropins       []Dropin `yaml:"dropins"`
+	Enabled       *bool    `yaml:"enabled"`
+	Mask          *bool    `yaml:"mask"`
+	Name          string   `yaml:"name"`
 }
 
 type Verification struct {

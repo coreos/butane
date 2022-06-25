@@ -12,3 +12,36 @@ Occasionally, changes are made to RHEL for Edge Butane configs (those that speci
 
 1. TOC
 {:toc}
+
+{% comment %}
+
+## From Version 1.0.0 to Version 1.1.0
+
+There are no breaking changes between versions 1.0.0 and 1.1.0 of the `r4e` configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.
+
+The following is a list of notable new features.
+
+### Local SSH key and systemd unit references
+
+SSH keys and systemd units are now embeddable via file references to local files. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
+
+<!-- butane-config -->
+```yaml
+variant: r4e
+version: 1.1.0-experimental
+systemd:
+  units:
+    - name: example.service
+      contents_local: example.service
+    - name: example-drop-in.service
+      dropins:
+        - name: example-drop-in.conf
+          contents_local: example.conf
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys_local:
+        - id_rsa.pub
+```
+
+{% endcomment %}

@@ -50,7 +50,8 @@ if [ -n "${csplit}" ] && [ -n "${head}" ]; then
     trap 'rm -r tmpdocs' EXIT
     # Create files-dir contents expected by configs
     mkdir -p tmpdocs/files-dir/tree
-    touch tmpdocs/files-dir/{config.ign,ca.pem,file,file-epilogue,local-file3}
+    touch tmpdocs/files-dir/{config.ign,ca.pem,example.conf,example.service,file,file-epilogue,local-file3}
+    echo "ssh-rsa AAAA" > tmpdocs/files-dir/id_rsa.pub
 
     for doc in docs/*md
     do

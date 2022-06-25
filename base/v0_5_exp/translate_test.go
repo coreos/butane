@@ -2205,6 +2205,199 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 	}
 }
 
+// TestTranslateUnitLocal tests translating the butane systemd.units[i].contents_local entries to ignition systemd.units[i].contents entries.
+func TestTranslateUnitLocal(t *testing.T) {
+	unitDir := t.TempDir()
+	randomDir := t.TempDir()
+	var unitName = "example.service"
+	var dropinName = "example.conf"
+	var unitDefinitionInline = "[Service]\nExecStart=/bin/false\n"
+	var unitDefinitionFile = "[Service]\nExecStart=/bin/true\n"
+	var unitEmptyFileName = "empty.service"
+	var unitEmptyDefinition = ""
+	var unitNonExistingFileName = "random.service"
+
+	err := os.WriteFile(filepath.Join(unitDir, unitName), []byte(unitDefinitionFile), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+	err = os.WriteFile(filepath.Join(unitDir, unitEmptyFileName), []byte(unitEmptyDefinition), 0644)
+	if err != nil {
+		t.Error(err)
+	}
+
+	tests := []struct {
+		name         string
+		in           Unit
+		out          types.Unit
+		translations []translate.Translation
+		reportSuffix string
+		fileDir      string
+	}{
+		{
+			"empty unit",
+			Unit{},
+			types.Unit{},
+			[]translate.Translation{},
+			"",
+			"",
+		},
+		{
+			"valid contents",
+			Unit{Contents: &unitDefinitionInline, Name: unitName},
+			types.Unit{Contents: &unitDefinitionInline, Name: unitName},
+			[]translate.Translation{},
+			"",
+			"",
+		},
+		{
+			"valid contents_local",
+			Unit{ContentsLocal: &unitName, Name: unitName},
+			types.Unit{Contents: &unitDefinitionFile, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents_local"),
+					To:   path.New("json", "contents"),
+				},
+			},
+			"",
+			unitDir,
+		},
+		{
+			"non existing contents_local file name",
+			Unit{ContentsLocal: &unitNonExistingFileName, Name: unitName},
+			types.Unit{Name: unitName},
+			[]translate.Translation{},
+			osNotFound,
+			unitDir,
+		},
+		{
+			"valid empty contents_local file",
+			Unit{ContentsLocal: &unitEmptyFileName, Name: unitName},
+			types.Unit{Contents: &unitEmptyDefinition, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "contents_local"),
+					To:   path.New("json", "contents"),
+				},
+			},
+			"",
+			unitDir,
+		},
+		{
+			"missing embed directory",
+			Unit{ContentsLocal: &unitName, Name: unitName},
+			types.Unit{Name: unitName},
+			[]translate.Translation{},
+			common.ErrNoFilesDir.Error(),
+			"",
+		},
+		{
+			"wrong embed directory",
+			Unit{ContentsLocal: &unitName, Name: unitName},
+			types.Unit{Name: unitName},
+			[]translate.Translation{},
+			osNotFound,
+			randomDir,
+		},
+		{
+			"empty dropin unit",
+			Unit{Name: dropinName, Dropins: nil},
+			types.Unit{Name: dropinName, Dropins: nil},
+			[]translate.Translation{},
+			"",
+			"",
+		},
+		{
+			"valid dropin contents",
+			Unit{Dropins: []Dropin{{Name: dropinName, Contents: &unitDefinitionInline}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionInline}}, Name: unitName},
+			[]translate.Translation{},
+			"",
+			"",
+		},
+		{
+			"valid dropin_contents_local",
+			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionFile}}, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "dropins", 0, "contents_local"),
+					To:   path.New("json", "dropins", 0, "contents"),
+				},
+			},
+			"",
+			unitDir,
+		},
+		{
+			"non existing dropin_contents_local file name",
+			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "dropins", 0, "contents_local"),
+					To:   path.New("json", "dropins", 0, "contents"),
+				},
+			},
+			osNotFound,
+			unitDir,
+		},
+		{
+			"valid empty dropin_contents_local file",
+			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitEmptyFileName}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitEmptyDefinition}}, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "dropins", 0, "contents_local"),
+					To:   path.New("json", "dropins", 0, "contents"),
+				},
+			},
+			"",
+			unitDir,
+		},
+		{
+			"missing embed directory for dropin",
+			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "dropins", 0, "contents_local"),
+					To:   path.New("json", "dropins", 0, "contents"),
+				},
+			},
+			common.ErrNoFilesDir.Error(),
+			"",
+		},
+		{
+			"wrong embed directory for dropin",
+			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "dropins", 0, "contents_local"),
+					To:   path.New("json", "dropins", 0, "contents"),
+				},
+			},
+			osNotFound,
+			randomDir,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			actual, translations, r := translateUnit(test.in, common.TranslateOptions{FilesDir: test.fileDir})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			if len(r.Entries) > 0 {
+				assert.Truef(t, strings.HasSuffix(r.Entries[0].Message, test.reportSuffix), "report mismatch: expected %q but got %q", test.reportSuffix, r.Entries[0].Message)
+			} else {
+				assert.True(t, len(test.reportSuffix) == 0, "unexpected report encountered")
+			}
+			baseutil.VerifyTranslations(t, translations, test.translations)
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
+	}
+}
+
 // TestToIgn3_4 tests the config.ToIgn3_4 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has its own set of tests.
 func TestToIgn3_4(t *testing.T) {
