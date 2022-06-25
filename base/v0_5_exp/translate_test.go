@@ -1889,6 +1889,322 @@ func TestTranslateTang(t *testing.T) {
 	}
 }
 
+// TestTranslateSSHAuthorizedKey tests translating the butane passwd.users[i].ssh_authorized_keys_local[j] entries to ignition passwd.users[i].ssh_authorized_keys[j] entries.
+func TestTranslateSSHAuthorizedKey(t *testing.T) {
+	sshKeyDir := t.TempDir()
+	randomDir := t.TempDir()
+	var sshKeyInline = "ssh-rsa AAAAAAAAA"
+	var sshKey1 = "ssh-rsa BBBBBBBBB"
+	var sshKey2 = "ssh-rsa CCCCCCCCC"
+	var sshKey3 = "ssh-rsa DDDDDDDDD"
+	var sshKeyFileName = "id_rsa.pub"
+	var sshKeyMultipleKeysFileName = "multiple.pub"
+	var sshKeyEmptyFileName = "empty.pub"
+	var sshKeyBlankFileName = "blank.pub"
+	var sshKeyWindowsLineEndingsFileName = "windows.pub"
+	var sshKeyNonExistingFileName = "id_ed25519.pub"
+
+	sshKeyData := map[string][]byte{
+		sshKeyFileName:                   []byte(sshKey1),
+		sshKeyMultipleKeysFileName:       []byte(fmt.Sprintf("%s\n#comment\n\n\n%s\n", sshKey2, sshKey3)),
+		sshKeyEmptyFileName:              []byte(""),
+		sshKeyBlankFileName:              []byte("\n\t"),
+		sshKeyWindowsLineEndingsFileName: []byte(fmt.Sprintf("%s\r\n#comment\r\n", sshKey1)),
+	}
+
+	for fileName, contents := range sshKeyData {
+		if err := os.WriteFile(filepath.Join(sshKeyDir, fileName), contents, 0644); err != nil {
+			t.Error(err)
+		}
+	}
+
+	tests := []struct {
+		name         string
+		in           PasswdUser
+		out          types.PasswdUser
+		translations []translate.Translation
+		reportSuffix string
+		fileDir      string
+	}{
+		{
+			"empty user",
+			PasswdUser{},
+			types.PasswdUser{},
+			[]translate.Translation{},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid ssh_keys_inline",
+			PasswdUser{SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline)}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys", 0),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid ssh_keys_local",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKey1)}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid ssh_keys_local with multiple keys per file",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
+				types.SSHAuthorizedKey(sshKey2),
+				types.SSHAuthorizedKey("#comment"),
+				types.SSHAuthorizedKey(""),
+				types.SSHAuthorizedKey(""),
+				types.SSHAuthorizedKey(sshKey3),
+				types.SSHAuthorizedKey(""),
+			}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 1),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 2),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 3),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 4),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 5),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid ssh_keys_local and ssh_keys",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline), types.SSHAuthorizedKey(sshKey1)}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys", 0),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 1),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid ssh_keys_local with multiple keys per file and ssh_keys",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
+				types.SSHAuthorizedKey(sshKeyInline),
+				types.SSHAuthorizedKey(sshKey2),
+				types.SSHAuthorizedKey("#comment"),
+				types.SSHAuthorizedKey(""),
+				types.SSHAuthorizedKey(""),
+				types.SSHAuthorizedKey(sshKey3),
+				types.SSHAuthorizedKey(""),
+			}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys", 0),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 1),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 2),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 3),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 4),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 5),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 6),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid empty ssh_keys_local file",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyEmptyFileName}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey("")}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid blank ssh_keys_local file",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyBlankFileName}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(""), types.SSHAuthorizedKey("\t")}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 1),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"valid Windows style line endings in ssh_keys_local file",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyWindowsLineEndingsFileName}},
+			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
+				types.SSHAuthorizedKey(sshKey1),
+				types.SSHAuthorizedKey("#comment"),
+				types.SSHAuthorizedKey(""),
+			}},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 0),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 1),
+				},
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys", 2),
+				},
+			},
+			"",
+			sshKeyDir,
+		},
+		{
+			"non existing ssh_keys_local file name",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyNonExistingFileName}},
+			types.PasswdUser{},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+			},
+			osNotFound,
+			sshKeyDir,
+		},
+		{
+			"missing embed directory",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			types.PasswdUser{},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+			},
+			common.ErrNoFilesDir.Error(),
+			"",
+		},
+		{
+			"wrong embed directory",
+			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			types.PasswdUser{},
+			[]translate.Translation{
+				{
+					From: path.New("yaml", "ssh_authorized_keys_local"),
+					To:   path.New("json", "sshAuthorizedKeys"),
+				},
+			},
+			osNotFound,
+			randomDir,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			actual, translations, r := translatePasswdUser(test.in, common.TranslateOptions{FilesDir: test.fileDir})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			if len(r.Entries) > 0 {
+				assert.Truef(t, strings.HasSuffix(r.Entries[0].Message, test.reportSuffix), "report mismatch: expected %q but got %q", test.reportSuffix, r.Entries[0].Message)
+			} else {
+				assert.True(t, len(test.reportSuffix) == 0, "unexpected report encountered")
+			}
+			baseutil.VerifyTranslations(t, translations, test.translations)
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
+	}
+}
+
 // TestToIgn3_4 tests the config.ToIgn3_4 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has its own set of tests.
 func TestToIgn3_4(t *testing.T) {

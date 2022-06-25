@@ -19,6 +19,7 @@ import (
 	"os"
 	slashpath "path"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -86,6 +87,7 @@ func (c Config) ToIgn3_4Unvalidated(options common.TranslateOptions) (types.Conf
 	tr.AddCustomTranslator(translateDirectory)
 	tr.AddCustomTranslator(translateLink)
 	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(translatePasswdUser)
 
 	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
 	tm.AddTranslation(path.New("yaml", "version"), path.New("json", "ignition", "version"))
@@ -210,6 +212,64 @@ func translateLink(from Link, options common.TranslateOptions) (to types.Link, t
 	translate.MergeP(tr, tm, &r, "overwrite", &from.Overwrite, &to.Overwrite)
 	translate.MergeP(tr, tm, &r, "path", &from.Path, &to.Path)
 	return
+}
+
+func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to types.PasswdUser, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
+	tm, r = translate.Prefixed(tr, "gecos", &from.Gecos, &to.Gecos)
+	translate.MergeP(tr, tm, &r, "groups", &from.Groups, &to.Groups)
+	translate.MergeP2(tr, tm, &r, "home_dir", &from.HomeDir, "homeDir", &to.HomeDir)
+	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
+	translate.MergeP2(tr, tm, &r, "no_create_home", &from.NoCreateHome, "noCreateHome", &to.NoCreateHome)
+	translate.MergeP2(tr, tm, &r, "no_log_init", &from.NoLogInit, "noLogInit", &to.NoLogInit)
+	translate.MergeP2(tr, tm, &r, "no_user_group", &from.NoUserGroup, "noUserGroup", &to.NoUserGroup)
+	translate.MergeP2(tr, tm, &r, "password_hash", &from.PasswordHash, "passwordHash", &to.PasswordHash)
+	translate.MergeP2(tr, tm, &r, "primary_group", &from.PrimaryGroup, "primaryGroup", &to.PrimaryGroup)
+	translate.MergeP(tr, tm, &r, "shell", &from.Shell, &to.Shell)
+	translate.MergeP2(tr, tm, &r, "should_exist", &from.ShouldExist, "shouldExist", &to.ShouldExist)
+	translate.MergeP2(tr, tm, &r, "ssh_authorized_keys", &from.SSHAuthorizedKeys, "sshAuthorizedKeys", &to.SSHAuthorizedKeys)
+	translate.MergeP(tr, tm, &r, "system", &from.System, &to.System)
+	translate.MergeP(tr, tm, &r, "uid", &from.UID, &to.UID)
+
+	if len(from.SSHAuthorizedKeysLocal) > 0 {
+		c := path.New("yaml", "ssh_authorized_keys_local")
+		tm.AddTranslation(c, path.New("json", "sshAuthorizedKeys"))
+
+		if options.FilesDir == "" {
+			r.AddOnError(c, common.ErrNoFilesDir)
+			return
+		}
+
+		for _, sshKeyFile := range from.SSHAuthorizedKeysLocal {
+			sshKeys, err := readSshKeyFile(options.FilesDir, sshKeyFile)
+			if err != nil {
+				r.AddOnError(c, err)
+				continue
+			}
+
+			// offset for TranslationSets when both ssh_authorized_keys and ssh_authorized_keys_local are available
+			offset := len(to.SSHAuthorizedKeys)
+			for i, line := range regexp.MustCompile("\r?\n").Split(sshKeys, -1) {
+				tm.AddTranslation(c, path.New("json", "sshAuthorizedKeys", i+offset))
+				to.SSHAuthorizedKeys = append(to.SSHAuthorizedKeys, types.SSHAuthorizedKey(line))
+			}
+		}
+	}
+
+	return
+}
+
+func readSshKeyFile(filesDir string, sshKeyFile string) (string, error) {
+	// calculate file path within FilesDir and check for path traversal
+	filePath := filepath.Join(filesDir, sshKeyFile)
+	if err := baseutil.EnsurePathWithinFilesDir(filePath, filesDir); err != nil {
+		return "", err
+	}
+	contents, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	return string(contents), nil
 }
 
 func (c Config) processTrees(ret *types.Config, options common.TranslateOptions) (translate.TranslationSet, report.Report) {

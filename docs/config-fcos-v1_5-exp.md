@@ -181,6 +181,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **name** (string): the username for the account.
     * **_password_hash_** (string): the hashed password for the account.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
+    * **_ssh_authorized_keys_local_** (list of strings): a list of local paths to SSH key files, relative to the directory specified by the `--files-dir` command-line argument, to be added as SSH key fragments at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique. Each file may contain multiple SSH keys, one per line.
     * **_uid_** (integer): the user ID of the account.
     * **_gecos_** (string): the GECOS field of the account.
     * **_home_dir_** (string): the home directory of the account.

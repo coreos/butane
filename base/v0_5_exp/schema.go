@@ -166,20 +166,21 @@ type PasswdGroup struct {
 }
 
 type PasswdUser struct {
-	Gecos             *string            `yaml:"gecos"`
-	Groups            []Group            `yaml:"groups"`
-	HomeDir           *string            `yaml:"home_dir"`
-	Name              string             `yaml:"name"`
-	NoCreateHome      *bool              `yaml:"no_create_home"`
-	NoLogInit         *bool              `yaml:"no_log_init"`
-	NoUserGroup       *bool              `yaml:"no_user_group"`
-	PasswordHash      *string            `yaml:"password_hash"`
-	PrimaryGroup      *string            `yaml:"primary_group"`
-	ShouldExist       *bool              `yaml:"should_exist"`
-	SSHAuthorizedKeys []SSHAuthorizedKey `yaml:"ssh_authorized_keys"`
-	Shell             *string            `yaml:"shell"`
-	System            *bool              `yaml:"system"`
-	UID               *int               `yaml:"uid"`
+	Gecos                  *string            `yaml:"gecos"`
+	Groups                 []Group            `yaml:"groups"`
+	HomeDir                *string            `yaml:"home_dir"`
+	Name                   string             `yaml:"name"`
+	NoCreateHome           *bool              `yaml:"no_create_home"`
+	NoLogInit              *bool              `yaml:"no_log_init"`
+	NoUserGroup            *bool              `yaml:"no_user_group"`
+	PasswordHash           *string            `yaml:"password_hash"`
+	PrimaryGroup           *string            `yaml:"primary_group"`
+	ShouldExist            *bool              `yaml:"should_exist"`
+	SSHAuthorizedKeys      []SSHAuthorizedKey `yaml:"ssh_authorized_keys"`
+	SSHAuthorizedKeysLocal []string           `yaml:"ssh_authorized_keys_local"`
+	Shell                  *string            `yaml:"shell"`
+	System                 *bool              `yaml:"system"`
+	UID                    *int               `yaml:"uid"`
 }
 
 type Proxy struct {
