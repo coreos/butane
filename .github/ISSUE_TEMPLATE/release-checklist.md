@@ -43,15 +43,14 @@ Fedora packaging:
 
 GitHub release:
  - [ ] Wait until the Bodhi update shows "Signed :heavy_check_mark:" in the Metadata box.
- - [ ] [File a releng ticket](https://pagure.io/releng/new_issue) based on [prior signing tickets](https://pagure.io/releng/issue/10599).
-   - [ ] Update the script and test it locally by running it like `FAKESIGN=1 ./script`
-     - [ ] If a new Fedora release has gone stable, update the signing key in the script to use the new Fedora signing key [found here](https://getfedora.org/security).
+ - [ ] Verify that the signing script can fetch the release binaries by running `bash signing-ticket.sh test <x.y.z-r> <output-dir>`, where `r` is the Release of the Fedora package without the dist tag (probably `1`)
+ - [ ] Run `bash signing-ticket.sh ticket <x.y.z-r>` and paste the output into a [releng ticket](https://pagure.io/releng/new_issue).
  - [ ] Wait for the ticket to be closed
  - [ ] Download the artifacts and signatures
  - [ ] Verify the signatures
  - [ ] Find the new tag in the [GitHub tag list](https://github.com/coreos/butane/tags) and click the triple dots menu, and create a draft release for it.
  - [ ] Upload all the release artifacts and their signatures. Copy and paste the release notes from `docs/release-notes.md` here as well.
-   - [ ] If the signing key has changed, note the change in the GitHub release notes as done [here](https://github.com/coreos/butane/releases/tag/v0.12.0).
+   - [ ] If the signing key has changed because a new Fedora release has gone stable, note the change in the GitHub release notes as done [here](https://github.com/coreos/butane/releases/tag/v0.12.0).
  - [ ] Publish the release
 
 Quay release:
@@ -76,7 +75,7 @@ RHCOS packaging for the current RHCOS development release:
  - [ ] File ticket similar to [this one](https://issues.redhat.com/browse/ART-3711) to sync the new version to mirror.openshift.com
 
 CentOS Stream 9 packaging:
-  - [ ] To be written
+  - [ ] Create a `rebase-c9s-butane` issue in the internal team-operations repo and follow the steps there
 
 Housekeeping:
  - [ ] Ask bgilbert to update the [MacPorts package](https://github.com/macports/macports-ports/tree/master/sysutils/butane)
