@@ -4,7 +4,30 @@ nav_order: 9
 
 # Release notes
 
+## Upcoming Butane 0.16.0 (unreleased)
+
+### Breaking changes
+
+
+### Features
+
+- Ship aarch64 macOS binary in GitHub release artifacts
+
+### Bug fixes
+
+
+### Misc. changes
+
+
+### Docs changes
+
+
+
+
 ## Butane 0.15.0 (2022-06-23)
+
+Starting with this release, Butane binaries are signed with the [Fedora 36
+key](https://getfedora.org/security/).
 
 ### Breaking changes
 
@@ -47,6 +70,9 @@ nav_order: 9
 
 
 ## Butane 0.14.0 (2022-01-27)
+
+Starting with this release, Butane binaries are signed with the [Fedora 35
+key](https://getfedora.org/security/).
 
 ### Breaking changes
 
@@ -144,6 +170,9 @@ nav_order: 9
 
 ## Butane 0.12.0 (2021-06-08)
 
+Starting with this release, Butane binaries are signed with the [Fedora 34
+key](https://getfedora.org/security/).
+
 ### Features
 
 - Add `kernel_arguments` section _(fcos 1.4.0-exp, openshift 4.9.0-exp)_
@@ -222,6 +251,9 @@ nav_order: 9
 
 ## FCCT 0.8.0 (2020-12-04)
 
+Starting with this release, Butane binaries are signed with the [Fedora 33
+key](https://getfedora.org/security/).
+
 ### Breaking changes
 
 - Restructure Go API
@@ -275,6 +307,9 @@ nav_order: 9
 
 
 ## FCCT 0.6.0 (2020-05-28)
+
+Starting with this release, Butane binaries are signed with the [Fedora 32
+key](https://getfedora.org/security/).
 
 ### Features
 
