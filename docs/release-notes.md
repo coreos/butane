@@ -4,6 +4,26 @@ nav_order: 9
 
 # Release notes
 
+## Upcoming Butane 0.16.0 (unreleased)
+
+### Breaking changes
+
+
+### Features
+
+- Ship aarch64 macOS binary in GitHub release artifacts
+
+### Bug fixes
+
+
+### Misc. changes
+
+
+### Docs changes
+
+
+
+
 ## Butane 0.15.0 (2022-06-23)
 
 Starting with this release, Butane binaries are signed with the [Fedora 36
