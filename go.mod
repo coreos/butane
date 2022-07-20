@@ -3,7 +3,7 @@ module github.com/coreos/butane
 go 1.17
 
 require (
-	github.com/clarketm/json v1.14.1
+	github.com/clarketm/json v1.17.1
 	github.com/coreos/go-semver v0.3.0
 	github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e
 	github.com/coreos/ignition/v2 v2.14.0

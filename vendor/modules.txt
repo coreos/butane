@@ -1,7 +1,7 @@
 # github.com/aws/aws-sdk-go v1.30.28
 ## explicit; go 1.11
 github.com/aws/aws-sdk-go/aws/arn
-# github.com/clarketm/json v1.14.1
+# github.com/clarketm/json v1.17.1
 ## explicit
 github.com/clarketm/json
 # github.com/coreos/go-json v0.0.0-20211020211907-c63f628265de
