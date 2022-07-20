@@ -1,6 +1,6 @@
 module github.com/coreos/butane
 
-go 1.15
+go 1.17
 
 require (
 	github.com/clarketm/json v1.14.1
@@ -11,6 +11,14 @@ require (
 	github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace
 	github.com/stretchr/testify v1.8.0
 	github.com/vincent-petithory/dataurl v1.0.0
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/aws/aws-sdk-go v1.30.28 // indirect
+	github.com/coreos/go-json v0.0.0-20211020211907-c63f628265de // indirect
+	github.com/coreos/go-systemd/v22 v22.0.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
