@@ -21,7 +21,7 @@ nav_order: 9
 
 ### Docs changes
 
-
+- Clarify spec docs for `files`/`directories`/`links` `group` fields
 
 
 ## Butane 0.15.0 (2022-06-23)
