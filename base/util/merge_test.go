@@ -63,15 +63,15 @@ func TestMergeTranslatedConfigs(t *testing.T) {
 			},
 			parentTranslations: makeTranslationSet([]translate.Translation{
 				// parent key duplicated in child, should be clobbered
-				{path.New("in", "bad", 1), path.New("out", "systemd", "units", 0, "name")},
+				{From: path.New("in", "bad", 1), To: path.New("out", "systemd", "units", 0, "name")},
 				// parent field overridden in child, should be clobbered
-				{path.New("in", "bad", 2), path.New("out", "systemd", "units", 0, "contents")},
+				{From: path.New("in", "bad", 2), To: path.New("out", "systemd", "units", 0, "contents")},
 				// parent field not overridden in child
-				{path.New("in", "good", 1), path.New("out", "systemd", "units", 0, "enabled")},
+				{From: path.New("in", "good", 1), To: path.New("out", "systemd", "units", 0, "enabled")},
 				// parent key not specified in child
-				{path.New("in", "good", 2), path.New("out", "systemd", "units", 1, "name")},
+				{From: path.New("in", "good", 2), To: path.New("out", "systemd", "units", 1, "name")},
 				// parent field not specified in child
-				{path.New("in", "good", 3), path.New("out", "systemd", "units", 1, "contents")},
+				{From: path.New("in", "good", 3), To: path.New("out", "systemd", "units", 1, "contents")},
 				// other fields omitted from translation set
 			}),
 			child: types.Config{
@@ -94,13 +94,13 @@ func TestMergeTranslatedConfigs(t *testing.T) {
 			},
 			childTranslations: makeTranslationSet([]translate.Translation{
 				// child key not mentioned in parent
-				{path.New("in", "good", 11), path.New("out", "systemd", "units", 0, "name")},
+				{From: path.New("in", "good", 11), To: path.New("out", "systemd", "units", 0, "name")},
 				// child field not mentioned in parent
-				{path.New("in", "good", 12), path.New("out", "systemd", "units", 0, "contents")},
+				{From: path.New("in", "good", 12), To: path.New("out", "systemd", "units", 0, "contents")},
 				// parent key duplicated in child
-				{path.New("in", "good", 13), path.New("out", "systemd", "units", 1, "name")},
+				{From: path.New("in", "good", 13), To: path.New("out", "systemd", "units", 1, "name")},
 				// parent field overridden in child
-				{path.New("in", "good", 14), path.New("out", "systemd", "units", 1, "contents")},
+				{From: path.New("in", "good", 14), To: path.New("out", "systemd", "units", 1, "contents")},
 				// other fields omitted from translation set
 			}),
 			merged: types.Config{
@@ -131,13 +131,13 @@ func TestMergeTranslatedConfigs(t *testing.T) {
 				},
 			},
 			mergedTranslations: makeTranslationSet([]translate.Translation{
-				{path.New("in", "good", 13), path.New("out", "systemd", "units", 0, "name")},
-				{path.New("in", "good", 1), path.New("out", "systemd", "units", 0, "enabled")},
-				{path.New("in", "good", 14), path.New("out", "systemd", "units", 0, "contents")},
-				{path.New("in", "good", 2), path.New("out", "systemd", "units", 1, "name")},
-				{path.New("in", "good", 3), path.New("out", "systemd", "units", 1, "contents")},
-				{path.New("in", "good", 11), path.New("out", "systemd", "units", 3, "name")},
-				{path.New("in", "good", 12), path.New("out", "systemd", "units", 3, "contents")},
+				{From: path.New("in", "good", 13), To: path.New("out", "systemd", "units", 0, "name")},
+				{From: path.New("in", "good", 1), To: path.New("out", "systemd", "units", 0, "enabled")},
+				{From: path.New("in", "good", 14), To: path.New("out", "systemd", "units", 0, "contents")},
+				{From: path.New("in", "good", 2), To: path.New("out", "systemd", "units", 1, "name")},
+				{From: path.New("in", "good", 3), To: path.New("out", "systemd", "units", 1, "contents")},
+				{From: path.New("in", "good", 11), To: path.New("out", "systemd", "units", 3, "name")},
+				{From: path.New("in", "good", 12), To: path.New("out", "systemd", "units", 3, "contents")},
 			}),
 		},
 	}
