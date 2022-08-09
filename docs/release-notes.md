@@ -22,6 +22,7 @@ nav_order: 9
 ### Docs changes
 
 - Clarify spec docs for `files`/`directories`/`links` `group` fields
+- Document that `user`/`group` fields aren't applied to hard links
 
 
 ## Butane 0.15.0 (2022-06-23)
