@@ -16,7 +16,6 @@ package v0_5_exp
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -72,7 +71,7 @@ func TestTranslateFile(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		err := ioutil.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
+		err := os.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
 		if err != nil {
 			t.Error(err)
 			return
@@ -1539,7 +1538,7 @@ func TestTranslateTree(t *testing.T) {
 					t.Error(err)
 					return
 				}
-				if err := ioutil.WriteFile(absPath, []byte(testPath), mode); err != nil {
+				if err := os.WriteFile(absPath, []byte(testPath), mode); err != nil {
 					t.Error(err)
 					return
 				}

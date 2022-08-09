@@ -16,7 +16,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/spf13/pflag"
@@ -90,7 +90,7 @@ func main() {
 		defer infile.Close()
 	}
 
-	dataIn, err := ioutil.ReadAll(infile)
+	dataIn, err := io.ReadAll(infile)
 	if err != nil {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}
