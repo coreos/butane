@@ -100,9 +100,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_user_** (object): specifies the file's owner.
       * **_id_** (integer): the user ID of the owner.
       * **_name_** (string): the user name of the owner.
-    * **_group_** (object): specifies the group of the owner.
-      * **_id_** (integer): the group ID of the owner.
-      * **_name_** (string): the group name of the owner.
+    * **_group_** (object): specifies the file's group.
+      * **_id_** (integer): the group ID of the group.
+      * **_name_** (string): the group name of the group.
   * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
