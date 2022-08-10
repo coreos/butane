@@ -4,8 +4,8 @@ github.com/aws/aws-sdk-go/aws/arn
 # github.com/clarketm/json v1.17.1
 ## explicit
 github.com/clarketm/json
-# github.com/coreos/go-json v0.0.0-20211020211907-c63f628265de
-## explicit; go 1.15
+# github.com/coreos/go-json v0.0.0-20220810161552-7cce03887f34
+## explicit; go 1.17
 github.com/coreos/go-json
 # github.com/coreos/go-semver v0.3.0
 ## explicit
@@ -28,8 +28,8 @@ github.com/coreos/ignition/v2/config/v3_2/types
 github.com/coreos/ignition/v2/config/v3_3/types
 github.com/coreos/ignition/v2/config/v3_4_experimental/types
 github.com/coreos/ignition/v2/config/validate
-# github.com/coreos/vcontext v0.0.0-20220603180515-2076d8d16945
-## explicit; go 1.15
+# github.com/coreos/vcontext v0.0.0-20220810162454-88bd546c634c
+## explicit; go 1.17
 github.com/coreos/vcontext/json
 github.com/coreos/vcontext/path
 github.com/coreos/vcontext/report
