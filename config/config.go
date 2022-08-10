@@ -42,7 +42,7 @@ var (
 	registry = map[string]translator{}
 )
 
-/// Fields that must be included in the root struct of every spec version.
+// Fields that must be included in the root struct of every spec version.
 type commonFields struct {
 	Version string `yaml:"version"`
 	Variant string `yaml:"variant"`
@@ -65,9 +65,9 @@ func init() {
 	RegisterTranslator("rhcos", "0.1.0", rhcos0_1.ToIgn3_2Bytes)
 }
 
-/// RegisterTranslator registers a translator for the specified variant and
-/// version to be available for use by TranslateBytes.  This is only needed
-/// by users implementing their own translators outside the Butane package.
+// RegisterTranslator registers a translator for the specified variant and
+// version to be available for use by TranslateBytes.  This is only needed
+// by users implementing their own translators outside the Butane package.
 func RegisterTranslator(variant, version string, trans translator) {
 	key := fmt.Sprintf("%s+%s", variant, version)
 	if _, ok := registry[key]; ok {

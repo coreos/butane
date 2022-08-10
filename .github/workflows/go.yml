@@ -14,27 +14,27 @@ jobs:
     name: Test build
     strategy:
       matrix:
-        go-version: [1.17.x, 1.18.x]
+        go-version: [1.17.x, 1.18.x, 1.19.x]
         os: [ubuntu-latest]
         include:
-        - go-version: 1.18.x
+        - go-version: 1.19.x
           os: macos-latest
-        - go-version: 1.18.x
+        - go-version: 1.19.x
           os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go-version }}
     - name: Check out repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Run tests
       shell: bash
       run: ./test
     - name: Run linter
-      uses: golangci/golangci-lint-action@v2
+      uses: golangci/golangci-lint-action@v3
       if: ${{ matrix.os == 'ubuntu-latest' }}
       with:
-        version: v1.45.0
+        version: v1.48.0
         args: -E=gofmt --timeout=30m0s
