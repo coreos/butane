@@ -37,6 +37,8 @@ var (
 	ErrNodeExists             = errors.New("matching filesystem node has existing contents or different type")
 	ErrNoFilesDir             = errors.New("local file paths are relative to a files directory that must be specified with -d/--files-dir")
 	ErrTreeNotDirectory       = errors.New("root of tree must be a directory")
+	ErrRootTooSmall           = errors.New("root should have 8GiB of space assigned")
+	ErrRootConstrained        = errors.New("root is configured too small, and has no room to expand")
 	ErrTreeNoLocal            = errors.New("local is required")
 
 	// filesystem nodes

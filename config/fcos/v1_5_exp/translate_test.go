@@ -146,6 +146,200 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 			},
 		},
+		// root partition too small
+		{
+			Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										SizeMiB: util.IntToPtr(500),
+										Resize:  util.BoolToPtr(true),
+										Number:  4,
+									},
+									{
+										Label:   util.StrToPtr("var-home"),
+										SizeMiB: util.IntToPtr(10240),
+									},
+								},
+							},
+						},
+						Filesystems: []base.Filesystem{
+							{
+								Device:         "/dev/disk/by-partlabel/var-home",
+								Format:         util.StrToPtr("xfs"),
+								Path:           util.StrToPtr("/var/home"),
+								Label:          util.StrToPtr("var-home"),
+								WipeFilesystem: util.BoolToPtr(false),
+							},
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Disks: []types.Disk{
+						{
+							Device: "/dev/vda",
+							Partitions: []types.Partition{
+								{
+									Label:   util.StrToPtr("root"),
+									SizeMiB: util.IntToPtr(500),
+									Resize:  util.BoolToPtr(true),
+									Number:  4,
+								},
+								{
+									Label:   util.StrToPtr("var-home"),
+									SizeMiB: util.IntToPtr(10240),
+								},
+							},
+						},
+					},
+					Filesystems: []types.Filesystem{
+						{
+							Device:         "/dev/disk/by-partlabel/var-home",
+							Format:         util.StrToPtr("xfs"),
+							Path:           util.StrToPtr("/var/home"),
+							Label:          util.StrToPtr("var-home"),
+							WipeFilesystem: util.BoolToPtr(false),
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "resize"), path.New("json", "storage", "disks", 0, "partitions", 0, "resize")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "label"), path.New("json", "storage", "disks", 0, "partitions", 1, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0), path.New("json", "storage", "disks", 0, "partitions", 0)},
+				{path.New("yaml", "storage", "disks", 0), path.New("json", "storage", "disks", 0)},
+				{path.New("yaml", "storage", "filesystems", 0, "device"), path.New("json", "storage", "filesystems", 0, "device")},
+				{path.New("yaml", "storage", "filesystems", 0, "format"), path.New("json", "storage", "filesystems", 0, "format")},
+				{path.New("yaml", "storage", "filesystems", 0, "path"), path.New("json", "storage", "filesystems", 0, "path")},
+				{path.New("yaml", "storage", "filesystems", 0, "label"), path.New("json", "storage", "filesystems", 0, "label")},
+				{path.New("yaml", "storage", "filesystems", 0, "wipe_filesystem"), path.New("json", "storage", "filesystems", 0, "wipeFilesystem")},
+				{path.New("yaml", "storage", "filesystems", 0), path.New("json", "storage", "filesystems", 0)},
+				{path.New("yaml", "storage", "filesystems"), path.New("json", "storage", "filesystems")},
+				{path.New("yaml", "storage"), path.New("json", "storage")},
+			},
+			report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrRootTooSmall.Error(),
+						Context: path.New("json", "storage", "disks", 0, "partitions", 0, "size_mib"),
+					},
+				},
+			},
+		},
+		// root partition constrained
+		{
+			Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										SizeMiB: util.IntToPtr(0),
+										Resize:  util.BoolToPtr(true),
+										Number:  4,
+									},
+									{
+										Label:    util.StrToPtr("var-home"),
+										SizeMiB:  util.IntToPtr(10240),
+										StartMiB: util.IntToPtr(0),
+										Number:   5,
+									},
+								},
+							},
+						},
+						Filesystems: []base.Filesystem{
+							{
+								Device:         "/dev/disk/by-partlabel/var-home",
+								Format:         util.StrToPtr("xfs"),
+								Path:           util.StrToPtr("/var/home"),
+								Label:          util.StrToPtr("var-home"),
+								WipeFilesystem: util.BoolToPtr(false),
+							},
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Disks: []types.Disk{
+						{
+							Device: "/dev/vda",
+							Partitions: []types.Partition{
+								{
+									Label:   util.StrToPtr("root"),
+									SizeMiB: util.IntToPtr(0),
+									Resize:  util.BoolToPtr(true),
+									Number:  4,
+								},
+								{
+									Label:    util.StrToPtr("var-home"),
+									SizeMiB:  util.IntToPtr(10240),
+									StartMiB: util.IntToPtr(0),
+									Number:   5,
+								},
+							},
+						},
+					},
+					Filesystems: []types.Filesystem{
+						{
+							Device:         "/dev/disk/by-partlabel/var-home",
+							Format:         util.StrToPtr("xfs"),
+							Path:           util.StrToPtr("/var/home"),
+							Label:          util.StrToPtr("var-home"),
+							WipeFilesystem: util.BoolToPtr(false),
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{path.New("yaml", "version"), path.New("json", "ignition", "version")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"), path.New("json", "storage", "disks", 0, "partitions", 0, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 0, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0, "resize"), path.New("json", "storage", "disks", 0, "partitions", 0, "resize")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "label"), path.New("json", "storage", "disks", 0, "partitions", 1, "label")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 1, "size_mib"), path.New("json", "storage", "disks", 0, "partitions", 1, "sizeMiB")},
+				{path.New("yaml", "storage", "disks", 0, "partitions", 0), path.New("json", "storage", "disks", 0, "partitions", 0)},
+				{path.New("yaml", "storage", "disks", 0), path.New("json", "storage", "disks", 0)},
+				{path.New("yaml", "storage", "filesystems", 0, "device"), path.New("json", "storage", "filesystems", 0, "device")},
+				{path.New("yaml", "storage", "filesystems", 0, "format"), path.New("json", "storage", "filesystems", 0, "format")},
+				{path.New("yaml", "storage", "filesystems", 0, "path"), path.New("json", "storage", "filesystems", 0, "path")},
+				{path.New("yaml", "storage", "filesystems", 0, "label"), path.New("json", "storage", "filesystems", 0, "label")},
+				{path.New("yaml", "storage", "filesystems", 0, "wipe_filesystem"), path.New("json", "storage", "filesystems", 0, "wipeFilesystem")},
+				{path.New("yaml", "storage", "filesystems", 0), path.New("json", "storage", "filesystems", 0)},
+				{path.New("yaml", "storage", "filesystems"), path.New("json", "storage", "filesystems")},
+				{path.New("yaml", "storage"), path.New("json", "storage")},
+			},
+			report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrRootConstrained.Error(),
+						Context: path.New("json", "storage", "disks", 0, "partitions", 0, "number"),
+					},
+				},
+			},
+		},
 		// LUKS, x86_64
 		{
 			Config{
