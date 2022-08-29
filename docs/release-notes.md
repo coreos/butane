@@ -17,7 +17,8 @@ nav_order: 9
 
 
 ### Misc. changes
-
+- Warn on root size is too small _(fcos)_
+- Warn on root constrained by another partition _(fcos)_
 
 ### Docs changes
 
