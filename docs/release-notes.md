@@ -21,6 +21,8 @@ nav_order: 9
 
 ### Docs changes
 
+- Document `passwd.users.should_exist` and `passwd.groups.should_exist` fields
+  _(fcos 1.2.0+, flatcar, rhcos)_
 - Clarify spec docs for `files`/`directories`/`links` `group` fields
 - Document that `user`/`group` fields aren't applied to hard links
 
