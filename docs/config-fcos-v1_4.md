@@ -185,11 +185,13 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_no_user_group_** (boolean): whether or not to create a group with the same name as the user. This only has an effect if the account doesn't exist yet.
     * **_no_log_init_** (boolean): whether or not to add the user to the lastlog and faillog databases. This only has an effect if the account doesn't exist yet.
     * **_shell_** (string): the login shell of the new account.
+    * **_should_exist_** (boolean) whether or not the user with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified user.
     * **_system_** (bool): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
   * **_groups_** (list of objects): the list of groups to be added. All groups must have a unique `name`.
     * **name** (string): the name of the group.
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
+    * **_should_exist_** (boolean) whether or not the group with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified group.
     * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
 * **_kernel_arguments_** (object): describes the desired kernel arguments.
   * **_should_exist_** (list of strings): the list of kernel arguments that should exist.
