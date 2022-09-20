@@ -67,7 +67,7 @@ RHCOS packaging for the current RHCOS development release:
    - Run `go-mods-to-bundled-provides.py | sort` while inside of the `butane` directory you ran `./tag_release` from & copy output into spec file in `# Main package provides` section
    - Update changelog
  - [ ] Run `spectool -g -S butane.spec`
- - [ ] Run `kinit your_account@REDHAT.COM`
+ - [ ] Run `kinit your_account@IPA.REDHAT.COM`
  - [ ] Run `rhpkg new-sources $(spectool -S butane.spec | sed 's:.*/::')`
  - [ ] PR the changes
  - [ ] Get the PR reviewed and merge it
