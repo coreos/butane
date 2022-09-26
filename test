@@ -54,19 +54,19 @@ if [ -n "${csplit}" ] && [ -n "${head}" ]; then
 
     for doc in docs/*md
     do
-            echo "Checking ${doc}"
-            # split each doc into a bunch of tmpfiles then run butane on them
-            sed -n '/^<!-- butane-config -->/,/^```$/ p' < "${doc}" \
-                    | ${csplit} - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
+        echo "Checking ${doc}"
+        # split each doc into a bunch of tmpfiles then run butane on them
+        sed -n '/^<!-- butane-config -->/,/^```$/ p' <"${doc}" \
+             | ${csplit} - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
 
-            for i in tmpdocs/config_*
-            do
-                    echo "Checking ${i}"
-                    tail -n +3 "${i}" | ${head} -n -1 \
-                            | "${BIN_PATH}/${NAME}" --strict --files-dir tmpdocs/files-dir > /dev/null \
-                            || (cat -n "${i}" && false)
-            done
-            rm -f tmpdocs/config_*
+        for i in tmpdocs/config_*
+        do
+            echo "Checking ${i}"
+            tail -n +3 "${i}" | ${head} -n -1 \
+                | "${BIN_PATH}/${NAME}" --strict --files-dir tmpdocs/files-dir >/dev/null \
+                || (cat -n "${i}" && false)
+        done
+        rm -f tmpdocs/config_*
     done
 else
     # Avoid dealing with presence/behavior of csplit and head
