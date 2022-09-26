@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 SRC=$(find . -name '*.go' -not -path "./vendor/*")
@@ -21,7 +21,29 @@ source ./build
 echo "Running tests"
 go test ./... -cover
 
+csplit=""
+head=""
+
 if [ "$(go env GOOS)" = linux ]; then
+    csplit="csplit"
+    head="head"
+elif [ "$(go env GOOS)" = darwin ]; then
+    # macOS has BSD versions of csplit and head that behave differently;
+    # check whether brew/macports supplied GNU versions exist
+    if hash gcsplit &> /dev/null; then
+        csplit="gcsplit"
+    fi
+    if hash ghead &> /dev/null; then
+        head="ghead"
+    fi
+elif [ "$(go env GOOS)" = windows ]; then
+    # if we find a Bash on Windows we can comparatively safely assume
+    # Git Bash with GNU utils is being used
+    csplit="csplit"
+    head="head"
+fi
+
+if [ -n "${csplit}" ] && [ -n "${head}" ]; then
     echo "Checking docs"
     shopt -s nullglob
     mkdir tmpdocs
@@ -32,23 +54,23 @@ if [ "$(go env GOOS)" = linux ]; then
 
     for doc in docs/*md
     do
-            echo "Checking $doc"
+            echo "Checking ${doc}"
             # split each doc into a bunch of tmpfiles then run butane on them
-            sed -n '/^<!-- butane-config -->/,/^```$/ p' < ${doc} \
-                    | csplit - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
+            sed -n '/^<!-- butane-config -->/,/^```$/ p' < "${doc}" \
+                    | ${csplit} - '/<!-- butane-config -->/' '{*}' -z --prefix "tmpdocs/config_$(basename ${doc%.*})_" -q
 
             for i in tmpdocs/config_*
             do
-                    echo "Checking $i"
-                    cat "$i" | tail -n +3 | head -n -1 \
-                            | ${BIN_PATH}/${NAME} --strict --files-dir tmpdocs/files-dir > /dev/null \
-                            || (cat -n "$i" && false)
+                    echo "Checking ${i}"
+                    tail -n +3 "${i}" | ${head} -n -1 \
+                            | "${BIN_PATH}/${NAME}" --strict --files-dir tmpdocs/files-dir > /dev/null \
+                            || (cat -n "${i}" && false)
             done
             rm -f tmpdocs/config_*
     done
 else
-    # Avoid dealing with presence/behavior of csplit
-    echo "skipping docs check on non-Linux"
+    # Avoid dealing with presence/behavior of csplit and head
+    echo "skipping docs check because GNU csplit and head are unavailable"
 fi
 
 echo ok
