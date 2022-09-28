@@ -61,7 +61,10 @@ func main() {
 	pflag.Parse()
 
 	args := pflag.Args()
-	if len(args) == 1 && input == "" {
+	if len(args) == 0 {
+		pflag.Usage()
+		os.Exit(2)
+	} else if len(args) == 1 && input == "" {
 		input = args[0]
 	} else if len(args) > 0 {
 		pflag.Usage()
