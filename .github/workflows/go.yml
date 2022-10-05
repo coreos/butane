@@ -29,6 +29,10 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Check out repository
       uses: actions/checkout@v3
+    - name: Install GNU utils on macOS
+      if: runner.os == 'macOS'
+      shell: bash
+      run: brew install coreutils
     - name: Run tests
       shell: bash
       run: ./test

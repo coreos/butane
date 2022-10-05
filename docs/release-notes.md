@@ -18,6 +18,10 @@ nav_order: 9
 
 ### Misc. changes
 
+- The `test` script now executes all tests on all platforms if the necessary GNU
+  utilities are available
+- CI jobs now include macOS specific instructions to install GNU utilities for
+  improved test coverage
 
 ### Docs changes
 
