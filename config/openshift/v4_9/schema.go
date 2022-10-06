@@ -16,6 +16,7 @@ package v4_9
 
 import (
 	fcos "github.com/coreos/butane/config/fcos/v1_3"
+	"github.com/coreos/butane/config/openshift/v4_8"
 )
 
 const ROLE_LABEL_KEY = "machineconfiguration.openshift.io/role"
@@ -25,15 +26,6 @@ type Config struct {
 	Metadata    Metadata  `yaml:"metadata"`
 	OpenShift   OpenShift `yaml:"openshift"`
 }
+type Metadata v4_8.Metadata
 
-type Metadata struct {
-	Name   string            `yaml:"name"`
-	Labels map[string]string `yaml:"labels,omitempty"`
-}
-
-type OpenShift struct {
-	KernelArguments []string `yaml:"kernel_arguments"`
-	Extensions      []string `yaml:"extensions"`
-	FIPS            *bool    `yaml:"fips"`
-	KernelType      *string  `yaml:"kernel_type"`
-}
+type OpenShift v4_8.OpenShift
