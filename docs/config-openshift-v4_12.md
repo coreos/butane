@@ -1,24 +1,22 @@
 ---
-title: OpenShift v4.12.0-experimental
+title: OpenShift v4.12.0
 parent: Configuration specifications
-nav_order: 150
+nav_order: 144
 ---
 
-# OpenShift Specification v4.12.0-experimental
-
-**Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
+# OpenShift Specification v4.12.0
 
 The OpenShift configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `4.12.0-experimental` and generates Ignition configs with version `3.4.0-experimental`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.12.0` and generates Ignition configs with version `3.2.0`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
 * **_ignition_** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `arn`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
@@ -28,7 +26,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_replace_** (object): the config that will replace the current.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `arn`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
@@ -43,7 +41,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
-        * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `arn`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+        * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
         * **_inline_** (string): the contents of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
         * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
         * **_compression_** (string): the type of compression used on the certificate (null or gzip). Compression cannot be used with S3.
@@ -108,7 +106,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **_key_file_** (string): options related to the contents of the key file.
       * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, `arn`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the key file. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the key file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
@@ -156,8 +154,6 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
-* **_extensions_** (list of objects): the list of additional packages to be installed.
-  * **name** (string): the name of the package.
 * **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.

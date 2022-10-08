@@ -11,6 +11,9 @@ nav_order: 9
 
 ### Features
 
+- Stabilize OpenShift spec 4.12.0, targeting Ignition spec 3.2.0
+- Add OpenShift spec 4.13.0-experimental, targeting Ignition spec
+  3.4.0-experimental
 - Ship aarch64 macOS binary in GitHub release artifacts
 
 ### Bug fixes
@@ -18,6 +21,7 @@ nav_order: 9
 
 ### Misc. changes
 
+- Roll back to Ignition spec 3.2.0 _(openshift 4.12.0)_
 - The `test` script now executes all tests on all platforms if the necessary GNU
   utilities are available
 - CI jobs now include macOS specific instructions to install GNU utilities for
