@@ -4,10 +4,25 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.16.0 (unreleased)
+## Upcoming Butane 0.17.0 (unreleased)
 
 ### Breaking changes
 
+
+### Features
+
+
+### Bug fixes
+
+
+### Misc. changes
+
+
+### Docs changes
+
+
+
+## Butane 0.16.0 (2022-10-14)
 
 ### Features
 
@@ -16,16 +31,11 @@ nav_order: 9
   3.4.0-experimental
 - Ship aarch64 macOS binary in GitHub release artifacts
 
-### Bug fixes
-
-
 ### Misc. changes
 
 - Roll back to Ignition spec 3.2.0 _(openshift 4.12.0)_
-- The `test` script now executes all tests on all platforms if the necessary GNU
-  utilities are available
-- CI jobs now include macOS specific instructions to install GNU utilities for
-  improved test coverage
+- Require Go 1.17+
+- test: Check docs on macOS and Windows if dependencies are available
 
 ### Docs changes
 
