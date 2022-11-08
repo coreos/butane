@@ -14,6 +14,7 @@ nav_order: 9
 
 ### Bug fixes
 
+- Fix version string in release container
 
 ### Misc. changes
 
