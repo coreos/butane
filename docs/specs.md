@@ -28,6 +28,8 @@ We recommend that you always use the latest **stable** specification for your op
   - [v4.10.0](config-openshift-v4_10.md)
   - [v4.9.0](config-openshift-v4_9.md)
   - [v4.8.0](config-openshift-v4_8.md)
+- RHEL for Edge (`r4e`)
+  - [v1.0.0](config-r4e-v1_0.md)
 
 ## Experimental specification versions
 
@@ -39,6 +41,8 @@ Do not use **experimental** specifications for anything beyond **development and
   - [v1.1.0-experimental](config-flatcar-v1_1-exp.md)
 - OpenShift (`openshift`)
   - [v4.13.0-experimental](config-openshift-v4_13-exp.md)
+- RHEL for Edge (`r4e`)
+  - [v1.1.0-experimental](config-r4e-v1_1-exp.md)
 
 ## Deprecated specification versions
 
@@ -67,4 +71,6 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `openshift`    | 4.11.0              | 3.2.0              |
 | `openshift`    | 4.12.0              | 3.2.0              |
 | `openshift`    | 4.13.0-experimental | 3.4.0-experimental |
+| `r4e`          | 1.0.0               | 3.3.0              |
+| `r4e`          | 1.1.0-experimental  | 3.4.0-experimental |
 | `rhcos`        | 0.1.0               | 3.2.0              |

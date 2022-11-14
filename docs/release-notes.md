@@ -11,6 +11,8 @@ nav_order: 9
 
 ### Features
 
+- Add RHEL for Edge (`r4e`) spec 1.0.0 and 1.1.0-experimental, targeting
+  Ignition spec 3.3.0 and 3.4.0-experimental respectively
 
 ### Bug fixes
 
