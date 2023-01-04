@@ -4,10 +4,28 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.17.0 (unreleased)
+## Upcoming Butane 0.18.0 (unreleased)
 
 ### Breaking changes
 
+
+### Features
+
+
+### Bug fixes
+
+
+### Misc. changes
+
+
+### Docs changes
+
+
+
+## Upcoming Butane 0.17.0 (2023-01-04)
+
+Starting with this release, Butane binaries are signed with the [Fedora 37
+key](https://getfedora.org/security/).
 
 ### Features
 
@@ -17,12 +35,6 @@ nav_order: 9
 ### Bug fixes
 
 - Fix version string in release container
-
-### Misc. changes
-
-
-### Docs changes
-
 
 
 ## Butane 0.16.0 (2022-10-14)
