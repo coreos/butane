@@ -8,6 +8,7 @@ nav_order: 9
 
 ### Breaking changes
 
+- Remove deprecated `rhcos` variant
 
 ### Features
 

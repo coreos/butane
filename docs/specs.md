@@ -44,13 +44,6 @@ Do not use **experimental** specifications for anything beyond **development and
 - RHEL for Edge (`r4e`)
   - [v1.1.0-experimental](config-r4e-v1_1-exp.md)
 
-## Deprecated specification versions
-
-The following configuration specifications are still accepted by Butane but are deprecated and will be removed in a future release:
-
-- RHEL CoreOS (`rhcos`)
-  - [v0.1.0](config-rhcos-v0_1.md)
-
 ## Butane specifications and Ignition specifications
 
 Each version of the Butane specification corresponds to a version of the Ignition specification:
@@ -73,4 +66,3 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `openshift`    | 4.13.0-experimental | 3.4.0-experimental |
 | `r4e`          | 1.0.0               | 3.3.0              |
 | `r4e`          | 1.1.0-experimental  | 3.4.0-experimental |
-| `rhcos`        | 0.1.0               | 3.2.0              |
