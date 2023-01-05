@@ -22,7 +22,7 @@ nav_order: 9
 
 
 
-## Upcoming Butane 0.17.0 (2023-01-04)
+## Butane 0.17.0 (2023-01-04)
 
 Starting with this release, Butane binaries are signed with the [Fedora 37
 key](https://getfedora.org/security/).
