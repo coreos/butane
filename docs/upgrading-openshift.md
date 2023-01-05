@@ -6,7 +6,7 @@ nav_order: 2
 
 # Upgrading OpenShift configs
 
-Occasionally, changes are made to OpenShift Butane configs (those that specify `variant: openshift` or, historically, `variant: rhcos`) that break backward compatibility. While this is not a concern for running machines, since Ignition only runs one time during first boot, it is a concern for those who maintain configuration files. This document serves to detail each of the breaking changes and tries to provide some reasoning for the change. This does not cover all of the changes to the spec - just those that need to be considered when migrating from one version to the next.
+Occasionally, changes are made to OpenShift Butane configs (those that specify `variant: openshift`) that break backward compatibility. While this is not a concern for running machines, since Ignition only runs one time during first boot, it is a concern for those who maintain configuration files. This document serves to detail each of the breaking changes and tries to provide some reasoning for the change. This does not cover all of the changes to the spec - just those that need to be considered when migrating from one version to the next.
 
 {: .no_toc }
 
@@ -52,7 +52,7 @@ There are no functionality changes between versions 4.8.0 and 4.9.0 of the `open
 
 ## From `rhcos` Version 0.1.0 to `openshift` Version 4.8.0
 
-The new `openshift` config variant is intended to work both on the OpenShift Container Platform with RHEL CoreOS, and on OKD with Fedora CoreOS. The `rhcos` variant is still accepted by Butane but will not receive new features.
+The new `openshift` config variant is intended to work both on the OpenShift Container Platform with RHEL CoreOS, and on OKD with Fedora CoreOS. The `rhcos` variant is no longer accepted by Butane.
 
 The `openshift` 4.8.0 specification is not backward-compatible with the `rhcos` 0.1.0 specification. It adds new mandatory metadata fields and removes certain Ignition config fields. In addition, `openshift` configs are transpiled to an OpenShift [MachineConfig] rather than an Ignition config by default. A valid `rhcos` 0.1.0 configuration can be updated to an `openshift` 4.8.0 configuration by changing the variant and version strings and then correcting any errors reported during transpilation.
 
