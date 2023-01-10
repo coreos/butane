@@ -67,6 +67,7 @@ func init() {
 	RegisterTranslator("openshift", "4.13.0-experimental", openshift4_13_exp.ToConfigBytes)
 	RegisterTranslator("r4e", "1.0.0", r4e1_0.ToIgn3_3Bytes)
 	RegisterTranslator("r4e", "1.1.0-experimental", r4e1_1_exp.ToIgn3_4Bytes)
+	RegisterTranslator("rhcos", "0.1.0", unsupportedRhcosVariant)
 }
 
 // RegisterTranslator registers a translator for the specified variant and
@@ -118,4 +119,8 @@ func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte,
 	}
 
 	return translator(input, options)
+}
+
+func unsupportedRhcosVariant(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+	return nil, report.Report{}, common.ErrRhcosVariantUnsupported
 }

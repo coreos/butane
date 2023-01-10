@@ -27,6 +27,9 @@ var (
 	ErrInvalidSourceConfig    = errors.New("source config is invalid")
 	ErrInvalidGeneratedConfig = errors.New("config generated was invalid")
 
+	// deprecated variant/version
+	ErrRhcosVariantUnsupported = errors.New("rhcos variant has been removed; use openshift variant instead: https://coreos.github.io/butane/upgrading-openshift/")
+
 	// resources and trees
 	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
 	ErrFilesDirEscape         = errors.New("local file path traverses outside the files directory")
