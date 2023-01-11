@@ -15,6 +15,7 @@ nav_order: 9
 
 ### Bug fixes
 
+- Allow setting `storage.trees.local` to the `--files-dir` directory
 
 ### Misc. changes
 
