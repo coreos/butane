@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/clarketm/json v1.17.1
-	github.com/coreos/go-semver v0.3.0
+	github.com/coreos/go-semver v0.3.1
 	github.com/coreos/go-systemd/v22 v22.5.0
 	github.com/coreos/ignition/v2 v2.14.0
 	github.com/coreos/vcontext v0.0.0-20220810162454-88bd546c634c
