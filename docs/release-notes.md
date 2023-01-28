@@ -18,6 +18,8 @@ nav_order: 9
 
 ### Misc. changes
 
+- Drop `LuksOption` and `RaidOption` types _(Go API for fcos 1.5.0-experimental,
+  flatcar 1.1.0-experimental, openshift 4.13.0-experimental)_
 
 ### Docs changes
 
