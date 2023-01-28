@@ -208,6 +208,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
       * **thumbprint** (string): thumbprint of a trusted signing key.
     * **_tpm2_** (bool): whether or not to use a tpm2 device.
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 * **_extensions_** (list of objects): the list of additional packages to be installed.

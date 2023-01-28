@@ -250,6 +250,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		rendered.Storage.Luks = []types.Luks{{
 			Clevis:     clevis,
 			Device:     &luksDevice,
+			Discard:    c.BootDevice.Luks.Discard,
 			Label:      util.StrToPtr("luks-root"),
 			Name:       "root",
 			WipeVolume: util.BoolToPtr(true),
@@ -257,6 +258,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		lpath := path.New("yaml", "boot_device", "luks")
 		rpath := path.New("json", "storage", "luks", 0)
 		renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("clevis")))
+		renderedTranslations.AddTranslation(lpath.Append("discard"), rpath.Append("discard"))
 		for _, f := range []string{"device", "label", "name", "wipeVolume"} {
 			renderedTranslations.AddTranslation(lpath, rpath.Append(f))
 		}
@@ -297,6 +299,8 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 
 func translateBootDeviceLuks(from BootDeviceLuks, options common.TranslateOptions) (to types.Clevis, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
+	// Discard field is handled by the caller because it doesn't go
+	// into types.Clevis
 	tm, r = translate.Prefixed(tr, "tang", &from.Tang, &to.Tang)
 	translate.MergeP(tr, tm, &r, "threshold", &from.Threshold, &to.Threshold)
 	translate.MergeP(tr, tm, &r, "tpm2", &from.Tpm2, &to.Tpm2)
