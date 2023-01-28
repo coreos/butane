@@ -149,7 +149,9 @@ The Flatcar configuration is a YAML document conforming to the following specifi
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_label_** (string): the label of the luks device.
     * **_uuid_** (string): the uuid of the luks device.
-    * **_options_** (list of strings): any additional options to be passed to the cryptsetup utility.
+    * **_options_** (list of strings): any additional options to be passed to `cryptsetup luksFormat`.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
+    * **_open_options_** (list of strings): any additional options to be passed to `cryptsetup luksOpen`. Supported options will be persistently written to the luks volume.
     * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [the Ignition documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.

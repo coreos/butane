@@ -12,6 +12,10 @@ nav_order: 9
 
 ### Features
 
+- Allow enabling discard passthrough on LUKS devices _(fcos 1.5.0-exp,
+  flatcar 1.1.0-exp, openshift 4.13.0-exp)_
+- Allow specifying arbitrary LUKS open options _(fcos 1.5.0-exp,
+  flatcar 1.1.0-exp, openshift 4.13.0-exp)_
 
 ### Bug fixes
 
