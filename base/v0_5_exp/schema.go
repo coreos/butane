@@ -80,8 +80,6 @@ type Filesystem struct {
 	WithMountUnit  *bool    `yaml:"with_mount_unit" butane:"auto_skip"` // Added, not in Ignition spec
 }
 
-type FilesystemOption string
-
 type Group string
 
 type HTTPHeader struct {
