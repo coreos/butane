@@ -80,8 +80,6 @@ type Filesystem struct {
 	WithMountUnit  *bool    `yaml:"with_mount_unit" butane:"auto_skip"` // Added, not in Ignition spec
 }
 
-type FilesystemOption string
-
 type Group string
 
 type HTTPHeader struct {
@@ -120,17 +118,15 @@ type Link struct {
 }
 
 type Luks struct {
-	Clevis     Clevis       `yaml:"clevis"`
-	Device     *string      `yaml:"device"`
-	KeyFile    Resource     `yaml:"key_file"`
-	Label      *string      `yaml:"label"`
-	Name       string       `yaml:"name"`
-	Options    []LuksOption `yaml:"options"`
-	UUID       *string      `yaml:"uuid"`
-	WipeVolume *bool        `yaml:"wipe_volume"`
+	Clevis     Clevis   `yaml:"clevis"`
+	Device     *string  `yaml:"device"`
+	KeyFile    Resource `yaml:"key_file"`
+	Label      *string  `yaml:"label"`
+	Name       string   `yaml:"name"`
+	Options    []string `yaml:"options"`
+	UUID       *string  `yaml:"uuid"`
+	WipeVolume *bool    `yaml:"wipe_volume"`
 }
-
-type LuksOption string
 
 type NodeGroup struct {
 	ID   *int    `yaml:"id"`
@@ -191,14 +187,12 @@ type Proxy struct {
 }
 
 type Raid struct {
-	Devices []Device     `yaml:"devices"`
-	Level   *string      `yaml:"level"`
-	Name    string       `yaml:"name"`
-	Options []RaidOption `yaml:"options"`
-	Spares  *int         `yaml:"spares"`
+	Devices []Device `yaml:"devices"`
+	Level   *string  `yaml:"level"`
+	Name    string   `yaml:"name"`
+	Options []string `yaml:"options"`
+	Spares  *int     `yaml:"spares"`
 }
-
-type RaidOption string
 
 type Resource struct {
 	Compression  *string      `yaml:"compression"`

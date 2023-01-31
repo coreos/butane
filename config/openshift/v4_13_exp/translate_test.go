@@ -118,23 +118,23 @@ func TestTranslateConfig(t *testing.T) {
 								},
 								{
 									Name:    "b",
-									Options: []base.LuksOption{"b", "b"},
+									Options: []string{"b", "b"},
 								},
 								{
 									Name:    "c",
-									Options: []base.LuksOption{"c", "--cipher", "c"},
+									Options: []string{"c", "--cipher", "c"},
 								},
 								{
 									Name:    "d",
-									Options: []base.LuksOption{"--cipher=z"},
+									Options: []string{"--cipher=z"},
 								},
 								{
 									Name:    "e",
-									Options: []base.LuksOption{"-c", "z"},
+									Options: []string{"-c", "z"},
 								},
 								{
 									Name:    "f",
-									Options: []base.LuksOption{"--ciphertext"},
+									Options: []string{"--ciphertext"},
 								},
 							},
 						},
