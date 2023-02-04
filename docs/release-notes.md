@@ -19,6 +19,7 @@ nav_order: 9
 
 ### Bug fixes
 
+- Use systemd default dependencies in mount units for Tang-backed LUKS volumes
 - Allow setting `storage.trees.local` to the `--files-dir` directory
 
 ### Misc. changes
