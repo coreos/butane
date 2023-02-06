@@ -118,14 +118,16 @@ type Link struct {
 }
 
 type Luks struct {
-	Clevis     Clevis   `yaml:"clevis"`
-	Device     *string  `yaml:"device"`
-	KeyFile    Resource `yaml:"key_file"`
-	Label      *string  `yaml:"label"`
-	Name       string   `yaml:"name"`
-	Options    []string `yaml:"options"`
-	UUID       *string  `yaml:"uuid"`
-	WipeVolume *bool    `yaml:"wipe_volume"`
+	Clevis      Clevis   `yaml:"clevis"`
+	Device      *string  `yaml:"device"`
+	Discard     *bool    `yaml:"discard"`
+	KeyFile     Resource `yaml:"key_file"`
+	Label       *string  `yaml:"label"`
+	Name        string   `yaml:"name"`
+	OpenOptions []string `yaml:"open_options"`
+	Options     []string `yaml:"options"`
+	UUID        *string  `yaml:"uuid"`
+	WipeVolume  *bool    `yaml:"wipe_volume"`
 }
 
 type NodeGroup struct {

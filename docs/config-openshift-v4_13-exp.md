@@ -118,7 +118,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`.
     * **_label_** (string): the label of the luks device.
     * **_uuid_** (string): the uuid of the luks device.
-    * **_options_** (list of strings): any additional options to be passed to the cryptsetup utility.
+    * **_options_** (list of strings): any additional options to be passed to `cryptsetup luksFormat`.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
+    * **_open_options_** (list of strings): any additional options to be passed to `cryptsetup luksOpen`. Supported options will be persistently written to the luks volume.
     * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [the Ignition documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
     * **_clevis_** (object): describes the clevis configuration for the luks device.
       * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
@@ -154,6 +156,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **thumbprint** (string): thumbprint of a trusted signing key.
     * **_tpm2_** (bool): whether or not to use a tpm2 device.
     * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 * **_extensions_** (list of objects): the list of additional packages to be installed.

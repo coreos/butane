@@ -151,6 +151,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			Config{
 				BootDevice: BootDevice{
 					Luks: BootDeviceLuks{
+						Discard: util.BoolToPtr(true),
 						Tang: []base.Tang{{
 							URL:        "https://example.com/",
 							Thumbprint: util.StrToPtr("z"),
@@ -176,6 +177,7 @@ func TestTranslateBootDevice(t *testing.T) {
 								Tpm2:      util.BoolToPtr(true),
 							},
 							Device:     util.StrToPtr("/dev/disk/by-partlabel/root"),
+							Discard:    util.BoolToPtr(true),
 							Label:      util.StrToPtr("luks-root"),
 							Name:       "root",
 							WipeVolume: util.BoolToPtr(true),
@@ -199,6 +201,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
 				{From: path.New("yaml", "boot_device", "luks", "threshold"), To: path.New("json", "storage", "luks", 0, "clevis", "threshold")},
 				{From: path.New("yaml", "boot_device", "luks", "tpm2"), To: path.New("json", "storage", "luks", 0, "clevis", "tpm2")},
+				{From: path.New("yaml", "boot_device", "luks", "discard"), To: path.New("json", "storage", "luks", 0, "discard")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
@@ -458,6 +461,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			Config{
 				BootDevice: BootDevice{
 					Luks: BootDeviceLuks{
+						Discard: util.BoolToPtr(true),
 						Tang: []base.Tang{{
 							URL:        "https://example.com/",
 							Thumbprint: util.StrToPtr("z"),
@@ -578,6 +582,7 @@ func TestTranslateBootDevice(t *testing.T) {
 								Tpm2:      util.BoolToPtr(true),
 							},
 							Device:     util.StrToPtr("/dev/md/md-root"),
+							Discard:    util.BoolToPtr(true),
 							Label:      util.StrToPtr("luks-root"),
 							Name:       "root",
 							WipeVolume: util.BoolToPtr(true),
@@ -705,6 +710,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
 				{From: path.New("yaml", "boot_device", "luks", "threshold"), To: path.New("json", "storage", "luks", 0, "clevis", "threshold")},
 				{From: path.New("yaml", "boot_device", "luks", "tpm2"), To: path.New("json", "storage", "luks", 0, "clevis", "tpm2")},
+				{From: path.New("yaml", "boot_device", "luks", "discard"), To: path.New("json", "storage", "luks", 0, "discard")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
@@ -733,6 +739,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				BootDevice: BootDevice{
 					Layout: util.StrToPtr("aarch64"),
 					Luks: BootDeviceLuks{
+						Discard: util.BoolToPtr(true),
 						Tang: []base.Tang{{
 							URL:        "https://example.com/",
 							Thumbprint: util.StrToPtr("z"),
@@ -828,6 +835,7 @@ func TestTranslateBootDevice(t *testing.T) {
 								Tpm2:      util.BoolToPtr(true),
 							},
 							Device:     util.StrToPtr("/dev/md/md-root"),
+							Discard:    util.BoolToPtr(true),
 							Label:      util.StrToPtr("luks-root"),
 							Name:       "root",
 							WipeVolume: util.BoolToPtr(true),
@@ -926,6 +934,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
 				{From: path.New("yaml", "boot_device", "luks", "threshold"), To: path.New("json", "storage", "luks", 0, "clevis", "threshold")},
 				{From: path.New("yaml", "boot_device", "luks", "tpm2"), To: path.New("json", "storage", "luks", 0, "clevis", "tpm2")},
+				{From: path.New("yaml", "boot_device", "luks", "discard"), To: path.New("json", "storage", "luks", 0, "discard")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
@@ -954,6 +963,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				BootDevice: BootDevice{
 					Layout: util.StrToPtr("ppc64le"),
 					Luks: BootDeviceLuks{
+						Discard: util.BoolToPtr(true),
 						Tang: []base.Tang{{
 							URL:        "https://example.com/",
 							Thumbprint: util.StrToPtr("z"),
@@ -1049,6 +1059,7 @@ func TestTranslateBootDevice(t *testing.T) {
 								Tpm2:      util.BoolToPtr(true),
 							},
 							Device:     util.StrToPtr("/dev/md/md-root"),
+							Discard:    util.BoolToPtr(true),
 							Label:      util.StrToPtr("luks-root"),
 							Name:       "root",
 							WipeVolume: util.BoolToPtr(true),
@@ -1127,6 +1138,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
 				{From: path.New("yaml", "boot_device", "luks", "threshold"), To: path.New("json", "storage", "luks", 0, "clevis", "threshold")},
 				{From: path.New("yaml", "boot_device", "luks", "tpm2"), To: path.New("json", "storage", "luks", 0, "clevis", "tpm2")},
+				{From: path.New("yaml", "boot_device", "luks", "discard"), To: path.New("json", "storage", "luks", 0, "discard")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
@@ -1185,6 +1197,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				},
 				BootDevice: BootDevice{
 					Luks: BootDeviceLuks{
+						Discard: util.BoolToPtr(true),
 						Tang: []base.Tang{{
 							URL:        "https://example.com/",
 							Thumbprint: util.StrToPtr("z"),
@@ -1282,6 +1295,7 @@ func TestTranslateBootDevice(t *testing.T) {
 								Tpm2:      util.BoolToPtr(true),
 							},
 							Device:     util.StrToPtr("/dev/md/md-root"),
+							Discard:    util.BoolToPtr(true),
 							Label:      util.StrToPtr("luks-root"),
 							Name:       "root",
 							WipeVolume: util.BoolToPtr(true),
@@ -1377,6 +1391,7 @@ func TestTranslateBootDevice(t *testing.T) {
 				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
 				{From: path.New("yaml", "boot_device", "luks", "threshold"), To: path.New("json", "storage", "luks", 0, "clevis", "threshold")},
 				{From: path.New("yaml", "boot_device", "luks", "tpm2"), To: path.New("json", "storage", "luks", 0, "clevis", "tpm2")},
+				{From: path.New("yaml", "boot_device", "luks", "discard"), To: path.New("json", "storage", "luks", 0, "discard")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
 				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
