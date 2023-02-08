@@ -78,9 +78,6 @@ var (
 	ErrLuksSupport       = errors.New("luks is not supported in this spec version")
 	ErrRaidSupport       = errors.New("raid is not supported in this spec version")
 
-	// Extensions
-	ErrExtensionNameRequired = errors.New("field \"name\" is required")
-
 	// Grub
 	ErrGrubUserNameNotSpecified = errors.New("field \"name\" is required")
 	ErrGrubPasswordNotSpecified = errors.New("field \"password_hash\" is required")
