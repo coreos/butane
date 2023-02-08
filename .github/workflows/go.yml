@@ -40,5 +40,5 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       if: ${{ matrix.os == 'ubuntu-latest' }}
       with:
-        version: v1.48.0
+        version: v1.51.1
         args: -E=gofmt --timeout=30m0s
