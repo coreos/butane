@@ -159,8 +159,6 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
-* **_extensions_** (list of objects): the list of additional packages to be installed.
-  * **name** (string): the name of the package.
 * **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
