@@ -264,14 +264,14 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 	}
 	for i, user := range mc.Spec.Config.Passwd.Users {
 		if user.Name == "core" {
-			// SSHAuthorizedKeys is managed; other fields are not
+			// PasswordHash and SSHAuthorizedKeys are managed; other fields are not
 			v := reflect.ValueOf(user)
 			t := v.Type()
 			for j := 0; j < v.NumField(); j++ {
 				fv := v.Field(j)
 				ft := t.Field(j)
 				switch ft.Name {
-				case "Name", "SSHAuthorizedKeys":
+				case "Name", "PasswordHash", "SSHAuthorizedKeys":
 					continue
 				default:
 					if fv.IsValid() && !fv.IsZero() {
