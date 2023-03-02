@@ -227,8 +227,9 @@ type Systemd struct {
 }
 
 type Tang struct {
-	Thumbprint *string `yaml:"thumbprint"`
-	URL        string  `yaml:"url"`
+	Thumbprint    *string `yaml:"thumbprint"`
+	URL           string  `yaml:"url"`
+	Advertisement *string `yaml:"advertisement"`
 }
 
 type TLS struct {
