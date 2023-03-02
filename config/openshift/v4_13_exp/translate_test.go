@@ -405,6 +405,7 @@ func TestValidateSupport(t *testing.T) {
 							Users: []base.PasswdUser{
 								{
 									Name:              "core",
+									PasswordHash:      util.StrToPtr("corned beef"),
 									SSHAuthorizedKeys: []base.SSHAuthorizedKey{"value"},
 								},
 							},
@@ -550,7 +551,6 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_create_home")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_log_init")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "no_user_group")},
-				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "password_hash")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "primary_group")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "shell")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "should_exist")},
