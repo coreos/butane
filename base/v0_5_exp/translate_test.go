@@ -1816,6 +1816,79 @@ func TestTranslateKernelArguments(t *testing.T) {
 	}
 }
 
+// TestTranslateLuks test translating the butane storage.luks.clevis.tang.[i] arguments to ignition storage.luks.clevis.tang.[i] entries.
+func TestTranslateTang(t *testing.T) {
+	tests := []struct {
+		in  Config
+		out types.Config
+	}{
+		// Luks with tang and all options set, returns a valid ignition config with the same options
+		{
+			Config{
+				Storage: Storage{
+					Filesystems: []Filesystem{
+						{
+							Device: "/dev/mapper/foo-bar",
+							Path:   util.StrToPtr("/var/lib/containers"),
+						},
+					},
+					Luks: []Luks{
+						{
+							Name:   "foo-bar",
+							Device: util.StrToPtr("/dev/bar"),
+							Clevis: Clevis{
+								Tang: []Tang{
+									{
+										URL:           "http://example.com",
+										Thumbprint:    util.StrToPtr("xyzzy"),
+										Advertisement: util.StrToPtr("{\"payload\": \"xyzzy\"}"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Filesystems: []types.Filesystem{
+						{
+							Device: "/dev/mapper/foo-bar",
+							Path:   util.StrToPtr("/var/lib/containers"),
+						},
+					},
+					Luks: []types.Luks{
+						{
+							Name:   "foo-bar",
+							Device: util.StrToPtr("/dev/bar"),
+							Clevis: types.Clevis{
+								Tang: []types.Tang{
+									{
+										URL:           "http://example.com",
+										Thumbprint:    util.StrToPtr("xyzzy"),
+										Advertisement: util.StrToPtr("{\"payload\": \"xyzzy\"}"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			assert.Equal(t, report.Report{}, r, "non-empty report")
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+		})
+	}
+}
+
 // TestToIgn3_4 tests the config.ToIgn3_4 function ensuring it will generate a valid config even when empty. Not much else is
 // tested since it uses the Ignition translation code which has its own set of tests.
 func TestToIgn3_4(t *testing.T) {

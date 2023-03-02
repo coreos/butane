@@ -219,6 +219,73 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			report.Report{},
 		},
+		// LUKS, x86_64, with Tang set for offline provisioning
+		{
+			Config{
+				BootDevice: BootDevice{
+					Luks: BootDeviceLuks{
+						Tang: []base.Tang{{
+							URL:           "https://example.com/",
+							Thumbprint:    util.StrToPtr("z"),
+							Advertisement: util.StrToPtr("{\"payload\": \"xyzzy\"}"),
+						}},
+					},
+				},
+			},
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.4.0-experimental",
+				},
+				Storage: types.Storage{
+					Luks: []types.Luks{
+						{
+							Clevis: types.Clevis{
+								Tang: []types.Tang{{
+									URL:           "https://example.com/",
+									Thumbprint:    util.StrToPtr("z"),
+									Advertisement: util.StrToPtr("{\"payload\": \"xyzzy\"}"),
+								}},
+							},
+							Device:     util.StrToPtr("/dev/disk/by-partlabel/root"),
+							Label:      util.StrToPtr("luks-root"),
+							Name:       "root",
+							WipeVolume: util.BoolToPtr(true),
+						},
+					},
+					Filesystems: []types.Filesystem{
+						{
+							Device:         "/dev/mapper/root",
+							Format:         util.StrToPtr("xfs"),
+							Label:          util.StrToPtr("root"),
+							WipeFilesystem: util.BoolToPtr(true),
+						},
+					},
+				},
+			},
+			[]translate.Translation{
+				{From: path.New("yaml", "version"), To: path.New("json", "ignition", "version")},
+				{From: path.New("yaml", "boot_device", "luks", "tang", 0, "url"), To: path.New("json", "storage", "luks", 0, "clevis", "tang", 0, "url")},
+				{From: path.New("yaml", "boot_device", "luks", "tang", 0, "thumbprint"), To: path.New("json", "storage", "luks", 0, "clevis", "tang", 0, "thumbprint")},
+				{From: path.New("yaml", "boot_device", "luks", "tang", 0, "advertisement"), To: path.New("json", "storage", "luks", 0, "clevis", "tang", 0, "advertisement")},
+				{From: path.New("yaml", "boot_device", "luks", "tang", 0), To: path.New("json", "storage", "luks", 0, "clevis", "tang", 0)},
+				{From: path.New("yaml", "boot_device", "luks", "tang"), To: path.New("json", "storage", "luks", 0, "clevis", "tang")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "clevis")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "device")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "label")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "name")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0, "wipeVolume")},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks", 0)},
+				{From: path.New("yaml", "boot_device", "luks"), To: path.New("json", "storage", "luks")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems", 0, "device")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems", 0, "format")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems", 0, "label")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems", 0, "wipeFilesystem")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems", 0)},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage", "filesystems")},
+				{From: path.New("yaml", "boot_device"), To: path.New("json", "storage")},
+			},
+			report.Report{},
+		},
 		// 3-disk mirror, x86_64
 		{
 			Config{
