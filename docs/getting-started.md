@@ -8,6 +8,21 @@ Butane (formerly the Fedora CoreOS Config Transpiler) is a tool that consumes a 
 
 Butane configs are YAML files conforming to Butane's schema. For more information on the schema, take a look at the [configuration specifications][spec].
 
+### Online Converter
+Here is the link to an online converter: https://butane.meixxi.com/.
+
+If you want to run this online converer locally, you can do this via docker:
+```
+docker run -p 8080:8080 ghcr.io/meixxi/butane-converter:latest
+```
+
+You can also use directly the online converters REST API:
+```
+curl --data-binary "@config.bu.yml" https://butane.meixxi.com/api/v0/convert
+```
+
+Project Website: https://github.com/meiXXI/butane-converter.
+
 ### Getting Butane
 
 `butane` can be run from a container image with `podman` or `docker`, installed from Fedora package repositories or downloaded as a standalone binary.
