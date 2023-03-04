@@ -33,6 +33,8 @@ nav_order: 9
 
 ### Docs changes
 
+- Document that `hash` fields describe decompressed data
+- Clarify spec docs for `files`/`luks` `hash` fields
 
 
 ## Butane 0.17.0 (2023-01-04)
