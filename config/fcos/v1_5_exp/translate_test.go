@@ -24,7 +24,7 @@ import (
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_4_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_4/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -45,7 +45,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			Config{},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 			},
 			[]translate.Translation{
@@ -88,7 +88,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -163,7 +163,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Luks: []types.Luks{
@@ -234,7 +234,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Luks: []types.Luks{
@@ -297,7 +297,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -543,7 +543,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -821,7 +821,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1045,7 +1045,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1279,7 +1279,7 @@ func TestTranslateBootDevice(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Disks: []types.Disk{
@@ -1542,7 +1542,7 @@ func TestTranslateGrub(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
@@ -1590,7 +1590,7 @@ func TestTranslateGrub(t *testing.T) {
 			},
 			types.Config{
 				Ignition: types.Ignition{
-					Version: "3.4.0-experimental",
+					Version: "3.4.0",
 				},
 				Storage: types.Storage{
 					Filesystems: []types.Filesystem{
