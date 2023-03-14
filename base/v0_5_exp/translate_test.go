@@ -1939,14 +1939,8 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline)}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys", 0),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys", 0), To: path.New("json", "sshAuthorizedKeys", 0)},
 			},
 			"",
 			sshKeyDir,
@@ -1956,14 +1950,8 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 0)},
 			},
 			"",
 			sshKeyDir,
@@ -1980,34 +1968,13 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 				types.SSHAuthorizedKey(""),
 			}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 1),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 2),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 3),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 4),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 5),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 0)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 1)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 2)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 3)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 4)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 5)},
 			},
 			"",
 			sshKeyDir,
@@ -2017,18 +1984,9 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline), types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys", 0),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 1),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys", 0), To: path.New("json", "sshAuthorizedKeys", 0)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 1)},
 			},
 			"",
 			sshKeyDir,
@@ -2046,38 +2004,14 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 				types.SSHAuthorizedKey(""),
 			}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys", 0),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 1),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 2),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 3),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 4),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 5),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 6),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys", 0), To: path.New("json", "sshAuthorizedKeys", 0)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 1)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 2)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 3)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 4)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 5)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 6)},
 			},
 			"",
 			sshKeyDir,
@@ -2087,14 +2021,8 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyEmptyFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey("")}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 0)},
 			},
 			"",
 			sshKeyDir,
@@ -2104,18 +2032,9 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyBlankFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(""), types.SSHAuthorizedKey("\t")}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 1),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 0)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 1)},
 			},
 			"",
 			sshKeyDir,
@@ -2129,22 +2048,10 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 				types.SSHAuthorizedKey(""),
 			}},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 0),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 1),
-				},
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys", 2),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 0)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 1)},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys", 2)},
 			},
 			"",
 			sshKeyDir,
@@ -2154,10 +2061,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyNonExistingFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
 			osNotFound,
 			sshKeyDir,
@@ -2167,10 +2071,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
 			common.ErrNoFilesDir.Error(),
 			"",
@@ -2180,10 +2081,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "ssh_authorized_keys_local"),
-					To:   path.New("json", "sshAuthorizedKeys"),
-				},
+				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
 			osNotFound,
 			randomDir,
@@ -2255,10 +2153,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Contents: &unitDefinitionFile, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "contents_local"),
-					To:   path.New("json", "contents"),
-				},
+				{From: path.New("yaml", "contents_local"), To: path.New("json", "contents")},
 			},
 			"",
 			unitDir,
@@ -2276,10 +2171,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{ContentsLocal: &unitEmptyFileName, Name: unitName},
 			types.Unit{Contents: &unitEmptyDefinition, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "contents_local"),
-					To:   path.New("json", "contents"),
-				},
+				{From: path.New("yaml", "contents_local"), To: path.New("json", "contents")},
 			},
 			"",
 			unitDir,
@@ -2321,10 +2213,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionFile}}, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "dropins", 0, "contents_local"),
-					To:   path.New("json", "dropins", 0, "contents"),
-				},
+				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
 			"",
 			unitDir,
@@ -2334,10 +2223,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "dropins", 0, "contents_local"),
-					To:   path.New("json", "dropins", 0, "contents"),
-				},
+				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
 			osNotFound,
 			unitDir,
@@ -2347,10 +2233,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitEmptyFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitEmptyDefinition}}, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "dropins", 0, "contents_local"),
-					To:   path.New("json", "dropins", 0, "contents"),
-				},
+				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
 			"",
 			unitDir,
@@ -2360,10 +2243,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "dropins", 0, "contents_local"),
-					To:   path.New("json", "dropins", 0, "contents"),
-				},
+				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
 			common.ErrNoFilesDir.Error(),
 			"",
@@ -2373,10 +2253,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{
-				{
-					From: path.New("yaml", "dropins", 0, "contents_local"),
-					To:   path.New("json", "dropins", 0, "contents"),
-				},
+				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
 			osNotFound,
 			randomDir,
