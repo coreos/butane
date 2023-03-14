@@ -275,7 +275,7 @@ func readSshKeyFile(filesDir string, sshKeyFile string) (string, error) {
 
 func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateUnitDropIn)
+	tr.AddCustomTranslator(translateDropin)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "dropins", &from.Dropins, &to.Dropins)
 	translate.MergeP(tr, tm, &r, "enabled", &from.Enabled, &to.Enabled)
@@ -308,7 +308,7 @@ func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, t
 	return
 }
 
-func translateUnitDropIn(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
+func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
@@ -334,8 +334,7 @@ func translateUnitDropIn(from Dropin, options common.TranslateOptions) (to types
 			r.AddOnError(c, err)
 			return
 		}
-		stringContents := string(contents)
-		to.Contents = util.StrToPtr(stringContents)
+		to.Contents = util.StrToPtr(string(contents))
 	}
 
 	return

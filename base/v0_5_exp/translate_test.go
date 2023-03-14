@@ -1935,7 +1935,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid ssh_keys_inline",
+			"valid inline keys",
 			PasswdUser{SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline)}},
 			[]translate.Translation{
@@ -1952,7 +1952,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid ssh_keys_local",
+			"valid local keys",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
@@ -1969,7 +1969,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid ssh_keys_local with multiple keys per file",
+			"valid local keys with multiple keys per file",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKey2),
@@ -2013,7 +2013,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid ssh_keys_local and ssh_keys",
+			"valid local and inline keys",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline), types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
@@ -2034,7 +2034,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid ssh_keys_local with multiple keys per file and ssh_keys",
+			"valid local keys with multiple keys per file and inline keys",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKeyInline),
@@ -2083,7 +2083,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid empty ssh_keys_local file",
+			"valid empty local file",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyEmptyFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey("")}},
 			[]translate.Translation{
@@ -2100,7 +2100,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid blank ssh_keys_local file",
+			"valid blank local file",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyBlankFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(""), types.SSHAuthorizedKey("\t")}},
 			[]translate.Translation{
@@ -2121,7 +2121,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"valid Windows style line endings in ssh_keys_local file",
+			"valid Windows style line endings in local file",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyWindowsLineEndingsFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKey1),
@@ -2150,7 +2150,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			sshKeyDir,
 		},
 		{
-			"non existing ssh_keys_local file name",
+			"missing local file",
 			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyNonExistingFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
@@ -2317,7 +2317,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			"",
 		},
 		{
-			"valid dropin_contents_local",
+			"valid dropin contents_local",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionFile}}, Name: unitName},
 			[]translate.Translation{
@@ -2330,7 +2330,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			unitDir,
 		},
 		{
-			"non existing dropin_contents_local file name",
+			"non existing dropin contents_local file name",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{
@@ -2343,7 +2343,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			unitDir,
 		},
 		{
-			"valid empty dropin_contents_local file",
+			"valid empty dropin contents_local file",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitEmptyFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitEmptyDefinition}}, Name: unitName},
 			[]translate.Translation{
