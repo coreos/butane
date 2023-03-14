@@ -315,8 +315,6 @@ func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dro
 
 	if util.NotEmpty(from.ContentsLocal) {
 		c := path.New("yaml", "contents_local")
-		tm.AddTranslation(c, path.New("json", "contents"))
-
 		if options.FilesDir == "" {
 			r.AddOnError(c, common.ErrNoFilesDir)
 			return
@@ -334,6 +332,7 @@ func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dro
 			r.AddOnError(c, err)
 			return
 		}
+		tm.AddTranslation(c, path.New("json", "contents"))
 		to.Contents = util.StrToPtr(string(contents))
 	}
 

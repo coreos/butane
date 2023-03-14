@@ -2243,9 +2243,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			"non existing dropin contents_local file name",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
-			[]translate.Translation{
-				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
-			},
+			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: open " + filepath.Join(unitDir, unitNonExistingFileName) + ": " + osNotFound + "\n",
 			unitDir,
 		},
@@ -2263,9 +2261,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			"missing embed directory for dropin",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
-			[]translate.Translation{
-				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
-			},
+			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: " + common.ErrNoFilesDir.Error() + "\n",
 			"",
 		},
@@ -2273,9 +2269,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			"wrong embed directory for dropin",
 			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
-			[]translate.Translation{
-				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
-			},
+			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: open " + filepath.Join(randomDir, unitName) + ": " + osNotFound + "\n",
 			randomDir,
 		},
