@@ -79,14 +79,14 @@ func (t Tree) Validate(c path.ContextPath) (r report.Report) {
 
 func (rs Unit) Validate(c path.ContextPath) (r report.Report) {
 	if rs.ContentsLocal != nil && rs.Contents != nil {
-		r.AddOnError(c.Append("inline"), common.ErrTooManySystemdSources)
+		r.AddOnError(c.Append("contents_local"), common.ErrTooManySystemdSources)
 	}
 	return
 }
 
 func (rs Dropin) Validate(c path.ContextPath) (r report.Report) {
 	if rs.ContentsLocal != nil && rs.Contents != nil {
-		r.AddOnError(c.Append("inline"), common.ErrTooManySystemdSources)
+		r.AddOnError(c.Append("contents_local"), common.ErrTooManySystemdSources)
 	}
 	return
 }

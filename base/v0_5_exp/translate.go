@@ -143,26 +143,11 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 
 	if from.Local != nil {
 		c := path.New("yaml", "local")
-
-		if options.FilesDir == "" {
-			r.AddOnError(c, common.ErrNoFilesDir)
-			return
-		}
-
-		// calculate file path within FilesDir and check for
-		// path traversal
-		filePath := filepath.Join(options.FilesDir, filepath.FromSlash(*from.Local))
-		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-
-		contents, err := os.ReadFile(filePath)
+		contents, err := baseutil.ReadLocalFile(*from.Local, options.FilesDir)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
 		}
-
 		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
 		if err != nil {
 			r.AddOnError(c, err)
@@ -241,17 +226,17 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 			return
 		}
 
-		for _, sshKeyFile := range from.SSHAuthorizedKeysLocal {
-			sshKeys, err := readSshKeyFile(options.FilesDir, sshKeyFile)
+		for keyFileIndex, sshKeyFile := range from.SSHAuthorizedKeysLocal {
+			sshKeys, err := baseutil.ReadLocalFile(sshKeyFile, options.FilesDir)
 			if err != nil {
-				r.AddOnError(c, err)
+				r.AddOnError(c.Append(keyFileIndex), err)
 				continue
 			}
-
-			// offset for TranslationSets when both ssh_authorized_keys and ssh_authorized_keys_local are available
-			offset := len(to.SSHAuthorizedKeys)
-			for i, line := range regexp.MustCompile("\r?\n").Split(sshKeys, -1) {
-				tm.AddTranslation(c, path.New("json", "sshAuthorizedKeys", i+offset))
+			for _, line := range regexp.MustCompile("\r?\n").Split(string(sshKeys), -1) {
+				if line == "" {
+					continue
+				}
+				tm.AddTranslation(c.Append(keyFileIndex), path.New("json", "sshAuthorizedKeys", len(to.SSHAuthorizedKeys)))
 				to.SSHAuthorizedKeys = append(to.SSHAuthorizedKeys, types.SSHAuthorizedKey(line))
 			}
 		}
@@ -260,22 +245,9 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 	return
 }
 
-func readSshKeyFile(filesDir string, sshKeyFile string) (string, error) {
-	// calculate file path within FilesDir and check for path traversal
-	filePath := filepath.Join(filesDir, sshKeyFile)
-	if err := baseutil.EnsurePathWithinFilesDir(filePath, filesDir); err != nil {
-		return "", err
-	}
-	contents, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", err
-	}
-	return string(contents), nil
-}
-
 func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateUnitDropIn)
+	tr.AddCustomTranslator(translateDropin)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "dropins", &from.Dropins, &to.Dropins)
 	translate.MergeP(tr, tm, &r, "enabled", &from.Enabled, &to.Enabled)
@@ -284,19 +256,7 @@ func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, t
 
 	if util.NotEmpty(from.ContentsLocal) {
 		c := path.New("yaml", "contents_local")
-		if options.FilesDir == "" {
-			r.AddOnError(c, common.ErrNoFilesDir)
-			return
-		}
-
-		// calculate file path within FilesDir and check for
-		// path traversal
-		filePath := filepath.Join(options.FilesDir, *from.ContentsLocal)
-		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		contents, err := os.ReadFile(filePath)
+		contents, err := baseutil.ReadLocalFile(*from.ContentsLocal, options.FilesDir)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
@@ -308,34 +268,20 @@ func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, t
 	return
 }
 
-func translateUnitDropIn(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
+func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
 
 	if util.NotEmpty(from.ContentsLocal) {
 		c := path.New("yaml", "contents_local")
-		tm.AddTranslation(c, path.New("json", "contents"))
-
-		if options.FilesDir == "" {
-			r.AddOnError(c, common.ErrNoFilesDir)
-			return
-		}
-
-		// calculate file path within FilesDir and check for
-		// path traversal
-		filePath := filepath.Join(options.FilesDir, *from.ContentsLocal)
-		if err := baseutil.EnsurePathWithinFilesDir(filePath, options.FilesDir); err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		contents, err := os.ReadFile(filePath)
+		contents, err := baseutil.ReadLocalFile(*from.ContentsLocal, options.FilesDir)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
 		}
-		stringContents := string(contents)
-		to.Contents = util.StrToPtr(stringContents)
+		tm.AddTranslation(c, path.New("json", "contents"))
+		to.Contents = util.StrToPtr(string(contents))
 	}
 
 	return

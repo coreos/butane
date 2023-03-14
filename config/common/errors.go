@@ -32,7 +32,6 @@ var (
 
 	// resources and trees
 	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
-	ErrTooManySystemdSources  = errors.New("only one of the following can be set: inline, local")
 	ErrFilesDirEscape         = errors.New("local file path traverses outside the files directory")
 	ErrFileType               = errors.New("trees may only contain files, directories, and symlinks")
 	ErrNodeExists             = errors.New("matching filesystem node has existing contents or different type")
@@ -42,6 +41,9 @@ var (
 
 	// filesystem nodes
 	ErrDecimalMode = errors.New("unreasonable mode would be reasonable if specified in octal; remember to add a leading zero")
+
+	// systemd
+	ErrTooManySystemdSources = errors.New("only one of the following can be set: contents, contents_local")
 
 	// mount units
 	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true and format is not swap")

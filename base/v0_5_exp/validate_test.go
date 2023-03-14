@@ -290,7 +290,7 @@ func TestValidateFilesystem(t *testing.T) {
 	}
 }
 
-// TestValidateUnit tests that multiple sources (i.e. local and inline) are not allowed but zero or one sources are
+// TestValidateUnit tests that multiple sources (i.e. contents and contents_local) are not allowed but zero or one sources are
 func TestValidateUnit(t *testing.T) {
 	tests := []struct {
 		in      Unit
@@ -298,7 +298,7 @@ func TestValidateUnit(t *testing.T) {
 		errPath path.ContextPath
 	}{
 		{},
-		// inline specified
+		// contents specified
 		{
 			Unit{
 				Contents: util.StrToPtr("hello"),
@@ -306,7 +306,7 @@ func TestValidateUnit(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
-		// local specified
+		// contents_local specified
 		{
 			Unit{
 				ContentsLocal: util.StrToPtr("hello"),
@@ -314,14 +314,14 @@ func TestValidateUnit(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
-		// inline + local, invalid
+		// contents + contents_local, invalid
 		{
 			Unit{
 				Contents:      util.StrToPtr("hello"),
 				ContentsLocal: util.StrToPtr("hello, too"),
 			},
 			common.ErrTooManySystemdSources,
-			path.New("yaml", "inline"),
+			path.New("yaml", "contents_local"),
 		},
 	}
 
@@ -335,7 +335,7 @@ func TestValidateUnit(t *testing.T) {
 	}
 }
 
-// TestValidateDropin tests that multiple sources (i.e. local and inline) are not allowed but zero or one sources are
+// TestValidateDropin tests that multiple sources (i.e. contents and contents_local) are not allowed but zero or one sources are
 func TestValidateDropin(t *testing.T) {
 	tests := []struct {
 		in      Dropin
@@ -343,7 +343,7 @@ func TestValidateDropin(t *testing.T) {
 		errPath path.ContextPath
 	}{
 		{},
-		// inline specified
+		// contents specified
 		{
 			Dropin{
 				Contents: util.StrToPtr("hello"),
@@ -351,7 +351,7 @@ func TestValidateDropin(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
-		// local specified
+		// contents_local specified
 		{
 			Dropin{
 				ContentsLocal: util.StrToPtr("hello"),
@@ -359,14 +359,14 @@ func TestValidateDropin(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
-		// inline + local, invalid
+		// contents + contents_local, invalid
 		{
 			Dropin{
 				Contents:      util.StrToPtr("hello"),
 				ContentsLocal: util.StrToPtr("hello, too"),
 			},
 			common.ErrTooManySystemdSources,
-			path.New("yaml", "inline"),
+			path.New("yaml", "contents_local"),
 		},
 	}
 
