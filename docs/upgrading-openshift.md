@@ -52,6 +52,26 @@ passwd:
 
 There are no breaking changes between versions 4.12.0 and 4.13.0 of the `openshift` configuration specification. Any valid 4.12.0 configuration can be updated to a 4.13.0 configuration by changing the version string in the config.
 
+The following is a list of notable new features, deprecations, and changes.
+
+### User passwords
+
+The `passwd.users` section enabled the `password_hash` field, which sets the password hash for an account. The `users` section continues to support only the `core` user.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.13.0
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker
+  name: core-password
+passwd:
+  users:
+    - name: core
+      password_hash: $y$j9T$nQ...
+```
+
 ## From Version 4.11.0 to 4.12.0
 
 There are no breaking changes between versions 4.11.0 and 4.12.0 of the `openshift` configuration specification. Any valid 4.11.0 configuration can be updated to a 4.12.0 configuration by changing the version string in the config.
