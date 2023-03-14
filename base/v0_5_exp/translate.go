@@ -241,17 +241,17 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 			return
 		}
 
-		for _, sshKeyFile := range from.SSHAuthorizedKeysLocal {
+		for keyFileIndex, sshKeyFile := range from.SSHAuthorizedKeysLocal {
 			sshKeys, err := readSshKeyFile(options.FilesDir, sshKeyFile)
 			if err != nil {
-				r.AddOnError(c, err)
+				r.AddOnError(c.Append(keyFileIndex), err)
 				continue
 			}
 
 			// offset for TranslationSets when both ssh_authorized_keys and ssh_authorized_keys_local are available
 			offset := len(to.SSHAuthorizedKeys)
 			for i, line := range regexp.MustCompile("\r?\n").Split(sshKeys, -1) {
-				tm.AddTranslation(c, path.New("json", "sshAuthorizedKeys", i+offset))
+				tm.AddTranslation(c.Append(keyFileIndex), path.New("json", "sshAuthorizedKeys", i+offset))
 				to.SSHAuthorizedKeys = append(to.SSHAuthorizedKeys, types.SSHAuthorizedKey(line))
 			}
 		}
