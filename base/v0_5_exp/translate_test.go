@@ -1923,7 +1923,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		in           PasswdUser
 		out          types.PasswdUser
 		translations []translate.Translation
-		reportSuffix string
+		report       string
 		fileDir      string
 	}{
 		{
@@ -2088,7 +2088,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
-			osNotFound,
+			"error at $.ssh_authorized_keys_local.0: open " + filepath.Join(sshKeyDir, sshKeyNonExistingFileName) + ": " + osNotFound + "\n",
 			sshKeyDir,
 		},
 		{
@@ -2098,7 +2098,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
-			common.ErrNoFilesDir.Error(),
+			"error at $.ssh_authorized_keys_local: " + common.ErrNoFilesDir.Error() + "\n",
 			"",
 		},
 		{
@@ -2108,7 +2108,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
 			},
-			osNotFound,
+			"error at $.ssh_authorized_keys_local.0: open " + filepath.Join(randomDir, sshKeyFileName) + ": " + osNotFound + "\n",
 			randomDir,
 		},
 	}
@@ -2117,11 +2117,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			actual, translations, r := translatePasswdUser(test.in, common.TranslateOptions{FilesDir: test.fileDir})
 			assert.Equal(t, test.out, actual, "translation mismatch")
-			if len(r.Entries) > 0 {
-				assert.Truef(t, strings.HasSuffix(r.Entries[0].Message, test.reportSuffix), "report mismatch: expected %q but got %q", test.reportSuffix, r.Entries[0].Message)
-			} else {
-				assert.True(t, len(test.reportSuffix) == 0, "unexpected report encountered")
-			}
+			assert.Equal(t, test.report, r.String(), "bad report")
 			baseutil.VerifyTranslations(t, translations, test.translations)
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
@@ -2154,7 +2150,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		in           Unit
 		out          types.Unit
 		translations []translate.Translation
-		reportSuffix string
+		report       string
 		fileDir      string
 	}{
 		{
@@ -2188,7 +2184,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{ContentsLocal: &unitNonExistingFileName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
-			osNotFound,
+			"error at $.contents_local: open " + filepath.Join(unitDir, unitNonExistingFileName) + ": " + osNotFound + "\n",
 			unitDir,
 		},
 		{
@@ -2206,7 +2202,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
-			common.ErrNoFilesDir.Error(),
+			"error at $.contents_local: " + common.ErrNoFilesDir.Error() + "\n",
 			"",
 		},
 		{
@@ -2214,7 +2210,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
-			osNotFound,
+			"error at $.contents_local: open " + filepath.Join(randomDir, unitName) + ": " + osNotFound + "\n",
 			randomDir,
 		},
 		{
@@ -2250,7 +2246,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
-			osNotFound,
+			"error at $.dropins.0.contents_local: open " + filepath.Join(unitDir, unitNonExistingFileName) + ": " + osNotFound + "\n",
 			unitDir,
 		},
 		{
@@ -2270,7 +2266,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
-			common.ErrNoFilesDir.Error(),
+			"error at $.dropins.0.contents_local: " + common.ErrNoFilesDir.Error() + "\n",
 			"",
 		},
 		{
@@ -2280,7 +2276,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 			[]translate.Translation{
 				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
 			},
-			osNotFound,
+			"error at $.dropins.0.contents_local: open " + filepath.Join(randomDir, unitName) + ": " + osNotFound + "\n",
 			randomDir,
 		},
 	}
@@ -2289,11 +2285,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			actual, translations, r := translateUnit(test.in, common.TranslateOptions{FilesDir: test.fileDir})
 			assert.Equal(t, test.out, actual, "translation mismatch")
-			if len(r.Entries) > 0 {
-				assert.Truef(t, strings.HasSuffix(r.Entries[0].Message, test.reportSuffix), "report mismatch: expected %q but got %q", test.reportSuffix, r.Entries[0].Message)
-			} else {
-				assert.True(t, len(test.reportSuffix) == 0, "unexpected report encountered")
-			}
+			assert.Equal(t, test.report, r.String(), "bad report")
 			baseutil.VerifyTranslations(t, translations, test.translations)
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
