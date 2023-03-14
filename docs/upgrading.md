@@ -11,4 +11,6 @@ Occasionally, changes are made to Butane configuration specifications that break
 For details about changes in new versions of Butane config specs, see the guide for your specific config variant:
 
 - [Fedora CoreOS](upgrading-fcos.md) (`fcos`)
+- [Flatcar](upgrading-flatcar.md) (`flatcar`)
 - [OpenShift](upgrading-openshift.md) (`openshift`)
+- [RHEL for Edge](upgrading-r4e.md) (`r4e`)

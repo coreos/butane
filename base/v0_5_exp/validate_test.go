@@ -289,3 +289,93 @@ func TestValidateFilesystem(t *testing.T) {
 		})
 	}
 }
+
+// TestValidateUnit tests that multiple sources (i.e. local and inline) are not allowed but zero or one sources are
+func TestValidateUnit(t *testing.T) {
+	tests := []struct {
+		in      Unit
+		out     error
+		errPath path.ContextPath
+	}{
+		{},
+		// inline specified
+		{
+			Unit{
+				Contents: util.StrToPtr("hello"),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// local specified
+		{
+			Unit{
+				ContentsLocal: util.StrToPtr("hello"),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// inline + local, invalid
+		{
+			Unit{
+				Contents:      util.StrToPtr("hello"),
+				ContentsLocal: util.StrToPtr("hello, too"),
+			},
+			common.ErrTooManySystemdSources,
+			path.New("yaml", "inline"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}
+
+// TestValidateDropin tests that multiple sources (i.e. local and inline) are not allowed but zero or one sources are
+func TestValidateDropin(t *testing.T) {
+	tests := []struct {
+		in      Dropin
+		out     error
+		errPath path.ContextPath
+	}{
+		{},
+		// inline specified
+		{
+			Dropin{
+				Contents: util.StrToPtr("hello"),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// local specified
+		{
+			Dropin{
+				ContentsLocal: util.StrToPtr("hello"),
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// inline + local, invalid
+		{
+			Dropin{
+				Contents:      util.StrToPtr("hello"),
+				ContentsLocal: util.StrToPtr("hello, too"),
+			},
+			common.ErrTooManySystemdSources,
+			path.New("yaml", "inline"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}

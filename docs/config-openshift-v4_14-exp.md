@@ -141,15 +141,18 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **name** (string): the name of the unit. This must be suffixed with a valid unit type (e.g. "thing.service").
     * **_enabled_** (boolean): whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section.
     * **_mask_** (boolean): whether or not the service shall be masked. When true, the service is masked by symlinking it to `/dev/null`.
-    * **_contents_** (string): the contents of the unit.
+    * **_contents_** (string): the contents of the unit. Mutually exclusive with `contents_local`.
+    * **_contents_local_** (string): a local path to the contents of the unit, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `contents`.
     * **_dropins_** (list of objects): the list of drop-ins for the unit. Every drop-in must have a unique `name`.
       * **name** (string): the name of the drop-in. This must be suffixed with ".conf".
-      * **_contents_** (string): the contents of the drop-in.
+      * **_contents_** (string): the contents of the drop-in. Mutually exclusive with `contents_local`.
+      * **_contents_local_** (string): a local path to the contents of the drop-in, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `contents`.
 * **_passwd_** (object): describes the desired additions to the passwd database.
   * **_users_** (list of objects): the list of accounts that shall exist. All users must have a unique `name`.
     * **name** (string): the username for the account. Must be `core`.
     * **_password_hash_** (string): the hashed password for the account.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added to `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
+    * **_ssh_authorized_keys_local_** (list of strings): a list of local paths to SSH key files, relative to the directory specified by the `--files-dir` command-line argument, to be added as SSH key fragments at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique. Each file may contain multiple SSH keys, one per line.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.

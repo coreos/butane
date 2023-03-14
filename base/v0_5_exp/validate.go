@@ -76,3 +76,17 @@ func (t Tree) Validate(c path.ContextPath) (r report.Report) {
 	}
 	return
 }
+
+func (rs Unit) Validate(c path.ContextPath) (r report.Report) {
+	if rs.ContentsLocal != nil && rs.Contents != nil {
+		r.AddOnError(c.Append("inline"), common.ErrTooManySystemdSources)
+	}
+	return
+}
+
+func (rs Dropin) Validate(c path.ContextPath) (r report.Report) {
+	if rs.ContentsLocal != nil && rs.Contents != nil {
+		r.AddOnError(c.Append("inline"), common.ErrTooManySystemdSources)
+	}
+	return
+}

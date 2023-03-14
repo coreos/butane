@@ -32,6 +32,7 @@ var (
 
 	// resources and trees
 	ErrTooManyResourceSources = errors.New("only one of the following can be set: inline, local, source")
+	ErrTooManySystemdSources  = errors.New("only one of the following can be set: inline, local")
 	ErrFilesDirEscape         = errors.New("local file path traverses outside the files directory")
 	ErrFileType               = errors.New("trees may only contain files, directories, and symlinks")
 	ErrNodeExists             = errors.New("matching filesystem node has existing contents or different type")
