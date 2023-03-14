@@ -232,11 +232,11 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 				r.AddOnError(c.Append(keyFileIndex), err)
 				continue
 			}
-
-			// offset for TranslationSets when both ssh_authorized_keys and ssh_authorized_keys_local are available
-			offset := len(to.SSHAuthorizedKeys)
-			for i, line := range regexp.MustCompile("\r?\n").Split(string(sshKeys), -1) {
-				tm.AddTranslation(c.Append(keyFileIndex), path.New("json", "sshAuthorizedKeys", i+offset))
+			for _, line := range regexp.MustCompile("\r?\n").Split(string(sshKeys), -1) {
+				if line == "" {
+					continue
+				}
+				tm.AddTranslation(c.Append(keyFileIndex), path.New("json", "sshAuthorizedKeys", len(to.SSHAuthorizedKeys)))
 				to.SSHAuthorizedKeys = append(to.SSHAuthorizedKeys, types.SSHAuthorizedKey(line))
 			}
 		}
