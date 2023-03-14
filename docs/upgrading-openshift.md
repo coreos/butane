@@ -13,6 +13,10 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 1. TOC
 {:toc}
 
+## From Version 4.12.0 to 4.13.0
+
+There are no breaking changes between versions 4.12.0 and 4.13.0 of the `openshift` configuration specification. Any valid 4.12.0 configuration can be updated to a 4.13.0 configuration by changing the version string in the config.
+
 ## From Version 4.11.0 to 4.12.0
 
 There are no breaking changes between versions 4.11.0 and 4.12.0 of the `openshift` configuration specification. Any valid 4.11.0 configuration can be updated to a 4.12.0 configuration by changing the version string in the config.
