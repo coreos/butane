@@ -15,7 +15,7 @@
 package v4_14_exp
 
 import (
-	fcos "github.com/coreos/butane/config/fcos/v1_5_exp"
+	fcos "github.com/coreos/butane/config/fcos/v1_6_exp"
 )
 
 const ROLE_LABEL_KEY = "machineconfiguration.openshift.io/role"

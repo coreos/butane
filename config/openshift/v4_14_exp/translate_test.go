@@ -19,9 +19,9 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_5"
+	base "github.com/coreos/butane/base/v0_6_exp"
 	"github.com/coreos/butane/config/common"
-	fcos "github.com/coreos/butane/config/fcos/v1_5_exp"
+	fcos "github.com/coreos/butane/config/fcos/v1_6_exp"
 	"github.com/coreos/butane/config/openshift/v4_14_exp/result"
 	"github.com/coreos/butane/translate"
 
