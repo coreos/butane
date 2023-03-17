@@ -1,17 +1,15 @@
 ---
-title: RHEL for Edge v1.1.0-experimental
+title: RHEL for Edge v1.1.0
 parent: Configuration specifications
-nav_order: 200
+nav_order: 198
 ---
 
-# RHEL for Edge Specification v1.1.0-experimental
-
-**Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
+# RHEL for Edge Specification v1.1.0
 
 The RHEL for Edge configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `r4e` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0-experimental` and generates Ignition configs with version `3.4.0`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0` and generates Ignition configs with version `3.4.0`.
 * **_ignition_** (object): metadata about the configuration itself.
   * **_config_** (objects): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
