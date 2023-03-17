@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_5
+package v1_6_exp
 
 import (
 	"fmt"
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_5"
+	base "github.com/coreos/butane/base/v0_6_exp"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/translate"
 
