@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_5
+package v0_6_exp
 
 import (
 	baseutil "github.com/coreos/butane/base/util"
