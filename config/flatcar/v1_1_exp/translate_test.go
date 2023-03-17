@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"testing"
 
-	base "github.com/coreos/butane/base/v0_5_exp"
+	base "github.com/coreos/butane/base/v0_5"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/util"

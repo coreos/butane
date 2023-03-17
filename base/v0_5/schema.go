@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_5_exp
+package v0_5
 
 type Clevis struct {
 	Custom    ClevisCustom `yaml:"custom"`
