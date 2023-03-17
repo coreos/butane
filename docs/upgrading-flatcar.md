@@ -28,7 +28,7 @@ SSH keys and systemd units are now embeddable via file references to local files
 <!-- butane-config -->
 ```yaml
 variant: flatcar
-version: 1.1.0-experimental
+version: 1.1.0
 systemd:
   units:
     - name: example.service
