@@ -23,7 +23,7 @@ import (
 	fcos1_2 "github.com/coreos/butane/config/fcos/v1_2"
 	fcos1_3 "github.com/coreos/butane/config/fcos/v1_3"
 	fcos1_4 "github.com/coreos/butane/config/fcos/v1_4"
-	fcos1_5_exp "github.com/coreos/butane/config/fcos/v1_5_exp"
+	fcos1_5 "github.com/coreos/butane/config/fcos/v1_5"
 	flatcar1_0 "github.com/coreos/butane/config/flatcar/v1_0"
 	flatcar1_1 "github.com/coreos/butane/config/flatcar/v1_1"
 	openshift4_10 "github.com/coreos/butane/config/openshift/v4_10"
@@ -57,7 +57,7 @@ func init() {
 	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
 	RegisterTranslator("fcos", "1.4.0", fcos1_4.ToIgn3_3Bytes)
-	RegisterTranslator("fcos", "1.5.0-experimental", fcos1_5_exp.ToIgn3_4Bytes)
+	RegisterTranslator("fcos", "1.5.0", fcos1_5.ToIgn3_4Bytes)
 	RegisterTranslator("flatcar", "1.0.0", flatcar1_0.ToIgn3_3Bytes)
 	RegisterTranslator("flatcar", "1.1.0", flatcar1_1.ToIgn3_4Bytes)
 	RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
