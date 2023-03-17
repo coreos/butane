@@ -117,7 +117,7 @@ func TestReportCorrelation(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
-			_, r, _ := ToIgn3_4Bytes([]byte(test.in), common.TranslateBytesOptions{})
+			_, r, _ := ToIgn3_5Bytes([]byte(test.in), common.TranslateBytesOptions{})
 			assert.Len(t, r.Entries, 1, "unexpected report length")
 			assert.Equal(t, test.message, r.Entries[0].Message, "bad error")
 			assert.NotNil(t, r.Entries[0].Marker.StartP, "marker start is nil")

@@ -69,7 +69,7 @@ func TestTranslation(t *testing.T) {
 			for _, entry := range test.entries {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
-			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
+			actual, translations, r := test.in.ToIgn3_5Unvalidated(common.TranslateOptions{})
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
