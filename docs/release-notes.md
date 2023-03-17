@@ -14,7 +14,16 @@ nav_order: 9
 
 - Stabilize OpenShift spec 4.13.0, targeting Ignition spec 3.2.0
 - Add OpenShift spec 4.14.0-experimental, targeting Ignition spec
-  3.4.0
+  3.5.0-experimental
+- Stabilize fcos spec 1.5.0, targeting Ignition spec 3.4.0
+- Add fcos spec 1.6.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Stabilize flatcar spec 1.1.0, targeting Ignition spec 3.4.0
+- Add flatcar spec 1.2.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Stabilize r4e spec 1.1.0, targeting Ignition spec 3.4.0
+- Add r4e spec 1.2.0-experimental, targeting Ignition spec
+  3.5.0-experimental
 - Allow enabling discard passthrough on LUKS devices _(fcos 1.5.0+,
   flatcar 1.1.0+, openshift 4.14.0-exp)_
 - Allow specifying arbitrary LUKS open options _(fcos 1.5.0+,
