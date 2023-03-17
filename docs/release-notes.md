@@ -15,13 +15,13 @@ nav_order: 9
 - Stabilize OpenShift spec 4.13.0, targeting Ignition spec 3.2.0
 - Add OpenShift spec 4.14.0-experimental, targeting Ignition spec
   3.4.0
-- Allow enabling discard passthrough on LUKS devices _(fcos 1.5.0-exp,
+- Allow enabling discard passthrough on LUKS devices _(fcos 1.5.0+,
   flatcar 1.1.0-exp, openshift 4.14.0-exp)_
-- Allow specifying arbitrary LUKS open options _(fcos 1.5.0-exp,
+- Allow specifying arbitrary LUKS open options _(fcos 1.5.0+,
   flatcar 1.1.0-exp, openshift 4.14.0-exp)_
 - Allow specifying user password hash _(openshift 4.13.0+)_
-- Support offline Tang provisioning via pre-shared advertisement _(fcos 1.5.0-exp, openshift 4.14.0-exp)_
-- Support local file embedding for SSH keys and systemd units _(fcos 1.5.0-exp,
+- Support offline Tang provisioning via pre-shared advertisement _(fcos 1.5.0+, openshift 4.14.0-exp)_
+- Support local file embedding for SSH keys and systemd units _(fcos 1.5.0+,
   flatcar 1.1.0-exp, openshift 4.14.0-exp, r4e 1.1.0-exp)_
 
 ### Bug fixes
@@ -32,8 +32,8 @@ nav_order: 9
 ### Misc. changes
 
 - Roll back to Ignition spec 3.2.0 _(openshift 4.13.0)_
-- Drop `extensions` section _(fcos 1.5.0-exp, openshift 4.13.0+)_
-- Drop `LuksOption` and `RaidOption` types _(Go API for fcos 1.5.0-experimental,
+- Drop `extensions` section _(fcos 1.5.0+, openshift 4.13.0+)_
+- Drop `LuksOption` and `RaidOption` types _(Go API for fcos 1.5.0+,
   flatcar 1.1.0-experimental, openshift 4.14.0-experimental)_
 - Require Go 1.18+
 
