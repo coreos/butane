@@ -380,7 +380,7 @@ and password will not be able to access GRUB command line, modify kernel command
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.5.0-experimental
+version: 1.5.0
 grub:
   users:
     - name: root

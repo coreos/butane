@@ -13,13 +13,46 @@ Occasionally, changes are made to RHEL for Edge Butane configs (those that speci
 1. TOC
 {:toc}
 
-{% comment %}
-
 ## From Version 1.0.0 to Version 1.1.0
 
 There are no breaking changes between versions 1.0.0 and 1.1.0 of the `r4e` configuration specification. Any valid 1.0.0 configuration can be updated to a 1.1.0 configuration by changing the version string in the config.
 
 The following is a list of notable new features.
+
+### Special mode bits supported
+
+The `mode` field of the `files` and `directories` sections now respects the setuid, setgid, and sticky bits. Previous spec versions ignore these bits.
+
+<!-- butane-config -->
+```yaml
+variant: r4e
+version: 1.1.0
+storage:
+  files:
+    - path: /usr/local/bin/setuid
+      mode: 04755
+      contents:
+        source: https://rootkit.example.com/setuid
+  directories:
+    - path: /var/local/tmp
+      mode: 01777
+```
+
+### AWS S3 access point ARN support
+
+The sections which allow fetching a remote URL now accept AWS S3 access point ARNs (`arn:aws:s3:<region>:<account>:accesspoint/<accesspoint>/object/<path>`) in the `source` field.
+
+<!-- butane-config -->
+```yaml
+variant: r4e
+version: 1.1.0
+storage:
+  files:
+    - path: /etc/example
+      mode: 0644
+      contents:
+        source: arn:aws:s3:us-west-1:123456789012:accesspoint/test/object/some/path
+```
 
 ### Local SSH key and systemd unit references
 
@@ -28,7 +61,7 @@ SSH keys and systemd units are now embeddable via file references to local files
 <!-- butane-config -->
 ```yaml
 variant: r4e
-version: 1.1.0-experimental
+version: 1.1.0
 systemd:
   units:
     - name: example.service
@@ -43,5 +76,3 @@ passwd:
       ssh_authorized_keys_local:
         - id_rsa.pub
 ```
-
-{% endcomment %}

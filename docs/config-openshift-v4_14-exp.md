@@ -11,7 +11,7 @@ nav_order: 150
 The OpenShift configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `4.14.0-experimental` and generates Ignition configs with version `3.4.0`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.14.0-experimental` and generates Ignition configs with version `3.5.0-experimental`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.

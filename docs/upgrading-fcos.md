@@ -13,13 +13,125 @@ Occasionally, changes are made to Fedora CoreOS Butane configs (those that speci
 1. TOC
 {:toc}
 
-{% comment %}
-
 ## From Version 1.4.0 to Version 1.5.0
 
 There are no breaking changes between versions 1.4.0 and 1.5.0 of the `fcos` configuration specification. Any valid 1.4.0 configuration can be updated to a 1.5.0 configuration by changing the version string in the config.
 
 The following is a list of notable new features.
+
+### GRUB passwords
+
+The config gained a new top-level `grub` section. It contains a `users` section with a list of usernames and corresponding password hashes for authenticating to the GRUB bootloader. If any users are specified, GRUB will require authentication before using the GRUB command line, modifying kernel command-line arguments, or booting non-default OSTree deployments. Password hashes can be generated with `grub2-mkpasswd-pbkdf2`.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+grub:
+  users:
+    - name: admin
+      password_hash: grub.pbkdf2.sha512.10000.874A958E5264...
+```
+
+### Offline Tang provisioning
+
+The `tang` sections in `storage.luks` and `boot_device.luks` gained a new `advertisement` field. If specified, Ignition will use it to provision the Tang server binding rather than fetching the advertisement from the server at runtime. This allows the server to be unavailable at provisioning time. The advertisement can be obtained from the server with `curl http://tang.example.com/adv`.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+boot_device:
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+        advertisement: "{\"payload\": \"...\", \"protected\": \"...\", \"signature\": \"...\"}"
+storage:
+  luks:
+    - name: luks-tang
+      device: /dev/sdb
+      clevis:
+        tang:
+          - url: https://tang.example.com
+            thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+            advertisement: "{\"payload\": \"...\", \"protected\": \"...\", \"signature\": \"...\"}"
+```
+
+### LUKS discard
+
+The `luks` sections in `storage` and `boot_device` gained a new `discard` field. If specified and true, the LUKS volume will issue discard commands to the underlying block device when blocks are freed. This improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+boot_device:
+  luks:
+    discard: true
+    tpm2: true
+storage:
+  luks:
+    - name: luks-tpm
+      device: /dev/sdb
+      discard: true
+      clevis:
+        tpm2: true
+```
+
+### LUKS open options
+
+The `storage.luks` section gained a new `open_options` field. It is a list of options Ignition should pass to `cryptsetup luksOpen` when unlocking the volume. Ignition also passes `--persistent`, so any options that support persistence will be saved to the volume and automatically used for future unlocks. Any options that do not support persistence will only be applied to Ignition's initial unlock of the volume.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+storage:
+  luks:
+    - name: luks-tpm
+      device: /dev/sdb
+      open_options:
+        - "--perf-no_read_workqueue"
+        - "--perf-no_write_workqueue"
+      clevis:
+        tpm2: true
+```
+
+### Special mode bits supported
+
+The `mode` field of the `files` and `directories` sections now respects the setuid, setgid, and sticky bits. Previous spec versions ignore these bits.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+storage:
+  files:
+    - path: /usr/local/bin/setuid
+      mode: 04755
+      contents:
+        source: https://rootkit.example.com/setuid
+  directories:
+    - path: /var/local/tmp
+      mode: 01777
+```
+
+### AWS S3 access point ARN support
+
+The sections which allow fetching a remote URL now accept AWS S3 access point ARNs (`arn:aws:s3:<region>:<account>:accesspoint/<accesspoint>/object/<path>`) in the `source` field.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+storage:
+  files:
+    - path: /etc/example
+      mode: 0644
+      contents:
+        source: arn:aws:s3:us-west-1:123456789012:accesspoint/test/object/some/path
+```
 
 ### Local SSH key and systemd unit references
 
@@ -28,7 +140,7 @@ SSH keys and systemd units are now embeddable via file references to local files
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.5.0-experimental
+version: 1.5.0
 systemd:
   units:
     - name: example.service
@@ -43,8 +155,6 @@ passwd:
       ssh_authorized_keys_local:
         - id_rsa.pub
 ```
-
-{% endcomment %}
 
 ## From Version 1.3.0 to 1.4.0
 
