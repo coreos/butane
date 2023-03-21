@@ -217,7 +217,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
 * **_grub_** (object): describes the desired GRUB bootloader configuration.
   * **_users_** (list of objects): the list of GRUB superusers.
     * **name** (string): the user name.
-    * **password_hash** (string): the PBKDF2 password hash.
+    * **password_hash** (string): the PBKDF2 password hash, generated with `grub2-mkpasswd-pbkdf2`.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397
