@@ -51,6 +51,7 @@ nav_order: 9
 - Document that `hash` fields describe decompressed data
 - Clarify spec docs for `files`/`luks` `hash` fields
 - Document SSH key file path used by OpenShift 4.13+ _(openshift)_
+- Document command to generate GRUB password hashes
 
 
 ## Butane 0.17.0 (2023-01-04)

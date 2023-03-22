@@ -374,8 +374,7 @@ systemd:
 ```
 ## GRUB password
 
-This example adds a superuser to GRUB and sets a password. Users without the given username
-and password will not be able to access GRUB command line, modify kernel command-line arguments, or boot non-default OSTree deployments.
+This example adds a superuser to GRUB and sets a password. Users without the given username and password will not be able to access GRUB command line, modify kernel command-line arguments, or boot non-default OSTree deployments. Password hashes can be generated with `grub2-mkpasswd-pbkdf2`.
 
 <!-- butane-config -->
 ```yaml
