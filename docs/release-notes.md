@@ -4,7 +4,25 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.18.0 (unreleased)
+## Upcoming Butane 0.19.0 (unreleased)
+
+### Breaking changes
+
+
+### Features
+
+
+### Bug fixes
+
+
+### Misc. changes
+
+
+### Docs changes
+
+
+
+## Butane 0.18.0 (2023-03-24)
 
 ### Breaking changes
 
@@ -12,26 +30,27 @@ nav_order: 9
 
 ### Features
 
-- Stabilize OpenShift spec 4.13.0, targeting Ignition spec 3.2.0
-- Add OpenShift spec 4.14.0-experimental, targeting Ignition spec
-  3.5.0-experimental
-- Stabilize fcos spec 1.5.0, targeting Ignition spec 3.4.0
-- Add fcos spec 1.6.0-experimental, targeting Ignition spec
-  3.5.0-experimental
-- Stabilize flatcar spec 1.1.0, targeting Ignition spec 3.4.0
-- Add flatcar spec 1.2.0-experimental, targeting Ignition spec
-  3.5.0-experimental
-- Stabilize r4e spec 1.1.0, targeting Ignition spec 3.4.0
-- Add r4e spec 1.2.0-experimental, targeting Ignition spec
-  3.5.0-experimental
+- Support offline Tang provisioning via pre-shared advertisement _(fcos 1.5.0+,
+  openshift 4.14.0-exp)_
+- Support local file embedding for SSH keys and systemd units _(fcos 1.5.0+,
+  flatcar 1.1.0+, openshift 4.14.0-exp, r4e 1.1.0+)_
 - Allow enabling discard passthrough on LUKS devices _(fcos 1.5.0+,
   flatcar 1.1.0+, openshift 4.14.0-exp)_
 - Allow specifying arbitrary LUKS open options _(fcos 1.5.0+,
   flatcar 1.1.0+, openshift 4.14.0-exp)_
 - Allow specifying user password hash _(openshift 4.13.0+)_
-- Support offline Tang provisioning via pre-shared advertisement _(fcos 1.5.0+, openshift 4.14.0-exp)_
-- Support local file embedding for SSH keys and systemd units _(fcos 1.5.0+,
-  flatcar 1.1.0+, openshift 4.14.0-exp, r4e 1.1.0+)_
+- Stabilize Fedora CoreOS spec 1.5.0, targeting Ignition spec 3.4.0
+- Stabilize Flatcar spec 1.1.0, targeting Ignition spec 3.4.0
+- Stabilize OpenShift spec 4.13.0, targeting Ignition spec 3.2.0
+- Stabilize RHEL for Edge spec 1.1.0, targeting Ignition spec 3.4.0
+- Add Fedora CoreOS spec 1.6.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Add Flatcar spec 1.2.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Add OpenShift spec 4.14.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Add RHEL for Edge spec 1.2.0-experimental, targeting Ignition spec
+  3.5.0-experimental
 
 ### Bug fixes
 
