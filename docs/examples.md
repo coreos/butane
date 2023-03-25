@@ -12,7 +12,7 @@ Here you can find a bunch of simple examples for using Butane, with some explana
 
 ## Users and groups
 
-This example modifies the existing `core` user and sets its ssh key.
+This example modifies the existing `core` user and sets its SSH key by providing it inline.
 
 <!-- butane-config -->
 ```yaml
@@ -25,7 +25,7 @@ passwd:
         - key1
 ```
 
-This example creates one user, `user1` and sets up one ssh public key for the user. The user is also given the home directory `/home/user1`, but it's not created, the user is added to the `wheel` and `plugdev` groups, and the user's shell is set to `/bin/bash`.
+This example creates one user, `user1` and sets up one SSH public key for the user. The user is also given the home directory `/home/user1`, but it's not created, the user is added to the `wheel` and `plugdev` groups, and the user's shell is set to `/bin/bash`.
 
 <!-- butane-config -->
 ```yaml
@@ -77,6 +77,24 @@ $y$j9T$A0Y3wwVOKP69S.1K/zYGN.$S596l11UGH3XjN...
 The `yescrypt` hashing method is recommended for new passwords. For more details on hashing methods, see `man 5 crypt`.
 
 For more information, see the Fedora CoreOS documentation on [Authentication][fcos-auth-docs].
+
+### SSH keys from local files
+
+As shown in the previous examples you can inline multiple SSH public keys per user directly in the Butane config. Additionally, you can embed keys from local files at transpile time. This example creates a `core` user and configures its SSH keys from local files. The file paths are relative to the directory specified with the `--files-dir` command-line option, which must be provided.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys_local:
+        - id_rsa.pub
+        - id_ed25519.pub
+```
+
+Different combinations for providing SSH keys are possible. You can provide inline ones together with file references and the files may also contain multiple keys (one per line). However, keep in mind that overall the keys must be unique. Check the [configuration specification][spec] for details.
 
 ## Storage and files
 
@@ -352,7 +370,7 @@ systemd:
             ExecStart=-/usr/sbin/agetty --autologin core --noclear %I $TERM
 ```
 
-This example creates a new systemd unit called hello.service, enables it so it will run on boot, and defines the contents to simply echo `"Hello, World!"`.
+This example creates a new systemd unit called `hello.service`, enables it so it will run on boot, and defines the contents to simply echo `"Hello, World!"`.
 
 <!-- butane-config -->
 ```yaml
@@ -372,6 +390,23 @@ systemd:
         [Install]
         WantedBy=multi-user.target
 ```
+
+This example specifies a systemd unit (`example.service`) and a dropin (`proxy.conf`) to be read from local files at transpile time. The file paths are relative to the directory specified with the `--files-dir` command-line option, which must be provided.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.5.0
+systemd:
+  units:
+    - name: example.service
+      contents_local: example.service
+    - name: rpm-ostreed.service
+      dropins:
+          - name: proxy.conf
+            contents_local: example.conf
+```
+
 ## GRUB password
 
 This example adds a superuser to GRUB and sets a password. Users without the given username and password will not be able to access GRUB command line, modify kernel command-line arguments, or boot non-default OSTree deployments. Password hashes can be generated with `grub2-mkpasswd-pbkdf2`.
