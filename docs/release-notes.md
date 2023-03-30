@@ -20,6 +20,7 @@ nav_order: 9
 
 ### Docs changes
 
+- Improve rendering of spec docs on docs site
 
 
 ## Butane 0.18.0 (2023-03-24)

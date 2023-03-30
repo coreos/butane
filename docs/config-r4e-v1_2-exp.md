@@ -10,6 +10,8 @@ nav_order: 200
 
 The RHEL for Edge configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
+<div id="spec-docs"></div>
+
 * **variant** (string): used to differentiate configs for different operating systems. Must be `r4e` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.2.0-experimental` and generates Ignition configs with version `3.5.0-experimental`.
 * **_ignition_** (object): metadata about the configuration itself.
