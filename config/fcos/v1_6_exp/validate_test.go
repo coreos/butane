@@ -237,6 +237,143 @@ func TestValidateGrubUser(t *testing.T) {
 	}
 }
 
+func TestValidateMountPoints(t *testing.T) {
+	tests := []struct {
+		in      Config
+		out     error
+		errPath path.ContextPath
+	}{
+		// valid config (has prefix "/etc" or "/var")
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/etc/foo"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+							{
+								Path:          util.StrToPtr("/var"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+							{
+								Path:          util.StrToPtr("/invalid/path"),
+								WithMountUnit: util.BoolToPtr(false),
+							},
+							{
+								WithMountUnit: util.BoolToPtr(true),
+							},
+							{
+								Path:          nil,
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+		},
+		// invalid config (path name is '/')
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+			out:     common.ErrMountPointForbidden,
+			errPath: path.New("yaml", "storage", "filesystems", 0, "path"),
+		},
+		// invalid config (path is /boot)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/boot"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+
+			out:     common.ErrMountPointForbidden,
+			errPath: path.New("yaml", "storage", "filesystems", 0, "path"),
+		},
+		// invalid config (path is invalid, does not contain /etc or /var)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/thisIsABugTest"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+
+			out:     common.ErrMountPointForbidden,
+			errPath: path.New("yaml", "storage", "filesystems", 0, "path"),
+		},
+		// invalid config (path is /varnish)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/varnish"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+
+			out:     common.ErrMountPointForbidden,
+			errPath: path.New("yaml", "storage", "filesystems", 0, "path"),
+		},
+		// invalid config (path is /foo/var)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Filesystems: []base.Filesystem{
+							{
+								Path:          util.StrToPtr("/foo/var"),
+								WithMountUnit: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+			},
+
+			out:     common.ErrMountPointForbidden,
+			errPath: path.New("yaml", "storage", "filesystems", 0, "path"),
+		},
+	}
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "invalid report")
+		})
+	}
+}
+
 func TestValidateConfig(t *testing.T) {
 	tests := []struct {
 		in      Config

@@ -49,8 +49,9 @@ var (
 	ErrTooManySystemdSources = errors.New("only one of the following can be set: contents, contents_local")
 
 	// mount units
-	ErrMountUnitNoPath   = errors.New("path is required if with_mount_unit is true and format is not swap")
-	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
+	ErrMountUnitNoPath     = errors.New("path is required if with_mount_unit is true and format is not swap")
+	ErrMountUnitNoFormat   = errors.New("format is required if with_mount_unit is true")
+	ErrMountPointForbidden = errors.New("path must be under /etc or /var if with_mount_unit is true")
 
 	// boot device
 	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64")
