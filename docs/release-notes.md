@@ -11,6 +11,7 @@ nav_order: 9
 
 ### Features
 
+- Add `-c`/`--check` option to check config without producing output
 
 ### Bug fixes
 
