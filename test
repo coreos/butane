@@ -65,7 +65,7 @@ if [ -n "${csplit}" ] && [ -n "${head}" ]; then
         do
             echo "Checking ${i}"
             tail -n +3 "${i}" | ${head} -n -1 \
-                | "${BIN_PATH}/${NAME}" --strict --files-dir tmpdocs/files-dir >/dev/null \
+                | "${BIN_PATH}/${NAME}" --check --strict --files-dir tmpdocs/files-dir \
                 || (cat -n "${i}" && false)
         done
         rm -f tmpdocs/config_*

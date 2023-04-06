@@ -35,6 +35,7 @@ func main() {
 	var (
 		input       string
 		output      string
+		check       bool
 		strict      bool
 		helpFlag    bool
 		versionFlag bool
@@ -44,6 +45,7 @@ func main() {
 	pflag.BoolVarP(&versionFlag, "version", "V", false, "print the version and exit")
 	pflag.BoolVarP(&options.DebugPrintTranslations, "debug", "D", false, "log translations")
 	pflag.Lookup("debug").Hidden = true
+	pflag.BoolVarP(&check, "check", "c", false, "check config without producing output")
 	pflag.BoolVarP(&strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.BoolVarP(&options.Raw, "raw", "r", false, "never wrap in a MachineConfig; force Ignition output")
@@ -80,7 +82,6 @@ func main() {
 	}
 
 	infile := os.Stdin
-	outfile := os.Stdout
 	if input != "" {
 		var err error
 		infile, err = os.Open(input)
@@ -104,16 +105,19 @@ func main() {
 		fail("Config produced warnings and --strict was specified\n")
 	}
 
-	if output != "" {
-		var err error
-		outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-		if err != nil {
-			fail("failed to open %s: %v\n", output, err)
+	if !check {
+		outfile := os.Stdout
+		if output != "" {
+			var err error
+			outfile, err = os.OpenFile(output, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+			if err != nil {
+				fail("failed to open %s: %v\n", output, err)
+			}
+			defer outfile.Close()
 		}
-		defer outfile.Close()
-	}
 
-	if _, err := outfile.Write(append(dataOut, '\n')); err != nil {
-		fail("Failed to write config to %s: %v\n", outfile.Name(), err)
+		if _, err := outfile.Write(append(dataOut, '\n')); err != nil {
+			fail("Failed to write config to %s: %v\n", outfile.Name(), err)
+		}
 	}
 }
