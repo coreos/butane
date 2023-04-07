@@ -8,6 +8,8 @@ nav_order: 145
 
 The OpenShift configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
+<div id="spec-docs"></div>
+
 * **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `4.12.0` and generates Ignition configs with version `3.2.0`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.

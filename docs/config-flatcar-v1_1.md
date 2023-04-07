@@ -8,6 +8,8 @@ nav_order: 98
 
 The Flatcar configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
 
+<div id="spec-docs"></div>
+
 * **variant** (string): used to differentiate configs for different operating systems. Must be `flatcar` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.1.0` and generates Ignition configs with version `3.4.0`.
 * **_ignition_** (object): metadata about the configuration itself.
