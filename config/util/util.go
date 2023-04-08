@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	snakeRe = regexp.MustCompile("([A-Z])")
+	snakeRe = regexp.MustCompile("(MiB|[A-Z])")
 )
 
 // Misc helpers
