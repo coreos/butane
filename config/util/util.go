@@ -204,7 +204,7 @@ func snakePath(p path.ContextPath) path.ContextPath {
 	ret := path.New(p.Tag)
 	for _, part := range p.Path {
 		if str, ok := part.(string); ok {
-			ret = ret.Append(snake(str))
+			ret = ret.Append(Snake(str))
 		} else {
 			ret = ret.Append(part)
 		}
@@ -212,8 +212,8 @@ func snakePath(p path.ContextPath) path.ContextPath {
 	return ret
 }
 
-// snake converts from camelCase (not CamelCase) to snake_case
-func snake(in string) string {
+// Snake converts from camelCase (not CamelCase) to snake_case
+func Snake(in string) string {
 	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
 }
 

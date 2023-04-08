@@ -52,8 +52,8 @@ func TestSnake(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
-			if snake(test.in) != test.out {
-				t.Errorf("expected %q got %q", test.out, snake(test.in))
+			if Snake(test.in) != test.out {
+				t.Errorf("expected %q got %q", test.out, Snake(test.in))
 			}
 		})
 	}

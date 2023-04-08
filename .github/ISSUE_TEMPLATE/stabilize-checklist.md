@@ -29,8 +29,8 @@ This checklist describes bumping the Ignition spec version, `base` version, and 
 
 ## Update docs
 
-- [ ] Copy the `C-exp` spec doc to `C+1-exp`. Update the header and the version numbers in the description of the `version` field.
-- [ ] Rename the `C-exp` spec doc to `C`. Update the header, delete the experimental config warning, and update the version numbers in the description of the `version` field. Update the `nav_order` to one less than the previous stable release.
+- [ ] Update `internal/doc/main.go` to add the new stable spec and reference the new experimental spec in `generate()`.
+- [ ] Run `generate` to regenerate spec docs.
 - [ ] Update `docs/specs.md`.
 - [ ] Update `docs/upgrading-*.md` for the new spec version. Copy the relevant section from Ignition's `doc/migrating-configs.md`, convert the configs to Butane configs, convert field names to snake case, and update wording as needed. Add subsections for any new Butane-specific features.
 - [ ] Note the stabilization in `docs/release-notes.md`, following the format of previous stabilizations. Drop the `-exp` version suffix from any notes for the upcoming release.

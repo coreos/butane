@@ -1,0 +1,16 @@
+---
+title: {{ .Variant }} v{{ .Version }}
+parent: Configuration specifications
+nav_order: {{ .NavOrder }}
+---
+
+# {{ .Variant }} Specification v{{ .Version }}
+
+{{ if .Version.PreRelease -}}
+**Note: This configuration is experimental and has not been stabilized. It is subject to change without warning or announcement.**
+
+{{ end -}}
+The {{ .Variant }} configuration is a YAML document conforming to the following specification, with **_italicized_** entries being optional:
+
+<div id="spec-docs"></div>
+
