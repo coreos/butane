@@ -15,7 +15,7 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
 * **variant** (string): used to differentiate configs for different operating systems. Must be `r4e` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.2.0-experimental` and generates Ignition configs with version `3.5.0-experimental`.
 * **_ignition_** (object): metadata about the configuration itself.
-  * **_config_** (objects): options related to the configuration.
+  * **_config_** (object): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
       * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
@@ -37,8 +37,8 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed config.
   * **_timeouts_** (object): options relating to `http` timeouts when fetching files over `http` or `https`.
-    * **_http_response_headers_** (integer) the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
-    * **_http_total_** (integer) the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
+    * **_http_response_headers_** (integer): the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
+    * **_http_total_** (integer): the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
@@ -136,14 +136,14 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
     * **_no_user_group_** (boolean): whether or not to create a group with the same name as the user. This only has an effect if the account doesn't exist yet.
     * **_no_log_init_** (boolean): whether or not to add the user to the lastlog and faillog databases. This only has an effect if the account doesn't exist yet.
     * **_shell_** (string): the login shell of the new account.
-    * **_should_exist_** (boolean) whether or not the user with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified user.
-    * **_system_** (bool): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
+    * **_should_exist_** (boolean): whether or not the user with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified user.
+    * **_system_** (boolean): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
   * **_groups_** (list of objects): the list of groups to be added. All groups must have a unique `name`.
     * **name** (string): the name of the group.
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
-    * **_should_exist_** (boolean) whether or not the group with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified group.
-    * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
+    * **_should_exist_** (boolean): whether or not the group with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified group.
+    * **_system_** (boolean): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
 
 [part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
 [rfc2397]: https://tools.ietf.org/html/rfc2397

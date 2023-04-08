@@ -16,7 +16,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **name** (string): a unique [name][k8s-names] for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels][k8s-labels] to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
 * **_ignition_** (object): metadata about the configuration itself.
-  * **_config_** (objects): options related to the configuration.
+  * **_config_** (object): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
       * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
@@ -38,8 +38,8 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed config.
   * **_timeouts_** (object): options relating to `http` timeouts when fetching files over `http` or `https`.
-    * **_http_response_headers_** (integer) the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
-    * **_http_total_** (integer) the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
+    * **_http_response_headers_** (integer): the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
+    * **_http_total_** (integer): the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
@@ -67,9 +67,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_start_mib_** (integer): the start of the partition (in mebibytes). If zero, the partition will be positioned at the start of the largest block available.
       * **_type_guid_** (string): the GPT [partition type GUID][part-types]. If omitted, the default will be 0FC63DAF-8483-4772-8E79-3D69D8477DE4 (Linux filesystem data).
       * **_guid_** (string): the GPT unique partition GUID.
-      * **_wipe_partition_entry_** (boolean) if true, Ignition will clobber an existing partition if it does not match the config. If false (default), Ignition will fail instead.
-      * **_should_exist_** (boolean) whether or not the partition with the specified `number` should exist. If omitted, it defaults to true. If false Ignition will either delete the specified partition or fail, depending on `wipePartitionEntry`. If false `number` must be specified and non-zero and `label`, `start`, `size`, `guid`, and `typeGuid` must all be omitted.
-      * **_resize_** (boolean) whether or not the existing partition should be resized. If omitted, it defaults to false. If true, Ignition will resize an existing partition if it matches the config in all respects except the partition size.
+      * **_wipe_partition_entry_** (boolean): if true, Ignition will clobber an existing partition if it does not match the config. If false (default), Ignition will fail instead.
+      * **_should_exist_** (boolean): whether or not the partition with the specified `number` should exist. If omitted, it defaults to true. If false Ignition will either delete the specified partition or fail, depending on `wipePartitionEntry`. If false `number` must be specified and non-zero and `label`, `start`, `size`, `guid`, and `typeGuid` must all be omitted.
+      * **_resize_** (boolean): whether or not the existing partition should be resized. If omitted, it defaults to false. If true, Ignition will resize an existing partition if it matches the config in all respects except the partition size.
   * **_raid_** (list of objects): the list of RAID arrays to be configured. Every RAID array must have a unique `name`.
     * **name** (string): the name to use for the resulting md device.
     * **level** (string): the redundancy level of the array (e.g. linear, raid1, raid5, etc.).
@@ -85,7 +85,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
     * **_mount_options_** (list of strings): any special options to be passed to the mount command.
-    * **_with_mount_unit_** (bool): whether to additionally generate a generic mount unit for this filesystem or a swap unit for this swap area. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path` or `device`, depending on the unit type. If your filesystem is located on a Tang-backed LUKS device, the unit will automatically require network access if you specify the device as `/dev/mapper/<device-name>` or `/dev/disk/by-id/dm-name-<device-name>`.
+    * **_with_mount_unit_** (boolean): whether to additionally generate a generic mount unit for this filesystem or a swap unit for this swap area. If a more specific unit is needed, a custom one can be specified in the `systemd.units` section. The unit will be named with the [escaped][systemd-escape] version of the `path` or `device`, depending on the unit type. If your filesystem is located on a Tang-backed LUKS device, the unit will automatically require network access if you specify the device as `/dev/mapper/<device-name>` or `/dev/disk/by-id/dm-name-<device-name>`.
   * **_files_** (list of objects): the list of files to be written. Every file, directory and link must have a unique `path`.
     * **path** (string): the absolute path to the file.
     * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `contents` must be specified if `overwrite` is true. Defaults to false.
@@ -106,7 +106,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
   * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
-    * **_key_file_** (string): options related to the contents of the key file.
+    * **_key_file_** (object): options related to the contents of the key file.
       * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
       * **_source_** (string): the URL of the key file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the key file. Mutually exclusive with `source` and `local`.
@@ -124,12 +124,12 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
         * **url** (string): url of the tang server.
         * **thumbprint** (string): thumbprint of a trusted signing key.
-      * **_tpm2_** (bool): whether or not to use a tpm2 device.
-      * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
+      * **_tpm2_** (boolean): whether or not to use a tpm2 device.
+      * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
       * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
-        * **_needs_network_** (bool): whether or not the device requires networking.
+        * **_needs_network_** (boolean): whether or not the device requires networking.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Symlinks must not be present. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. File attributes can be overridden by creating a corresponding entry in the `files` section; such entries must omit `contents`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
@@ -153,15 +153,15 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.
       * **thumbprint** (string): thumbprint of a trusted signing key.
-    * **_tpm2_** (bool): whether or not to use a tpm2 device.
-    * **_threshold_** (int): sets the minimum number of pieces required to decrypt the device. Default is 1.
+    * **_tpm2_** (boolean): whether or not to use a tpm2 device.
+    * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 * **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
   * **_extensions_** (list of strings): RHCOS extensions to be installed on the node.
-  * **_fips_** (bool): whether or not to enable FIPS 140-2 compatibility. If omitted, defaults to false.
+  * **_fips_** (boolean): whether or not to enable FIPS 140-2 compatibility. If omitted, defaults to false.
 
 [k8s-names]: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
 [k8s-labels]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
