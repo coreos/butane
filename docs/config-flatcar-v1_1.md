@@ -77,7 +77,7 @@ The Flatcar configuration is a YAML document conforming to the following specifi
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
     * **format** (string): the filesystem format (ext4, btrfs, xfs, vfat, swap, or none).
     * **_path_** (string): the mount-point of the filesystem while Ignition is running relative to where the root filesystem will be mounted. This is not necessarily the same as where it should be mounted in the real root, but it is encouraged to make it the same.
-    * **_wipe_filesystem_** (boolean): whether or not to wipe the device before filesystem creation, see [the documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information. Defaults to false.
+    * **_wipe_filesystem_** (boolean): whether or not to wipe the device before filesystem creation, see [Ignition's documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information. Defaults to false.
     * **_label_** (string): the label of the filesystem.
     * **_uuid_** (string): the uuid of the filesystem.
     * **_options_** (list of strings): any additional options to be passed to the format-specific mkfs utility.
@@ -152,7 +152,7 @@ The Flatcar configuration is a YAML document conforming to the following specifi
     * **_options_** (list of strings): any additional options to be passed to `cryptsetup luksFormat`.
     * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
     * **_open_options_** (list of strings): any additional options to be passed to `cryptsetup luksOpen`. Supported options will be persistently written to the luks volume.
-    * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [the Ignition documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
+    * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [Ignition's documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
