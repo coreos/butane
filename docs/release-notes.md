@@ -21,6 +21,7 @@ nav_order: 9
 
 ### Docs changes
 
+- Document consequence of setting `systemd.units.mask` to false
 - Improve rendering of spec docs on docs site
 
 
