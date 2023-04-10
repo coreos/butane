@@ -22,6 +22,7 @@ nav_order: 9
 ### Docs changes
 
 - Document consequence of setting `systemd.units.mask` to false
+- Don't claim to support generating swap units _(openshift 4.8.0 - 4.13.0)_
 - Improve rendering of spec docs on docs site
 
 
