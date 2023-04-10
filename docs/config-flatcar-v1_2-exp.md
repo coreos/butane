@@ -45,12 +45,12 @@ The Flatcar configuration is a YAML document conforming to the following specifi
         * **_source_** (string): the URL of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `tftp`, `s3`, `arn`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
         * **_inline_** (string): the contents of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
         * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. The bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
-        * **_compression_** (string): the type of compression used on the certificate (null or gzip). Compression cannot be used with S3.
+        * **_compression_** (string): the type of compression used on the certificate bundle (null or gzip). Compression cannot be used with S3.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
           * **name** (string): the header name.
           * **_value_** (string): the header contents.
-        * **_verification_** (object): options related to the verification of the certificate.
-          * **_hash_** (string): the hash of the certificate, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed certificate.
+        * **_verification_** (object): options related to the verification of the certificate bundle.
+          * **_hash_** (string): the hash of the certificate bundle, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed certificate bundle.
   * **_proxy_** (object): options relating to setting an `HTTP(S)` proxy when fetching resources.
     * **_http_proxy_** (string): will be used as the proxy URL for HTTP requests and HTTPS requests unless overridden by `https_proxy` or `no_proxy`.
     * **_https_proxy_** (string): will be used as the proxy URL for HTTPS requests unless overridden by `no_proxy`.
