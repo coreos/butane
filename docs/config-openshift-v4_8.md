@@ -109,6 +109,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
       * **_source_** (string): the URL of the key file. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the key file. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the key file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_compression_** (string): the type of compression used on the key file (null or gzip). Compression cannot be used with S3.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
