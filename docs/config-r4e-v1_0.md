@@ -13,9 +13,9 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
 * **variant** (string): used to differentiate configs for different operating systems. Must be `r4e` for this specification.
 * **version** (string): the semantic version of the spec for this document. This document is for version `1.0.0` and generates Ignition configs with version `3.3.0`.
 * **_ignition_** (object): metadata about the configuration itself.
-  * **_config_** (objects): options related to the configuration.
+  * **_config_** (object): options related to the configuration.
     * **_merge_** (list of objects): a list of the configs to be merged to the current config.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
@@ -25,7 +25,7 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed config.
     * **_replace_** (object): the config that will replace the current.
-      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the config. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the config. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the config, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
       * **_compression_** (string): the type of compression used on the config (null or gzip). Compression cannot be used with S3.
@@ -35,20 +35,20 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
       * **_verification_** (object): options related to the verification of the config.
         * **_hash_** (string): the hash of the config, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed config.
   * **_timeouts_** (object): options relating to `http` timeouts when fetching files over `http` or `https`.
-    * **_http_response_headers_** (integer) the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
-    * **_http_total_** (integer) the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
+    * **_http_response_headers_** (integer): the time to wait (in seconds) for the server's response headers (but not the body) after making a request. 0 indicates no timeout. Default is 10 seconds.
+    * **_http_total_** (integer): the time limit (in seconds) for the operation (connection, request, and response), including retries. 0 indicates no timeout. Default is 0.
   * **_security_** (object): options relating to network security.
     * **_tls_** (object): options relating to TLS when fetching resources over `https`.
       * **_certificate_authorities_** (list of objects): the list of additional certificate authorities (in addition to the system authorities) to be used for TLS verification when fetching over `https`. All certificate authorities must have a unique `source`, `inline`, or `local`.
-        * **_source_** (string): the URL of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `s3`, `gs`, `tftp`, and [`data`][rfc2397]. Note: When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
-        * **_inline_** (string): the contents of the certificate bundle (in PEM format). With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
-        * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. With Ignition &ge; 2.4.0, the bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
-        * **_compression_** (string): the type of compression used on the certificate (null or gzip). Compression cannot be used with S3.
+        * **_source_** (string): the URL of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+        * **_inline_** (string): the contents of the certificate bundle (in PEM format). The bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `local`.
+        * **_local_** (string): a local path to the contents of the certificate bundle (in PEM format), relative to the directory specified by the `--files-dir` command-line argument. The bundle can contain multiple concatenated certificates. Mutually exclusive with `source` and `inline`.
+        * **_compression_** (string): the type of compression used on the certificate bundle (null or gzip). Compression cannot be used with S3.
         * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
           * **name** (string): the header name.
           * **_value_** (string): the header contents.
-        * **_verification_** (object): options related to the verification of the certificate.
-          * **_hash_** (string): the hash of the certificate, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed certificate.
+        * **_verification_** (object): options related to the verification of the certificate bundle.
+          * **_hash_** (string): the hash of the certificate bundle, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed certificate bundle.
   * **_proxy_** (object): options relating to setting an `HTTP(S)` proxy when fetching resources.
     * **_http_proxy_** (string): will be used as the proxy URL for HTTP requests and HTTPS requests unless overridden by `https_proxy` or `no_proxy`.
     * **_https_proxy_** (string): will be used as the proxy URL for HTTPS requests unless overridden by `no_proxy`.
@@ -58,25 +58,25 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
     * **path** (string): the absolute path to the file.
     * **_overwrite_** (boolean): whether to delete preexisting nodes at the path. `contents` must be specified if `overwrite` is true. Defaults to false.
     * **_contents_** (object): options related to the contents of the file.
-      * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the file contents. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. If source is omitted and a regular file already exists at the path, Ignition will do nothing. If source is omitted and no file exists, an empty file will be created. Mutually exclusive with `inline` and `local`.
+      * **_source_** (string): the URL of the file. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. If source is omitted and a regular file already exists at the path, Ignition will do nothing. If source is omitted and no file exists, an empty file will be created. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the file. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the file, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_compression_** (string): the type of compression used on the file (null or gzip). Compression cannot be used with S3.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
-      * **_verification_** (object): options related to the verification of the file contents.
-        * **_hash_** (string): the hash of the contents, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed contents.
-    * **_append_** (list of objects): list of contents to be appended to the file. Follows the same stucture as `contents`
-      * **_compression_** (string): the type of compression used on the contents (null or gzip). Compression cannot be used with S3.
-      * **_source_** (string): the URL of the contents to append. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`][rfc2397]. When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
-      * **_inline_** (string): the contents to append. Mutually exclusive with `source` and `local`.
-      * **_local_** (string): a local path to the contents to append, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_verification_** (object): options related to the verification of the file.
+        * **_hash_** (string): the hash of the file, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed file.
+    * **_append_** (list of objects): list of fragments to be appended to the file. Follows the same structure as `contents`.
+      * **_source_** (string): the URL of the fragment. Supported schemes are `http`, `https`, `tftp`, `s3`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
+      * **_inline_** (string): the contents of the fragment. Mutually exclusive with `source` and `local`.
+      * **_local_** (string): a local path to the contents of the fragment, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
+      * **_compression_** (string): the type of compression used on the fragment (null or gzip). Compression cannot be used with S3.
       * **_http_headers_** (list of objects): a list of HTTP headers to be added to the request. Available for `http` and `https` source schemes only.
         * **name** (string): the header name.
         * **_value_** (string): the header contents.
-      * **_verification_** (object): options related to the verification of the appended contents.
-        * **_hash_** (string): the hash of the contents, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed contents.
+      * **_verification_** (object): options related to the verification of the fragment.
+        * **_hash_** (string): the hash of the fragment, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed fragment.
     * **_mode_** (integer): the file's permission mode. Setuid/setgid/sticky bits are not supported. If not specified, the permission mode for files defaults to 0644 or the existing file's permissions if `overwrite` is false, `contents` is unspecified, and a file already exists at the path.
     * **_user_** (object): specifies the file's owner.
       * **_id_** (integer): the user ID of the owner.
@@ -112,7 +112,7 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
   * **_units_** (list of objects): the list of systemd units. Every unit must have a unique `name`.
     * **name** (string): the name of the unit. This must be suffixed with a valid unit type (e.g. "thing.service").
     * **_enabled_** (boolean): whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section.
-    * **_mask_** (boolean): whether or not the service shall be masked. When true, the service is masked by symlinking it to `/dev/null`.
+    * **_mask_** (boolean): whether or not the service shall be masked. When true, the service is masked by symlinking it to `/dev/null`. When false, the service is unmasked by deleting the symlink to `/dev/null` if it exists.
     * **_contents_** (string): the contents of the unit.
     * **_dropins_** (list of objects): the list of drop-ins for the unit. Every drop-in must have a unique `name`.
       * **name** (string): the name of the drop-in. This must be suffixed with ".conf".
@@ -131,15 +131,11 @@ The RHEL for Edge configuration is a YAML document conforming to the following s
     * **_no_user_group_** (boolean): whether or not to create a group with the same name as the user. This only has an effect if the account doesn't exist yet.
     * **_no_log_init_** (boolean): whether or not to add the user to the lastlog and faillog databases. This only has an effect if the account doesn't exist yet.
     * **_shell_** (string): the login shell of the new account.
-    * **_should_exist_** (boolean) whether or not the user with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified user.
-    * **_system_** (bool): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
+    * **_should_exist_** (boolean): whether or not the user with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified user.
+    * **_system_** (boolean): whether or not this account should be a system account. This only has an effect if the account doesn't exist yet.
   * **_groups_** (list of objects): the list of groups to be added. All groups must have a unique `name`.
     * **name** (string): the name of the group.
     * **_gid_** (integer): the group ID of the new group.
     * **_password_hash_** (string): the hashed password of the new group.
-    * **_should_exist_** (boolean) whether or not the group with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified group.
-    * **_system_** (bool): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
-
-[part-types]: http://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
-[rfc2397]: https://tools.ietf.org/html/rfc2397
-[systemd-escape]: https://www.freedesktop.org/software/systemd/man/systemd-escape.html
+    * **_should_exist_** (boolean): whether or not the group with the specified `name` should exist. If omitted, it defaults to true. If false, then Ignition will delete the specified group.
+    * **_system_** (boolean): whether or not the group should be a system group. This only has an effect if the group doesn't exist yet.
