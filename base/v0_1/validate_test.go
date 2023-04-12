@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -71,6 +72,7 @@ func TestValidateFileContents(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			// hardcode inline for now since that's the only place errors occur. Move into the
 			// test struct once there's more than one place
@@ -106,6 +108,7 @@ func TestValidateFileMode(t *testing.T) {
 	for i, test := range fileTests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnWarn(path.New("yaml", "mode"), test.out)
 			assert.Equal(t, expected, actual, "bad report")
@@ -139,6 +142,7 @@ func TestValidateDirMode(t *testing.T) {
 	for i, test := range dirTests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnWarn(path.New("yaml", "mode"), test.out)
 			assert.Equal(t, expected, actual, "bad report")

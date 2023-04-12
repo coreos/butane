@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_6_exp"
 	"github.com/coreos/butane/config/common"
 
@@ -181,6 +182,7 @@ func TestValidateBootDevice(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad validation report")
@@ -225,6 +227,7 @@ func TestValidateGrubUser(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad report")

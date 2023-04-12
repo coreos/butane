@@ -276,6 +276,7 @@ func TestTranslateConfig(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
+			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)
@@ -472,6 +473,7 @@ func TestValidateSupport(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToMachineConfig4_10Unvalidated(common.TranslateOptions{})
+			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})
