@@ -217,13 +217,17 @@ func snake(in string) string {
 	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
 }
 
-// TranslateReportPaths takes a report from a camelCase json document and a set of translations rules,
-// applies those rules and converts all camelCase to snake_case.
+// TranslateReportPaths takes a report with a mix of json (camelCase) and
+// yaml (snake_case) paths, and a set of translation rules.  It applies
+// those rules and converts all json paths to snake-cased yaml.
 func TranslateReportPaths(r report.Report, ts translate.TranslationSet) report.Report {
 	var ret report.Report
 	ret.Merge(r)
 	for i, ent := range ret.Entries {
 		context := ent.Context
+		if context.Tag == "yaml" {
+			continue
+		}
 		if t, ok := ts.Set[context.String()]; ok {
 			context = t.From
 		} else {
