@@ -52,7 +52,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("path", "json", "kernel_arguments", "should_exist", 0),
+					path.New("json", "kernelArguments", "shouldExist", 0),
 				},
 			},
 		},
@@ -71,7 +71,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("path", "json", "kernel_arguments", "should_not_exist", 0),
+					path.New("json", "kernelArguments", "shouldNotExist", 0),
 				},
 			},
 		},
@@ -92,7 +92,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrDiskSupport,
-					path.New("path", "json", "storage", "disks", 0),
+					path.New("json", "storage", "disks", 0),
 				},
 			},
 		},
@@ -114,7 +114,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrFilesystemSupport,
-					path.New("path", "json", "storage", "filesystems", 0),
+					path.New("json", "storage", "filesystems", 0),
 				},
 			},
 		},
@@ -135,7 +135,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrLuksSupport,
-					path.New("path", "json", "storage", "luks", 0),
+					path.New("json", "storage", "luks", 0),
 				},
 			},
 		},
@@ -156,7 +156,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrRaidSupport,
-					path.New("path", "json", "storage", "raid", 0),
+					path.New("json", "storage", "raid", 0),
 				},
 			},
 		},

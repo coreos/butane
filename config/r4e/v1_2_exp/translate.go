@@ -42,22 +42,22 @@ func (c Config) ToIgn3_5Unvalidated(options common.TranslateOptions) (types.Conf
 // provided
 func checkForForbiddenFields(t types.Config, r *report.Report) {
 	for i := range t.KernelArguments.ShouldExist {
-		r.AddOnError(path.New("path", "json", "kernel_arguments", "should_exist", i), common.ErrGeneralKernelArgumentSupport)
+		r.AddOnError(path.New("json", "kernelArguments", "shouldExist", i), common.ErrGeneralKernelArgumentSupport)
 	}
 	for i := range t.KernelArguments.ShouldNotExist {
-		r.AddOnError(path.New("path", "json", "kernel_arguments", "should_not_exist", i), common.ErrGeneralKernelArgumentSupport)
+		r.AddOnError(path.New("json", "kernelArguments", "shouldNotExist", i), common.ErrGeneralKernelArgumentSupport)
 	}
 	for i := range t.Storage.Disks {
-		r.AddOnError(path.New("path", "json", "storage", "disks", i), common.ErrDiskSupport)
+		r.AddOnError(path.New("json", "storage", "disks", i), common.ErrDiskSupport)
 	}
 	for i := range t.Storage.Filesystems {
-		r.AddOnError(path.New("path", "json", "storage", "filesystems", i), common.ErrFilesystemSupport)
+		r.AddOnError(path.New("json", "storage", "filesystems", i), common.ErrFilesystemSupport)
 	}
 	for i := range t.Storage.Luks {
-		r.AddOnError(path.New("path", "json", "storage", "luks", i), common.ErrLuksSupport)
+		r.AddOnError(path.New("json", "storage", "luks", i), common.ErrLuksSupport)
 	}
 	for i := range t.Storage.Raid {
-		r.AddOnError(path.New("path", "json", "storage", "raid", i), common.ErrRaidSupport)
+		r.AddOnError(path.New("json", "storage", "raid", i), common.ErrRaidSupport)
 	}
 }
 

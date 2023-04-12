@@ -15,6 +15,7 @@ nav_order: 9
 
 ### Bug fixes
 
+- Fix line/column reporting for unsupported field errors _(r4e)_
 
 ### Misc. changes
 
