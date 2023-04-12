@@ -18,6 +18,7 @@ nav_order: 9
 
 ### Misc. changes
 
+- Add error structs for YAML unmarshal errors, unknown config versions (Go API)
 
 ### Docs changes
 
