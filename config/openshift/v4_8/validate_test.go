@@ -49,7 +49,7 @@ func TestValidateMetadata(t *testing.T) {
 				Name: "n",
 			},
 			common.ErrRoleRequired,
-			path.New("yaml", "labels", ROLE_LABEL_KEY),
+			path.New("yaml", "labels"),
 		},
 		// empty role
 		{
@@ -60,7 +60,7 @@ func TestValidateMetadata(t *testing.T) {
 				},
 			},
 			common.ErrRoleRequired,
-			path.New("yaml", "labels", ROLE_LABEL_KEY),
+			path.New("yaml", "labels"),
 		},
 	}
 
