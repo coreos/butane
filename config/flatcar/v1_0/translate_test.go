@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
 
@@ -70,6 +71,7 @@ func TestTranslation(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
+			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})

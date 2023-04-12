@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/ignition/v2/config/util"
@@ -168,6 +169,7 @@ func TestTranslateInvalid(t *testing.T) {
 				expectedReport.AddOnError(entry.Path, entry.Err)
 			}
 			actual, translations, r := test.In.ToIgn3_3Unvalidated(common.TranslateOptions{})
+			baseutil.VerifyTranslatedReport(t, test.In, translations, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})

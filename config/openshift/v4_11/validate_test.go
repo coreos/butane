@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"testing"
 
+	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
@@ -67,6 +68,7 @@ func TestValidateMetadata(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad report")
@@ -99,6 +101,7 @@ func TestValidateOpenShift(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
 			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad report")

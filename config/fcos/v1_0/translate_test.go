@@ -145,6 +145,7 @@ func TestTranslateConfig(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_0Unvalidated(common.TranslateOptions{})
+			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, test.report, r, "report mismatch")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)
