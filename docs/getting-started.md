@@ -66,7 +66,7 @@ Download the latest version of `butane` and the detached signature from the [rel
 ```
 gpg --verify <detached sig> <butane binary>
 ```
-You may need to download the [Fedora signing keys](https://getfedora.org/static/fedora.gpg) and import them with `gpg --import <key>` if you have not already done so.
+You may need to download the [Fedora signing keys](https://fedoraproject.org/fedora.gpg) and import them with `gpg --import <key>` if you have not already done so.
 
 New releases of `butane` are backwards compatible with old releases, and with the Fedora CoreOS Config Transpiler, unless otherwise noted.
 
