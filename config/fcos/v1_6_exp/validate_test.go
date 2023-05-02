@@ -88,22 +88,24 @@ func TestReportCorrelation(t *testing.T) {
 			`storage:
                            disks:
                            - device: /dev/z
+                             wipe_table: true
                              partitions:
                                - start_mib: 5`,
 			errors.ErrNeedLabelOrNumber.Error(),
-			5,
+			6,
 		},
 		// Ignition validation error, partition list
 		{
 			`storage:
                            disks:
                            - device: /dev/z
+                             wipe_table: true
                              partitions:
                                - number: 1
                                  should_exist: false
                                - label: z`,
 			errors.ErrZeroesWithShouldNotExist.Error(),
-			5,
+			6,
 		},
 		// Ignition duplicate key check, paths
 		{
@@ -231,6 +233,112 @@ func TestValidateGrubUser(t *testing.T) {
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}
+
+func TestValidateConfig(t *testing.T) {
+	tests := []struct {
+		in      Config
+		out     error
+		errPath path.ContextPath
+	}{
+		// valid config (wipe_table is true)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device:    "/dev/vda",
+								WipeTable: util.BoolToPtr(true),
+								Partitions: []base.Partition{
+									{
+										Label: util.StrToPtr("foo"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		// valid config (disk is /dev/disk/by-id/coreos-boot-disk)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device:    rootDevice,
+								WipeTable: util.BoolToPtr(false),
+								Partitions: []base.Partition{
+									{
+										Label: util.StrToPtr("bar"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		// invalid config (wipe_table is nil)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label: util.StrToPtr("foo"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			out:     common.ErrReuseByLabel,
+			errPath: path.New("yaml", "storage", "disks", 0, "partitions", 0, "number"),
+		},
+		// invalid config (wipe_table is false with a partition numbered 0)
+		{
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device:    "/dev/vda",
+								WipeTable: util.BoolToPtr(false),
+								Partitions: []base.Partition{
+									{
+										Label: util.StrToPtr("foo"),
+									},
+									{
+										Label:  util.StrToPtr("bar"),
+										Number: 2,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			out:     common.ErrReuseByLabel,
+			errPath: path.New("yaml", "storage", "disks", 0, "partitions", 0, "number"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
+			expected := report.Report{}
+			expected.AddOnWarn(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "invalid report")
 		})
 	}
 }
