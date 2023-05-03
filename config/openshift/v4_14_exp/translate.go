@@ -284,7 +284,7 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 			}
 		} else {
 			// TRIPWIRE
-			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i), common.ErrUserNameSupport)
+			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i, "name"), common.ErrUserNameSupport)
 		}
 	}
 	for i := range mc.Spec.Config.KernelArguments.ShouldExist {
