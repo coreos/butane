@@ -94,7 +94,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrDiskSupport,
-					path.New("yaml", "storage", "disks", 0),
+					path.New("yaml", "storage", "disks"),
 				},
 			},
 		},
@@ -116,7 +116,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrFilesystemSupport,
-					path.New("yaml", "storage", "filesystems", 0),
+					path.New("yaml", "storage", "filesystems"),
 				},
 			},
 		},
@@ -137,7 +137,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrLuksSupport,
-					path.New("yaml", "storage", "luks", 0),
+					path.New("yaml", "storage", "luks"),
 				},
 			},
 		},
@@ -158,7 +158,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrRaidSupport,
-					path.New("yaml", "storage", "raid", 0),
+					path.New("yaml", "storage", "raid"),
 				},
 			},
 		},

@@ -45,17 +45,17 @@ func checkForForbiddenFields(t types.Config, r *report.Report) {
 	if len(t.KernelArguments.ShouldExist) > 0 || len(t.KernelArguments.ShouldNotExist) > 0 {
 		r.AddOnError(path.New("json", "kernelArguments"), common.ErrGeneralKernelArgumentSupport)
 	}
-	for i := range t.Storage.Disks {
-		r.AddOnError(path.New("json", "storage", "disks", i), common.ErrDiskSupport)
+	if len(t.Storage.Disks) > 0 {
+		r.AddOnError(path.New("json", "storage", "disks"), common.ErrDiskSupport)
 	}
-	for i := range t.Storage.Filesystems {
-		r.AddOnError(path.New("json", "storage", "filesystems", i), common.ErrFilesystemSupport)
+	if len(t.Storage.Filesystems) > 0 {
+		r.AddOnError(path.New("json", "storage", "filesystems"), common.ErrFilesystemSupport)
 	}
-	for i := range t.Storage.Luks {
-		r.AddOnError(path.New("json", "storage", "luks", i), common.ErrLuksSupport)
+	if len(t.Storage.Luks) > 0 {
+		r.AddOnError(path.New("json", "storage", "luks"), common.ErrLuksSupport)
 	}
-	for i := range t.Storage.Raid {
-		r.AddOnError(path.New("json", "storage", "raid", i), common.ErrRaidSupport)
+	if len(t.Storage.Raid) > 0 {
+		r.AddOnError(path.New("json", "storage", "raid"), common.ErrRaidSupport)
 	}
 }
 

@@ -219,9 +219,9 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 	// supported fields.  We reject these.
 
 	var r report.Report
-	for i := range mc.Spec.Config.Storage.Directories {
+	if len(mc.Spec.Config.Storage.Directories) > 0 {
 		// IMMUTABLE
-		r.AddOnError(path.New("json", "spec", "config", "storage", "directories", i), common.ErrDirectorySupport)
+		r.AddOnError(path.New("json", "spec", "config", "storage", "directories"), common.ErrDirectorySupport)
 	}
 	for i, file := range mc.Spec.Config.Storage.Files {
 		if len(file.Append) > 0 {
@@ -241,16 +241,16 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "mode"), common.ErrFileSpecialModeSupport)
 		}
 	}
-	for i := range mc.Spec.Config.Storage.Links {
+	if len(mc.Spec.Config.Storage.Links) > 0 {
 		// IMMUTABLE
 		// If you change this to be less restrictive without adding
 		// link support in the MCO, consider what should happen if
 		// the user specifies a storage.tree that includes symlinks.
-		r.AddOnError(path.New("json", "spec", "config", "storage", "links", i), common.ErrLinkSupport)
+		r.AddOnError(path.New("json", "spec", "config", "storage", "links"), common.ErrLinkSupport)
 	}
-	for i := range mc.Spec.Config.Passwd.Groups {
+	if len(mc.Spec.Config.Passwd.Groups) > 0 {
 		// IMMUTABLE
-		r.AddOnError(path.New("json", "spec", "config", "passwd", "groups", i), common.ErrGroupSupport)
+		r.AddOnError(path.New("json", "spec", "config", "passwd", "groups"), common.ErrGroupSupport)
 	}
 	for i, user := range mc.Spec.Config.Passwd.Users {
 		if user.Name == "core" {
