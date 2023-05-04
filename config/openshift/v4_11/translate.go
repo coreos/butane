@@ -87,8 +87,8 @@ func (c Config) ToMachineConfig4_11Unvalidated(options common.TranslateOptions) 
 	ts.Merge(addLuksFipsOptions(&mc))
 
 	// finally, check the fully desugared config for RHCOS and MCO support
-	r.Merge(validateRHCOSSupport(mc, ts))
-	r.Merge(validateMCOSupport(mc, ts))
+	r.Merge(validateRHCOSSupport(mc))
+	r.Merge(validateMCOSupport(mc))
 
 	return mc, ts, r
 }
@@ -114,7 +114,8 @@ func (c Config) ToIgn3_2Unvalidated(options common.TranslateOptions) (types.Conf
 	// than the Ignition config itself) that we're ignoring
 	mc.Spec.Config = types.Config{}
 	warnings := translate.PrefixReport(cutil.CheckForElidedFields(mc.Spec), "spec")
-	// translate from json space into yaml space
+	// translate from json space into yaml space, since the caller won't
+	// have enough info to do it
 	r.Merge(cutil.TranslateReportPaths(warnings, ts))
 
 	ts = ts.Descend(path.New("json", "spec", "config"))
@@ -177,7 +178,7 @@ OUTER:
 // boot_device.luks), so we work in JSON (output) space and then translate
 // paths back to YAML (input) space.  That's also the reason we do these
 // checks after translation, rather than during validation.
-func validateRHCOSSupport(mc result.MachineConfig, ts translate.TranslationSet) report.Report {
+func validateRHCOSSupport(mc result.MachineConfig) report.Report {
 	var r report.Report
 	for i, fs := range mc.Spec.Config.Storage.Filesystems {
 		if fs.Format != nil && *fs.Format == "btrfs" {
@@ -185,7 +186,7 @@ func validateRHCOSSupport(mc result.MachineConfig, ts translate.TranslationSet) 
 			r.AddOnError(path.New("json", "spec", "config", "storage", "filesystems", i, "format"), common.ErrBtrfsSupport)
 		}
 	}
-	return cutil.TranslateReportPaths(r, ts)
+	return r
 }
 
 // Error on fields that are rejected outright by the MCO, or that are
@@ -197,7 +198,7 @@ func validateRHCOSSupport(mc result.MachineConfig, ts translate.TranslationSet) 
 // so we work in JSON (output) space and then translate paths back to YAML
 // (input) space.  That's also the reason we do these checks after
 // translation, rather than during validation.
-func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) report.Report {
+func validateMCOSupport(mc result.MachineConfig) report.Report {
 	// Error classes for the purposes of this function:
 	//
 	// UNPARSABLE - Cannot be rendered into a config by the MCC.  If
@@ -275,5 +276,5 @@ func validateMCOSupport(mc result.MachineConfig, ts translate.TranslationSet) re
 			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i), common.ErrUserNameSupport)
 		}
 	}
-	return cutil.TranslateReportPaths(r, ts)
+	return r
 }
