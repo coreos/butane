@@ -20,8 +20,17 @@ import (
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_3/types"
-	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+)
+
+var (
+	fieldFilters = cutil.NewFilters(types.Config{}, cutil.FilterMap{
+		"kernelArguments":     common.ErrGeneralKernelArgumentSupport,
+		"storage.disks":       common.ErrDiskSupport,
+		"storage.filesystems": common.ErrFilesystemSupport,
+		"storage.luks":        common.ErrLuksSupport,
+		"storage.raid":        common.ErrRaidSupport,
+	})
 )
 
 // ToIgn3_3Unvalidated translates the config to an Ignition config.  It also
@@ -34,29 +43,9 @@ func (c Config) ToIgn3_3Unvalidated(options common.TranslateOptions) (types.Conf
 		return types.Config{}, translate.TranslationSet{}, r
 	}
 
-	checkForForbiddenFields(ret, &r)
+	r.Merge(fieldFilters.Verify(ret))
 
 	return ret, ts, r
-}
-
-// Checks and adds the appropiate errors when unsupported fields on r4e are
-// provided
-func checkForForbiddenFields(t types.Config, r *report.Report) {
-	if len(t.KernelArguments.ShouldExist) > 0 || len(t.KernelArguments.ShouldNotExist) > 0 {
-		r.AddOnError(path.New("json", "kernelArguments"), common.ErrGeneralKernelArgumentSupport)
-	}
-	if len(t.Storage.Disks) > 0 {
-		r.AddOnError(path.New("json", "storage", "disks"), common.ErrDiskSupport)
-	}
-	if len(t.Storage.Filesystems) > 0 {
-		r.AddOnError(path.New("json", "storage", "filesystems"), common.ErrFilesystemSupport)
-	}
-	if len(t.Storage.Luks) > 0 {
-		r.AddOnError(path.New("json", "storage", "luks"), common.ErrLuksSupport)
-	}
-	if len(t.Storage.Raid) > 0 {
-		r.AddOnError(path.New("json", "storage", "raid"), common.ErrRaidSupport)
-	}
 }
 
 // ToIgn3_3 translates the config to an Ignition config.  It returns a

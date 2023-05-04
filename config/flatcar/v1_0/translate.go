@@ -20,8 +20,13 @@ import (
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/v3_3/types"
-	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+)
+
+var (
+	fieldFilters = cutil.NewFilters(types.Config{}, cutil.FilterMap{
+		"storage.luks.clevis": common.ErrClevisSupport,
+	})
 )
 
 // ToIgn3_3Unvalidated translates the config to an Ignition config.  It also
@@ -34,11 +39,7 @@ func (c Config) ToIgn3_3Unvalidated(options common.TranslateOptions) (types.Conf
 		return types.Config{}, translate.TranslationSet{}, r
 	}
 
-	for i, luks := range ret.Storage.Luks {
-		if luks.Clevis.IsPresent() {
-			r.AddOnError(path.New("json", "storage", "luks", i, "clevis"), common.ErrClevisSupport)
-		}
-	}
+	r.Merge(fieldFilters.Verify(ret))
 
 	return ret, ts, r
 }

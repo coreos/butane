@@ -16,7 +16,6 @@ package v4_14_exp
 
 import (
 	"net/url"
-	"reflect"
 	"strings"
 
 	"github.com/coreos/butane/config/common"
@@ -30,11 +29,75 @@ import (
 	"github.com/coreos/vcontext/report"
 )
 
+// Error classes:
+//
+// UNPARSABLE - Cannot be rendered into a config by the MCC.  If present in
+// MC, MCC will mark the pool degraded.  We reject these.
+//
+// FORBIDDEN - Not supported by the MCD.  If present in MC, MCD will mark
+// the node degraded.  We reject these.
+//
+// REDUNDANT - Feature is also provided by a MachineConfig-specific field
+// with different semantics.  To reduce confusion, disable this
+// implementation.
+//
+// IMMUTABLE - Permitted in MC, passed through to Ignition, but not
+// supported by the MCD.  MCD will mark the node degraded if the field
+// changes after the node is provisioned.  We reject these outright to
+// discourage their use.
+//
+// TRIPWIRE - A subset of fields in the containing struct are supported by
+// the MCD.  If the struct contents change after the node is provisioned,
+// and the struct contains unsupported fields, MCD will mark the node
+// degraded, even if the change only affects supported fields.  We reject
+// these.
+
 const (
 	// FIPS 140-2 doesn't allow the default XTS mode
 	fipsCipherOption      = types.LuksOption("--cipher")
 	fipsCipherShortOption = types.LuksOption("-c")
 	fipsCipherArgument    = types.LuksOption("aes-cbc-essiv:sha256")
+)
+
+var (
+	// See also validateRHCOSSupport() and validateMCOSupport()
+	fieldFilters = cutil.NewFilters(result.MachineConfig{}, cutil.FilterMap{
+		// UNPARSABLE, REDUNDANT
+		"spec.config.kernelArguments": common.ErrKernelArgumentSupport,
+		// IMMUTABLE
+		"spec.config.passwd.groups": common.ErrGroupSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.gecos": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.groups": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.homeDir": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.noCreateHome": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.noLogInit": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.noUserGroup": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.primaryGroup": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.shell": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.shouldExist": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.system": common.ErrUserFieldSupport,
+		// TRIPWIRE
+		"spec.config.passwd.users.uid": common.ErrUserFieldSupport,
+		// IMMUTABLE
+		"spec.config.storage.directories": common.ErrDirectorySupport,
+		// FORBIDDEN
+		"spec.config.storage.files.append": common.ErrFileAppendSupport,
+		// IMMUTABLE
+		// If you change this to be less restrictive without adding
+		// link support in the MCO, consider what should happen if
+		// the user specifies a storage.tree that includes symlinks.
+		"spec.config.storage.links": common.ErrLinkSupport,
+	})
 )
 
 // ToMachineConfig4_14Unvalidated translates the config to a MachineConfig.  It also
@@ -90,6 +153,7 @@ func (c Config) ToMachineConfig4_14Unvalidated(options common.TranslateOptions) 
 	// finally, check the fully desugared config for RHCOS and MCO support
 	r.Merge(validateRHCOSSupport(mc))
 	r.Merge(validateMCOSupport(mc))
+	r.Merge(fieldFilters.Verify(mc))
 
 	return mc, ts, r
 }
@@ -200,28 +264,7 @@ func validateRHCOSSupport(mc result.MachineConfig) report.Report {
 // (input) space.  That's also the reason we do these checks after
 // translation, rather than during validation.
 func validateMCOSupport(mc result.MachineConfig) report.Report {
-	// Error classes for the purposes of this function:
-	//
-	// UNPARSABLE - Cannot be rendered into a config by the MCC.  If
-	// present in MC, MCC will mark the pool degraded.  We reject these.
-	//
-	// FORBIDDEN - Not supported by the MCD.  If present in MC, MCD will
-	// mark the node degraded.  We reject these.
-	//
-	// REDUNDANT - Feature is also provided by a MachineConfig-specific
-	// field with different semantics.  To reduce confusion, disable
-	// this implementation.
-	//
-	// IMMUTABLE - Permitted in MC, passed through to Ignition, but not
-	// supported by the MCD.  MCD will mark the node degraded if the
-	// field changes after the node is provisioned.  We reject these
-	// outright to discourage their use.
-	//
-	// TRIPWIRE - A subset of fields in the containing struct are
-	// supported by the MCD.  If the struct contents change after the node
-	// is provisioned, and the struct contains unsupported fields, MCD
-	// will mark the node degraded, even if the change only affects
-	// supported fields.  We reject these.
+	// See also fieldFilters at the top of this file.
 
 	var r report.Report
 	for i, fs := range mc.Spec.Config.Storage.Filesystems {
@@ -230,15 +273,7 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 			r.AddOnError(path.New("json", "spec", "config", "storage", "filesystems", i, "format"), common.ErrFilesystemNoneSupport)
 		}
 	}
-	if len(mc.Spec.Config.Storage.Directories) > 0 {
-		// IMMUTABLE
-		r.AddOnError(path.New("json", "spec", "config", "storage", "directories"), common.ErrDirectorySupport)
-	}
 	for i, file := range mc.Spec.Config.Storage.Files {
-		if len(file.Append) > 0 {
-			// FORBIDDEN
-			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "append"), common.ErrFileAppendSupport)
-		}
 		if file.Contents.Source != nil {
 			fileSource, err := url.Parse(*file.Contents.Source)
 			// parse errors will be caught by normal config validation
@@ -252,44 +287,11 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 			r.AddOnError(path.New("json", "spec", "config", "storage", "files", i, "mode"), common.ErrFileSpecialModeSupport)
 		}
 	}
-	if len(mc.Spec.Config.Storage.Links) > 0 {
-		// IMMUTABLE
-		// If you change this to be less restrictive without adding
-		// link support in the MCO, consider what should happen if
-		// the user specifies a storage.tree that includes symlinks.
-		r.AddOnError(path.New("json", "spec", "config", "storage", "links"), common.ErrLinkSupport)
-	}
-	if len(mc.Spec.Config.Passwd.Groups) > 0 {
-		// IMMUTABLE
-		r.AddOnError(path.New("json", "spec", "config", "passwd", "groups"), common.ErrGroupSupport)
-	}
 	for i, user := range mc.Spec.Config.Passwd.Users {
-		if user.Name == "core" {
-			// PasswordHash and SSHAuthorizedKeys are managed; other fields are not
-			v := reflect.ValueOf(user)
-			t := v.Type()
-			for j := 0; j < v.NumField(); j++ {
-				fv := v.Field(j)
-				ft := t.Field(j)
-				switch ft.Name {
-				case "Name", "PasswordHash", "SSHAuthorizedKeys":
-					continue
-				default:
-					if fv.IsValid() && !fv.IsZero() {
-						tag := strings.Split(ft.Tag.Get("json"), ",")[0]
-						// TRIPWIRE
-						r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i, tag), common.ErrUserFieldSupport)
-					}
-				}
-			}
-		} else {
+		if user.Name != "core" {
 			// TRIPWIRE
 			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i, "name"), common.ErrUserNameSupport)
 		}
-	}
-	if len(mc.Spec.Config.KernelArguments.ShouldExist) > 0 || len(mc.Spec.Config.KernelArguments.ShouldNotExist) > 0 {
-		// UNPARSABLE, REDUNDANT
-		r.AddOnError(path.New("json", "spec", "config", "kernelArguments"), common.ErrKernelArgumentSupport)
 	}
 	return r
 }

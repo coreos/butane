@@ -547,12 +547,11 @@ func TestValidateSupport(t *testing.T) {
 				},
 			},
 			[]entry{
+				// code
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
-				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories")},
-				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
-				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
 				{report.Error, common.ErrFileSchemeSupport, path.New("yaml", "storage", "files", 2, "contents", "source")},
-				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links")},
+				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1, "name")},
+				// filters
 				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "groups")},
@@ -566,7 +565,10 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "should_exist")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
-				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1, "name")},
+				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories")},
+				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
+				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
+				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links")},
 			},
 		},
 	}
