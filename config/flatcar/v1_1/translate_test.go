@@ -21,6 +21,7 @@ import (
 	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_5"
 	"github.com/coreos/butane/config/common"
+	confutil "github.com/coreos/butane/config/util"
 
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
@@ -59,7 +60,7 @@ func TestTranslation(t *testing.T) {
 				},
 			},
 			[]entry{
-				{report.Error, common.ErrClevisSupport, path.New("json", "storage", "luks", 1, "clevis")},
+				{report.Error, common.ErrClevisSupport, path.New("yaml", "storage", "luks", 1, "clevis")},
 			},
 		},
 	}
@@ -71,7 +72,8 @@ func TestTranslation(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})

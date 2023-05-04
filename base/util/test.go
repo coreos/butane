@@ -19,7 +19,6 @@ import (
 	"strings"
 	"testing"
 
-	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/vcontext/path"
@@ -46,31 +45,6 @@ func VerifyTranslations(t *testing.T, set translate.TranslationSet, exceptions [
 			assert.Equal(t, translation.From.Path, translation.To.Path, "translation is not identity")
 		}
 	}
-}
-
-// VerifyTranslatedReport translates report paths from camelCase json to
-// snake_case yaml and then verifies that every path in a report corresponds
-// to a valid field in the object.
-func VerifyTranslatedReport(t *testing.T, obj interface{}, ts translate.TranslationSet, r report.Report) {
-	// check for stray snake_case
-	for _, entry := range r.Entries {
-		if entry.Context.Tag == "yaml" {
-			// expected to be in snake case
-			continue
-		}
-		for _, component := range entry.Context.Path {
-			str, ok := component.(string)
-			if !ok {
-				continue
-			}
-			if strings.Contains(str, "_") {
-				t.Errorf("%s: translated report contains snake_case name", entry.Context)
-			}
-		}
-	}
-
-	r2 := confutil.TranslateReportPaths(r, ts)
-	VerifyReport(t, obj, r2)
 }
 
 // VerifyReport verifies that every path in a report corresponds to a valid
