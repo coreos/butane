@@ -170,6 +170,7 @@ func TestTranslateInvalid(t *testing.T) {
 				expectedReport.AddOnError(entry.Path, entry.Err)
 			}
 			actual, translations, r := test.In.ToIgn3_3Unvalidated(common.TranslateOptions{})
+			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.In, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")

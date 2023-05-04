@@ -575,6 +575,7 @@ func TestValidateSupport(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToMachineConfig4_14Unvalidated(common.TranslateOptions{})
+			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")

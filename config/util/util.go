@@ -41,12 +41,16 @@ var (
 
 // Misc helpers
 
+type Config interface {
+	FieldFilters() *FieldFilters
+}
+
 // Translate translates cfg to the corresponding Ignition config version
 // using the named translation method on cfg, and returns the marshaled
 // Ignition config.  It returns a report of any errors or warnings in the
 // source and resultant config.  If the report has fatal errors or it
 // encounters other problems translating, an error is returned.
-func Translate(cfg interface{}, translateMethod string, options common.TranslateOptions) (interface{}, report.Report, error) {
+func Translate(cfg Config, translateMethod string, options common.TranslateOptions) (interface{}, report.Report, error) {
 	// Get method, and zero return value for error returns.
 	method := reflect.ValueOf(cfg).MethodByName(translateMethod)
 	zeroValue := reflect.Zero(method.Type().Out(0)).Interface()
@@ -70,6 +74,16 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 		fmt.Fprint(os.Stderr, translations)
 		if err := translations.DebugVerifyCoverage(final); err != nil {
 			fmt.Fprintf(os.Stderr, "\n%s", err)
+		}
+	}
+
+	// Check for fields forbidden by this spec.
+	filters := cfg.FieldFilters()
+	if filters != nil {
+		filterReport := filters.Verify(final)
+		r.Merge(TranslateReportPaths(filterReport, translations))
+		if r.IsFatal() {
+			return zeroValue, r, common.ErrInvalidSourceConfig
 		}
 	}
 

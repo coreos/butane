@@ -94,6 +94,11 @@ var (
 	})
 )
 
+// Return FieldFilters for this spec.
+func (c Config) FieldFilters() *cutil.FieldFilters {
+	return &fieldFilters
+}
+
 // ToMachineConfig4_13Unvalidated translates the config to a MachineConfig.  It also
 // returns the set of translations it did so paths in the resultant config
 // can be tracked back to their source in the source config.  No config
@@ -146,7 +151,6 @@ func (c Config) ToMachineConfig4_13Unvalidated(options common.TranslateOptions) 
 	// finally, check the fully desugared config for RHCOS and MCO support
 	r.Merge(validateRHCOSSupport(mc))
 	r.Merge(validateMCOSupport(mc))
-	r.Merge(fieldFilters.Verify(mc))
 
 	return mc, ts, r
 }
