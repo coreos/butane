@@ -21,6 +21,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/translate"
@@ -229,6 +230,20 @@ func snakePath(p path.ContextPath) path.ContextPath {
 // Snake converts from camelCase (not CamelCase) to snake_case
 func Snake(in string) string {
 	return strings.ToLower(snakeRe.ReplaceAllString(in, "_$1"))
+}
+
+// Camel converts from snake_case to camelCase
+func Camel(in string) string {
+	if strings.HasSuffix(in, "_mib") {
+		in = strings.TrimSuffix(in, "_mib") + "MiB"
+	}
+	arr := []rune(in)
+	for i := range arr {
+		if i > 0 && arr[i-1] == '_' {
+			arr[i] = unicode.ToUpper(arr[i])
+		}
+	}
+	return strings.ReplaceAll(string(arr), "_", "")
 }
 
 // TranslateReportPaths takes a report with a mix of json (camelCase) and
