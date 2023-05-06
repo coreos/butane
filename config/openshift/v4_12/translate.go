@@ -88,6 +88,9 @@ var (
 		"spec.config.storage.directories": common.ErrDirectorySupport,
 		// FORBIDDEN
 		"spec.config.storage.files.append": common.ErrFileAppendSupport,
+		// redundant with a check from Ignition validation, but ensures we
+		// exclude the section from docs
+		"spec.config.storage.files.contents.httpHeaders": common.ErrFileHeaderSupport,
 		// IMMUTABLE
 		// If you change this to be less restrictive without adding
 		// link support in the MCO, consider what should happen if

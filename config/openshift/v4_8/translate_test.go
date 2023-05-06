@@ -494,6 +494,18 @@ func TestValidateSupport(t *testing.T) {
 										Source: util.StrToPtr("https://example.com/"),
 									},
 								},
+								{
+									Path: "/i",
+									Contents: base.Resource{
+										Source: util.StrToPtr("data:,z"),
+										HTTPHeaders: base.HTTPHeaders{
+											{
+												Name:  "foo",
+												Value: util.StrToPtr("bar"),
+											},
+										},
+									},
+								},
 							},
 							Filesystems: []base.Filesystem{
 								{
@@ -568,6 +580,7 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories")},
 				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
 				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
+				{report.Error, common.ErrFileHeaderSupport, path.New("yaml", "storage", "files", 3, "contents", "http_headers")},
 				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links")},
 			},
 		},
