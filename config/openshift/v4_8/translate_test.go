@@ -433,6 +433,33 @@ func TestValidateSupport(t *testing.T) {
 			},
 			[]entry{},
 		},
+		// config with uncompressed inline contents
+		// (shouldn't reject Compression: StrToPtr(""))
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Files: []base.File{
+								{
+									Path: "/a",
+									Contents: base.Resource{
+										Inline: util.StrToPtr("foo"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]entry{},
+		},
 		// all the warnings/errors
 		{
 			Config{
