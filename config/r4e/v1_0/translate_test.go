@@ -54,7 +54,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("yaml", "kernel_arguments", "should_exist", 0),
+					path.New("yaml", "kernel_arguments"),
 				},
 			},
 		},
@@ -73,7 +73,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("yaml", "kernel_arguments", "should_not_exist", 0),
+					path.New("yaml", "kernel_arguments"),
 				},
 			},
 		},

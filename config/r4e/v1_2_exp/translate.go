@@ -41,11 +41,8 @@ func (c Config) ToIgn3_5Unvalidated(options common.TranslateOptions) (types.Conf
 // Checks and adds the appropiate errors when unsupported fields on r4e are
 // provided
 func checkForForbiddenFields(t types.Config, r *report.Report) {
-	for i := range t.KernelArguments.ShouldExist {
-		r.AddOnError(path.New("json", "kernelArguments", "shouldExist", i), common.ErrGeneralKernelArgumentSupport)
-	}
-	for i := range t.KernelArguments.ShouldNotExist {
-		r.AddOnError(path.New("json", "kernelArguments", "shouldNotExist", i), common.ErrGeneralKernelArgumentSupport)
+	if len(t.KernelArguments.ShouldExist) > 0 || len(t.KernelArguments.ShouldNotExist) > 0 {
+		r.AddOnError(path.New("json", "kernelArguments"), common.ErrGeneralKernelArgumentSupport)
 	}
 	for i := range t.Storage.Disks {
 		r.AddOnError(path.New("json", "storage", "disks", i), common.ErrDiskSupport)

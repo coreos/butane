@@ -287,13 +287,9 @@ func validateMCOSupport(mc result.MachineConfig) report.Report {
 			r.AddOnError(path.New("json", "spec", "config", "passwd", "users", i, "name"), common.ErrUserNameSupport)
 		}
 	}
-	for i := range mc.Spec.Config.KernelArguments.ShouldExist {
+	if len(mc.Spec.Config.KernelArguments.ShouldExist) > 0 || len(mc.Spec.Config.KernelArguments.ShouldNotExist) > 0 {
 		// UNPARSABLE, REDUNDANT
-		r.AddOnError(path.New("json", "spec", "config", "kernelArguments", "shouldExist", i), common.ErrKernelArgumentSupport)
-	}
-	for i := range mc.Spec.Config.KernelArguments.ShouldNotExist {
-		// UNPARSABLE, REDUNDANT
-		r.AddOnError(path.New("json", "spec", "config", "kernelArguments", "shouldNotExist", i), common.ErrKernelArgumentSupport)
+		r.AddOnError(path.New("json", "spec", "config", "kernelArguments"), common.ErrKernelArgumentSupport)
 	}
 	return r
 }
