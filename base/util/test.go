@@ -16,6 +16,7 @@ package util
 
 import (
 	"reflect"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -28,9 +29,15 @@ import (
 
 // helper functions for writing tests
 
-// VerifyTranslations ensures all the translations are identity, unless they
-// match a listed one, and verifies that all the listed ones exist.
+// VerifyTranslations validates a TranslationSet from 'yaml' to 'json'.  It
+// expects all translations to be identity, unless they match a listed one,
+// and all the listed ones to exist.
 func VerifyTranslations(t *testing.T, set translate.TranslationSet, exceptions []translate.Translation) {
+	// check tags
+	assert.Equal(t, set.FromTag, "yaml")
+	assert.Equal(t, set.ToTag, "json")
+
+	// build up exceptions and check them
 	exceptionSet := translate.NewTranslationSet(set.FromTag, set.ToTag)
 	for _, ex := range exceptions {
 		exceptionSet.AddTranslation(ex.From, ex.To)
@@ -40,10 +47,17 @@ func VerifyTranslations(t *testing.T, set translate.TranslationSet, exceptions [
 			t.Errorf("missing non-identity translation %v", ex)
 		}
 	}
+
+	// walk translations
 	for key, translation := range set.Set {
+		// unexpected non-identity?
 		if _, ok := exceptionSet.Set[key]; !ok {
 			assert.Equal(t, translation.From.Path, translation.To.Path, "translation is not identity")
 		}
+		// camel case on left?
+		assert.NotRegexp(t, regexp.MustCompile("[A-Z]"), translation.From.String(), "from path in camelCase")
+		// snake case on right?
+		assert.NotContains(t, translation.To.String(), "_", "to path in snake_case")
 	}
 }
 

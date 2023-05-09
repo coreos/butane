@@ -19,6 +19,7 @@ key](https://getfedora.org/security/).
 
 ### Bug fixes
 
+- Fix line/column reporting for `http_headers` errors
 - Fix line/column reporting for unsupported field errors _(r4e)_
 
 ### Misc. changes

@@ -217,8 +217,40 @@ func TestTranslateFile(t *testing.T) {
 			},
 			[]translate.Translation{
 				{
+					From: path.New("yaml", "append", 0, "http_headers"),
+					To:   path.New("json", "append", 0, "httpHeaders"),
+				},
+				{
+					From: path.New("yaml", "append", 0, "http_headers", 0),
+					To:   path.New("json", "append", 0, "httpHeaders", 0),
+				},
+				{
+					From: path.New("yaml", "append", 0, "http_headers", 0, "name"),
+					To:   path.New("json", "append", 0, "httpHeaders", 0, "name"),
+				},
+				{
+					From: path.New("yaml", "append", 0, "http_headers", 0, "value"),
+					To:   path.New("json", "append", 0, "httpHeaders", 0, "value"),
+				},
+				{
 					From: path.New("yaml", "append", 1, "inline"),
 					To:   path.New("json", "append", 1, "source"),
+				},
+				{
+					From: path.New("yaml", "append", 1, "http_headers"),
+					To:   path.New("json", "append", 1, "httpHeaders"),
+				},
+				{
+					From: path.New("yaml", "append", 1, "http_headers", 0),
+					To:   path.New("json", "append", 1, "httpHeaders", 0),
+				},
+				{
+					From: path.New("yaml", "append", 1, "http_headers", 0, "name"),
+					To:   path.New("json", "append", 1, "httpHeaders", 0, "name"),
+				},
+				{
+					From: path.New("yaml", "append", 1, "http_headers", 0, "value"),
+					To:   path.New("json", "append", 1, "httpHeaders", 0, "value"),
 				},
 				{
 					From: path.New("yaml", "append", 2, "local"),
@@ -227,6 +259,22 @@ func TestTranslateFile(t *testing.T) {
 				{
 					From: path.New("yaml", "append", 2, "local"),
 					To:   path.New("json", "append", 2, "compression"),
+				},
+				{
+					From: path.New("yaml", "contents", "http_headers"),
+					To:   path.New("json", "contents", "httpHeaders"),
+				},
+				{
+					From: path.New("yaml", "contents", "http_headers", 0),
+					To:   path.New("json", "contents", "httpHeaders", 0),
+				},
+				{
+					From: path.New("yaml", "contents", "http_headers", 0, "name"),
+					To:   path.New("json", "contents", "httpHeaders", 0, "name"),
+				},
+				{
+					From: path.New("yaml", "contents", "http_headers", 0, "value"),
+					To:   path.New("json", "contents", "httpHeaders", 0, "value"),
 				},
 			},
 			"",
