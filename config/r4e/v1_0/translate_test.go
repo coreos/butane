@@ -21,6 +21,7 @@ import (
 	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_4"
 	"github.com/coreos/butane/config/common"
+	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
@@ -53,7 +54,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("json", "kernelArguments", "shouldExist", 0),
+					path.New("yaml", "kernel_arguments", "should_exist", 0),
 				},
 			},
 		},
@@ -72,7 +73,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("json", "kernelArguments", "shouldNotExist", 0),
+					path.New("yaml", "kernel_arguments", "should_not_exist", 0),
 				},
 			},
 		},
@@ -93,7 +94,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrDiskSupport,
-					path.New("json", "storage", "disks", 0),
+					path.New("yaml", "storage", "disks", 0),
 				},
 			},
 		},
@@ -115,7 +116,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrFilesystemSupport,
-					path.New("json", "storage", "filesystems", 0),
+					path.New("yaml", "storage", "filesystems", 0),
 				},
 			},
 		},
@@ -136,7 +137,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrLuksSupport,
-					path.New("json", "storage", "luks", 0),
+					path.New("yaml", "storage", "luks", 0),
 				},
 			},
 		},
@@ -157,7 +158,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrRaidSupport,
-					path.New("json", "storage", "raid", 0),
+					path.New("yaml", "storage", "raid", 0),
 				},
 			},
 		},
@@ -169,7 +170,8 @@ func TestTranslateInvalid(t *testing.T) {
 				expectedReport.AddOnError(entry.Path, entry.Err)
 			}
 			actual, translations, r := test.In.ToIgn3_3Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.In, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.In, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})

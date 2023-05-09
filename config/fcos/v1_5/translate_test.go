@@ -21,6 +21,7 @@ import (
 	baseutil "github.com/coreos/butane/base/util"
 	base "github.com/coreos/butane/base/v0_5"
 	"github.com/coreos/butane/config/common"
+	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -141,7 +142,7 @@ func TestTranslateBootDevice(t *testing.T) {
 					{
 						Kind:    report.Warn,
 						Message: common.ErrWrongPartitionNumber.Error(),
-						Context: path.New("json", "storage", "disks", 0, "partitions", 0, "label"),
+						Context: path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"),
 					},
 				},
 			},
@@ -1495,7 +1496,8 @@ func TestTranslateBootDevice(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, test.report, r, "report mismatch")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)
@@ -1626,7 +1628,8 @@ func TestTranslateGrub(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_4Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, test.report, r, "report mismatch")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)

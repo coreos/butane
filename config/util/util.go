@@ -62,7 +62,7 @@ func Translate(cfg interface{}, translateMethod string, options common.Translate
 	final := translateRet[0].Interface()
 	translations := translateRet[1].Interface().(translate.TranslationSet)
 	translateReport := translateRet[2].Interface().(report.Report)
-	r.Merge(translateReport)
+	r.Merge(TranslateReportPaths(translateReport, translations))
 	if r.IsFatal() {
 		return zeroValue, r, common.ErrInvalidSourceConfig
 	}

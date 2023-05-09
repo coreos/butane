@@ -23,6 +23,7 @@ import (
 	"github.com/coreos/butane/config/common"
 	fcos "github.com/coreos/butane/config/fcos/v1_3"
 	"github.com/coreos/butane/config/openshift/v4_8/result"
+	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -349,7 +350,8 @@ func TestTranslateConfig(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToMachineConfig4_8Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)
@@ -549,7 +551,8 @@ func TestValidateSupport(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToMachineConfig4_8Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 		})

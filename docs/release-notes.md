@@ -11,6 +11,7 @@ key](https://getfedora.org/security/).
 
 ### Breaking changes
 
+- Reports from `Unvalidated` functions can now include `json` paths (Go API)
 
 ### Features
 

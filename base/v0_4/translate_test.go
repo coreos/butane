@@ -26,6 +26,7 @@ import (
 
 	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
+	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -541,7 +542,8 @@ func TestTranslateFile(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := translateFile(test.in, test.options)
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, test.report, r.String(), "bad report")
 			baseutil.VerifyTranslations(t, translations, test.exceptions)
@@ -599,7 +601,8 @@ func TestTranslateDirectory(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := translateDirectory(test.in, common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
@@ -658,7 +661,8 @@ func TestTranslateLink(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := translateLink(test.in, common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
@@ -714,7 +718,8 @@ func TestTranslateFilesystem(t *testing.T) {
 			}
 			expected := []types.Filesystem{test.out}
 			actual, translations, r := in.ToIgn3_3Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expected, actual.Storage.Filesystems, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			// FIXME: Zero values are pruned from merge transcripts and
@@ -1137,7 +1142,8 @@ RequiredBy=swap.target`),
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			out, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, out, "bad output")
 			assert.Equal(t, report.Report{}, r, "expected empty report")
 			assert.NoError(t, translations.DebugVerifyCoverage(out), "incomplete TranslationSet coverage")
@@ -1664,7 +1670,8 @@ func TestTranslateTree(t *testing.T) {
 			}
 			actual, translations, r := config.ToIgn3_3Unvalidated(options)
 
-			baseutil.VerifyTranslatedReport(t, config, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, config, r)
 			expectedReport := strings.ReplaceAll(test.report, "%FilesDir%", filesDir)
 			assert.Equal(t, expectedReport, r.String(), "bad report")
 			if expectedReport != "" {
@@ -1766,7 +1773,8 @@ func TestTranslateIgnition(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := translateIgnition(test.in, common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			// DebugVerifyCoverage wants to see a translation for $.version but
@@ -1816,7 +1824,8 @@ func TestTranslateKernelArguments(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
@@ -1843,7 +1852,8 @@ func TestToIgn3_3(t *testing.T) {
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			actual, translations, r := test.in.ToIgn3_3Unvalidated(common.TranslateOptions{})
-			baseutil.VerifyTranslatedReport(t, test.in, translations, r)
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
 			assert.Equal(t, report.Report{}, r, "non-empty report")
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
