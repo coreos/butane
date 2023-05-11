@@ -198,10 +198,11 @@ func TestReportCorrelation(t *testing.T) {
                          storage:
                            disks:
                            - device: /dev/z
+                             wipe_table: true
                              partitions:
                                - start_mib: 5`,
 			errors.ErrNeedLabelOrNumber.Error(),
-			10,
+			11,
 		},
 		// Ignition validation error, partition list
 		{
@@ -213,12 +214,13 @@ func TestReportCorrelation(t *testing.T) {
                          storage:
                            disks:
                            - device: /dev/z
+                             wipe_table: true
                              partitions:
                                - number: 1
                                  should_exist: false
                                - label: z`,
 			errors.ErrZeroesWithShouldNotExist.Error(),
-			10,
+			11,
 		},
 		// Ignition duplicate key check, paths
 		{

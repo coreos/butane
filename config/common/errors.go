@@ -57,6 +57,7 @@ var (
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
 
 	// partition
+	ErrReuseByLabel         = errors.New("partitions cannot be reused by label; number must be specified except on boot disk (/dev/disk/by-id/coreos-boot-disk) or when wipe_table is true")
 	ErrWrongPartitionNumber = errors.New("incorrect partition number; a new partition will be created using reserved label")
 
 	// MachineConfigs

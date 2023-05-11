@@ -17,6 +17,8 @@ key](https://getfedora.org/security/).
 ### Features
 
 - Add `-c`/`--check` option to check config without producing output
+- Warn if config attempts to reuse partition by label _(fcos 1.6.0-exp,
+  openshift 4.14.0-exp)_
 
 ### Bug fixes
 
