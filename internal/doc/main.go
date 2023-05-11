@@ -22,6 +22,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/coreos/go-semver/semver"
@@ -84,7 +85,7 @@ type variant struct {
 
 type version struct {
 	version string
-	config  any
+	config  buUtil.Config
 }
 
 func generate(dir string) error {
@@ -229,7 +230,22 @@ func generateOne(dir string, comps doc.Components, variant variant, version vers
 		doc.IGNITION_VARIANT: ignVer,
 		variant.variant:      ver,
 	}
-	if err := comps.Generate(vers, version.config, f); err != nil {
+	ignore := func(path []string) bool {
+		filters := version.config.FieldFilters()
+		if filters == nil {
+			return false
+		}
+		var camelPath []string
+		for _, el := range path {
+			camelPath = append(camelPath, buUtil.Camel(el))
+		}
+		pathStr := strings.Join(camelPath, ".")
+		if variant.variant == "openshift" {
+			pathStr = fmt.Sprintf("spec.config.%s", pathStr)
+		}
+		return filters.Lookup(pathStr) != nil
+	}
+	if err := comps.Generate(vers, version.config, ignore, f); err != nil {
 		return fmt.Errorf("generating: %w", err)
 	}
 	return nil

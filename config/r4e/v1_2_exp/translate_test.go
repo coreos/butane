@@ -54,7 +54,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("yaml", "kernel_arguments", "should_exist", 0),
+					path.New("yaml", "kernel_arguments"),
 				},
 			},
 		},
@@ -73,7 +73,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrGeneralKernelArgumentSupport,
-					path.New("yaml", "kernel_arguments", "should_not_exist", 0),
+					path.New("yaml", "kernel_arguments"),
 				},
 			},
 		},
@@ -94,7 +94,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrDiskSupport,
-					path.New("yaml", "storage", "disks", 0),
+					path.New("yaml", "storage", "disks"),
 				},
 			},
 		},
@@ -116,7 +116,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrFilesystemSupport,
-					path.New("yaml", "storage", "filesystems", 0),
+					path.New("yaml", "storage", "filesystems"),
 				},
 			},
 		},
@@ -137,7 +137,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrLuksSupport,
-					path.New("yaml", "storage", "luks", 0),
+					path.New("yaml", "storage", "luks"),
 				},
 			},
 		},
@@ -158,7 +158,7 @@ func TestTranslateInvalid(t *testing.T) {
 				{
 					report.Error,
 					common.ErrRaidSupport,
-					path.New("yaml", "storage", "raid", 0),
+					path.New("yaml", "storage", "raid"),
 				},
 			},
 		},
@@ -170,6 +170,7 @@ func TestTranslateInvalid(t *testing.T) {
 				expectedReport.AddOnError(entry.Path, entry.Err)
 			}
 			actual, translations, r := test.In.ToIgn3_5Unvalidated(common.TranslateOptions{})
+			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.In, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")

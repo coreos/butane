@@ -11,6 +11,7 @@ key](https://getfedora.org/security/).
 
 ### Breaking changes
 
+- Spec implementations require a `FieldFilters()` method (Go API)
 - Reports from `Unvalidated` functions can now include `json` paths (Go API)
 
 ### Features

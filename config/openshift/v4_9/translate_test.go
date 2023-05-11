@@ -433,6 +433,33 @@ func TestValidateSupport(t *testing.T) {
 			},
 			[]entry{},
 		},
+		// config with uncompressed inline contents
+		// (shouldn't reject Compression: StrToPtr(""))
+		{
+			Config{
+				Metadata: Metadata{
+					Name: "z",
+					Labels: map[string]string{
+						ROLE_LABEL_KEY: "z",
+					},
+				},
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Files: []base.File{
+								{
+									Path: "/a",
+									Contents: base.Resource{
+										Inline: util.StrToPtr("foo"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			[]entry{},
+		},
 		// all the warnings/errors
 		{
 			Config{
@@ -465,6 +492,18 @@ func TestValidateSupport(t *testing.T) {
 									Path: "/h",
 									Contents: base.Resource{
 										Source: util.StrToPtr("https://example.com/"),
+									},
+								},
+								{
+									Path: "/i",
+									Contents: base.Resource{
+										Source: util.StrToPtr("data:,z"),
+										HTTPHeaders: base.HTTPHeaders{
+											{
+												Name:  "foo",
+												Value: util.StrToPtr("bar"),
+											},
+										},
 									},
 								},
 							},
@@ -520,13 +559,12 @@ func TestValidateSupport(t *testing.T) {
 				},
 			},
 			[]entry{
+				// code
 				{report.Error, common.ErrBtrfsSupport, path.New("yaml", "storage", "filesystems", 0, "format")},
-				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories", 0)},
-				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
-				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
 				{report.Error, common.ErrFileSchemeSupport, path.New("yaml", "storage", "files", 2, "contents", "source")},
-				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links", 0)},
-				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups", 0)},
+				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1, "name")},
+				// filters
+				{report.Error, common.ErrGroupSupport, path.New("yaml", "passwd", "groups")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "gecos")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "groups")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "home_dir")},
@@ -539,7 +577,11 @@ func TestValidateSupport(t *testing.T) {
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "should_exist")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "system")},
 				{report.Error, common.ErrUserFieldSupport, path.New("yaml", "passwd", "users", 0, "uid")},
-				{report.Error, common.ErrUserNameSupport, path.New("yaml", "passwd", "users", 1)},
+				{report.Error, common.ErrDirectorySupport, path.New("yaml", "storage", "directories")},
+				{report.Error, common.ErrFileAppendSupport, path.New("yaml", "storage", "files", 1, "append")},
+				{report.Error, common.ErrFileCompressionSupport, path.New("yaml", "storage", "files", 1, "contents", "compression")},
+				{report.Error, common.ErrFileHeaderSupport, path.New("yaml", "storage", "files", 3, "contents", "http_headers")},
+				{report.Error, common.ErrLinkSupport, path.New("yaml", "storage", "links")},
 			},
 		},
 	}
@@ -551,6 +593,7 @@ func TestValidateSupport(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToMachineConfig4_9Unvalidated(common.TranslateOptions{})
+			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")

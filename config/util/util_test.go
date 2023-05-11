@@ -48,12 +48,53 @@ func TestSnake(t *testing.T) {
 			"snake_already",
 			"snake_already",
 		},
+		{
+			"camelMiB",
+			"camel_mib",
+		},
 	}
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			if Snake(test.in) != test.out {
 				t.Errorf("expected %q got %q", test.out, Snake(test.in))
+			}
+		})
+	}
+}
+
+func TestCamel(t *testing.T) {
+	tests := []struct {
+		in  string
+		out string
+	}{
+		{},
+		{
+			"foo",
+			"foo",
+		},
+		{
+			"snake_case",
+			"snakeCase",
+		},
+		{
+			"long_snake_case",
+			"longSnakeCase",
+		},
+		{
+			"camelAlready",
+			"camelAlready",
+		},
+		{
+			"snake_mib",
+			"snakeMiB",
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+			if Camel(test.in) != test.out {
+				t.Errorf("expected %q got %q", test.out, Camel(test.in))
 			}
 		})
 	}
