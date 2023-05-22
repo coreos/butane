@@ -9,7 +9,7 @@ require (
 	github.com/coreos/ignition/v2 v2.15.1-0.20230510033844-8b6e7f111ca5
 	github.com/coreos/vcontext v0.0.0-20230201181013-d72178a18687
 	github.com/spf13/pflag v1.0.6-0.20210604193023-d5e0c0615ace
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/vincent-petithory/dataurl v1.0.0
 	gopkg.in/yaml.v3 v3.0.1
 )
