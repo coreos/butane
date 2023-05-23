@@ -76,6 +76,3 @@ RHCOS packaging for the current RHCOS development release:
 
 CentOS Stream 9 packaging:
   - [ ] Create a `rebase-c9s-butane` issue in the internal team-operations repo and follow the steps there
-
-Housekeeping:
- - [ ] Ask bgilbert to update the [MacPorts package](https://github.com/macports/macports-ports/tree/master/sysutils/butane)
