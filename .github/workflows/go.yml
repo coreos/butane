@@ -1,26 +1,32 @@
-name: Go
+# Maintained in https://github.com/coreos/repo-templates
+# Do not edit downstream.
 
+name: Go
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 permissions:
   contents: read
 
+# don't waste job slots on superseded code
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test-build:
-    name: Test build
+  test:
+    name: Test
     strategy:
       matrix:
         go-version: [1.18.x, 1.19.x, 1.20.x]
         os: [ubuntu-latest]
         include:
-        - go-version: 1.20.x
-          os: macos-latest
-        - go-version: 1.20.x
-          os: windows-latest
+          - go-version: 1.20.x
+            os: macos-latest
+          - go-version: 1.20.x
+            os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set up Go 1.x
@@ -29,21 +35,23 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Check out repository
       uses: actions/checkout@v3
-    - name: Install GNU utils on macOS
+    - name: Install macOS dependencies
       if: runner.os == 'macOS'
       shell: bash
       run: brew install coreutils
-    - name: Run tests
+    - name: Check modules
+      run: go mod verify
+    - name: Test
       shell: bash
       run: ./test
     - name: Run linter
       uses: golangci/golangci-lint-action@v3
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+      if: runner.os == 'Linux'
       with:
-        version: v1.51.1
+        version: v1.52.2
         args: -E=gofmt --timeout=30m0s
   regenerate:
-    name: Regenerate docs
+    name: Regenerate
     runs-on: ubuntu-latest
     steps:
     - name: Check out repository
@@ -52,9 +60,9 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: 1.20.x
-    - name: Regenerate spec docs
+    - name: Regenerate
       run: ./generate
-    - name: Check whether spec docs are current
+    - name: Check whether generated output is current
       run: |
         if [ -n "$(git status --porcelain docs)" ]; then
           echo "Found local changes after regenerating:"

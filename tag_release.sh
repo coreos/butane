@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Maintained in https://github.com/coreos/repo-templates
+# Do not edit downstream.
 
 set -e
 
@@ -17,7 +19,11 @@ COMMIT=$2
 	exit 3
 }
 
-source ./build
+if [ -f Makefile ]; then
+	make
+else
+	./build
+fi
 
 git tag --sign --message "Butane ${VER}" "${VER}" "${COMMIT}"
 git verify-tag --verbose "${VER}"
