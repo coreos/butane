@@ -189,6 +189,16 @@ root:
               descendants: true
     - name: storage
       children:
+        - name: disks
+          children:
+            - name: device
+              transforms:
+                - regex: $
+                  replacement: " The boot disk can be referenced as `/dev/disk/by-id/coreos-boot-disk`."
+                  if:
+                    - variant: fcos
+                    - variant: openshift
+                      min: 4.11.0
         - name: filesystems
           children:
             - name: format
