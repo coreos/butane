@@ -35,7 +35,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
           * **_hash_** (string): the hash of the certificate bundle, in the form `<type>-<value>` where type is `sha512`.
 * **_storage_** (object): describes the desired state of the system's storage devices.
   * **_disks_** (list of objects): the list of disks to be configured and their options. Every entry must have a unique `device`.
-    * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
+    * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks. The boot disk can be referenced as `/dev/disk/by-id/coreos-boot-disk`.
     * **_wipe_table_** (boolean): whether or not the partition tables shall be wiped. When true, the partition tables are erased before any further manipulation. Otherwise, the existing entries are left intact.
     * **_partitions_** (list of objects): the list of partitions and their configuration for this particular disk. Every partition must have a unique `number`, or if 0 is specified, a unique `label`.
       * **_label_** (string): the PARTLABEL for the partition.
