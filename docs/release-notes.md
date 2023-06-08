@@ -19,6 +19,8 @@ key](https://getfedora.org/security/).
 - Add `-c`/`--check` option to check config without producing output
 - Warn if config attempts to reuse partition by label _(fcos 1.6.0-exp,
   openshift 4.14.0-exp)_
+- Require `storage.filesystems.path` to start with `/etc` or `/var` if
+  `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0-exp)_
 
 ### Bug fixes
 
