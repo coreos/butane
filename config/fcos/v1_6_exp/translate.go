@@ -151,7 +151,6 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	case *layout == "s390x-virt":
 		wantBIOSPart = true
 		wantEFIPart = true
-		
 	default:
 		// should have failed validation
 		panic("unknown layout")
