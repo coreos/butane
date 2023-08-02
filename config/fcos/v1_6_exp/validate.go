@@ -25,7 +25,7 @@ import (
 func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 	if d.Layout != nil {
 		switch *d.Layout {
-		case "aarch64", "ppc64le", "x86_64":
+		case "aarch64", "ppc64le", "x86_64", "s390x-zfcp", "s390x-eckd", "s390x-virt":
 		default:
 			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
 		}

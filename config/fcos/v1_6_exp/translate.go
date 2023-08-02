@@ -17,6 +17,8 @@ package v1_6_exp
 import (
 	"fmt"
 	"strings"
+	"regexp"
+	"strconv"
 
 	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
@@ -27,6 +29,11 @@ import (
 	"github.com/coreos/ignition/v2/config/v3_5_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
+)
+
+var (
+	dasdRe = regexp.MustCompile("(/dev/dasd[a-z]$)")
+	sdRe = regexp.MustCompile("(/dev/sd[a-z]$)")
 )
 
 const (
@@ -109,9 +116,15 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var r report.Report
 
 	// check for high-level features
-	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0
+	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0 
+	wantLuksDevice := len(c.BootDeviceLuks.Device) > 0 && len(c.BootDevice.Luks.Tang) > 0
 	wantMirror := len(c.BootDevice.Mirror.Devices) > 0
 	if !wantLuks && !wantMirror {
+		return r
+	}
+    
+	// s390x zfcp and dasd does not support mirror
+	if wantLuksDevice && wantMirror {
 		return r
 	}
 
@@ -119,6 +132,9 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var wantBIOSPart bool
 	var wantEFIPart bool
 	var wantPRePPart bool
+	var wantMBR bool
+	var wantDasd bool
+	var wantKVM bool
 	layout := c.BootDevice.Layout
 	switch {
 	case layout == nil || *layout == "x86_64":
@@ -128,6 +144,14 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		wantEFIPart = true
 	case *layout == "ppc64le":
 		wantPRePPart = true
+	case *layout == "s390x-zfcp":
+		wantMBR = true
+	case *layout == "s390x-eckd":
+		wantDasd = true
+	case *layout == "s390x-virt":
+		wantBIOSPart = true
+		wantEFIPart = true
+		
 	default:
 		// should have failed validation
 		panic("unknown layout")
@@ -257,6 +281,42 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		renderedTranslations.AddTranslation(lpath, rpath)
 		renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
 		r.Merge(r2)
+	}
+    
+	//encrypted root partition for s390x
+	if wantLuksDevice  {
+		var luksDevice string
+		dasd := dasdRe.FindString(c.BootDeviceLuks.Device)
+		sd := sdRe.FindString(c.BootDeviceLuks.Device)
+		
+		switch {
+		case wantMBR && len(sd) != 0:
+			luksDevice = sd + strconv.Itoa(2)
+		case wantDasd && len(dasd) != 0:
+			luksDevice = dasd + strconv.Itoa(2)
+		default:
+			panic("can't happen")
+		}
+		clevis, ts2, r2 := translateBootDeviceLuks(c.BootDevice.Luks, options)
+		rendered.Storage.Luks = []types.Luks{{
+			Clevis:     clevis,
+			Device:     &luksDevice,
+			Discard:    c.BootDevice.Luks.Discard,
+			Label:      util.StrToPtr("luks-root"),
+			Name:       "root",
+			WipeVolume: util.BoolToPtr(true),
+		}}
+		lpath := path.New("yaml", "boot_device", "luks")
+		rpath := path.New("json", "storage", "luks", 0)
+		renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("clevis")))
+		renderedTranslations.AddTranslation(lpath.Append("discard"), rpath.Append("discard"))
+		for _, f := range []string{"device", "label", "name", "wipeVolume"} {
+			renderedTranslations.AddTranslation(lpath, rpath.Append(f))
+		}
+		renderedTranslations.AddTranslation(lpath, rpath)
+		renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
+		r.Merge(r2)
+		
 	}
 
 	// create root filesystem
