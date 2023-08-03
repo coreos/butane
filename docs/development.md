@@ -57,6 +57,12 @@ variant/version pair with `config`.
 - `internal/` &mdash;
   `main`, non-exported code.
 
+## Adding sugar
+
+Sugar implementations should generally translate the sugar into a fresh Ignition config struct, then use Ignition config merging to merge that struct with the user's config.  The desugared struct should be the merge parent and the user's config the child, allowing the user to override field values produced by desugaring.
+
+This approach may not always be suitable, since Ignition's config merging isn't always expressive enough.  In that case, it may be necessary to directly modify the user's Ignition config struct.
+
 ## Creating a release
 
 Create a [release checklist](https://github.com/coreos/butane/issues/new?template=release-checklist.md) and follow those steps.
