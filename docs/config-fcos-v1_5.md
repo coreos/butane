@@ -207,7 +207,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
   * **_should_exist_** (list of strings): the list of kernel arguments that should exist.
   * **_should_not_exist_** (list of strings): the list of kernel arguments that should not exist.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
-  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
+  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, `s390x-zfcp`, `s390x-eckd`, `s390x-virt` and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.

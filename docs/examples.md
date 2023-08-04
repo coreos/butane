@@ -281,6 +281,42 @@ boot_device:
         thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
 ```
 
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem unlocked with a combination of a network Tang server in S390x.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  layout: s390x-eckd
+  luks:
+    device: /dev/dasda 
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  layout: s390x-zfcp
+  luks:
+    device: /dev/sdb
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+```yaml
+variant: fcos
+version: 1.3.0
+boot_device:
+  layout: s390x-virt
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
 This example combines `boot_device` with a manually-specified filesystem `format` to create an encrypted root filesystem formatted with `ext4` instead of the default `xfs`.
 
 <!-- butane-config -->

@@ -395,7 +395,7 @@ root:
       desc: describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
       children:
         - name: layout
-          desc: the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
+          desc: the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, `s390x-zfcp`, `s390x-eckd`, `s390x-virt` and `x86_64`. Defaults to `x86_64`.
         - name: luks
           desc: describes the clevis configuration for encrypting the root filesystem.
           children:
@@ -403,6 +403,8 @@ root:
               use: tang
             - name: tpm2
               desc: whether or not to use a tpm2 device.
+            - name: device
+              desc: Specifically for s390x `eckd` and `zfcp` disk without `mirror`.
             - name: threshold
               desc: sets the minimum number of pieces required to decrypt the device. Default is 1.
             - name: discard
