@@ -53,7 +53,7 @@ var (
 	ErrMountUnitNoFormat = errors.New("format is required if with_mount_unit is true")
 
 	// boot device
-	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64")
+	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64, s390x-zfcp, s390x-eckd, s390x-virt")
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
 
 	// partition

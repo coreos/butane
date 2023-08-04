@@ -117,15 +117,15 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 
 	// check for high-level features
 	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0 
-	wantLuksDevice := len(c.BootDeviceLuks.Device) > 0 && len(c.BootDevice.Luks.Tang) > 0
+	wantLuksDevice := len(c.BootDevice.Luks.Device) > 0 
 	wantMirror := len(c.BootDevice.Mirror.Devices) > 0
+	
 	if !wantLuks && !wantMirror {
 		return r
 	}
-    
-	// s390x zfcp and dasd does not support mirror
-	if wantLuksDevice && wantMirror {
-		return r
+
+	if wantLuksDevice && wantLuks {
+		panic("can't happen")	
 	}
 
 	// compute layout rendering options
@@ -134,7 +134,6 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var wantPRePPart bool
 	var wantMBR bool
 	var wantDasd bool
-	var wantKVM bool
 	layout := c.BootDevice.Layout
 	switch {
 	case layout == nil || *layout == "x86_64":
@@ -144,11 +143,11 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		wantEFIPart = true
 	case *layout == "ppc64le":
 		wantPRePPart = true
-	case *layout == "s390x-zfcp":
+	case *layout == "s390x-zfcp" && wantLuksDevice:
 		wantMBR = true
-	case *layout == "s390x-eckd":
+	case *layout == "s390x-eckd" && wantLuksDevice:
 		wantDasd = true
-	case *layout == "s390x-virt":
+	case *layout == "s390x-virt" && !wantLuksDevice:
 		wantBIOSPart = true
 		wantEFIPart = true
 	default:
@@ -283,10 +282,10 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	}
     
 	//encrypted root partition for s390x
-	if wantLuksDevice  {
+	if wantMBR || wantDasd {
 		var luksDevice string
-		dasd := dasdRe.FindString(c.BootDeviceLuks.Device)
-		sd := sdRe.FindString(c.BootDeviceLuks.Device)
+		dasd := dasdRe.FindString(c.BootDevice.Luks.Device)
+		sd := sdRe.FindString(c.BootDevice.Luks.Device)
 		
 		switch {
 		case wantMBR && len(sd) != 0:
@@ -294,7 +293,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		case wantDasd && len(dasd) != 0:
 			luksDevice = dasd + strconv.Itoa(2)
 		default:
-			panic("can't happen")
+			panic("Incorrect Device Parameter")
 		}
 		clevis, ts2, r2 := translateBootDeviceLuks(c.BootDevice.Luks, options)
 		rendered.Storage.Luks = []types.Luks{{
@@ -327,9 +326,12 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	case wantMirror:
 		// RAID without LUKS
 		rootDevice = "/dev/md/md-root"
+	case wantLuksDevice:
+		//Only Luks for s390x
+		rootDevice = "/dev/mapper/root"
 	default:
 		panic("can't happen")
-	}
+	}	
 	rootFilesystem := types.Filesystem{
 		Device:         rootDevice,
 		Format:         util.StrToPtr("xfs"),
