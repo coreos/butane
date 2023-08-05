@@ -158,14 +158,13 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
     * **_ssh_authorized_keys_local_** (list of strings): a list of local paths to SSH key files, relative to the directory specified by the `--files-dir` command-line argument, to be added as SSH key fragments at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique. Each file may contain multiple SSH keys, one per line.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
-  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, `s390x-zfcp`, `s390x-eckd`, `s390x-virt` and `x86_64`. Defaults to `x86_64`.
+  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.
       * **thumbprint** (string): thumbprint of a trusted signing key.
       * **_advertisement_** (string): the advertisement JSON. If not specified, the advertisement is fetched from the tang server during provisioning.
     * **_tpm2_** (boolean): whether or not to use a tpm2 device.
-    * **device** (string): Specifically for s390x `eckd` and `zfcp` disk without `mirror`.
     * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
     * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.

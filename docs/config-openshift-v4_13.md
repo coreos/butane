@@ -150,7 +150,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_password_hash_** (string): the hashed password for the account.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
-  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, `s390x-zfcp`, `s390x-eckd`, `s390x-virt` and `x86_64`. Defaults to `x86_64`.
+  * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.
