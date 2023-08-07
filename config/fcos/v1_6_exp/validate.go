@@ -25,14 +25,24 @@ import (
 func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 	if d.Layout != nil {
 		switch *d.Layout {
-		case "aarch64", "ppc64le", "x86_64", "s390x-zfcp", "s390x-eckd", "s390x-virt":
+		case "aarch64", "ppc64le", "x86_64", "s390x-virt", "s390x-zfcp", "s390x-eckd":
 		default:
 			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
 		}
 	}
+	if len(d.Luks.Device) != 0 && len(d.Mirror.Devices) != 0  {
+		r.AddOnError(c.Append("mirror"), common.ErrMirrorNotSupport)
+	}
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
 	return
 }
+
+// func (l BootDeviceLuks) Validate(c path.ContextPath) (r report.Report) {
+// 	if len(l.Device) == 0 {
+// 		r.AddOnWarn(c.Append("device"), common.ErrNoLuksBootDevice)
+// 	}
+// 	return
+// }
 
 func (m BootDeviceMirror) Validate(c path.ContextPath) (r report.Report) {
 	if len(m.Devices) == 1 {

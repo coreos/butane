@@ -31,10 +31,10 @@ import (
 	"github.com/coreos/vcontext/report"
 )
 
-var (
-	dasdRe = regexp.MustCompile("(/dev/dasd[a-z]$)")
-	sdRe = regexp.MustCompile("(/dev/sd[a-z]$)")
-)
+ var (
+ 	dasdRe = regexp.MustCompile("(/dev/dasd[a-z]$)")
+ 	sdRe = regexp.MustCompile("(/dev/sd[a-z]$)")
+ )
 
 const (
 	reservedTypeGuid = "8DA63339-0007-60C0-C436-083AC8230908"
@@ -138,9 +138,9 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		wantEFIPart = true
 	case *layout == "ppc64le":
 		wantPRePPart = true
-	case *layout == "s390x-zfcp" && !wantMirror:
+	case *layout == "s390x-zfcp":
 		wantMBR = true
-	case *layout == "s390x-eckd" && !wantMirror:
+	case *layout == "s390x-eckd":
 		wantDasd = true
 	case *layout == "s390x-virt":
 		wantBIOSPart = true
@@ -254,11 +254,10 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		var luksDevice string
 		dasd := dasdRe.FindString(c.BootDevice.Luks.Device)
 		sd := sdRe.FindString(c.BootDevice.Luks.Device)
-		
 		switch {
-		case wantMBR && len(sd) != 0:
+		case wantMBR && len(sd) > 0:
 			luksDevice = sd + strconv.Itoa(2)
-		case wantDasd && len(dasd) != 0:
+		case wantDasd && len(dasd) > 0:
 			luksDevice = dasd + strconv.Itoa(2)
 		case wantMirror:
 			luksDevice = "/dev/md/md-root"
@@ -289,7 +288,6 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
 		r.Merge(r2)
 	}
-    
 	// create root filesystem
 	var rootDevice string
 	switch {
@@ -301,7 +299,8 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		rootDevice = "/dev/md/md-root"
 	default:
 		panic("can't happen")
-	}	
+	}
+
 	rootFilesystem := types.Filesystem{
 		Device:         rootDevice,
 		Format:         util.StrToPtr("xfs"),

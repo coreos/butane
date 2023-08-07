@@ -55,6 +55,8 @@ var (
 	// boot device
 	ErrUnknownBootDeviceLayout = errors.New("layout must be one of: aarch64, ppc64le, x86_64, s390x-zfcp, s390x-eckd, s390x-virt")
 	ErrTooFewMirrorDevices     = errors.New("mirroring requires at least two devices")
+	//ErrNoLuksBootDevice    = errors.New("device field support layout: s390x-eckd /dev/dasd[a-z] or s390x-zfcp /dev/sd[a-z]")
+	ErrMirrorNotSupport    = errors.New("mirror is not support with luks.device for layout: s390x-zfcp, s390x-eckd")
 
 	// partition
 	ErrWrongPartitionNumber = errors.New("incorrect partition number; a new partition will be created using reserved label")
