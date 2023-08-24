@@ -64,7 +64,7 @@ func TestValidateResource(t *testing.T) {
 		// local specified
 		{
 			Resource{
-				Local:       util.StrToPtr("hello"),
+				Local:       util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
 					Hash: util.StrToPtr("this isn't validated"),
@@ -77,7 +77,7 @@ func TestValidateResource(t *testing.T) {
 		{
 			Resource{
 				Source:      util.StrToPtr("data:,hello"),
-				Inline:      util.StrToPtr("hello"),
+				Inline:      util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
 					Hash: util.StrToPtr("this isn't validated"),
@@ -90,7 +90,7 @@ func TestValidateResource(t *testing.T) {
 		{
 			Resource{
 				Source:      util.StrToPtr("data:,hello"),
-				Local:       util.StrToPtr("hello"),
+				Local:       util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
 					Hash: util.StrToPtr("this isn't validated"),
@@ -102,8 +102,8 @@ func TestValidateResource(t *testing.T) {
 		// inline + local, invalid
 		{
 			Resource{
-				Inline:      util.StrToPtr("hello"),
-				Local:       util.StrToPtr("hello"),
+				Inline:      util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
+				Local:       util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
 					Hash: util.StrToPtr("this isn't validated"),
@@ -116,8 +116,8 @@ func TestValidateResource(t *testing.T) {
 		{
 			Resource{
 				Source:      util.StrToPtr("data:,hello"),
-				Inline:      util.StrToPtr("hello"),
-				Local:       util.StrToPtr("hello"),
+				Inline:      util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
+				Local:       util.StrToPtr("{\"ignition\": {\"version\": \"3.5.0\"}}"),
 				Compression: util.StrToPtr("gzip"),
 				Verification: Verification{
 					Hash: util.StrToPtr("this isn't validated"),
