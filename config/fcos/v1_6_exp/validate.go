@@ -98,3 +98,20 @@ func (user GrubUser) Validate(c path.ContextPath) (r report.Report) {
 	}
 	return
 }
+
+func (m Module) Validate(c path.ContextPath) (r report.Report) {
+	if m.Name == "" && m.Content == "" {
+		r.AddOnError(c.Append("name"), common.ErrSelinuxContentNotSpecified)
+		r.AddOnError(c.Append("content"), common.ErrSelinuxContentNotSpecified)
+	} else {
+		if m.Name == "" {
+			r.AddOnError(c.Append("name"), common.ErrSelinuxNameNotSpecified)
+		}
+
+		if m.Content == "" {
+			r.AddOnError(c.Append("content"), common.ErrSelinuxContentNotSpecified)
+		}
+	}
+
+	return r
+}

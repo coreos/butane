@@ -22,6 +22,7 @@ type Config struct {
 	base.Config `yaml:",inline"`
 	BootDevice  BootDevice `yaml:"boot_device"`
 	Grub        Grub       `yaml:"grub"`
+	Selinux     Selinux    `yaml:"selinux"`
 }
 
 type BootDevice struct {
@@ -49,4 +50,13 @@ type Grub struct {
 type GrubUser struct {
 	Name         string  `yaml:"name"`
 	PasswordHash *string `yaml:"password_hash"`
+}
+
+type Selinux struct {
+	Module []Module `yaml:"module"`
+}
+
+type Module struct {
+	Name    string `yaml:"name"`
+	Content string `yaml:"content"`
 }

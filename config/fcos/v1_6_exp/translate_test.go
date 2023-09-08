@@ -1637,3 +1637,97 @@ func TestTranslateGrub(t *testing.T) {
 		})
 	}
 }
+
+func TestTranslateSelinux(t *testing.T) {
+	cmdToExecute := "/usr/sbin/semodule -i" + "/etc/selinux/targeted/modules/active/extra/some_name.cil"
+	translations := []translate.Translation{
+		{From: path.New("yaml", "version"), To: path.New("json", "ignition", "version")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0)},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0, "path")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0, "append")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0, "append", 0)},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0, "append", 0, "source")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "storage", "files", 0, "append", 0, "compression")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd", "units", 0, "name")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd", "units", 0, "contents")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd", "units", 0, "enabled")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd", "units", 0)},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd", "units")},
+		{From: path.New("yaml", "selinux", "module"), To: path.New("json", "systemd")},
+	}
+	tests := []struct {
+		in         Config
+		out        types.Config
+		exceptions []translate.Translation
+	}{
+		// config with one module
+		{
+			Config{
+				Selinux: Selinux{
+					Module: []Module{
+						{
+							Name:    "some_name",
+							Content: "some content here",
+						},
+					},
+				},
+			},
+
+			types.Config{
+				Ignition: types.Ignition{
+					Version: "3.5.0-experimental",
+				},
+				Storage: types.Storage{
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/etc/selinux/targeted/modules/active/extra/some_name.cil",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Append: []types.Resource{
+									{
+										Source:      util.StrToPtr("data:,some%20content%20here"),
+										Compression: util.StrToPtr(""),
+									},
+								},
+							},
+						},
+					},
+				},
+				Systemd: types.Systemd{
+					Units: []types.Unit{
+						{
+							Name:    "some_name" + ".conf",
+							Enabled: util.BoolToPtr(true),
+							Contents: util.StrToPtr(
+								"[Unit]\n" +
+									"Description=Import SELinux module\n" +
+									"[Service]\n" +
+									"Type=oneshot\n" +
+									"RemainAfterExit=yes\n" +
+									"ExecStart=" + cmdToExecute + "\n" +
+									"[Install]\n" +
+									"WantedBy=multi-user.target\n"),
+						},
+					},
+				},
+			},
+			translations,
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			out, translations, r := test.in.ToIgn3_5Unvalidated(common.TranslateOptions{})
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
+			assert.Equal(t, test.out, out, "bad output")
+			assert.Equal(t, report.Report{}, r, "expected empty report")
+			baseutil.VerifyTranslations(t, translations, test.exceptions)
+			assert.NoError(t, translations.DebugVerifyCoverage(out), "incomplete TranslationSet coverage")
+		})
+	}
+
+}

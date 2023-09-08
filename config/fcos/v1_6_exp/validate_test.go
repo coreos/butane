@@ -479,3 +479,49 @@ func TestValidateConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateModule(t *testing.T) {
+	tests := []struct {
+		in      Module
+		out     error
+		errPath path.ContextPath
+	}{
+		{
+			// valid module
+			in: Module{
+				Content: "some content",
+				Name:    "some name",
+			},
+			out:     nil,
+			errPath: path.New("yaml"),
+		},
+		{
+			// content is not specified
+			in: Module{
+				Content: "",
+				Name:    "some name",
+			},
+			out:     common.ErrSelinuxContentNotSpecified,
+			errPath: path.New("yaml", "content"),
+		},
+		{
+			// name is not specified
+			in: Module{
+				Name:    "",
+				Content: "some content",
+			},
+			out:     common.ErrSelinuxNameNotSpecified,
+			errPath: path.New("yaml", "name"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}
