@@ -35,6 +35,8 @@ We recommend that you always use the latest **stable** specification for your op
 - RHEL for Edge (`r4e`)
   - [v1.1.0](config-r4e-v1_1.md)
   - [v1.0.0](config-r4e-v1_0.md)
+- Fedora IoT (`fiot`)
+  - [v1.0.0](config-fiot-v1_0.md)
 
 ## Experimental specification versions
 
@@ -48,6 +50,8 @@ Do not use **experimental** specifications for anything beyond **development and
   - [v4.15.0-experimental](config-openshift-v4_15-exp.md)
 - RHEL for Edge (`r4e`)
   - [v1.2.0-experimental](config-r4e-v1_2-exp.md)
+- Fedora IoT (`fiot`)
+  - [v1.1.0-experimental](config-fiot-v1_1-exp.md)
 
 ## Butane specifications and Ignition specifications
 
@@ -76,3 +80,5 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `r4e`          | 1.0.0               | 3.3.0              |
 | `r4e`          | 1.1.0               | 3.4.0              |
 | `r4e`          | 1.2.0-experimental  | 3.5.0-experimental |
+| `fiot`         | 1.0.0               | 3.4.0              |
+| `fiot`         | 1.1.0-experimental  | 3.5.0-experimental |

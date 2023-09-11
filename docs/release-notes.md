@@ -44,6 +44,7 @@ key](https://getfedora.org/security/).
 - Stabilize OpenShift spec 4.14.0, targeting Ignition spec 3.4.0
 - Add OpenShift spec 4.15.0-experimental, targeting Ignition spec
   3.5.0-experimental
+- Add new variant `fiot` for fedora-iot
 
 ### Bug fixes
 

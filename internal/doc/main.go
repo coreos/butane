@@ -42,6 +42,8 @@ import (
 	fcos1_4 "github.com/coreos/butane/config/fcos/v1_4"
 	fcos1_5 "github.com/coreos/butane/config/fcos/v1_5"
 	fcos1_6_exp "github.com/coreos/butane/config/fcos/v1_6_exp"
+	fiot1_0 "github.com/coreos/butane/config/fiot/v1_0"
+	fiot1_1_exp "github.com/coreos/butane/config/fiot/v1_1_exp"
 	flatcar1_0 "github.com/coreos/butane/config/flatcar/v1_0"
 	flatcar1_1 "github.com/coreos/butane/config/flatcar/v1_1"
 	flatcar1_2_exp "github.com/coreos/butane/config/flatcar/v1_2_exp"
@@ -139,6 +141,15 @@ func generate(dir string) error {
 				{"1.2.0-experimental", r4e1_2_exp.Config{}},
 				{"1.0.0", r4e1_0.Config{}},
 				{"1.1.0", r4e1_1.Config{}},
+			},
+		},
+		{
+			"Fedora IoT",
+			"fiot",
+			[]version{
+				// inverse order of website navbar
+				{"1.1.0-experimental", fiot1_1_exp.Config{}},
+				{"1.0.0", fiot1_0.Config{}},
 			},
 		},
 	}
