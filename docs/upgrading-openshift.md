@@ -15,6 +15,12 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 
 {% comment %}
 
+## From Version 4.14.0 to 4.15.0
+
+There are no breaking changes between versions 4.14.0 and 4.15.0 of the `openshift` configuration specification. Any valid 4.14.0 configuration can be updated to a 4.15.0 configuration by changing the version string in the config.
+
+{% endcomment %}
+
 ## From Version 4.13.0 to 4.14.0
 
 There are no breaking changes between versions 4.13.0 and 4.14.0 of the `openshift` configuration specification. Any valid 4.13.0 configuration can be updated to a 4.14.0 configuration by changing the version string in the config.
@@ -26,7 +32,7 @@ SSH keys and systemd units are now embeddable via file references to local files
 <!-- butane-config -->
 ```yaml
 variant: openshift
-version: 4.14.0-experimental
+version: 4.14.0
 metadata:
   name: minimal-config
   labels:
@@ -45,8 +51,6 @@ passwd:
       ssh_authorized_keys_local:
         - id_rsa.pub
 ```
-
-{% endcomment %}
 
 ## From Version 4.12.0 to 4.13.0
 
