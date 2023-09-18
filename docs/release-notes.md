@@ -34,7 +34,7 @@ key](https://getfedora.org/security/).
 ### Docs changes
 
 - Document consequence of setting `systemd.units.mask` to false
-- Document `grub` section _(openshift 4.14.0-exp)_
+- Document `grub` section _(openshift 4.15.0-exp)_
 - Document `/dev/disk/by-id/coreos-boot-disk` _(fcos, openshift 4.11.0+)_
 - Don't claim to support generating swap units _(openshift 4.8.0 - 4.13.0)_
 - Document `key_file` `compression` field  _(openshift 4.8.0 - 4.9.0)_
