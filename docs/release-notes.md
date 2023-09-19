@@ -21,6 +21,7 @@ key](https://getfedora.org/security/).
   openshift 4.14.0-exp)_
 - Require `storage.filesystems.path` to start with `/etc` or `/var` if
   `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0-exp)_
+- Validate merged/replaced ignition configs if they are local/inline _(fcos 1.6.0-exp)_
 
 ### Bug fixes
 
