@@ -18,9 +18,12 @@ key](https://getfedora.org/security/).
 
 - Add `-c`/`--check` option to check config without producing output
 - Warn if config attempts to reuse partition by label _(fcos 1.6.0-exp,
-  openshift 4.14.0-exp)_
+  openshift 4.14.0)_
 - Require `storage.filesystems.path` to start with `/etc` or `/var` if
-  `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0-exp)_
+  `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0)_
+- Stabilize OpenShift spec 4.14.0, targeting Ignition spec 3.4.0
+- Add OpenShift spec 4.15.0-experimental, targeting Ignition spec
+  3.5.0-experimental
 
 ### Bug fixes
 
@@ -30,6 +33,7 @@ key](https://getfedora.org/security/).
 ### Misc. changes
 
 - Add error structs for YAML unmarshal errors, unknown config versions (Go API)
+- Roll back to Ignition spec 3.4.0 _(openshift 4.14.0)_
 
 ### Docs changes
 
