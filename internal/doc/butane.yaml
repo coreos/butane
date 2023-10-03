@@ -323,9 +323,19 @@ root:
       children:
         - name: layout
           desc: the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
+          transforms:
+            - regex: "Supported values are (.*), and `x86_64`."
+              replacement: "Supported values are $1, `s390x-eckd`, `s390x-virt`, `s390x-zfcp`, and `x86_64`."
+              if:
+                - variant: fcos
+                  min: 1.6.0-experimental
+                - variant: openshift
+                  min: 4.15.0-experimental 
         - name: luks
           desc: describes the clevis configuration for encrypting the root filesystem.
           children:
+            - name: device
+              desc: the whole-disk device (not partitions), referenced by their absolute path. Must start with `/dev/dasd` for `s390x-eckd` layout or `/dev/sd` for `s390x-zfcp` layouts. 
             - name: tang
               use: tang
             - name: tpm2
