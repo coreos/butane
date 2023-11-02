@@ -12,6 +12,7 @@ nav_order: 9
 
 ### Features
 
+- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.15.0-exp)
 
 ### Bug fixes
 

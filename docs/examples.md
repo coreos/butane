@@ -296,6 +296,50 @@ storage:
       format: ext4
 ```
 
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem in s390x on the `dasda` DASD device unlocked with a network Tang server.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.6.0-experimental
+boot_device:
+  layout: s390x-eckd
+  luks:
+    device: /dev/dasda
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem in s390x on the `sdb` zFCP device unlocked with a network Tang server.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.6.0-experimental
+boot_device:
+  layout: s390x-zfcp
+  luks:
+    device: /dev/sdb
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem in s390x KVM unlocked with a network Tang server.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.6.0-experimental
+boot_device:
+  layout: s390x-virt
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
 ### Mirrored boot disk
 
 This example replicates all default partitions on the boot disk across multiple disks, allowing the system to survive disk failure.
