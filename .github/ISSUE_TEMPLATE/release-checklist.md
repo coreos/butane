@@ -74,6 +74,7 @@ RHCOS packaging for the current RHCOS development release:
  - [ ] Get the PR reviewed and merge it
  - [ ] Update your local repo and run `rhpkg build`
  - [ ] File ticket similar to [this one](https://issues.redhat.com/browse/ART-3711) to sync the new version to mirror.openshift.com
+ - [ ] Wait until mirror.openshift.com is updated and confirm the new version is correct
 
 CentOS Stream 9 packaging:
   - [ ] Create a `rebase-c9s-butane` issue in the internal team-operations repo and follow the steps there
