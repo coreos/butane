@@ -19,6 +19,7 @@ nav_order: 9
 
 ### Misc. changes
 
+- Require Go 1.20+
 
 ### Docs changes
 
