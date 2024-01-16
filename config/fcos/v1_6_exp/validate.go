@@ -100,17 +100,12 @@ func (user GrubUser) Validate(c path.ContextPath) (r report.Report) {
 }
 
 func (m Module) Validate(c path.ContextPath) (r report.Report) {
-	if m.Name == "" && m.Content == "" {
-		r.AddOnError(c.Append("name"), common.ErrSelinuxContentNotSpecified)
-		r.AddOnError(c.Append("content"), common.ErrSelinuxContentNotSpecified)
-	} else {
-		if m.Name == "" {
-			r.AddOnError(c.Append("name"), common.ErrSelinuxNameNotSpecified)
-		}
+	if m.Name == "" {
+		r.AddOnError(c.Append("name"), common.ErrSelinuxNameNotSpecified)
+	}
 
-		if m.Content == "" {
-			r.AddOnError(c.Append("content"), common.ErrSelinuxContentNotSpecified)
-		}
+	if m.Contents.Inline == nil || *m.Contents.Inline == "" {
+		r.AddOnError(c.Append("contents"), common.ErrSelinuxContentsNotSpecified)
 	}
 
 	return r

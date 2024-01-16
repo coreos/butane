@@ -489,26 +489,32 @@ func TestValidateModule(t *testing.T) {
 		{
 			// valid module
 			in: Module{
-				Content: "some content",
-				Name:    "some name",
+				Contents: Resource{
+					Inline: util.StrToPtr("some contents"),
+				},
+				Name: "some name",
 			},
 			out:     nil,
 			errPath: path.New("yaml"),
 		},
 		{
-			// content is not specified
+			// contents is not specified
 			in: Module{
-				Content: "",
-				Name:    "some name",
+				Contents: Resource{
+					Inline: util.StrToPtr(""),
+				},
+				Name: "some name",
 			},
-			out:     common.ErrSelinuxContentNotSpecified,
-			errPath: path.New("yaml", "content"),
+			out:     common.ErrSelinuxContentsNotSpecified,
+			errPath: path.New("yaml", "contents"),
 		},
 		{
 			// name is not specified
 			in: Module{
-				Name:    "",
-				Content: "some content",
+				Name: "",
+				Contents: Resource{
+					Inline: util.StrToPtr("some contents"),
+				},
 			},
 			out:     common.ErrSelinuxNameNotSpecified,
 			errPath: path.New("yaml", "name"),

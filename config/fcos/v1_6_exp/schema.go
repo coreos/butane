@@ -53,10 +53,30 @@ type GrubUser struct {
 }
 
 type Selinux struct {
-	Module []Module `yaml:"module"`
+	Modules []Module `yaml:"modules"`
 }
 
 type Module struct {
-	Name    string `yaml:"name"`
-	Content string `yaml:"content"`
+	Name     string   `yaml:"name"`
+	Contents Resource `yaml:"contents"`
+}
+
+type Resource struct {
+	Compression  *string      `yaml:"compression"`
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
+	Source       *string      `yaml:"source"`
+	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
+	Local        *string      `yaml:"local"`  // Added, not in ignition spec
+	Verification Verification `yaml:"verification"`
+}
+
+type HTTPHeader struct {
+	Name  string  `yaml:"name"`
+	Value *string `yaml:"value"`
+}
+
+type HTTPHeaders []HTTPHeader
+
+type Verification struct {
+	Hash *string `yaml:"hash"`
 }
