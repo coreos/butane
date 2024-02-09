@@ -149,6 +149,23 @@ storage:
       mode: 0644
 ```
 
+This example creates a file at `/opt/foo/bar/file.txt` with the contents `Hello, world!`, permissions 0644 (so readable and writable by the owner, and only readable by everyone else). Additionally is specifies a parent directory at `/opt/foo` with permissions 0644, which ensure that if the directories between `/opt/foo` and `/opt/foo/bar/file.txt` (i.e `/opt/foo`, `/opt/foo/bar`) do not exist, they will be created with the specified permissions. Use this to avoid having to create directories separately, with the correct permissions.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.6.0-experimental
+storage:
+  files:
+    - path: /opt/foo/bar/file.txt
+      contents:
+        inline: Hello, world!
+      mode: 0644
+      parent:
+          path:  /opt/foo
+          mode: 0644
+```
+
 ### Directory trees
 
 Consider a directory tree at `~/conf/tree` on the system running Butane:

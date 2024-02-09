@@ -47,6 +47,9 @@ key](https://getfedora.org/security/).
 - Stabilize OpenShift spec 4.15.0, targeting Ignition spec 3.4.0
 - Add OpenShift spec 4.16.0-experimental, targeting Ignition spec
   3.5.0-experimental
+- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.15.0-exp)
+- Add `parent` field to `files`, to reduce verbosity when configuring a deeply
+  nested file. _(base 0.6.0-exp)_
 
 ### Bug fixes
 

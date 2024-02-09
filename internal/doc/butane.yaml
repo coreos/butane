@@ -250,6 +250,14 @@ root:
                         - variant: openshift
             - name: mode
               use: mode
+            - name: parent
+              after: $
+              desc: the parent directory for the specified file, by declaring a parent the directories from the parent to the file's target destination.
+              children:
+                - name: path
+                  desc: the path of the directory within the file's 'path'.
+                - name: mode
+                  desc: directory modes are set to 0755 as a default if not specified and directory does not exist prior to the specified file.
         - name: directories
           children:
             - name: mode

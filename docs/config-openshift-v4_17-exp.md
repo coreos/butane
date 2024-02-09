@@ -107,6 +107,9 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_group_** (object): specifies the file's group.
       * **_id_** (integer): the group ID of the group.
       * **_name_** (string): the group name of the group.
+    * **_parent_** (object): the parent directory for the specified file, by declaring a parent the directories from the parent to the file's target destination.
+      * **_path_** (string): the path of the directory within the file's 'path'.
+      * **_mode_** (integer): directory modes are set to 0755 as a default if not specified and directory does not exist prior to the specified file.
   * **_luks_** (list of objects): the list of luks devices to be created. Every device must have a unique `name`.
     * **name** (string): the name of the luks device.
     * **device** (string): the absolute path to the device. Devices are typically referenced by the `/dev/disk/by-*` symlinks.
