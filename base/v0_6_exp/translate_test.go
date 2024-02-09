@@ -599,6 +599,195 @@ func TestTranslateFile(t *testing.T) {
 		})
 	}
 }
+func TestTranslateStorage(t *testing.T) {
+	tests := []struct {
+		in      Storage
+		out     types.Storage
+		errPath path.ContextPath
+		errors  error
+		skip    func(t *testing.T)
+	}{
+		// Basic parent file directory
+		{
+			in: Storage{
+				Files: []File{
+					{
+						Path:     "/foo/bar/txt.txt",
+						Contents: Resource{},
+						Mode:     util.IntToPtr(420),
+						Parent: Parent{
+							Path: util.StrToPtr("/foo"),
+							Mode: util.IntToPtr(420),
+						},
+					},
+				},
+			},
+			out: types.Storage{
+				Files: []types.File{
+					{
+						Node: types.Node{
+							Path: "/foo/bar/txt.txt",
+						},
+						FileEmbedded1: types.FileEmbedded1{
+							Mode:     util.IntToPtr(420),
+							Contents: types.Resource{},
+						},
+					},
+				},
+				Directories: []types.Directory{
+					{
+						Node: types.Node{
+							Path: "/foo/bar",
+						},
+						DirectoryEmbedded1: types.DirectoryEmbedded1{
+							Mode: util.IntToPtr(420),
+						},
+					},
+					{
+						Node: types.Node{
+							Path: "/foo",
+						},
+						DirectoryEmbedded1: types.DirectoryEmbedded1{
+							Mode: util.IntToPtr(420),
+						},
+					},
+				},
+			},
+			errPath: path.ContextPath{},
+			errors:  nil,
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					t.Skip("skipping test on Windows")
+				}
+			},
+		},
+		// Empty parent file directory
+		{
+			in: Storage{
+				Files: []File{
+					{
+						Path:     "/foo/bar/txt.txt",
+						Contents: Resource{},
+						Mode:     util.IntToPtr(420),
+						Parent: Parent{
+							Path: util.StrToPtr(""),
+							Mode: util.IntToPtr(420),
+						},
+					},
+				},
+			},
+			out: types.Storage{
+				Files: []types.File{
+					{
+						Node: types.Node{
+							Path: "/foo/bar/txt.txt",
+						},
+						FileEmbedded1: types.FileEmbedded1{
+							Mode:     util.IntToPtr(420),
+							Contents: types.Resource{},
+						},
+					},
+				},
+			},
+			errPath: path.ContextPath{},
+			errors:  nil,
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					t.Skip("skipping test on Windows")
+				}
+			},
+		},
+		// Parent not defined
+		{
+			in: Storage{
+				Files: []File{
+					{
+						Path:     "/foo/bar/txt.txt",
+						Contents: Resource{},
+						Mode:     util.IntToPtr(420),
+					},
+				},
+			},
+			out: types.Storage{
+				Files: []types.File{
+					{
+						Node: types.Node{
+							Path: "/foo/bar/txt.txt",
+						},
+						FileEmbedded1: types.FileEmbedded1{
+							Mode:     util.IntToPtr(420),
+							Contents: types.Resource{},
+						},
+					},
+				},
+			},
+			errPath: path.ContextPath{},
+			errors:  nil,
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					t.Skip("skipping test on Windows")
+				}
+			},
+		},
+		// Parent path is not related to file path
+		{
+			in: Storage{
+				Files: []File{
+					{
+						Path:     "/foo/bar/txt.txt",
+						Contents: Resource{},
+						Mode:     util.IntToPtr(420),
+						Parent: Parent{
+							Path: util.StrToPtr("/godzilla"),
+							Mode: util.IntToPtr(420),
+						},
+					},
+				},
+			},
+			out: types.Storage{
+				Files: []types.File{
+					{
+						Node: types.Node{
+							Path: "/foo/bar/txt.txt",
+						},
+						FileEmbedded1: types.FileEmbedded1{
+							Mode:     util.IntToPtr(420),
+							Contents: types.Resource{},
+						},
+					},
+				},
+			},
+			errPath: path.New("yaml", "files", 0, "parent"),
+			errors:  common.ErrInvalidParent,
+			skip: func(t *testing.T) {
+				if runtime.GOOS == "windows" {
+					t.Skip("skipping test on Windows")
+				}
+			},
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
+			if test.skip != nil {
+				// give the test an opportunity to skip
+				test.skip(t)
+			}
+			actual, translations, r := translateStorage(test.in, common.TranslateOptions{})
+			r = confutil.TranslateReportPaths(r, translations)
+			baseutil.VerifyReport(t, test.in, r)
+			assert.Equal(t, test.out, actual, "translation mismatch")
+			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
+			if test.errors != nil {
+				expected := report.Report{}
+				expected.AddOnError(test.errPath, test.errors)
+				assert.Equal(t, expected, r, "bad report for test case %d", i)
+			} else {
+				assert.Equal(t, report.Report{}, r, "non-empty report")
+			}
+		})
+	}
+}
 
 // TestTranslateDirectory tests translating the ct storage.directories.[i] entries to ignition storage.directories.[i] entires.
 func TestTranslateDirectory(t *testing.T) {
