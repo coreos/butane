@@ -13,6 +13,8 @@ nav_order: 9
 ### Features
 
 - Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.15.0-exp)
+- Add `parent` field to `files`, to reduce verbosity when configuring a deeply
+  nested file. _(base 0.6.0-exp)_
 
 ### Bug fixes
 

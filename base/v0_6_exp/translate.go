@@ -83,9 +83,7 @@ func (c Config) ToIgn3_5Unvalidated(options common.TranslateOptions) (types.Conf
 
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateIgnition)
-	tr.AddCustomTranslator(translateFile)
-	tr.AddCustomTranslator(translateDirectory)
-	tr.AddCustomTranslator(translateLink)
+	tr.AddCustomTranslator(translateStorage)
 	tr.AddCustomTranslator(translateResource)
 	tr.AddCustomTranslator(translatePasswdUser)
 	tr.AddCustomTranslator(translateUnit)
@@ -99,7 +97,6 @@ func (c Config) ToIgn3_5Unvalidated(options common.TranslateOptions) (types.Conf
 	translate.MergeP(tr, tm, &r, "systemd", &c.Systemd, &ret.Systemd)
 
 	c.addMountUnits(&ret, &tm)
-
 	tm2, r2 := c.processTrees(&ret, options)
 	tm.Merge(tm2)
 	r.Merge(r2)
@@ -121,6 +118,59 @@ func translateIgnition(from Ignition, options common.TranslateOptions) (to types
 	return
 }
 
+func translateStorage(from Storage, options common.TranslateOptions) (to types.Storage, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
+	tr.AddCustomTranslator(translateFile)
+	tr.AddCustomTranslator(translateDirectory)
+	tr.AddCustomTranslator(translateLink)
+	tr.AddCustomTranslator(translateLuks)
+	tm, r = translate.Prefixed(tr, "directories", &from.Directories, &to.Directories)
+	translate.MergeP(tr, tm, &r, "disks", &from.Disks, &to.Disks)
+	translate.MergeP(tr, tm, &r, "files", &from.Files, &to.Files)
+	translate.MergeP(tr, tm, &r, "filesystems", &from.Filesystems, &to.Filesystems)
+	translate.MergeP(tr, tm, &r, "links", &from.Links, &to.Links)
+	translate.MergeP(tr, tm, &r, "luks", &from.Luks, &to.Luks)
+	translate.MergeP(tr, tm, &r, "raid", &from.Raid, &to.Raid)
+	for i, file := range from.Files {
+		if util.NotEmpty(file.Parent.Path) {
+			yamlPath := path.New("yaml", "files", i, "parent")
+
+			if !strings.Contains(file.Path, *file.Parent.Path) {
+				r.AddOnError(yamlPath, common.ErrInvalidParent)
+				continue
+			}
+
+			dir := filepath.Dir(file.Path)
+			// make sure to clean the path to avoid consistency issues
+			dir = filepath.Clean(dir)
+			for dir != "" {
+				renderedDir := types.Directory{
+					Node: types.Node{
+						Path:  dir,
+						Group: types.NodeGroup{ID: file.Group.ID, Name: file.Group.Name},
+						User:  types.NodeUser{ID: file.User.ID, Name: file.User.Name},
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: file.Parent.Mode,
+					},
+				}
+				to.Directories = append(to.Directories, renderedDir)
+				nextDir, _ := filepath.Split(dir)
+				// make sure to clean the path to avoid consistency issues
+				nextDir = filepath.Clean(nextDir)
+				if dir == *file.Parent.Path || nextDir == dir {
+					// we have reached the parent directory or the end of the path
+					break
+				}
+				dir = nextDir
+			}
+			tm.AddFromCommonSource(yamlPath, path.New("json", "directories"), to.Directories)
+		}
+
+	}
+	return
+}
+
 func translateFile(from File, options common.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateResource)
@@ -131,6 +181,22 @@ func translateFile(from File, options common.TranslateOptions) (to types.File, t
 	translate.MergeP(tr, tm, &r, "overwrite", &from.Overwrite, &to.Overwrite)
 	translate.MergeP(tr, tm, &r, "path", &from.Path, &to.Path)
 	translate.MergeP(tr, tm, &r, "mode", &from.Mode, &to.Mode)
+	return
+}
+
+func translateLuks(from Luks, options common.TranslateOptions) (to types.Luks, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
+	tr.AddCustomTranslator(translateResource)
+	tm, r = translate.Prefixed(tr, "clevis", &from.Clevis, &to.Clevis)
+	translate.MergeP(tr, tm, &r, "device", &from.Device, &to.Device)
+	translate.MergeP(tr, tm, &r, "discard", &from.Discard, &to.Discard)
+	translate.MergeP2(tr, tm, &r, "key_file", &from.KeyFile, "keyFile", &to.KeyFile)
+	translate.MergeP(tr, tm, &r, "label", &from.Label, &to.Label)
+	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
+	translate.MergeP2(tr, tm, &r, "open_options", &from.OpenOptions, "openOptions", &to.OpenOptions)
+	translate.MergeP(tr, tm, &r, "options", &from.Options, &to.Options)
+	translate.MergeP(tr, tm, &r, "uuid", &from.UUID, &to.UUID)
+	translate.MergeP2(tr, tm, &r, "wipe_volume", &from.WipeVolume, "wipeVolume", &to.WipeVolume)
 	return
 }
 
@@ -294,7 +360,7 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 		return ts, r
 	}
 	t := newNodeTracker(ret)
-
+	ts.AddTranslation(path.New("yaml", "storage"), path.New("json", "storage"))
 	for i, tree := range c.Storage.Trees {
 		yamlPath := path.New("yaml", "storage", "trees", i)
 		if options.FilesDir == "" {
