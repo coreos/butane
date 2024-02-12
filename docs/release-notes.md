@@ -6,6 +6,8 @@ nav_order: 9
 
 ## Upcoming Butane 0.20.0 (unreleased)
 
+Starting with this release, Butane binaries are signed with the [Fedora 39
+key](https://getfedora.org/security/).
 
 ### Breaking changes
 
