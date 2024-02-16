@@ -352,16 +352,40 @@ root:
     - name: grub
       after: $
       desc: describes the desired GRUB bootloader configuration.
+      transforms:
+        - regex: ".*"
+          replacement: "Unsupported"
+          if:
+            - variant: openshift
+              max: 4.14.0
       children:
         - name: users
           desc: the list of GRUB superusers.
+          transforms:
+            - regex: ".*"
+              replacement: "Unsupported"
+              if:
+                - variant: openshift
+                  max: 4.14.0
           children:
             - name: name
               desc: the user name.
+              transforms:
+                - regex: ".*"
+                  replacement: "Unsupported"
+                  if:
+                    - variant: openshift
+                      max: 4.14.0
             - name: password_hash
               desc: the PBKDF2 password hash, generated with `grub2-mkpasswd-pbkdf2`.
               # required by validation
               required: true
+              transforms:
+                - regex: ".*"
+                  replacement: "Unsupported"
+                  if:
+                    - variant: openshift
+                      max: 4.14.0
     - name: openshift
       after: $
       desc: describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
