@@ -51,7 +51,7 @@ import (
 	openshift4_11 "github.com/coreos/butane/config/openshift/v4_11"
 	openshift4_12 "github.com/coreos/butane/config/openshift/v4_12"
 	openshift4_13 "github.com/coreos/butane/config/openshift/v4_13"
-	openshift4_14 "github.com/coreos/butane/config/openshift/v4_13"
+	openshift4_14 "github.com/coreos/butane/config/openshift/v4_14"
 	openshift4_15_exp "github.com/coreos/butane/config/openshift/v4_15_exp"
 	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
 	openshift4_9 "github.com/coreos/butane/config/openshift/v4_9"
