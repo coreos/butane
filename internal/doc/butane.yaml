@@ -330,12 +330,12 @@ root:
                 - variant: fcos
                   min: 1.6.0-experimental
                 - variant: openshift
-                  min: 4.15.0-experimental 
+                  min: 4.15.0-experimental
         - name: luks
           desc: describes the clevis configuration for encrypting the root filesystem.
           children:
             - name: device
-              desc: the whole-disk device (not partitions), referenced by their absolute path. Must start with `/dev/dasd` for `s390x-eckd` layout or `/dev/sd` for `s390x-zfcp` layouts. 
+              desc: the whole-disk device (not partitions), referenced by their absolute path. Must start with `/dev/dasd` for `s390x-eckd` layout or `/dev/sd` for `s390x-zfcp` layouts.
             - name: tang
               use: tang
             - name: tpm2
