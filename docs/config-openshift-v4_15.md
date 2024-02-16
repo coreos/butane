@@ -13,7 +13,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
 <div id="spec-docs"></div>
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `4.15.0` and generates Ignition configs with version `3.5.0-experimental`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.15.0` and generates Ignition configs with version `3.4.0`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names) for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
@@ -158,7 +158,6 @@ The OpenShift configuration is a YAML document conforming to the following speci
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, `s390x-eckd`, `s390x-virt`, `s390x-zfcp`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
-    * **_device_** (string): the whole-disk device (not partitions), referenced by their absolute path. Must start with `/dev/dasd` for `s390x-eckd` layout or `/dev/sd` for `s390x-zfcp` layouts.
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.
       * **thumbprint** (string): thumbprint of a trusted signing key.

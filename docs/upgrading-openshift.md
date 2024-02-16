@@ -15,11 +15,15 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 
 {% comment %}
 
+## From Version 4.15.0 to 4.16.0
+
+There are no breaking changes between versions 4.15.0 and 4.16.0 of the `openshift` configuration specification. Any valid 4.15.0 configuration can be updated to a 4.16.0 configuration by changing the version string in the config.
+
+{% endcomment %}
+
 ## From Version 4.14.0 to 4.15.0
 
 There are no breaking changes between versions 4.14.0 and 4.15.0 of the `openshift` configuration specification. Any valid 4.14.0 configuration can be updated to a 4.15.0 configuration by changing the version string in the config.
-
-{% endcomment %}
 
 ## From Version 4.13.0 to 4.14.0
 
