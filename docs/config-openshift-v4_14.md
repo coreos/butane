@@ -121,11 +121,14 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_label_** (string): the label of the luks device.
     * **_uuid_** (string): the uuid of the luks device.
     * **_options_** (list of strings): any additional options to be passed to `cryptsetup luksFormat`.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
+    * **_open_options_** (list of strings): any additional options to be passed to `cryptsetup luksOpen`. Supported options will be persistently written to the luks volume.
     * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [Ignition's documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
     * **_clevis_** (object): describes the clevis configuration for the luks device.
       * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
         * **url** (string): url of the tang server.
         * **thumbprint** (string): thumbprint of a trusted signing key.
+        * **_advertisement_** (string): the advertisement JSON. If not specified, the advertisement is fetched from the tang server during provisioning.
       * **_tpm2_** (boolean): whether or not to use a tpm2 device.
       * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
       * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
@@ -141,24 +144,33 @@ The OpenShift configuration is a YAML document conforming to the following speci
     * **_enabled_** (boolean): whether or not the service shall be enabled. When true, the service is enabled. When false, the service is disabled. When omitted, the service is unmodified. In order for this to have any effect, the unit must have an install section.
     * **_mask_** (boolean): whether or not the service shall be masked. When true, the service is masked by symlinking it to `/dev/null`. When false, the service is unmasked by deleting the symlink to `/dev/null` if it exists.
     * **_contents_** (string): the contents of the unit. Mutually exclusive with `contents_local`.
+    * **_contents_local_** (string): a local path to the contents of the unit, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `contents`.
     * **_dropins_** (list of objects): the list of drop-ins for the unit. Every drop-in must have a unique `name`.
       * **name** (string): the name of the drop-in. This must be suffixed with ".conf".
       * **_contents_** (string): the contents of the drop-in. Mutually exclusive with `contents_local`.
+      * **_contents_local_** (string): a local path to the contents of the drop-in, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `contents`.
 * **_passwd_** (object): describes the desired additions to the passwd database.
   * **_users_** (list of objects): the list of accounts that shall exist. All users must have a unique `name`.
     * **name** (string): the username for the account. Must be `core`.
     * **_password_hash_** (string): the hashed password for the account.
     * **_ssh_authorized_keys_** (list of strings): a list of SSH keys to be added as an SSH key fragment at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique.
+    * **_ssh_authorized_keys_local_** (list of strings): a list of local paths to SSH key files, relative to the directory specified by the `--files-dir` command-line argument, to be added as SSH key fragments at `.ssh/authorized_keys.d/ignition` in the user's home directory. All SSH keys must be unique. Each file may contain multiple SSH keys, one per line.
 * **_boot_device_** (object): describes the desired boot device configuration. At least one of `luks` or `mirror` must be specified.
   * **_layout_** (string): the disk layout of the target OS image. Supported values are `aarch64`, `ppc64le`, and `x86_64`. Defaults to `x86_64`.
   * **_luks_** (object): describes the clevis configuration for encrypting the root filesystem.
     * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
       * **url** (string): url of the tang server.
       * **thumbprint** (string): thumbprint of a trusted signing key.
+      * **_advertisement_** (string): the advertisement JSON. If not specified, the advertisement is fetched from the tang server during provisioning.
     * **_tpm2_** (boolean): whether or not to use a tpm2 device.
     * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
+    * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
+* **_grub_** (object): Unsupported
+  * **_users_** (list of objects): Unsupported
+    * **name** (string): Unsupported
+    * **password_hash** (string): Unsupported
 * **_openshift_** (object): describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **_kernel_type_** (string): which kernel to use on the node. Must be `default` or `realtime`.
   * **_kernel_arguments_** (list of strings): arguments to be added to the kernel command line.
