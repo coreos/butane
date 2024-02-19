@@ -448,7 +448,8 @@ func processModule(rendered types.Config, module Module, options common.Translat
 		"CmdToExecute": cmdToExecute,
 	})
 	if err != nil {
-		panic(err)
+		r.AddOnError(yamlPath, err)
+		return rendered
 	}
 
 	result := contents.String()
