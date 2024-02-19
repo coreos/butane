@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v4_15_exp
+package v4_16_exp
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ import (
 	base "github.com/coreos/butane/base/v0_6_exp"
 	"github.com/coreos/butane/config/common"
 	fcos "github.com/coreos/butane/config/fcos/v1_6_exp"
-	"github.com/coreos/butane/config/openshift/v4_15_exp/result"
+	"github.com/coreos/butane/config/openshift/v4_16_exp/result"
 	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
@@ -359,7 +359,7 @@ func TestTranslateConfig(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
-			actual, translations, r := test.in.ToMachineConfig4_15Unvalidated(common.TranslateOptions{})
+			actual, translations, r := test.in.ToMachineConfig4_16Unvalidated(common.TranslateOptions{})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -587,7 +587,7 @@ func TestValidateSupport(t *testing.T) {
 			for _, entry := range test.entries {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
-			actual, translations, r := test.in.ToMachineConfig4_15Unvalidated(common.TranslateOptions{})
+			actual, translations, r := test.in.ToMachineConfig4_16Unvalidated(common.TranslateOptions{})
 			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
