@@ -12,6 +12,7 @@ nav_order: 9
 
 ### Features
 
+- Add SElinux sugar to butane which will allow users import costum SElinux modules. 
 
 ### Bug fixes
 
@@ -33,7 +34,7 @@ key](https://getfedora.org/security/).
 
 ### Features
 
-- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.15.0-exp)
+- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.16.0-exp)
 - Stabilize OpenShift spec 4.15.0, targeting Ignition spec 3.4.0
 - Add OpenShift spec 4.16.0-experimental, targeting Ignition spec
   3.5.0-experimental
