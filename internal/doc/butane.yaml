@@ -330,7 +330,7 @@ root:
                 - variant: fcos
                   min: 1.6.0-experimental
                 - variant: openshift
-                  min: 4.15.0-experimental
+                  min: 4.16.0-experimental
         - name: luks
           desc: describes the clevis configuration for encrypting the root filesystem.
           children:

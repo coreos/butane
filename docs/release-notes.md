@@ -33,7 +33,7 @@ key](https://getfedora.org/security/).
 
 ### Features
 
-- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.15.0-exp)
+- Support s390x layouts in `boot_device` section (fcos 1.6.0-exp, openshift 4.16.0-exp)
 - Stabilize OpenShift spec 4.15.0, targeting Ignition spec 3.4.0
 - Add OpenShift spec 4.16.0-experimental, targeting Ignition spec
   3.5.0-experimental
