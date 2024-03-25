@@ -12,6 +12,7 @@ nav_order: 9
 
 ### Features
 
+- Add SElinux sugar to butane which will allow users import costum SElinux modules. 
 
 ### Bug fixes
 

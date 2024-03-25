@@ -386,6 +386,17 @@ root:
                   if:
                     - variant: openshift
                       max: 4.15.0
+    - name: selinux
+      after: $
+      desc: simplifies security policy configuration through direct integration with Ignition, facilitating the generation of SELinux modules.
+      children: 
+        - name: modules 
+          desc: a module retains the data necessary for generating SELinux files.
+          children:
+            - name: name
+              desc: module name
+            - name: contents
+              desc: all the information provided that will be the configuration of the SELinux module
     - name: openshift
       after: $
       desc: describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.

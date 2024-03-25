@@ -22,6 +22,7 @@ type Config struct {
 	base.Config `yaml:",inline"`
 	BootDevice  BootDevice `yaml:"boot_device"`
 	Grub        Grub       `yaml:"grub"`
+	Selinux     Selinux    `yaml:"selinux"`
 }
 
 type BootDevice struct {
@@ -49,4 +50,33 @@ type Grub struct {
 type GrubUser struct {
 	Name         string  `yaml:"name"`
 	PasswordHash *string `yaml:"password_hash"`
+}
+
+type Selinux struct {
+	Modules []Module `yaml:"modules"`
+}
+
+type Module struct {
+	Name     string   `yaml:"name"`
+	Contents Resource `yaml:"contents"`
+}
+
+type Resource struct {
+	Compression  *string      `yaml:"compression"`
+	HTTPHeaders  HTTPHeaders  `yaml:"http_headers"`
+	Source       *string      `yaml:"source"`
+	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
+	Local        *string      `yaml:"local"`  // Added, not in ignition spec
+	Verification Verification `yaml:"verification"`
+}
+
+type HTTPHeader struct {
+	Name  string  `yaml:"name"`
+	Value *string `yaml:"value"`
+}
+
+type HTTPHeaders []HTTPHeader
+
+type Verification struct {
+	Hash *string `yaml:"hash"`
 }

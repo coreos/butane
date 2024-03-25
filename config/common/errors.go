@@ -96,6 +96,10 @@ var (
 
 	// Kernel arguments
 	ErrGeneralKernelArgumentSupport = errors.New("kernel argument customization is not supported in this spec version")
+
+	// Selinux Module
+	ErrSelinuxContentsNotSpecified = errors.New("field \"contents\" is required")
+	ErrSelinuxNameNotSpecified     = errors.New("field \"name\" is required")
 )
 
 type ErrUnmarshal struct {
