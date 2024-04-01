@@ -59,9 +59,7 @@ func TestTranslation(t *testing.T) {
 					},
 				},
 			},
-			[]entry{
-				{report.Error, common.ErrClevisSupport, path.New("yaml", "storage", "luks", 1, "clevis")},
-			},
+			[]entry{}, // Clevis support was added in 1_2_experimental and we therefore expect no errors.
 		},
 	}
 
@@ -72,7 +70,9 @@ func TestTranslation(t *testing.T) {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
 			actual, translations, r := test.in.ToIgn3_5Unvalidated(common.TranslateOptions{})
-			r.Merge(fieldFilters.Verify(actual))
+			if test.in.FieldFilters() != nil {
+				r.Merge(test.in.FieldFilters().Verify(actual))
+			}
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, expectedReport, r, "report mismatch")

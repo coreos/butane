@@ -12,6 +12,7 @@ nav_order: 9
 
 ### Features
 
+- Support `storage.luks.clevis` (flatcar 1.2.0-exp)
 
 ### Bug fixes
 
