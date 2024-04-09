@@ -192,7 +192,7 @@ storage:
     - device: /dev/sdb
       wipe_table: true
       partitions:
-        - number: 1
+        - number: 5
           label: var
   filesystems:
     - path: /var
