@@ -157,6 +157,17 @@ The Flatcar configuration is a YAML document conforming to the following specifi
     * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
     * **_open_options_** (list of strings): any additional options to be passed to `cryptsetup luksOpen`. Supported options will be persistently written to the luks volume.
     * **_wipe_volume_** (boolean): whether or not to wipe the device before volume creation, see [Ignition's documentation on filesystems](https://coreos.github.io/ignition/operator-notes/#filesystem-reuse-semantics) for more information.
+    * **_clevis_** (object): describes the clevis configuration for the luks device.
+      * **_tang_** (list of objects): describes a tang server. Every server must have a unique `url`.
+        * **url** (string): url of the tang server.
+        * **thumbprint** (string): thumbprint of a trusted signing key.
+        * **_advertisement_** (string): the advertisement JSON. If not specified, the advertisement is fetched from the tang server during provisioning.
+      * **_tpm2_** (boolean): whether or not to use a tpm2 device.
+      * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
+      * **_custom_** (object): overrides the clevis configuration. The `pin` & `config` will be passed directly to `clevis luks bind`. If specified, all other clevis options must be omitted.
+        * **pin** (string): the clevis pin.
+        * **config** (string): the clevis configuration JSON.
+        * **_needs_network_** (boolean): whether or not the device requires networking.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.

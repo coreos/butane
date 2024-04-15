@@ -22,15 +22,9 @@ import (
 	"github.com/coreos/vcontext/report"
 )
 
-var (
-	fieldFilters = cutil.NewFilters(types.Config{}, cutil.FilterMap{
-		"storage.luks.clevis": common.ErrClevisSupport,
-	})
-)
-
 // Return FieldFilters for this spec.
 func (c Config) FieldFilters() *cutil.FieldFilters {
-	return &fieldFilters
+	return nil
 }
 
 // ToIgn3_5 translates the config to an Ignition config.  It returns a
