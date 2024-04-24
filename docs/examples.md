@@ -373,12 +373,12 @@ storage:
     - device: /dev/sda
       partitions:
         - label: root-1
-          size_mib: 8192
+          size_mib: 10240
         - label: var-1
     - device: /dev/sdb
       partitions:
         - label: root-2
-          size_mib: 8192
+          size_mib: 10240
         - label: var-2
   raid:
     - name: md-var
