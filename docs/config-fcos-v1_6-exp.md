@@ -100,7 +100,7 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **_value_** (string): the header contents.
       * **_verification_** (object): options related to the verification of the file.
         * **_hash_** (string): the hash of the file, in the form `<type>-<value>` where type is either `sha512` or `sha256`. If `compression` is specified, the hash describes the decompressed file.
-    * **_append_** (list of objects): list of fragments to be appended to the file. Follows the same structure as `contents`.
+    * **_appends_** (list of objects): list of fragments to be appended to the file. Follows the same structure as `contents`.
       * **_source_** (string): the URL of the fragment. Supported schemes are `http`, `https`, `tftp`, `s3`, `arn`, `gs`, and [`data`](https://tools.ietf.org/html/rfc2397). When using `http`, it is advisable to use the verification option to ensure the contents haven't been modified. Mutually exclusive with `inline` and `local`.
       * **_inline_** (string): the contents of the fragment. Mutually exclusive with `source` and `local`.
       * **_local_** (string): a local path to the contents of the fragment, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`.
