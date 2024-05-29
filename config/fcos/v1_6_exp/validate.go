@@ -18,6 +18,7 @@ import (
 	"regexp"
 
 	"github.com/coreos/butane/config/common"
+	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
 
 	"github.com/coreos/vcontext/path"
@@ -51,31 +52,43 @@ func (conf Config) Validate(c path.ContextPath) (r report.Report) {
 }
 
 func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
-	if d.Layout != nil {
-		switch *d.Layout {
+	var layout = d.Layout
+	if layout != nil {
+		switch *layout {
 		case "aarch64", "ppc64le", "x86_64":
+			if util.IsTrue(d.Luks.Enabled) {
+				r.AddOnError(c.Append(*layout), common.ErrCexUnSupportArch)
+			}
 		case "s390x-eckd":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append(*layout), common.ErrNoLuksBootDevice)
 			} else if !dasdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append(*layout), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-zfcp":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append(*layout), common.ErrNoLuksBootDevice)
 			} else if !sdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append(*layout), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-virt":
 		default:
 			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
 		}
 
-		if *d.Layout == "s390x-eckd" || *d.Layout == "s390x-zfcp" || *d.Layout == "s390x-virt" {
+		if *layout == "s390x-eckd" || *layout == "s390x-zfcp" || *layout == "s390x-virt" {
 			if len(d.Mirror.Devices) > 0 {
-				r.AddOnError(c.Append(*d.Layout), common.ErrMirrorNotSupport)
+				r.AddOnError(c.Append(*layout), common.ErrMirrorNotSupport)
 			}
 		}
+
+		if util.IsTrue(d.Luks.Enabled) && (len(d.Luks.Tang) > 0 || util.IsTrue(d.Luks.Tpm2)) {
+			r.AddOnError(c.Append("luks"), errors.ErrCexWithClevis)
+		}
+	}
+
+	if layout == nil && util.IsTrue(d.Luks.Enabled) {
+		r.AddOnError(c.Append("cex"), common.ErrCexUnSupportArch)
 	}
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
 	return

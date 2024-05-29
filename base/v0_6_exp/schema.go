@@ -14,6 +14,10 @@
 
 package v0_6_exp
 
+type Cex struct {
+	Enabled *bool `yaml:"enabled"`
+}
+
 type Clevis struct {
 	Custom    ClevisCustom `yaml:"custom"`
 	Tang      []Tang       `yaml:"tang"`
@@ -119,6 +123,7 @@ type Link struct {
 }
 
 type Luks struct {
+	Cex         Cex      `yaml:"cex"`
 	Clevis      Clevis   `yaml:"clevis"`
 	Device      *string  `yaml:"device"`
 	Discard     *bool    `yaml:"discard"`

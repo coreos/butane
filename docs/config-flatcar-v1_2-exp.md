@@ -168,6 +168,8 @@ The Flatcar configuration is a YAML document conforming to the following specifi
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
         * **_needs_network_** (boolean): whether or not the device requires networking.
+    * **_cex_** (object): describes the IBM Crypto Express (CEX) card configuration for the luks device.
+      * **_enabled_** (boolean): whether or not to use a CEX secure key to encrypt the luks device.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
