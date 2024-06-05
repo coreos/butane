@@ -13,6 +13,7 @@ nav_order: 9
 ### Features
 
 - Support `storage.luks.clevis` (flatcar 1.2.0-exp)
+- Stabilize OpenShift spec 4.16.0, targeting Ignition spec 3.4.0
 
 ### Bug fixes
 
