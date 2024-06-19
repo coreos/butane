@@ -75,11 +75,8 @@ key](https://getfedora.org/security/).
 - Warn if config attempts to reuse partition by label _(fcos 1.6.0-exp,
   openshift 4.14.0)_
 - Require `storage.filesystems.path` to start with `/etc` or `/var` if
-  `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0)_
-- Stabilize OpenShift spec 4.14.0, targeting Ignition spec 3.4.0
-- Add OpenShift spec 4.15.0-experimental, targeting Ignition spec
-  3.5.0-experimental
-- Add new variant `fiot` for fedora-iot
+  `with_mount_unit` is true _(fcos 1.6.0-exp, openshift 4.14.0-exp)_
+- Validate merged/replaced ignition configs if they are local/inline _(fcos 1.6.0-exp)_
 
 ### Bug fixes
 
