@@ -67,6 +67,12 @@ type File struct {
 	Append    []Resource `yaml:"append"`
 	Contents  Resource   `yaml:"contents"`
 	Mode      *int       `yaml:"mode"`
+	Parent    Parent     `yaml:"parent"`
+}
+
+type Parent struct {
+	Path *string `yaml:"path,omitempty"`
+	Mode *int    `yaml:"mode,omitempty"`
 }
 
 type Filesystem struct {

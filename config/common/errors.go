@@ -89,6 +89,7 @@ var (
 	ErrLinkSupport       = errors.New("links are not supported in this spec version")
 	ErrLuksSupport       = errors.New("luks is not supported in this spec version")
 	ErrRaidSupport       = errors.New("raid is not supported in this spec version")
+	ErrInvalidParent     = errors.New("parent must be included in the file path")
 
 	// Grub
 	ErrGrubUserNameNotSpecified = errors.New("field \"name\" is required")
