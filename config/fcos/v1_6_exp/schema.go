@@ -31,9 +31,9 @@ type BootDevice struct {
 }
 
 type BootDeviceLuks struct {
+	Cex       base.Cex    `yaml:"cex"`
 	Discard   *bool       `yaml:"discard"`
 	Device    *string     `yaml:"device"`
-	Enabled   *bool       `yaml:"enabled"`
 	Tang      []base.Tang `yaml:"tang"`
 	Threshold *int        `yaml:"threshold"`
 	Tpm2      *bool       `yaml:"tpm2"`

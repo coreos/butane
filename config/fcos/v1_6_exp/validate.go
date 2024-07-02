@@ -56,8 +56,8 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 	if layout != nil {
 		switch *layout {
 		case "aarch64", "ppc64le", "x86_64":
-			if util.IsTrue(d.Luks.Enabled) {
-				r.AddOnError(c.Append(*layout), common.ErrCexUnSupportArch)
+			if util.IsTrue(d.Luks.Cex.Enabled) {
+				r.AddOnError(c.Append(*layout), common.ErrCexArchitectureMismatch)
 			}
 		case "s390x-eckd":
 			if util.NilOrEmpty(d.Luks.Device) {
@@ -82,13 +82,13 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 			}
 		}
 
-		if util.IsTrue(d.Luks.Enabled) && (len(d.Luks.Tang) > 0 || util.IsTrue(d.Luks.Tpm2)) {
+		if util.IsTrue(d.Luks.Cex.Enabled) && (len(d.Luks.Tang) > 0 || util.IsTrue(d.Luks.Tpm2)) {
 			r.AddOnError(c.Append("luks"), errors.ErrCexWithClevis)
 		}
 	}
 
-	if layout == nil && util.IsTrue(d.Luks.Enabled) {
-		r.AddOnError(c.Append("cex"), common.ErrCexUnSupportArch)
+	if layout == nil && util.IsTrue(d.Luks.Cex.Enabled) {
+		r.AddOnError(c.Append("cex"), common.ErrCexArchitectureMismatch)
 	}
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
 	return

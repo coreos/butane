@@ -166,8 +166,10 @@ func TestValidateBootDevice(t *testing.T) {
 			BootDevice{
 				Layout: util.StrToPtr("s390x-eckd"),
 				Luks: BootDeviceLuks{
-					Device:  util.StrToPtr("/dev/dasda"),
-					Enabled: util.BoolToPtr(true),
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
 				},
 			},
 			nil,

@@ -114,7 +114,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var r report.Report
 
 	// check for high-level features
-	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0 || util.IsTrue(c.BootDevice.Luks.Enabled)
+	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0 || util.IsTrue(c.BootDevice.Luks.Cex.Enabled)
 	wantMirror := len(c.BootDevice.Mirror.Devices) > 0
 	if !wantLuks && !wantMirror {
 		return r
@@ -252,7 +252,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		default:
 			luksDevice = "/dev/disk/by-partlabel/root"
 		}
-		if util.IsTrue(c.BootDevice.Luks.Enabled) {
+		if util.IsTrue(c.BootDevice.Luks.Cex.Enabled) {
 			cex, ts2, r2 := translateBootDeviceLuksCex(c.BootDevice.Luks, options)
 			rendered.Storage.Luks = []types.Luks{{
 				Cex:        cex,
@@ -343,9 +343,8 @@ func translateBootDeviceLuksCex(from BootDeviceLuks, options common.TranslateOpt
 	tr := translate.NewTranslator("yaml", "json", options)
 	// Discard field is handled by the caller because it doesn't go
 	// into types.Cex
-	tm, r = translate.Prefixed(tr, "enabled", &from.Enabled, &to.Enabled)
-	//translate.MergeP(tr, tm, &r, "threshold", &from.Threshold, &to.Threshold)
-	translate.MergeP(tr, tm, &r, "enabled", &from.Enabled, &to.Enabled)
+	tm, r = translate.Prefixed(tr, "enabled", &from.Cex.Enabled, &to.Enabled)
+	translate.MergeP(tr, tm, &r, "enabled", &from.Cex.Enabled, &to.Enabled)
 	// we're being called manually, not via the translate package's
 	// custom translator mechanism, so we have to add the base
 	// translation ourselves

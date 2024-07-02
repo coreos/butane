@@ -350,7 +350,8 @@ boot_device:
   layout: s390x-eckd
   luks:
     device: /dev/dasda
-    enabled: true
+    cex:
+      enabled: true
 ```
 
 ### Mirrored boot disk
