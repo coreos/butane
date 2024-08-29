@@ -168,6 +168,8 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
         * **_needs_network_** (boolean): whether or not the device requires networking.
+    * **_cex_** (object): describes the IBM Crypto Express (CEX) card configuration for the luks device.
+      * **_enabled_** (boolean): whether or not to use a CEX secure key to encrypt the luks device.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
@@ -219,6 +221,8 @@ The Fedora CoreOS configuration is a YAML document conforming to the following s
     * **_tpm2_** (boolean): whether or not to use a tpm2 device.
     * **_threshold_** (integer): sets the minimum number of pieces required to decrypt the device. Default is 1.
     * **_discard_** (boolean): whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
+    * **_cex_** (object): describes the IBM Crypto Express (CEX) card configuration for the luks device.
+      * **_enabled_** (boolean): whether or not to enable cex compatibility for luks. If omitted, defaults to false.
   * **_mirror_** (object): describes mirroring of the boot disk for fault tolerance.
     * **_devices_** (list of strings): the list of whole-disk devices (not partitions) to include in the disk array, referenced by their absolute path. At least two devices must be specified.
 * **_grub_** (object): describes the desired GRUB bootloader configuration.

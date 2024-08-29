@@ -161,6 +161,20 @@ func TestValidateBootDevice(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
+		// complete config with cex
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
 		// invalid layout
 		{
 			BootDevice{

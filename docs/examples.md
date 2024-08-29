@@ -340,6 +340,20 @@ boot_device:
         thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
 ```
 
+This example uses the shortcut `boot_device` syntax to configure an encrypted root filesystem in s390x on the `dasda` DASD device unlocked with a CEX card.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.6.0-experimental
+boot_device:
+  layout: s390x-eckd
+  luks:
+    device: /dev/dasda
+    cex:
+      enabled: true
+```
+
 ### Mirrored boot disk
 
 This example replicates all default partitions on the boot disk across multiple disks, allowing the system to survive disk failure.

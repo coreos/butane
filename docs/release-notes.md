@@ -7,6 +7,23 @@ nav_order: 9
 ## Upcoming Butane 0.22.0 (unreleased)
 
 
+### Breaking changes
+
+
+### Features
+
+- Support LUKS encryption using IBM CEX secure keys on s390x
+
+### Bug fixes
+
+
+## Misc. changes
+
+
+### Docs changes
+
+
+
 ## Butane 0.21.0 (2024-06-06)
 
 Starting with this release, Butane binaries are signed with the [Fedora 40

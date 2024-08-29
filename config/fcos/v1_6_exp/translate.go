@@ -114,7 +114,7 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 	var r report.Report
 
 	// check for high-level features
-	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0
+	wantLuks := util.IsTrue(c.BootDevice.Luks.Tpm2) || len(c.BootDevice.Luks.Tang) > 0 || util.IsTrue(c.BootDevice.Luks.Cex.Enabled)
 	wantMirror := len(c.BootDevice.Mirror.Devices) > 0
 	if !wantLuks && !wantMirror {
 		return r
@@ -252,25 +252,47 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 		default:
 			luksDevice = "/dev/disk/by-partlabel/root"
 		}
-		clevis, ts2, r2 := translateBootDeviceLuks(c.BootDevice.Luks, options)
-		rendered.Storage.Luks = []types.Luks{{
-			Clevis:     clevis,
-			Device:     &luksDevice,
-			Discard:    c.BootDevice.Luks.Discard,
-			Label:      util.StrToPtr("luks-root"),
-			Name:       "root",
-			WipeVolume: util.BoolToPtr(true),
-		}}
-		lpath := path.New("yaml", "boot_device", "luks")
-		rpath := path.New("json", "storage", "luks", 0)
-		renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("clevis")))
-		renderedTranslations.AddTranslation(lpath.Append("discard"), rpath.Append("discard"))
-		for _, f := range []string{"device", "label", "name", "wipeVolume"} {
-			renderedTranslations.AddTranslation(lpath, rpath.Append(f))
+		if util.IsTrue(c.BootDevice.Luks.Cex.Enabled) {
+			cex, ts2, r2 := translateBootDeviceLuksCex(c.BootDevice.Luks, options)
+			rendered.Storage.Luks = []types.Luks{{
+				Cex:        cex,
+				Device:     &luksDevice,
+				Discard:    c.BootDevice.Luks.Discard,
+				Label:      util.StrToPtr("luks-root"),
+				Name:       "root",
+				WipeVolume: util.BoolToPtr(true),
+			}}
+			lpath := path.New("yaml", "boot_device", "luks")
+			rpath := path.New("json", "storage", "luks", 0)
+			renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("cex")))
+			renderedTranslations.AddTranslation(lpath.Append("discard"), rpath.Append("discard"))
+			for _, f := range []string{"device", "label", "name", "wipeVolume"} {
+				renderedTranslations.AddTranslation(lpath, rpath.Append(f))
+			}
+			renderedTranslations.AddTranslation(lpath, rpath)
+			renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
+			r.Merge(r2)
+		} else {
+			clevis, ts2, r2 := translateBootDeviceLuks(c.BootDevice.Luks, options)
+			rendered.Storage.Luks = []types.Luks{{
+				Clevis:     clevis,
+				Device:     &luksDevice,
+				Discard:    c.BootDevice.Luks.Discard,
+				Label:      util.StrToPtr("luks-root"),
+				Name:       "root",
+				WipeVolume: util.BoolToPtr(true),
+			}}
+			lpath := path.New("yaml", "boot_device", "luks")
+			rpath := path.New("json", "storage", "luks", 0)
+			renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("clevis")))
+			renderedTranslations.AddTranslation(lpath.Append("discard"), rpath.Append("discard"))
+			for _, f := range []string{"device", "label", "name", "wipeVolume"} {
+				renderedTranslations.AddTranslation(lpath, rpath.Append(f))
+			}
+			renderedTranslations.AddTranslation(lpath, rpath)
+			renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
+			r.Merge(r2)
 		}
-		renderedTranslations.AddTranslation(lpath, rpath)
-		renderedTranslations.AddTranslation(lpath, path.New("json", "storage", "luks"))
-		r.Merge(r2)
 	}
 
 	// create root filesystem
@@ -310,6 +332,19 @@ func translateBootDeviceLuks(from BootDeviceLuks, options common.TranslateOption
 	tm, r = translate.Prefixed(tr, "tang", &from.Tang, &to.Tang)
 	translate.MergeP(tr, tm, &r, "threshold", &from.Threshold, &to.Threshold)
 	translate.MergeP(tr, tm, &r, "tpm2", &from.Tpm2, &to.Tpm2)
+	// we're being called manually, not via the translate package's
+	// custom translator mechanism, so we have to add the base
+	// translation ourselves
+	tm.AddTranslation(path.New("yaml"), path.New("json"))
+	return
+}
+
+func translateBootDeviceLuksCex(from BootDeviceLuks, options common.TranslateOptions) (to types.Cex, tm translate.TranslationSet, r report.Report) {
+	tr := translate.NewTranslator("yaml", "json", options)
+	// Discard field is handled by the caller because it doesn't go
+	// into types.Cex
+	tm, r = translate.Prefixed(tr, "enabled", &from.Cex.Enabled, &to.Enabled)
+	translate.MergeP(tr, tm, &r, "enabled", &from.Cex.Enabled, &to.Enabled)
 	// we're being called manually, not via the translate package's
 	// custom translator mechanism, so we have to add the base
 	// translation ourselves
