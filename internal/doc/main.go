@@ -54,7 +54,7 @@ import (
 	openshift4_14 "github.com/coreos/butane/config/openshift/v4_14"
 	openshift4_15 "github.com/coreos/butane/config/openshift/v4_15"
 	openshift4_16 "github.com/coreos/butane/config/openshift/v4_16"
-	openshift4_17_exp "github.com/coreos/butane/config/openshift/v4_17_exp"
+	openshift4_17 "github.com/coreos/butane/config/openshift/v4_17"
 	openshift4_18_exp "github.com/coreos/butane/config/openshift/v4_18_exp"
 	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
 	openshift4_9 "github.com/coreos/butane/config/openshift/v4_9"
@@ -127,7 +127,6 @@ func generate(dir string) error {
 			[]version{
 				// inverse order of website navbar
 				{"4.18.0-experimental", openshift4_18_exp.Config{}},
-				{"4.17.0-experimental", openshift4_17_exp.Config{}},
 				{"4.8.0", openshift4_8.Config{}},
 				{"4.9.0", openshift4_9.Config{}},
 				{"4.10.0", openshift4_10.Config{}},
@@ -137,6 +136,7 @@ func generate(dir string) error {
 				{"4.14.0", openshift4_14.Config{}},
 				{"4.15.0", openshift4_15.Config{}},
 				{"4.16.0", openshift4_16.Config{}},
+				{"4.17.0", openshift4_17.Config{}},
 			},
 		},
 		{

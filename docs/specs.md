@@ -25,6 +25,7 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.1.0](config-flatcar-v1_1.md)
   - [v1.0.0](config-flatcar-v1_0.md)
 - OpenShift (`openshift`)
+  - [v4.17.0](config-openshift-v4_17.md)
   - [v4.16.0](config-openshift-v4_16.md)
   - [v4.15.0](config-openshift-v4_15.md)
   - [v4.14.0](config-openshift-v4_14.md)
@@ -80,7 +81,7 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `openshift`    | 4.14.0              | 3.4.0              |
 | `openshift`    | 4.15.0              | 3.4.0              |
 | `openshift`    | 4.16.0              | 3.4.0              |
-| `openshift`    | 4.17.0-experimental | 3.5.0-experimental |
+| `openshift`    | 4.17.0              | 3.4.0              |
 | `openshift`    | 4.18.0-experimental | 3.5.0-experimental |
 | `r4e`          | 1.0.0               | 3.3.0              |
 | `r4e`          | 1.1.0               | 3.4.0              |
