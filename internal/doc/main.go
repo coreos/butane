@@ -55,6 +55,7 @@ import (
 	openshift4_15 "github.com/coreos/butane/config/openshift/v4_15"
 	openshift4_16 "github.com/coreos/butane/config/openshift/v4_16"
 	openshift4_17_exp "github.com/coreos/butane/config/openshift/v4_17_exp"
+	openshift4_18_exp "github.com/coreos/butane/config/openshift/v4_18_exp"
 	openshift4_8 "github.com/coreos/butane/config/openshift/v4_8"
 	openshift4_9 "github.com/coreos/butane/config/openshift/v4_9"
 	r4e1_0 "github.com/coreos/butane/config/r4e/v1_0"
@@ -125,6 +126,7 @@ func generate(dir string) error {
 			"openshift",
 			[]version{
 				// inverse order of website navbar
+				{"4.18.0-experimental", openshift4_18_exp.Config{}},
 				{"4.17.0-experimental", openshift4_17_exp.Config{}},
 				{"4.8.0", openshift4_8.Config{}},
 				{"4.9.0", openshift4_9.Config{}},
