@@ -32,10 +32,6 @@ nav_order: 9
 Starting with this release, Butane binaries are signed with the [Fedora 40
 key](https://getfedora.org/security/).
 
-
-### Breaking changes
-
-
 ### Features
 
 - Support `storage.luks.clevis` (flatcar 1.2.0-exp)
@@ -43,23 +39,11 @@ key](https://getfedora.org/security/).
 - Add OpenShift spec 4.17.0-experimental, targeting Ignition spec
   3.5.0-experimental
 
-### Bug fixes
-
-
-### Misc. changes
-
-
-### Docs changes
-
-
 
 ## Butane 0.20.0 (2024-02-19)
 
 Starting with this release, Butane binaries are signed with the [Fedora 39
 key](https://getfedora.org/security/).
-
-### Breaking changes
-
 
 ### Features
 
@@ -68,15 +52,9 @@ key](https://getfedora.org/security/).
 - Add OpenShift spec 4.16.0-experimental, targeting Ignition spec
   3.5.0-experimental
 
-### Bug fixes
-
-
 ### Misc. changes
 
 - Require Go 1.20+
-
-### Docs changes
-
 
 
 ## Butane 0.19.0 (2023-10-03)
