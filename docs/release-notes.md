@@ -6,15 +6,31 @@ nav_order: 9
 
 ## Upcoming Butane 0.22.0 (unreleased)
 
+### Breaking changes
+
+
+### Features
+
+- Stabilize OpenShift spec 4.17.0, targeting Ignition spec 3.4.0
+- Add OpenShift spec 4.18.0-experimental, targeting Ignition spec
+  3.5.0-experimental
+- Support and documentation for `grub` section moved to OpenShift
+  4.18.0-experimental spec.
+
+### Bug fixes
+
+
+### Misc. changes
+
+- Roll back to Ignition spec 3.4.0 _(openshift 4.17.0)_
+
+### Docs changes
+
 
 ## Butane 0.21.0 (2024-06-06)
 
 Starting with this release, Butane binaries are signed with the [Fedora 40
 key](https://getfedora.org/security/).
-
-
-### Breaking changes
-
 
 ### Features
 
@@ -23,23 +39,11 @@ key](https://getfedora.org/security/).
 - Add OpenShift spec 4.17.0-experimental, targeting Ignition spec
   3.5.0-experimental
 
-### Bug fixes
-
-
-### Misc. changes
-
-
-### Docs changes
-
-
 
 ## Butane 0.20.0 (2024-02-19)
 
 Starting with this release, Butane binaries are signed with the [Fedora 39
 key](https://getfedora.org/security/).
-
-### Breaking changes
-
 
 ### Features
 
@@ -48,15 +52,9 @@ key](https://getfedora.org/security/).
 - Add OpenShift spec 4.16.0-experimental, targeting Ignition spec
   3.5.0-experimental
 
-### Bug fixes
-
-
 ### Misc. changes
 
 - Require Go 1.20+
-
-### Docs changes
-
 
 
 ## Butane 0.19.0 (2023-10-03)
