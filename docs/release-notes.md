@@ -4,10 +4,18 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.22.0 (unreleased)
+## Upcoming Butane 0.23.0 (unreleased)
 
-### Breaking changes
+### Features
 
+### Bug fixes
+
+### Misc. changes
+
+### Docs changes
+
+
+## Butane 0.22.0 (2024-09-20)
 
 ### Features
 
@@ -17,14 +25,9 @@ nav_order: 9
 - Support and documentation for `grub` section moved to OpenShift
   4.18.0-experimental spec.
 
-### Bug fixes
-
-
 ### Misc. changes
 
 - Roll back to Ignition spec 3.4.0 _(openshift 4.17.0)_
-
-### Docs changes
 
 
 ## Butane 0.21.0 (2024-06-06)
