@@ -20,12 +20,12 @@ jobs:
     name: Test
     strategy:
       matrix:
-        go-version: [1.20.x, 1.21.x]
+        go-version: [1.22.x, 1.23.x]
         os: [ubuntu-latest]
         include:
-          - go-version: 1.21.x
+          - go-version: 1.23.x
             os: macos-latest
-          - go-version: 1.21.x
+          - go-version: 1.23.x
             os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -48,7 +48,7 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       if: runner.os == 'Linux'
       with:
-        version: v1.55.1
+        version: v1.61.0
         args: -E=gofmt --timeout=30m0s
   regenerate:
     name: Regenerate
@@ -59,7 +59,7 @@ jobs:
     - name: Set up Go 1.x
       uses: actions/setup-go@v4
       with:
-        go-version: 1.21.x
+        go-version: 1.23.x
     - name: Regenerate
       run: ./generate
     - name: Check whether generated output is current
