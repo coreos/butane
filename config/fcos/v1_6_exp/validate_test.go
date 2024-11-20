@@ -161,6 +161,80 @@ func TestValidateBootDevice(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
+		// complete config with cex
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// can not use both cex & tang
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+					Tang: []base.Tang{{
+						URL:        "https://example.com/",
+						Thumbprint: util.StrToPtr("x"),
+					}},
+				},
+			},
+			errors.ErrCexWithClevis,
+			path.New("yaml", "luks"),
+		},
+		// can not use both cex & tpm2
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+					Tpm2: util.BoolToPtr(true),
+				},
+			},
+			errors.ErrCexWithClevis,
+			path.New("yaml", "luks"),
+		},
+		// can not use cex on non s390x
+		{
+			BootDevice{
+				Layout: util.StrToPtr("x86_64"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			common.ErrCexArchitectureMismatch,
+			path.New("yaml", "layout"),
+		},
+		// must set s390x layout with cex
+		{
+			BootDevice{
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			common.ErrCexArchitectureMismatch,
+			path.New("yaml", "luks", "cex"),
+		},
 		// invalid layout
 		{
 			BootDevice{

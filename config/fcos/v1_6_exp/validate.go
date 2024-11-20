@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/coreos/butane/config/common"
+	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
 
 	"github.com/coreos/vcontext/path"
@@ -55,6 +56,7 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 	if d.Layout != nil {
 		switch *d.Layout {
 		case "aarch64", "ppc64le", "x86_64":
+			// Nothing to do
 		case "s390x-eckd":
 			if util.NilOrEmpty(d.Luks.Device) {
 				r.AddOnError(c.Append("layout"), common.ErrNoLuksBootDevice)
@@ -77,6 +79,19 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 			r.AddOnError(c.Append("layout"), common.ErrMirrorNotSupport)
 		}
 	}
+
+	// CEX is only valid on s390x and incompatible with Clevis
+	if util.IsTrue(d.Luks.Cex.Enabled) {
+		if d.Layout == nil {
+			r.AddOnError(c.Append("luks", "cex"), common.ErrCexArchitectureMismatch)
+		} else if !strings.HasPrefix(*d.Layout, "s390x") {
+			r.AddOnError(c.Append("layout"), common.ErrCexArchitectureMismatch)
+		}
+		if len(d.Luks.Tang) > 0 || util.IsTrue(d.Luks.Tpm2) {
+			r.AddOnError(c.Append("luks"), errors.ErrCexWithClevis)
+		}
+	}
+
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
 	return
 }
