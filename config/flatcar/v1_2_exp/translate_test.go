@@ -59,7 +59,7 @@ func TestTranslation(t *testing.T) {
 					},
 				},
 			},
-			[]entry{}, // Clevis support was added in 1_2_experimental and we therefore expect no errors.
+			[]entry{}, // Clevis support was added in 1_2 and we therefore expect no errors.
 		},
 	}
 
