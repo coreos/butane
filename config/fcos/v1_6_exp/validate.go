@@ -16,6 +16,7 @@ package v1_6_exp
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/ignition/v2/config/util"
@@ -56,25 +57,24 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 		case "aarch64", "ppc64le", "x86_64":
 		case "s390x-eckd":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append("layout"), common.ErrNoLuksBootDevice)
 			} else if !dasdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append("layout"), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-zfcp":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append("layout"), common.ErrNoLuksBootDevice)
 			} else if !sdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append("layout"), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-virt":
 		default:
 			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
 		}
 
-		if *d.Layout == "s390x-eckd" || *d.Layout == "s390x-zfcp" || *d.Layout == "s390x-virt" {
-			if len(d.Mirror.Devices) > 0 {
-				r.AddOnError(c.Append(*d.Layout), common.ErrMirrorNotSupport)
-			}
+		// Mirroring the boot disk is not supported on s390x
+		if strings.HasPrefix(*d.Layout, "s390x") && len(d.Mirror.Devices) > 0 {
+			r.AddOnError(c.Append("layout"), common.ErrMirrorNotSupport)
 		}
 	}
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))

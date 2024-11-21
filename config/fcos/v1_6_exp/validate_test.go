@@ -179,6 +179,56 @@ func TestValidateBootDevice(t *testing.T) {
 			common.ErrTooFewMirrorDevices,
 			path.New("yaml", "mirror", "devices"),
 		},
+		// s390x-eckd/s390x-zfcp layouts require a boot device with luks
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+			},
+			common.ErrNoLuksBootDevice,
+			path.New("yaml", "layout"),
+		},
+		// s390x-eckd/s390x-zfcp layouts do not support mirroring
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-zfcp"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+				Mirror: BootDeviceMirror{
+					Devices: []string{
+						"/dev/sda",
+						"/dev/sdb",
+					},
+				},
+			},
+			common.ErrMirrorNotSupport,
+			path.New("yaml", "layout"),
+		},
+		// s390x-eckd devices must start with /dev/dasd
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+			},
+			common.ErrLuksBootDeviceBadName,
+			path.New("yaml", "layout"),
+		},
+		// s390x-zfcp devices must start with /dev/sd
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasd"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+			},
+			common.ErrLuksBootDeviceBadName,
+			path.New("yaml", "layout"),
+		},
 	}
 
 	for i, test := range tests {
