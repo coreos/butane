@@ -16,8 +16,10 @@ package v1_6_exp
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/coreos/butane/config/common"
+	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
 
 	"github.com/coreos/vcontext/path"
@@ -54,29 +56,42 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 	if d.Layout != nil {
 		switch *d.Layout {
 		case "aarch64", "ppc64le", "x86_64":
+			// Nothing to do
 		case "s390x-eckd":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append("layout"), common.ErrNoLuksBootDevice)
 			} else if !dasdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append("layout"), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-zfcp":
 			if util.NilOrEmpty(d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrNoLuksBootDevice)
+				r.AddOnError(c.Append("layout"), common.ErrNoLuksBootDevice)
 			} else if !sdRe.MatchString(*d.Luks.Device) {
-				r.AddOnError(c.Append(*d.Layout), common.ErrLuksBootDeviceBadName)
+				r.AddOnError(c.Append("layout"), common.ErrLuksBootDeviceBadName)
 			}
 		case "s390x-virt":
 		default:
 			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
 		}
 
-		if *d.Layout == "s390x-eckd" || *d.Layout == "s390x-zfcp" || *d.Layout == "s390x-virt" {
-			if len(d.Mirror.Devices) > 0 {
-				r.AddOnError(c.Append(*d.Layout), common.ErrMirrorNotSupport)
-			}
+		// Mirroring the boot disk is not supported on s390x
+		if strings.HasPrefix(*d.Layout, "s390x") && len(d.Mirror.Devices) > 0 {
+			r.AddOnError(c.Append("layout"), common.ErrMirrorNotSupport)
 		}
 	}
+
+	// CEX is only valid on s390x and incompatible with Clevis
+	if util.IsTrue(d.Luks.Cex.Enabled) {
+		if d.Layout == nil {
+			r.AddOnError(c.Append("luks", "cex"), common.ErrCexArchitectureMismatch)
+		} else if !strings.HasPrefix(*d.Layout, "s390x") {
+			r.AddOnError(c.Append("layout"), common.ErrCexArchitectureMismatch)
+		}
+		if len(d.Luks.Tang) > 0 || util.IsTrue(d.Luks.Tpm2) {
+			r.AddOnError(c.Append("luks"), errors.ErrCexWithClevis)
+		}
+	}
+
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
 	return
 }

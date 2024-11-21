@@ -344,6 +344,11 @@ root:
               desc: sets the minimum number of pieces required to decrypt the device. Default is 1.
             - name: discard
               desc: whether to issue discard commands to the underlying block device when blocks are freed. Enabling this improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data. If omitted, it defaults to false.
+            - name: cex
+              desc: describes the IBM Crypto Express (CEX) card configuration for the luks device.
+              children:
+                - name: enabled
+                  desc: whether or not to enable cex compatibility for luks. If omitted, defaults to false.
         - name: mirror
           desc: describes mirroring of the boot disk for fault tolerance.
           children:

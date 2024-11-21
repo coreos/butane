@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6-exp)_ _(openshift 4.18.0-exp)_
+
 ### Bug fixes
 
 ### Misc. changes

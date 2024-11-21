@@ -161,6 +161,80 @@ func TestValidateBootDevice(t *testing.T) {
 			nil,
 			path.New("yaml"),
 		},
+		// complete config with cex
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// can not use both cex & tang
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+					Tang: []base.Tang{{
+						URL:        "https://example.com/",
+						Thumbprint: util.StrToPtr("x"),
+					}},
+				},
+			},
+			errors.ErrCexWithClevis,
+			path.New("yaml", "luks"),
+		},
+		// can not use both cex & tpm2
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+					Tpm2: util.BoolToPtr(true),
+				},
+			},
+			errors.ErrCexWithClevis,
+			path.New("yaml", "luks"),
+		},
+		// can not use cex on non s390x
+		{
+			BootDevice{
+				Layout: util.StrToPtr("x86_64"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			common.ErrCexArchitectureMismatch,
+			path.New("yaml", "layout"),
+		},
+		// must set s390x layout with cex
+		{
+			BootDevice{
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Cex: base.Cex{
+						Enabled: util.BoolToPtr(true),
+					},
+				},
+			},
+			common.ErrCexArchitectureMismatch,
+			path.New("yaml", "luks", "cex"),
+		},
 		// invalid layout
 		{
 			BootDevice{
@@ -178,6 +252,56 @@ func TestValidateBootDevice(t *testing.T) {
 			},
 			common.ErrTooFewMirrorDevices,
 			path.New("yaml", "mirror", "devices"),
+		},
+		// s390x-eckd/s390x-zfcp layouts require a boot device with luks
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+			},
+			common.ErrNoLuksBootDevice,
+			path.New("yaml", "layout"),
+		},
+		// s390x-eckd/s390x-zfcp layouts do not support mirroring
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-zfcp"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+				Mirror: BootDeviceMirror{
+					Devices: []string{
+						"/dev/sda",
+						"/dev/sdb",
+					},
+				},
+			},
+			common.ErrMirrorNotSupport,
+			path.New("yaml", "layout"),
+		},
+		// s390x-eckd devices must start with /dev/dasd
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/sda"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+			},
+			common.ErrLuksBootDeviceBadName,
+			path.New("yaml", "layout"),
+		},
+		// s390x-zfcp devices must start with /dev/sd
+		{
+			BootDevice{
+				Layout: util.StrToPtr("s390x-eckd"),
+				Luks: BootDeviceLuks{
+					Device: util.StrToPtr("/dev/dasd"),
+					Tpm2:   util.BoolToPtr(true),
+				},
+			},
+			common.ErrLuksBootDeviceBadName,
+			path.New("yaml", "layout"),
 		},
 	}
 
