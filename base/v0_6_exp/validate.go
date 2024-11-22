@@ -17,8 +17,9 @@ package v0_6_exp
 import (
 	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
-
+	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
+	exp "github.com/coreos/ignition/v2/config/v3_5_experimental"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 )
@@ -26,23 +27,64 @@ import (
 func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
 	var field string
 	sources := 0
+	var config string
+	var butaneReport report.Report
 	if rs.Local != nil {
 		sources++
 		field = "local"
+		config = *rs.Local
 	}
 	if rs.Inline != nil {
 		sources++
 		field = "inline"
+		config = *rs.Inline
 	}
 	if rs.Source != nil {
 		sources++
 		field = "source"
+		config = *rs.Source
 	}
 	if sources > 1 {
 		r.AddOnError(c.Append(field), common.ErrTooManyResourceSources)
 	}
+	if field == "local" || field == "inline" {
+		_, report, err := exp.Parse([]byte(config))
+		if len(report.Entries) > 0 {
+			butaneReport = ConvertToButaneReport(report, field)
+			r.Merge(butaneReport)
+		}
+		if err != nil {
+			r.AddOnError(c.Append(field), errors.ErrUnknownVersion)
+		}
+	}
 	return
 }
+
+func ConvertToButaneReport(ignitionReport report.Report, field string) report.Report {
+	var butaneRep report.Report
+	for _, entry := range ignitionReport.Entries {
+		
+		adjustedPath := []interface{}{field}
+		adjustedPath = append(adjustedPath, entry.Context.Path...)
+
+
+		butaneEntry := report.Entry{
+			Kind:    entry.Kind,
+			Message: entry.Message,
+			Context: path.ContextPath{
+				Path: adjustedPath,      // convert ignition path to butane path
+				Tag:  entry.Context.Tag,
+			},
+			Marker: entry.Marker,
+		}
+		butaneRep.Entries = append(butaneRep.Entries, butaneEntry)
+	}
+	return butaneRep
+}
+
+// func TranslatePath() {
+// path translating logic // TODO
+// }
 
 func (fs Filesystem) Validate(c path.ContextPath) (r report.Report) {
 	if !util.IsTrue(fs.WithMountUnit) {
