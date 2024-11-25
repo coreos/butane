@@ -6,6 +6,9 @@ nav_order: 9
 
 ## Upcoming Butane 0.23.0 (unreleased)
 
+Starting with this release, Butane binaries are signed with the [Fedora 41
+key](https://getfedora.org/security/).
+
 ### Features
 
 - Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6-exp)_ _(openshift 4.18.0-exp)_
