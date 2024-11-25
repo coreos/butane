@@ -15,7 +15,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
 <div id="spec-docs"></div>
 
 * **variant** (string): used to differentiate configs for different operating systems. Must be `openshift` for this specification.
-* **version** (string): the semantic version of the spec for this document. This document is for version `4.18.0-experimental` and generates Ignition configs with version `3.5.0-experimental`.
+* **version** (string): the semantic version of the spec for this document. This document is for version `4.18.0-experimental` and generates Ignition configs with version `3.5.0`.
 * **metadata** (object): metadata about the generated MachineConfig resource. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
   * **name** (string): a unique [name](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names) for this MachineConfig resource.
   * **labels** (object): string key/value pairs to apply as [Kubernetes labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) to this MachineConfig resource. `machineconfiguration.openshift.io/role` is required.
@@ -138,7 +138,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **config** (string): the clevis configuration JSON.
         * **_needs_network_** (boolean): whether or not the device requires networking.
     * **_cex_** (object): describes the IBM Crypto Express (CEX) card configuration for the luks device.
-      * **_enabled_** (boolean): whether or not to use a CEX secure key to encrypt the luks device.
+      * **_enabled_** (boolean): whether or not to enable cex compatibility for luks. If omitted, defaults to false.
   * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Symlinks must not be present. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. File attributes can be overridden by creating a corresponding entry in the `files` section; such entries must omit `contents`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
