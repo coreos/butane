@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_6_exp
+package v1_6
 
 import (
-	base "github.com/coreos/butane/base/v0_6_exp"
+	base "github.com/coreos/butane/base/v0_6"
 )
 
 type Config struct {
