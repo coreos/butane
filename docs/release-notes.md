@@ -8,7 +8,18 @@ nav_order: 9
 
 ### Features
 
-- Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6-exp)_ _(openshift 4.18.0-exp)_
+- Stabilize Fcos spec 1.6.0, targeting Ignition spec 3.5.0
+- Add Fcos spec 1.7.0-experimental, targeting Ignition spec
+  3.6.0-experimental
+- Update Fiot spec 1.1.0-experimental to target Ignition spec
+  3.6.0-experimental
+- Update Flatcar spec 1.2.0-experimental to target Ignition spec
+  3.6.0-experimental
+- Update OpenShift spec 4.18.0-experimental, targeting Ignition spec
+  3.6.0-experimental
+- Update R4e spec 1.2.0-experimental to target Ignition spec
+  3.6.0-experimental
+- Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6)_ _(openshift 4.18.0-exp)_
 
 ### Bug fixes
 
