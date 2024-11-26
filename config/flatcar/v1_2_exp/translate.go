@@ -18,7 +18,7 @@ import (
 	"github.com/coreos/butane/config/common"
 	cutil "github.com/coreos/butane/config/util"
 
-	"github.com/coreos/ignition/v2/config/v3_5_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_5/types"
 	"github.com/coreos/vcontext/report"
 )
 

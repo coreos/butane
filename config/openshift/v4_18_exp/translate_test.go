@@ -27,7 +27,7 @@ import (
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/ignition/v2/config/util"
-	"github.com/coreos/ignition/v2/config/v3_5_experimental/types"
+	"github.com/coreos/ignition/v2/config/v3_5/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
 	"github.com/stretchr/testify/assert"
@@ -84,7 +84,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.5.0-experimental",
+							Version: "3.5.0",
 						},
 					},
 				},
@@ -159,7 +159,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.5.0-experimental",
+							Version: "3.5.0",
 						},
 						Storage: types.Storage{
 							Filesystems: []types.Filesystem{
@@ -304,7 +304,7 @@ func TestTranslateConfig(t *testing.T) {
 				Spec: result.Spec{
 					Config: types.Config{
 						Ignition: types.Ignition{
-							Version: "3.5.0-experimental",
+							Version: "3.5.0",
 						},
 						Storage: types.Storage{
 							Filesystems: []types.Filesystem{
