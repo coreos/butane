@@ -72,7 +72,7 @@ func init() {
 	RegisterTranslator("fcos", "1.7.0-experimental", fcos1_7_exp.ToIgn3_6Bytes)
 	RegisterTranslator("flatcar", "1.0.0", flatcar1_0.ToIgn3_3Bytes)
 	RegisterTranslator("flatcar", "1.1.0", flatcar1_1.ToIgn3_4Bytes)
-	RegisterTranslator("flatcar", "1.2.0-experimental", flatcar1_2_exp.ToIgn3_5Bytes)
+	RegisterTranslator("flatcar", "1.2.0-experimental", flatcar1_2_exp.ToIgn3_6Bytes)
 	RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
 	RegisterTranslator("openshift", "4.9.0", openshift4_9.ToConfigBytes)
 	RegisterTranslator("openshift", "4.10.0", openshift4_10.ToConfigBytes)
