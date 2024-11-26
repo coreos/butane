@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v1_6_exp
+package v1_7_exp
 
 import (
 	"fmt"
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_6_exp"
+	base "github.com/coreos/butane/base/v0_7_exp"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
@@ -120,7 +120,7 @@ func TestReportCorrelation(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
-			_, r, _ := ToIgn3_5Bytes([]byte(test.in), common.TranslateBytesOptions{})
+			_, r, _ := ToIgn3_6Bytes([]byte(test.in), common.TranslateBytesOptions{})
 			assert.Len(t, r.Entries, 1, "unexpected report length")
 			assert.Equal(t, test.message, r.Entries[0].Message, "bad error")
 			assert.NotNil(t, r.Entries[0].Marker.StartP, "marker start is nil")
