@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_6_exp
+package v0_6
 
 import (
 	"github.com/coreos/ignition/v2/config/v3_5/types"
