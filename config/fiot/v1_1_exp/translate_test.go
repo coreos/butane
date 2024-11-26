@@ -19,7 +19,7 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_6_exp"
+	base "github.com/coreos/butane/base/v0_7_exp"
 	"github.com/coreos/butane/config/common"
 	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/ignition/v2/config/util"
@@ -169,7 +169,7 @@ func TestTranslateInvalid(t *testing.T) {
 			for _, entry := range test.Entries {
 				expectedReport.AddOnError(entry.Path, entry.Err)
 			}
-			actual, translations, r := test.In.ToIgn3_5Unvalidated(common.TranslateOptions{})
+			actual, translations, r := test.In.ToIgn3_6Unvalidated(common.TranslateOptions{})
 			r.Merge(fieldFilters.Verify(actual))
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.In, r)

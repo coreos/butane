@@ -88,7 +88,7 @@ func init() {
 	RegisterTranslator("r4e", "1.1.0", r4e1_1.ToIgn3_4Bytes)
 	RegisterTranslator("r4e", "1.2.0-experimental", r4e1_2_exp.ToIgn3_5Bytes)
 	RegisterTranslator("fiot", "1.0.0", fiot1_0.ToIgn3_4Bytes)
-	RegisterTranslator("fiot", "1.1.0-experimental", fiot1_1_exp.ToIgn3_5Bytes)
+	RegisterTranslator("fiot", "1.1.0-experimental", fiot1_1_exp.ToIgn3_6Bytes)
 	RegisterTranslator("rhcos", "0.1.0", unsupportedRhcosVariant)
 }
 
