@@ -6,6 +6,9 @@ nav_order: 9
 
 ## Upcoming Butane 0.23.0 (unreleased)
 
+Starting with this release, Butane binaries are signed with the [Fedora 41
+key](https://getfedora.org/security/).
+
 ### Features
 
 - Stabilize Fcos spec 1.6.0, targeting Ignition spec 3.5.0
