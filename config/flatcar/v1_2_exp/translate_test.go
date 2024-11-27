@@ -19,7 +19,7 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	base "github.com/coreos/butane/base/v0_6_exp"
+	base "github.com/coreos/butane/base/v0_7_exp"
 	"github.com/coreos/butane/config/common"
 	confutil "github.com/coreos/butane/config/util"
 
@@ -69,7 +69,7 @@ func TestTranslation(t *testing.T) {
 			for _, entry := range test.entries {
 				expectedReport.AddOn(entry.path, entry.err, entry.kind)
 			}
-			actual, translations, r := test.in.ToIgn3_5Unvalidated(common.TranslateOptions{})
+			actual, translations, r := test.in.ToIgn3_6Unvalidated(common.TranslateOptions{})
 			if test.in.FieldFilters() != nil {
 				r.Merge(test.in.FieldFilters().Verify(actual))
 			}

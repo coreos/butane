@@ -15,6 +15,7 @@ See the [Upgrading Configs](upgrading.md) page for instructions to update a conf
 We recommend that you always use the latest **stable** specification for your operating system to benefit from new features and bug fixes. The following **stable** specification versions are currently supported in Butane:
 
 - Fedora CoreOS (`fcos`)
+  - [v1.6.0](config-fcos-v1_6.md)
   - [v1.5.0](config-fcos-v1_5.md)
   - [v1.4.0](config-fcos-v1_4.md)
   - [v1.3.0](config-fcos-v1_3.md)
@@ -46,7 +47,7 @@ We recommend that you always use the latest **stable** specification for your op
 Do not use **experimental** specifications for anything beyond **development and testing** as they are subject to change **without warning or announcement**. The following **experimental** specification versions are currently available in Butane:
 
 - Fedora CoreOS (`fcos`)
-  - [v1.6.0-experimental](config-fcos-v1_6-exp.md)
+  - [v1.7.0-experimental](config-fcos-v1_7-exp.md)
 - Flatcar (`flatcar`)
   - [v1.2.0-experimental](config-flatcar-v1_2-exp.md)
 - OpenShift (`openshift`)
@@ -68,7 +69,8 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `fcos`         | 1.3.0               | 3.2.0              |
 | `fcos`         | 1.4.0               | 3.3.0              |
 | `fcos`         | 1.5.0               | 3.4.0              |
-| `fcos`         | 1.6.0-experimental  | 3.5.0-experimental |
+| `fcos`         | 1.6.0               | 3.5.0              |
+| `fcos`         | 1.7.0-experimental  | 3.6.0-experimental |
 | `flatcar`      | 1.0.0               | 3.3.0              |
 | `flatcar`      | 1.1.0               | 3.4.0              |
 | `flatcar`      | 1.2.0-experimental  | 3.5.0-experimental |

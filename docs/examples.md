@@ -301,7 +301,7 @@ This example uses the shortcut `boot_device` syntax to configure an encrypted ro
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.6.0-experimental
+version: 1.6.0
 boot_device:
   layout: s390x-eckd
   luks:
@@ -316,7 +316,7 @@ This example uses the shortcut `boot_device` syntax to configure an encrypted ro
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.6.0-experimental
+version: 1.6.0
 boot_device:
   layout: s390x-zfcp
   luks:
@@ -331,7 +331,7 @@ This example uses the shortcut `boot_device` syntax to configure an encrypted ro
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.6.0-experimental
+version: 1.6.0
 boot_device:
   layout: s390x-virt
   luks:
@@ -345,7 +345,7 @@ This example uses the shortcut `boot_device` syntax to configure an encrypted ro
 <!-- butane-config -->
 ```yaml
 variant: fcos
-version: 1.6.0-experimental
+version: 1.6.0
 boot_device:
   layout: s390x-eckd
   luks:
