@@ -11,6 +11,9 @@ key](https://getfedora.org/security/).
 
 ### Features
 
+- Add OpenShift spec 4.19.0-experimental, targeting Ignition spec
+  3.6.0-experimental
+- Stabilize OpenShift spec 4.18.0, targeting Ignition spec 3.4.0
 - Stabilize Fcos spec 1.6.0, targeting Ignition spec 3.5.0
 - Add Fcos spec 1.7.0-experimental, targeting Ignition spec
   3.6.0-experimental
