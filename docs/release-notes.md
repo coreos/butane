@@ -4,7 +4,17 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.23.0 (unreleased)
+## Upcoming Butane 0.24.0 (unreleased)
+
+### Features
+
+### Bug fixes
+
+### Misc. changes
+
+### Docs changes
+
+## Butane 0.23.0 (2024-12-03)
 
 Starting with this release, Butane binaries are signed with the [Fedora 41
 key](https://getfedora.org/security/).
@@ -26,10 +36,6 @@ key](https://getfedora.org/security/).
 - Update R4e spec 1.2.0-experimental to target Ignition spec
   3.6.0-experimental
 - Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6)_ _(openshift 4.18.0-exp)_
-
-### Bug fixes
-
-### Misc. changes
 
 ### Docs changes
 
