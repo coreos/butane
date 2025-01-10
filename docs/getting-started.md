@@ -20,14 +20,14 @@ This example uses `podman`, but `docker` can also be used.
 
 ```bash
 # Pull the container image release
-podman image pull quay.io/coreos/butane:release
+podman pull quay.io/coreos/butane:release
 
 # Run Butane using standard input and standard output
-podman container run --interactive --rm quay.io/coreos/butane:release \
+podman run --interactive --rm quay.io/coreos/butane:release \
        --pretty --strict < your_config.bu > transpiled_config.ign
 
 # Run Butane using a file as input and standard output
-podman container run --interactive --rm --security-opt label=disable \
+podman run --interactive --rm --security-opt label=disable \
        --volume ${PWD}:/pwd --workdir /pwd quay.io/coreos/butane:release \
        --pretty --strict your_config.bu > transpiled_config.ign
 ```
