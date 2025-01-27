@@ -61,7 +61,7 @@ Do not use **experimental** specifications for anything beyond **development and
 
 Each version of the Butane specification corresponds to a version of the Ignition specification:
 
-| Butane variant | Butane version      | Ignition spec      |
+| Butane variant | Butane spec         | Ignition spec      |
 |----------------|---------------------|--------------------|
 | `fcos`         | 1.0.0               | 3.0.0              |
 | `fcos`         | 1.1.0               | 3.1.0              |
