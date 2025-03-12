@@ -1,3 +1,10 @@
+---
+name: Stabilization checklist
+about: Stabilization checklist template
+title: New stabilization for Butane
+labels: jira
+---
+
 # Bumping spec versions
 
 This checklist describes bumping the Ignition spec version, `base` version, and distro versions. If your scenario is different, modify to taste.
