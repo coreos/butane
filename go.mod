@@ -6,7 +6,7 @@ require (
 	github.com/clarketm/json v1.17.1
 	github.com/coreos/go-semver v0.3.1
 	github.com/coreos/go-systemd/v22 v22.5.0
-	github.com/coreos/ignition/v2 v2.20.0
+	github.com/coreos/ignition/v2 v2.21.0
 	github.com/coreos/vcontext v0.0.0-20230201181013-d72178a18687
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.55.5 // indirect
+	github.com/aws/aws-sdk-go v1.55.6 // indirect
 	github.com/coreos/go-json v0.0.0-20230131223807-18775e0fb4fb // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
