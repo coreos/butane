@@ -83,3 +83,6 @@ RHCOS packaging for the current RHCOS development release:
 
 CentOS Stream 9 packaging:
   - [ ] Create a `rebase-c9s-butane` issue in the internal team-operations repo and follow the steps there
+
+CentOS Stream 10 packaging:
+  - [ ] Create a `rebase-c10s-butane` issue in the internal team-operations repo and follow the steps there
