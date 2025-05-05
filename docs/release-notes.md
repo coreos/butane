@@ -37,6 +37,10 @@ key](https://getfedora.org/security/).
   3.6.0-experimental
 - Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6)_ _(openshift 4.18.0-exp)_
 
+### Bug fixes
+
+- Fail if LUKS method is not specified while `boot_device.luks.device` is set.
+
 ### Docs changes
 
 - Re-vendor latest ignition release; 3.5.0-experimental becomes 3.5.0
