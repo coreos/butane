@@ -10,6 +10,8 @@ nav_order: 9
 
 ### Bug fixes
 
+- Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_
+
 ### Misc. changes
 
 ### Docs changes
@@ -36,10 +38,6 @@ key](https://getfedora.org/security/).
 - Update R4e spec 1.2.0-experimental to target Ignition spec
   3.6.0-experimental
 - Support LUKS encryption using IBM CEX secure keys on s390x _(fcos 1.6)_ _(openshift 4.18.0-exp)_
-
-### Bug fixes
-
-- Fail if LUKS method is not specified while `boot_device.luks.device` is set.
 
 ### Docs changes
 
