@@ -228,3 +228,26 @@ func TestValidateDirMode(t *testing.T) {
 		})
 	}
 }
+
+// TestUnkownIgnitionVersion tests that butane will raise a warning but will not fail when an ignition config with an unkown version is specified
+func TestUnkownIgnitionVersion(t *testing.T) {
+	test := struct {
+		in      Resource
+		out     error
+		errPath path.ContextPath
+	}{
+		Resource{
+			Inline: util.StrToPtr(`{"ignition": {"version": "10.0.0"}}`),
+		},
+		common.ErrUnkownIgnitionVersion,
+		path.New("yaml", "ignition", "config", "version"),
+	}
+	path := path.New("yaml", "ignition", "config")
+	// Skipping baseutil.VerifyReport because it expects all referenced paths to exist in the struct.
+	// In this test, "ignition.config" doesn't exist, so VerifyReport would fail. However, we still need
+	// to pass this path to Validate() to trigger the unknown Ignition version warning we're testing for.
+	actual := test.in.Validate(path)
+	expected := report.Report{}
+	expected.AddOnWarn(test.errPath, test.out)
+	assert.Equal(t, expected, actual, "bad report")
+}
