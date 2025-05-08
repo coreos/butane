@@ -15,6 +15,8 @@
 package v0_7_exp
 
 import (
+	"strings"
+
 	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
 
@@ -34,11 +36,6 @@ func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
 	if rs.Inline != nil {
 		sources++
 		field = "inline"
-		rp, err := ValidateIgnitionConfig(c, []byte(*rs.Inline))
-		r.Merge(rp)
-		if err != nil {
-			return
-		}
 	}
 	if rs.Source != nil {
 		sources++
@@ -46,6 +43,17 @@ func (rs Resource) Validate(c path.ContextPath) (r report.Report) {
 	}
 	if sources > 1 {
 		r.AddOnError(c.Append(field), common.ErrTooManyResourceSources)
+		return
+	}
+	if strings.HasPrefix(c.String(), "$.ignition.config") {
+		if field == "inline" {
+			rp, err := ValidateIgnitionConfig(c, []byte(*rs.Inline))
+			r.Merge(rp)
+			if err != nil {
+				r.AddOnError(c.Append(field), err)
+				return
+			}
+		}
 	}
 	return
 }

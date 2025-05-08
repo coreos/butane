@@ -150,10 +150,12 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 		}
 		// Validating the contents of the local file from here since there is no way to
 		// get both the filename and filedirectory in the Validate context
-		rp, err := ValidateIgnitionConfig(c, contents)
-		r.Merge(rp)
-		if err != nil {
-			return
+		if strings.HasPrefix(c.String(), "$.ignition.config") {
+			rp, err := ValidateIgnitionConfig(c, contents)
+			r.Merge(rp)
+			if err != nil {
+				return
+			}
 		}
 
 		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)

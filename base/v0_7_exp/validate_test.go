@@ -387,3 +387,7 @@ func TestValidateDropin(t *testing.T) {
 		})
 	}
 }
+
+// TODO: TestUnkownIgnitionVersion tests that butane will raise a warning but will not fail when an ignition config with an unkown version is specified
+func TestUnkownIgnitionVersion(t *testing.T) {
+}

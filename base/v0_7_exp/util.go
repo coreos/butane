@@ -15,6 +15,7 @@
 package v0_7_exp
 
 import (
+	common "github.com/coreos/butane/config/common"
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_6_experimental/types"
@@ -144,7 +145,7 @@ func ValidateIgnitionConfig(c path.ContextPath, rawConfig []byte) (report.Report
 			// warn user with ErrUnknownVersion when version is unkown and skip the validation.
 			if e.Message == errors.ErrUnknownVersion.Error() {
 				skipValidate = true
-				r.AddOnWarn(c.Append("version"), errors.ErrUnknownVersion)
+				r.AddOnWarn(c.Append("version"), common.ErrUnkownIgnitionVersion)
 				break
 			}
 		}
