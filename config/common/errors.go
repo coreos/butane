@@ -99,6 +99,9 @@ var (
 
 	// Kernel arguments
 	ErrGeneralKernelArgumentSupport = errors.New("kernel argument customization is not supported in this spec version")
+
+	// Unkown ignition version
+	ErrUnkownIgnitionVersion = errors.New("skipping validation for the merge/replace ignition config due to an unkown version")
 )
 
 type ErrUnmarshal struct {

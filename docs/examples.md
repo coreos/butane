@@ -478,6 +478,49 @@ grub:
     - name: root
       password_hash: grub.pbkdf2.sha512.10000.874A958E5264...
 ```
+## Merging Ignition Configs
+
+Butane supports merging ignition configurations directly into butane configs using different methods
+
+
+This example embeds a raw ignition JSON config directly into the Butane file.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.7.0-experimental
+ignition:
+  config:
+    merge:
+    - inline: '{"ignition": {"version": "3.6.0-experimental"}}'
+```
+
+This example merges a local ignition file. The file directory can be specified using the `-d` when running Butane.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.7.0-experimental
+ignition:
+  config:
+    merge:
+    - local: ignition.ig
+```
+
+This example fetches and merges an ignition config from a remote URL.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.7.0-experimental
+ignition:
+  config:
+    merge:
+    - source: https://example.com/sample.ign
+```
+
+Note that if Butane encounters an Ignition version it doesn’t recognize (usually because it’s from a newer release), it shows a warning but continues processing. 
+This allows you to use newer Ignition versions without blocking the build.
 
 [spec]: specs.md
 [dropins]: https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
