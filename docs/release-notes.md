@@ -10,6 +10,8 @@ nav_order: 9
 
 ### Bug fixes
 
+- Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_
+
 ### Misc. changes
 
 ### Docs changes
