@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Validate merged/replaced Ignition configs if they are local/inline _(all base specifications)_
+
 ### Bug fixes
 
 - Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_

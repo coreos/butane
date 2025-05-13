@@ -53,6 +53,7 @@ if [ -n "${csplit}" ] && [ -n "${head}" ]; then
     touch tmpdocs/files-dir/{config.ign,ca.pem,example.conf,example.service,file,file-epilogue,local-file3}
     echo "ssh-rsa AAAA" > tmpdocs/files-dir/id_rsa.pub
     echo "ssh-ed25519 AAAA" > tmpdocs/files-dir/id_ed25519.pub
+    echo '{"ignition": {"version": "3.5.0"}}' > tmpdocs/files-dir/ignition.ign
 
     for doc in docs/*md
     do
