@@ -328,9 +328,9 @@ root:
               replacement: "Supported values are $1, `s390x-eckd`, `s390x-virt`, `s390x-zfcp`, and `x86_64`."
               if:
                 - variant: fcos
-                  min: 1.6.0-experimental
+                  min: 1.6.0
                 - variant: openshift
-                  min: 4.19.0-experimental
+                  min: 4.19.0
         - name: luks
           desc: describes the clevis configuration for encrypting the root filesystem.
           children:
