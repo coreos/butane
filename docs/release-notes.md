@@ -18,6 +18,8 @@ nav_order: 9
 
 ### Docs changes
 
+- Add missing examples in upgrading-openshift _(openshift 4.14)_
+
 ## Butane 0.23.0 (2024-12-03)
 
 Starting with this release, Butane binaries are signed with the [Fedora 41
