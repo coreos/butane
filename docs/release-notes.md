@@ -9,12 +9,17 @@ nav_order: 9
 ### Features
 
 - Validate merged/replaced Ignition configs if they are local/inline _(all base specifications)_
+- Stabilize OpenShift spec 4.19.0, targeting Ignition spec 3.5.0
+- Add OpenShift spec 4.20.0-experimental, targeting Ignition spec
+  3.6.0-experimental
 
 ### Bug fixes
 
 - Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_
 
 ### Misc. changes
+
+- Roll back to Ignition spec 3.5.0 _(openshift 4.19.0)_
 
 ### Docs changes
 
