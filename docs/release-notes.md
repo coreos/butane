@@ -9,6 +9,8 @@ nav_order: 9
 ### Features
 
 - Validate merged/replaced Ignition configs if they are local/inline _(all base specifications)_
+- Add OpenShift spec 4.20.0-experimental, targeting Ignition spec
+  3.6.0-experimental
 
 ### Bug fixes
 

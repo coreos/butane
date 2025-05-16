@@ -53,6 +53,7 @@ Do not use **experimental** specifications for anything beyond **development and
   - [v1.2.0-experimental](config-flatcar-v1_2-exp.md)
 - OpenShift (`openshift`)
   - [v4.19.0-experimental](config-openshift-v4_19-exp.md)
+  - [v4.20.0-experimental](config-openshift-v4_20-exp.md)
 - RHEL for Edge (`r4e`)
   - [v1.2.0-experimental](config-r4e-v1_2-exp.md)
 - Fedora IoT (`fiot`)
@@ -87,6 +88,7 @@ Each version of the Butane specification corresponds to a version of the Ignitio
 | `openshift`    | 4.17.0              | 3.4.0              |
 | `openshift`    | 4.18.0              | 3.4.0              |
 | `openshift`    | 4.19.0-experimental | 3.6.0-experimental |
+| `openshift`    | 4.20.0-experimental | 3.6.0-experimental |
 | `r4e`          | 1.0.0               | 3.3.0              |
 | `r4e`          | 1.1.0               | 3.4.0              |
 | `r4e`          | 1.2.0-experimental  | 3.6.0-experimental |
