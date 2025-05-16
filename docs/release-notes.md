@@ -16,6 +16,8 @@ nav_order: 9
 
 ### Docs changes
 
+- Add missing examples in upgrading-openshift _(openshift 4.14)_
+
 
 ## Butane 0.24.0 (2025-05-27)
 
@@ -35,6 +37,7 @@ nav_order: 9
 ### Misc. changes
 
 - Roll back to Ignition spec 3.5.0 _(openshift 4.19.0)_
+
 
 ## Butane 0.23.0 (2024-12-03)
 
