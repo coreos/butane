@@ -45,7 +45,7 @@ jobs:
       shell: bash
       run: ./test
     - name: Run linter
-      uses: golangci/golangci-lint-action@v6
+      uses: golangci/golangci-lint-action@v8
       if: runner.os == 'Linux'
       with:
         version: v1.64.4
