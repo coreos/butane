@@ -262,6 +262,16 @@ func (c Config) processBootDevice(config *types.Config, ts *translate.Translatio
 				Name:       "root",
 				WipeVolume: util.BoolToPtr(true),
 			}}
+			// Add the kernel argument pointing to the CEX key file only for the fcos
+			// variant as it will be done differently for the openshift one.
+			// See: https://github.com/coreos/butane/issues/613
+			if c.Config.Variant == "fcos" {
+				rendered.KernelArguments = types.KernelArguments{
+					ShouldExist: []types.KernelArgument{
+						types.KernelArgument("rd.luks.key=/etc/luks/cex.key"),
+					},
+				}
+			}
 			lpath := path.New("yaml", "boot_device", "luks")
 			rpath := path.New("json", "storage", "luks", 0)
 			renderedTranslations.Merge(ts2.PrefixPaths(lpath, rpath.Append("cex")))
