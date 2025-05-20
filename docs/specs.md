@@ -26,6 +26,7 @@ We recommend that you always use the latest **stable** specification for your op
   - [v1.1.0](config-flatcar-v1_1.md)
   - [v1.0.0](config-flatcar-v1_0.md)
 - OpenShift (`openshift`)
+  - [v4.18.0](config-openshift-v4_18.md)
   - [v4.17.0](config-openshift-v4_17.md)
   - [v4.16.0](config-openshift-v4_16.md)
   - [v4.15.0](config-openshift-v4_15.md)
