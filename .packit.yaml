@@ -1,0 +1,38 @@
+# See the documentation for more information:
+# https://packit.dev/docs/configuration/
+specfile_path: butane.spec
+downstream_package_name: butane
+upstream_package_name: butane
+upstream_tag_template: v{version}
+# add or remove files that should be synced
+files_to_sync:
+  - butane.spec
+  - .packit.yaml
+
+actions:
+  changelog-entry:
+    - bash -c 'echo "- New upstream release"'
+  post-upstream-clone:
+    - wget https://src.fedoraproject.org/rpms/butane/raw/rawhide/f/butane.spec
+
+
+jobs:
+
+- job: propose_downstream
+  trigger: release
+  # https://packit.dev/docs/configuration#aliases
+  dist_git_branches:
+    rawhide:
+      fast_forward_merge_into: [fedora-latest-stable]
+
+- job: koji_build
+  trigger: commit
+  dist_git_branches:
+    - fedora-development
+    - fedora-latest-stable
+
+- job: bodhi_update
+  trigger: commit
+  dist_git_branches:
+    - fedora-development
+    - fedora-latest-stable

@@ -16,6 +16,8 @@ nav_order: 9
 
 ### Misc. changes
 
+- packit: add initial support
+
 ### Docs changes
 
 ## Butane 0.23.0 (2024-12-03)
