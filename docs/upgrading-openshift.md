@@ -13,6 +13,95 @@ Occasionally, changes are made to OpenShift Butane configs (those that specify `
 1. TOC
 {:toc}
 
+## From Version 4.18.0 to 4.19.0
+
+There are no breaking changes between versions 4.18.0 and 4.19.0 of the `openshift` configuration specification. Any valid 4.18.0 configuration can be updated to a 4.19.0 configuration by changing the version string in the config.
+
+The following is a list of notable new features.
+
+### LUKS CEX support
+
+The `luks` sections in `storage` and `boot_device` gained a `cex` field. If enabled, this will configure an encrypted root filesystem on a s390x system using IBM Crypto Express (CEX) card.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.19.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+openshift:
+  kernel_arguments:
+    - rd.luks.key=/etc/luks/cex.key
+boot_device:
+  layout: s390x-eckd
+  luks:
+    device: /dev/dasda
+    cex:
+      enabled: true
+```
+
+### Boot_Device Layouts s390x support
+
+The `boot_device` section gained support for the following layouts `s390x-eckd`, `s390x-zfcp`, `s390x-virt`. This enables the use of the `boot_device` sugar for s390x systems.
+
+The `s390x-eckd` layout enables configuration of an encrypted root filesystem for a DASD device.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.19.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+boot_device:
+  layout: s390x-eckd
+  luks:
+    device: /dev/dasda
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
+The `s390x-zfcp` layout enables configuration of an encrypted root filesystem for a zFCP device.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.19.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+boot_device:
+  layout: s390x-zfcp
+  luks:
+    device: /dev/sdb
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
+The `s390x-virt` layout enables configuration of an encrypted root filesystem for KVM.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.19.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+boot_device:
+  layout: s390x-virt
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+```
+
 ## From Version 4.17.0 to 4.18.0
 
 There are no breaking changes between versions 4.17.0 and 4.18.0 of the `openshift` configuration specification. Any valid 4.17.0 configuration can be updated to a 4.18.0 configuration by changing the version string in the config.

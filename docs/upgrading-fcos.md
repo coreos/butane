@@ -27,6 +27,9 @@ The `luks` sections in `storage` and `boot_device` gained a `cex` field. If enab
 ```yaml
 variant: fcos
 version: 1.6.0
+kernel_arguments:
+  should_exist:
+    - rd.luks.key=/etc/luks/cex.key
 boot_device:
   layout: s390x-eckd
   luks:
