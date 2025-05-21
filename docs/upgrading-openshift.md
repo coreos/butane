@@ -122,6 +122,8 @@ There are no breaking changes between versions 4.14.0 and 4.15.0 of the `openshi
 
 There are no breaking changes between versions 4.13.0 and 4.14.0 of the `openshift` configuration specification. Any valid 4.13.0 configuration can be updated to a 4.14.0 configuration by changing the version string in the config.
 
+The following is a list of notable new features, deprecations, and changes.
+
 ### Local SSH key and systemd unit references
 
 SSH keys and systemd units are now embeddable via file references to local files The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
@@ -147,6 +149,130 @@ passwd:
     - name: core
       ssh_authorized_keys_local:
         - id_rsa.pub
+```
+
+### Offline Tang provisioning
+
+The `tang` sections in `storage.luks` and `boot_device.luks` gained a new `advertisement` field. If specified, Ignition will use it to provision the Tang server binding rather than fetching the advertisement from the server at runtime. This allows the server to be unavailable at provisioning time. The advertisement can be obtained from the server with `curl http://tang.example.com/adv`.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.14.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+boot_device:
+  luks:
+    tang:
+      - url: https://tang.example.com
+        thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+        advertisement: "{\"payload\": \"...\", \"protected\": \"...\", \"signature\": \"...\"}"
+storage:
+  luks:
+    - name: luks-tang
+      device: /dev/sdb
+      clevis:
+        tang:
+          - url: https://tang.example.com
+            thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+            advertisement: "{\"payload\": \"...\", \"protected\": \"...\", \"signature\": \"...\"}"
+```
+
+### LUKS discard
+
+The `luks` sections in `storage` and `boot_device` gained a new `discard` field. If specified and true, the LUKS volume will issue discard commands to the underlying block device when blocks are freed. This improves performance and device longevity on SSDs and space utilization on thinly provisioned SAN devices, but leaks information about which disk blocks contain data.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.14.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+boot_device:
+  luks:
+    discard: true
+    tpm2: true
+storage:
+  luks:
+    - name: luks-tpm
+      device: /dev/sdb
+      discard: true
+      clevis:
+        tpm2: true
+```
+
+### LUKS open options
+
+The `storage.luks` section gained a new `open_options` field. It is a list of options Ignition should pass to `cryptsetup luksOpen` when unlocking the volume. Ignition also passes `--persistent`, so any options that support persistence will be saved to the volume and automatically used for future unlocks. Any options that do not support persistence will only be applied to Ignition's initial unlock of the volume.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.14.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+storage:
+  luks:
+    - name: luks-tpm
+      device: /dev/sdb
+      open_options:
+        - "--perf-no_read_workqueue"
+        - "--perf-no_write_workqueue"
+      clevis:
+        tpm2: true
+```
+
+### Local SSH key and systemd unit references
+
+SSH keys and systemd units are now embeddable via file references to local files. The specified path is relative to a local _files-dir_, specified with the `-d`/`--files-dir` option to Butane. If no _files-dir_ is specified, this functionality is unavailable.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.14.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+systemd:
+  units:
+    - name: example.service
+      contents_local: example.service
+    - name: example-drop-in.service
+      dropins:
+        - name: example-drop-in.conf
+          contents_local: example.conf
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys_local:
+        - id_rsa.pub
+```
+
+### Automatic generation of systemd swap units
+
+The `with_mount_unit` field of the `filesystems` section can now be set to `true` if the `format` field is set to `swap`. Butane will generate a systemd swap unit for the specified swap area.
+
+<!-- butane-config -->
+```yaml
+variant: openshift
+version: 4.14.0
+metadata:
+  name: minimal-config
+  labels:
+    machineconfiguration.openshift.io/role: worker
+storage:
+  filesystems:
+    - device: /dev/vdb1
+      format: swap
+      wipe_filesystem: true
+      with_mount_unit: true
 ```
 
 ## From Version 4.12.0 to 4.13.0
