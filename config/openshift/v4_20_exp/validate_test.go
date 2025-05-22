@@ -19,7 +19,9 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
+	base "github.com/coreos/butane/base/v0_7_exp"
 	"github.com/coreos/butane/config/common"
+	fcos "github.com/coreos/butane/config/fcos/v1_7_exp"
 
 	"github.com/coreos/ignition/v2/config/shared/errors"
 	"github.com/coreos/ignition/v2/config/util"
@@ -95,6 +97,138 @@ func TestValidateOpenShift(t *testing.T) {
 			},
 			common.ErrInvalidKernelType,
 			path.New("yaml", "kernel_type"),
+		},
+	}
+
+	for i, test := range tests {
+		t.Run(fmt.Sprintf("validate %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
+			expected := report.Report{}
+			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad report")
+		})
+	}
+}
+
+func TestValidateConfig(t *testing.T) {
+	tests := []struct {
+		in      Config
+		out     error
+		errPath path.ContextPath
+	}{
+		// missing kargs for CEX support
+		{
+			Config{
+				Config: fcos.Config{
+					BootDevice: fcos.BootDevice{
+						Layout: util.StrToPtr("s390x-eckd"),
+						Luks: fcos.BootDeviceLuks{
+							Device: util.StrToPtr("/dev/dasda"),
+							Cex: base.Cex{
+								Enabled: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					// explicitly empty kernel argument list
+					KernelArguments: []string{},
+				},
+			},
+			common.ErrMissingKernelArgumentCex,
+			path.New("yaml", "openshift", "kernel_arguments"),
+		},
+		{
+			Config{
+				Config: fcos.Config{
+					BootDevice: fcos.BootDevice{
+						Layout: util.StrToPtr("s390x-zfcp"),
+						Luks: fcos.BootDeviceLuks{
+							Device: util.StrToPtr("/dev/sda"),
+							Cex: base.Cex{
+								Enabled: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					// explicitly empty kernel argument list
+					KernelArguments: []string{},
+				},
+			},
+			common.ErrMissingKernelArgumentCex,
+			path.New("yaml", "openshift", "kernel_arguments"),
+		},
+		{
+			Config{
+				Config: fcos.Config{
+					BootDevice: fcos.BootDevice{
+						Layout: util.StrToPtr("s390x-virt"),
+						Luks: fcos.BootDeviceLuks{
+							Cex: base.Cex{
+								Enabled: util.BoolToPtr(true),
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					// explicitly empty kernel argument list
+					KernelArguments: []string{},
+				},
+			},
+			common.ErrMissingKernelArgumentCex,
+			path.New("yaml", "openshift", "kernel_arguments"),
+		},
+		{
+			Config{
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Filesystems: []base.Filesystem{
+								{
+									Device:         "/dev/mapper/root",
+									Format:         util.StrToPtr("xfs"),
+									Label:          util.StrToPtr("root"),
+									WipeFilesystem: util.BoolToPtr(true),
+								},
+								{
+									Device:         "/dev/mapper/foo",
+									Format:         util.StrToPtr("xfs"),
+									Label:          util.StrToPtr("foo"),
+									WipeFilesystem: util.BoolToPtr(true),
+								},
+							},
+							Luks: []base.Luks{
+								{
+									Name:       "root",
+									Label:      util.StrToPtr("luks-root"),
+									Device:     util.StrToPtr("/dev/disk/by-label/root"),
+									WipeVolume: util.BoolToPtr(true),
+									Cex: base.Cex{
+										Enabled: util.BoolToPtr(true),
+									},
+								},
+								{
+									Name:       "foo",
+									Label:      util.StrToPtr("luks-foo"),
+									Device:     util.StrToPtr("/dev/disk/by-label/foo"),
+									WipeVolume: util.BoolToPtr(true),
+									Cex: base.Cex{
+										Enabled: util.BoolToPtr(true),
+									},
+								},
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					// explicitly empty kernel argument list
+					KernelArguments: []string{},
+				},
+			},
+			common.ErrMissingKernelArgumentCex,
+			path.New("yaml", "openshift", "kernel_arguments"),
 		},
 	}
 

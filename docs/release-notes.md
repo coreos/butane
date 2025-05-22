@@ -16,6 +16,7 @@ nav_order: 9
 ### Bug fixes
 
 - Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_
+- Validate kernel arguments when CEX support is enabled on s390x _(4.19.0 and 4.20.0-experimental)_
 
 ### Misc. changes
 
