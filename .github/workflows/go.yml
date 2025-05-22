@@ -48,7 +48,7 @@ jobs:
       uses: golangci/golangci-lint-action@v8
       if: runner.os == 'Linux'
       with:
-        version: v1.64.4
+        version: 1.64.4
         args: -E=gofmt --timeout=30m0s
   regenerate:
     name: Regenerate
