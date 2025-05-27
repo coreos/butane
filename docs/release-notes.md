@@ -4,7 +4,18 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.24.0 (unreleased)
+## Upcoming Butane 0.25.0 (unreleased)
+
+### Features
+
+### Bug fixes
+
+### Misc. changes
+
+### Docs changes
+
+
+## Butane 0.24.0 (2025-05-27)
 
 ### Features
 
@@ -21,8 +32,6 @@ nav_order: 9
 ### Misc. changes
 
 - Roll back to Ignition spec 3.5.0 _(openshift 4.19.0)_
-
-### Docs changes
 
 ## Butane 0.23.0 (2024-12-03)
 
