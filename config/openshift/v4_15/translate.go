@@ -16,9 +16,11 @@ package v4_15
 
 import (
 	"net/url"
+	"reflect"
 	"strings"
 
 	"github.com/coreos/butane/config/common"
+	fcos "github.com/coreos/butane/config/fcos/v1_5"
 	"github.com/coreos/butane/config/openshift/v4_15/result"
 	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
@@ -100,8 +102,6 @@ var (
 		// link support in the MCO, consider what should happen if
 		// the user specifies a storage.tree that includes symlinks.
 		"spec.config.storage.links": common.ErrLinkSupport,
-		// FORBIDDEN
-		"spec.config.grub": common.ErrGrubConfigSupport,
 	})
 )
 
@@ -117,6 +117,12 @@ func (c Config) FieldFilters() *cutil.FieldFilters {
 func (c Config) ToMachineConfig4_15Unvalidated(options common.TranslateOptions) (result.MachineConfig, translate.TranslationSet, report.Report) {
 	cfg, ts, r := c.Config.ToIgn3_4Unvalidated(options)
 	if r.IsFatal() {
+		return result.MachineConfig{}, ts, r
+	}
+
+	// If any GRUB settings are provided by the user, return an error.
+	if !reflect.DeepEqual(c.Grub, fcos.Grub{}) {
+		r.AddOnError(path.New("yaml", "grub"), common.ErrGrubConfigSupport)
 		return result.MachineConfig{}, ts, r
 	}
 
