@@ -23,6 +23,7 @@ nav_order: 9
 - Stabilize OpenShift spec 4.19.0, targeting Ignition spec 3.5.0
 - Add OpenShift spec 4.20.0-experimental, targeting Ignition spec
   3.6.0-experimental
+- Add initial TMT tests and a new workflow to execute tests on PRs
 
 ### Bug fixes
 
