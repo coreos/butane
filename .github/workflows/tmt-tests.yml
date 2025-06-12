@@ -56,23 +56,13 @@ jobs:
           set -x -e -o pipefail
           ./build_for_container
 
-      - name: Run TMT tests
+      - name: Build test container
+        run: sudo podman build -t localhost/butane-test:latest -f Dockerfile .
+
+      - name: Run TMT tests in container
         run: |
-          set -x -e -o pipefail
-          if [ "$ACT" = "true" ]; then
-            echo "Running locally using ACT" # ACT ref:  https://github.com/nektos/act
-            TMT_PROVISION_OPTS="--how local --feeling-safe"
-          else
-            TMT_PROVISION_OPTS="--how container"
-          fi
-          if [ -n "${{ github.event.inputs.plan_filter }}" ]; then
-            PLAN_FILTER_PARAM="plan --filter '${{ github.event.inputs.plan_filter }}'"
-          fi
-          if [ -z "${{ github.event.inputs.use_built_from_src }}" ] || [ "${{ github.event.inputs.use_built_from_src }}" == "true" ]; then
-            CONTEXT_PARAM="--context use_built_from_src=true"
-          else
-            CONTEXT_PARAM="--context use_built_from_src=false"
-          fi
-          # eval is used to allow the use of variables in the command
-          # and to avoid issues withe the tmt --filter option
-          eval "tmt $CONTEXT_PARAM run --all --debug -vvvv provision $TMT_PROVISION_OPTS $PLAN_FILTER_PARAM"
+          sudo podman run --rm \
+            -v ${{ github.workspace }}:/workspace:Z \
+            -w /workspace \
+            localhost/butane-test:latest \
+            bash -c "tmt run ..."
