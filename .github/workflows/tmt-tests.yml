@@ -64,5 +64,19 @@ jobs:
           sudo podman run --rm \
             -v ${{ github.workspace }}:/workspace:Z \
             -w /workspace \
+            -e PLAN_FILTER="${{ github.event.inputs.plan_filter }}" \
+            -e USE_BUILT_FROM_SRC="${{ github.event.inputs.use_built_from_src }}" \
             localhost/butane-test:latest \
-            bash -c "tmt run ..."
+            bash -c '
+              set -x -e -o pipefail
+              TMT_PROVISION_OPTS="--how container"
+              if [ -n "$PLAN_FILTER" ]; then
+                PLAN_FILTER_PARAM="plan --filter '\''$PLAN_FILTER'\''"
+              fi
+              if [ -z "$USE_BUILT_FROM_SRC" ] || [ "$USE_BUILT_FROM_SRC" == "true" ]; then
+                CONTEXT_PARAM="--context use_built_from_src=true"
+              else
+                CONTEXT_PARAM="--context use_built_from_src=false"
+              fi
+              eval "tmt $CONTEXT_PARAM run --all --debug -vvvv provision $TMT_PROVISION_OPTS $PLAN_FILTER_PARAM"
+            '
