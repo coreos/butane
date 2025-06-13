@@ -1,5 +1,5 @@
 FROM quay.io/fedora/fedora:42 AS builder
-RUN dnf install -y golang git-core
+RUN dnf install -y golang git-core tmt
 RUN mkdir /butane
 COPY . /butane
 WORKDIR /butane
