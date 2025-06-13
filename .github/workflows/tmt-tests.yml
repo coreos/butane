@@ -71,7 +71,7 @@ jobs:
             localhost/butane-test:latest \
             bash -c '
               set -x -e -o pipefail
-              TMT_PROVISION_OPTS="--how container"
+              TMT_PROVISION_OPTS="--how container --image localhost/butane-test:latest"
               if [ -n "$PLAN_FILTER" ]; then
                 PLAN_FILTER_PARAM="plan --filter '\''$PLAN_FILTER'\''"
               fi
