@@ -7,4 +7,4 @@ RUN ./build_for_container
 
 FROM quay.io/fedora/fedora-minimal:42
 COPY --from=builder /butane/bin/container/butane /usr/local/bin/butane
-ENTRYPOINT ["/usr/local/bin/butane"]
+CMD ["/usr/local/bin/butane"]
