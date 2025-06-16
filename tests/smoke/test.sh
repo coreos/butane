@@ -1,3 +1,0 @@
-#!/bin/bash
-
-butane --version
