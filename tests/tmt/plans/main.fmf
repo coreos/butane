@@ -9,13 +9,13 @@ prepare:
       # when running the tests in the tmt environment when it is built from source.
       # The butane binary is located in the tmt run instance directory and it needed
       # to set a environment variable to point to the butane binary location.
-      set -x -e -o pipefail
+      set -x -e -u -o pipefail
       echo "Preparing the test environment"
       BUTANE_BIN_NAME="butane"
       PARENT_DIR=$(dirname "${TMT_TREE}")
       BUTANE_BIN_FULL_PATH=$(find "${PARENT_DIR}" -type f -name "${BUTANE_BIN_NAME}")
       if [ -z "${BUTANE_BIN_FULL_PATH}" ]; then
-          echo "butane file not found."
+          echo "butane file not found." >&2
           exit 1
       fi
       BUTANE_BIN_DIR=$(dirname "${BUTANE_BIN_FULL_PATH}")
@@ -28,5 +28,5 @@ prepare:
     when: use_built_from_src is not defined or use_built_from_src == false
     how: shell
     script: |
-      set -x -e -o pipefail
+      set -x -e -u -o pipefail
       echo "BUTANE_BIN_DIR=/usr/lib/dracut/modules.d/30butane"  > /tmp/butane_bin_dir
