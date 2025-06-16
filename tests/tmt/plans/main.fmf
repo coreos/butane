@@ -13,13 +13,13 @@ prepare:
       echo "Preparing the test environment"
       BUTANE_BIN_NAME="butane"
       PARENT_DIR=$(dirname "${TMT_TREE}")
-      BUTANE_BIN_FULL_PATH=$(find "${PARENT_DIR}" -type f -name "${BUTANE_BIN_NAME}" -print -quit)
+      BUTANE_BIN_FULL_PATH=$(find "${PARENT_DIR}" -type f -name "${BUTANE_BIN_NAME}")
       if [ -z "${BUTANE_BIN_FULL_PATH}" ]; then
           echo "butane file not found."
           exit 1
       fi
       BUTANE_BIN_DIR=$(dirname "${BUTANE_BIN_FULL_PATH}")
-      export BUTANE_BIN_DIR
+      echo BUTANE_BIN_DIR  > /tmp/butane_bin_dir
   - name: Install butane package
     when: use_built_from_src is not defined or use_built_from_src == false
     how: install
@@ -29,10 +29,4 @@ prepare:
     how: shell
     script: |
       set -x -e -o pipefail
-      BUTANE_EXECUTABLE_PATH=$(command -v butane)
-      if [ -z "${BUTANE_EXECUTABLE_PATH}" ]; then
-          echo "Error: butane not found in PATH after installation."
-          exit 1
-      fi
-      export BUTANE_BIN_DIR=$(dirname "${BUTANE_EXECUTABLE_PATH}")
-      echo "BUTANE_BIN_DIR=${BUTANE_BIN_DIR} (exported for test execution)"
+      echo "BUTANE_BIN_DIR=${BUTANE_BIN_DIR} (exported for test execution)"  > /tmp/butane_bin_dir

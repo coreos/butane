@@ -3,4 +3,5 @@ tag:
   - smoke
 test: |
   set -x -e -o pipefail
+  source /tmp/butane_bin_dir
   ${BUTANE_BIN_DIR}/butane --version
