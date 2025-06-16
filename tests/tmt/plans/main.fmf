@@ -29,4 +29,4 @@ prepare:
     how: shell
     script: |
       set -x -e -o pipefail
-      echo "BUTANE_BIN_DIR=${BUTANE_BIN_DIR} (exported for test execution)"  > /tmp/butane_bin_dir
+      echo "BUTANE_BIN_DIR=/usr/lib/dracut/modules.d/30butane"  > /tmp/butane_bin_dir
