@@ -19,7 +19,7 @@ prepare:
           exit 1
       fi
       BUTANE_BIN_DIR=$(dirname "${BUTANE_BIN_FULL_PATH}")
-      echo BUTANE_BIN_DIR  > /tmp/butane_bin_dir
+      echo "BUTANE_BIN_DIR=${BUTANE_BIN_DIR}" > /tmp/butane_bin_dir
   - name: Install butane package
     when: use_built_from_src is not defined or use_built_from_src == false
     how: install
