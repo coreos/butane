@@ -1,0 +1,4 @@
+summary: runs butane --version and checks return code 
+test: ./test.sh
+tag:
+- smoke

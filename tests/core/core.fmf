@@ -1,6 +1,0 @@
-summary: runs butane --version and checks return code
-tag:
-  - smoke
-test: |
-  set -x -e -o pipefail
-  ${BUTANE_BIN_DIR}/butane --version
