@@ -49,6 +49,7 @@ jobs:
       if: runner.os == 'Linux'
       with:
         version: v2.1.6
+        args: -E=gofmt --timeout=30m0s
   regenerate:
     name: Regenerate
     runs-on: ubuntu-latest
