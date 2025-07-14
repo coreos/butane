@@ -316,9 +316,9 @@ func translateUserGrubCfg(config *types.Config, ts *translate.TranslationSet) tr
 			}
 			fromPath := path.New("json", "storage", "files", i, "append", 0)
 			translatedPath := path.New("json", "storage", "files", i, "contents")
-			config.Storage.Files[i].FileEmbedded1.Contents = file.Append[0]
-			config.Storage.Files[i].FileEmbedded1.Append = nil
-			newMappings.AddFromCommonObject(fromPath, translatedPath, config.Storage.Files[i].FileEmbedded1.Contents)
+			config.Storage.Files[i].Contents = file.Append[0]
+			config.Storage.Files[i].Append = nil
+			newMappings.AddFromCommonObject(fromPath, translatedPath, config.Storage.Files[i].Contents)
 
 			return ts.Map(newMappings)
 		}
