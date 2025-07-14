@@ -44,6 +44,17 @@ jobs:
     - name: Test
       shell: bash
       run: ./test
+    - name: Check Go formatting (gofmt)
+      shell: bash
+      run: |
+        GO_FILES=$(find . -name '*.go' -not -path "./vendor/*")
+        UNFORMATTED_FILES=$(gofmt -l $GO_FILES)
+        if [ -n "$UNFORMATTED_FILES" ]; then
+          echo "Go files are not formatted. Please run 'gofmt -w .' on your code."
+          gofmt -d $UNFORMATTED_FILES
+          exit 1
+        fi
+        echo "All Go files are correctly formatted."
     - name: Run linter
       uses: golangci/golangci-lint-action@v8
       if: runner.os == 'Linux'
