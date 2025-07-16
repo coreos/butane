@@ -53,10 +53,9 @@ import (
 // these.
 
 const (
-	// FIPS 140-2 doesn't allow the default XTS mode
 	fipsCipherOption      = types.LuksOption("--cipher")
 	fipsCipherShortOption = types.LuksOption("-c")
-	fipsCipherArgument    = types.LuksOption("aes-cbc-essiv:sha256")
+	fipsCipherArgument    = types.LuksOption("aes-xts-plain64")
 )
 
 var (
