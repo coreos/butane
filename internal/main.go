@@ -91,6 +91,7 @@ func main() {
 		if err != nil {
 			fail("failed to initialize gomplate: %v\n", err)
 		}
+		baseutil.EnableGomplate = true
 	}
 
 	infile := os.Stdin

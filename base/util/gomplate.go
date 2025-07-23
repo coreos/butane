@@ -12,6 +12,7 @@ import (
 )
 
 var once sync.Once
+var EnableGomplate = false
 
 func initGomplateConfig() (*gomplate.Config, error) {
 	f, err := os.Open(".gomplate.yaml")
@@ -46,6 +47,10 @@ func createGomplateRenderer() (gomplate.Renderer, error) {
 }
 
 func GetGomplateRenderer() (gomplate.Renderer, error) {
+	if !EnableGomplate {
+		return nil, nil
+	}
+
 	var renderer gomplate.Renderer
 	var err error
 	once.Do(func() {
