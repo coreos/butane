@@ -16,7 +16,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 
 	"github.com/spf13/pflag"
@@ -101,7 +100,7 @@ func main() {
 		defer infile.Close()
 	}
 
-	dataIn, err := io.ReadAll(infile)
+	dataIn, err := baseutil.GomplateReadLocalFile(infile)
 	if err != nil {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}

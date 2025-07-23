@@ -15,7 +15,10 @@
 package util
 
 import (
+	"bytes"
+	"context"
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,7 +53,31 @@ func ReadLocalFile(configPath, filesDir string) ([]byte, error) {
 	if err := EnsurePathWithinFilesDir(filePath, filesDir); err != nil {
 		return nil, err
 	}
-	return os.ReadFile(filePath)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	// if > v0.7
+	return GomplateReadLocalFile(file)
+	// else
+	return io.ReadAll(file)
+}
+
+func GomplateReadLocalFile(file *os.File) ([]byte, error) {
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	// gomplate is disabled
+	if gomplateRenderer == nil {
+		return fileContent, nil
+	}
+
+	var buf bytes.Buffer
+	err = gomplateRenderer.Render(context.Background(), file.Name(), string(fileContent), &buf)
+	return buf.Bytes(), err
 }
 
 var gomplateConfig *gomplate.Config
