@@ -15,11 +15,14 @@
 package util
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/coreos/butane/config/common"
+
+	"github.com/hairyhenderson/gomplate/v4"
 )
 
 func EnsurePathWithinFilesDir(path, filesDir string) error {
@@ -48,6 +51,40 @@ func ReadLocalFile(configPath, filesDir string) ([]byte, error) {
 		return nil, err
 	}
 	return os.ReadFile(filePath)
+}
+
+var gomplateConfig *gomplate.Config
+var gomplateRenderer gomplate.Renderer
+
+func InitGomplateConfig() error {
+	f, err := os.Open(".gomplate.yaml")
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	defer f.Close()
+
+	// Parse the config
+	parsedConfig, err := gomplate.Parse(f)
+	if err != nil {
+		return err
+	}
+
+	gomplateConfig = parsedConfig
+	return nil
+}
+
+func InitGomplateRenderer() error {
+	err := InitGomplateConfig()
+	if err != nil {
+		return err
+	}
+
+	gomplateRenderer = gomplate.NewRenderer(gomplate.RenderOptions{})
+
+	return nil
 }
 
 // CheckForDecimalMode fails if the specified mode appears to have been
