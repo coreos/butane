@@ -27,13 +27,22 @@ func initGomplateConfig() (*gomplate.Config, error) {
 }
 
 func createGomplateRenderer() (gomplate.Renderer, error) {
-	_, err := initGomplateConfig()
-
-	if err != nil {
+	if config, err := initGomplateConfig(); err != nil {
 		return nil, err
+	} else if config != nil {
+		// TODO: is there a better way?
+		return gomplate.NewRenderer(gomplate.RenderOptions{
+			Datasources:  config.DataSources,
+			Context:      config.Context,
+			Templates:    config.Templates,
+			ExtraHeaders: config.ExtraHeaders,
+			LDelim:       config.LDelim,
+			RDelim:       config.RDelim,
+			MissingKey:   config.MissingKey,
+		}), nil
+	} else {
+		return gomplate.NewRenderer(gomplate.RenderOptions{}), nil
 	}
-
-	return gomplate.NewRenderer(gomplate.RenderOptions{}), nil
 }
 
 func GetGomplateRenderer() (gomplate.Renderer, error) {
