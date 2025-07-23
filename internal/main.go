@@ -84,9 +84,9 @@ func main() {
 	}
 
 	if enableGomplate {
-		err := baseutil.InitGomplateRenderer()
+		_, err := baseutil.GetGomplateRenderer()
 		if err != nil {
-			fail("failed to init gomplate %v\n", err)
+			fail("failed to initialize gomplate: %v\n", err)
 		}
 	}
 
