@@ -84,6 +84,9 @@ func main() {
 	}
 
 	if enableGomplate {
+		// We don't need the renderer now
+		// but the function uses sync.Once
+		// so any error here can be catch early
 		_, err := baseutil.GetGomplateRenderer()
 		if err != nil {
 			fail("failed to initialize gomplate: %v\n", err)

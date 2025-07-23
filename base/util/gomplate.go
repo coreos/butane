@@ -60,6 +60,8 @@ func GomplateReadLocalFile(file *os.File) ([]byte, error) {
 		return nil, err
 	}
 
+	// Initialization has been done during argument parsing
+	// Any error would've happend then, thus we can safely ignore errors
 	gomplateRenderer, _ := GetGomplateRenderer()
 	// gomplate is disabled
 	if gomplateRenderer == nil {
