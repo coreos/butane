@@ -16,11 +16,12 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/pflag"
 
+	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/internal/version"
@@ -49,6 +50,7 @@ func main() {
 	pflag.BoolVarP(&strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.BoolVarP(&options.Raw, "raw", "r", false, "never wrap in a MachineConfig; force Ignition output")
+	pflag.BoolVarP(&baseutil.EnableGomplate, "enable-gomplate", "", false, "Enable gomplate evaluation")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
 	pflag.Lookup("input").Deprecated = "specify filename directly on command line"
 	pflag.Lookup("input").Hidden = true
@@ -81,6 +83,15 @@ func main() {
 		os.Exit(0)
 	}
 
+	if baseutil.EnableGomplate {
+		baseutil.GomplateConfigPath = filepath.Join(options.FilesDir, baseutil.GomplateConfigPath)
+
+		err := baseutil.InitGomplateRenderer()
+		if err != nil {
+			fail("failed to initialize gomplate: %v\n", err)
+		}
+	}
+
 	infile := os.Stdin
 	if input != "" {
 		var err error
@@ -91,7 +102,7 @@ func main() {
 		defer infile.Close()
 	}
 
-	dataIn, err := io.ReadAll(infile)
+	dataIn, err := baseutil.GomplateReadLocalFile(infile)
 	if err != nil {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}

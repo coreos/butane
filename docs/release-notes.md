@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Add support for [`gomplate`](https://github.com/hairyhenderson/gomplate) integration, opt-in via `--enable-gomplate`
+
 ### Bug fixes
 
 ### Misc. changes
