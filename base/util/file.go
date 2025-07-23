@@ -52,6 +52,7 @@ func ReadLocalFile(configPath, filesDir string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer file.Close()
 
 	// TODO: keep old branch, if based on version?
 	return GomplateReadLocalFile(file)
