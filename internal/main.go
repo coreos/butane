@@ -33,13 +33,12 @@ func fail(format string, args ...interface{}) {
 
 func main() {
 	var (
-		input          string
-		output         string
-		check          bool
-		strict         bool
-		helpFlag       bool
-		versionFlag    bool
-		enableGomplate bool
+		input       string
+		output      string
+		check       bool
+		strict      bool
+		helpFlag    bool
+		versionFlag bool
 	)
 	options := common.TranslateBytesOptions{}
 	pflag.BoolVarP(&helpFlag, "help", "h", false, "show usage and exit")
@@ -50,7 +49,7 @@ func main() {
 	pflag.BoolVarP(&strict, "strict", "s", false, "fail on any warning")
 	pflag.BoolVarP(&options.Pretty, "pretty", "p", false, "output formatted json")
 	pflag.BoolVarP(&options.Raw, "raw", "r", false, "never wrap in a MachineConfig; force Ignition output")
-	pflag.BoolVarP(&enableGomplate, "enable-gomplate", "", false, "Enable gomplate evaluation")
+	pflag.BoolVarP(&baseutil.EnableGomplate, "enable-gomplate", "", false, "Enable gomplate evaluation")
 	pflag.StringVar(&input, "input", "", "read from input file instead of stdin")
 	pflag.Lookup("input").Deprecated = "specify filename directly on command line"
 	pflag.Lookup("input").Hidden = true
@@ -83,7 +82,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if enableGomplate {
+	if baseutil.EnableGomplate {
 		// We don't need the renderer now
 		// but the function uses sync.Once
 		// so any error here can be catch early
@@ -91,7 +90,6 @@ func main() {
 		if err != nil {
 			fail("failed to initialize gomplate: %v\n", err)
 		}
-		baseutil.EnableGomplate = true
 	}
 
 	infile := os.Stdin
