@@ -10,6 +10,8 @@ nav_order: 9
 
 ### Bug fixes
 
+- Stop overriding default LUKS cipher algorithm in FIPS mode _(openshift 4.20.0-exp)_
+
 ### Misc. changes
 
 ### Docs changes
