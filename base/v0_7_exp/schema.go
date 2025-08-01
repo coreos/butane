@@ -210,6 +210,8 @@ type Resource struct {
 	Inline       *string      `yaml:"inline"` // Added, not in ignition spec
 	Local        *string      `yaml:"local"`  // Added, not in ignition spec
 	Verification Verification `yaml:"verification"`
+	InlineButane *string      `yaml:"inline_butane"` // Added, not in ignition spec
+	LocalButane  *string      `yaml:"local_butane"`  // Added, not in ignition spec
 }
 
 type SSHAuthorizedKey string
