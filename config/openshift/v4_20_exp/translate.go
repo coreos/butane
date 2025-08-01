@@ -16,14 +16,12 @@ package v4_20_exp
 
 import (
 	"net/url"
-	"strings"
 
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/config/openshift/v4_20_exp/result"
 	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
-	"github.com/coreos/ignition/v2/config/util"
 	"github.com/coreos/ignition/v2/config/v3_6_experimental/types"
 	"github.com/coreos/vcontext/path"
 	"github.com/coreos/vcontext/report"
@@ -51,13 +49,6 @@ import (
 // and the struct contains unsupported fields, MCD will mark the node
 // degraded, even if the change only affects supported fields.  We reject
 // these.
-
-const (
-	// FIPS 140-2 doesn't allow the default XTS mode
-	fipsCipherOption      = types.LuksOption("--cipher")
-	fipsCipherShortOption = types.LuksOption("-c")
-	fipsCipherArgument    = types.LuksOption("aes-cbc-essiv:sha256")
-)
 
 var (
 	// See also validateRHCOSSupport() and validateMCOSupport()
@@ -155,9 +146,6 @@ func (c Config) ToMachineConfig4_20Unvalidated(options common.TranslateOptions) 
 	ts.MergeP2("openshift", "spec", ts2)
 	r.Merge(r2)
 
-	// apply FIPS options to LUKS volumes
-	ts.Merge(addLuksFipsOptions(&mc))
-
 	// finally, check the fully desugared config for RHCOS and MCO support
 	r.Merge(validateRHCOSSupport(mc))
 	r.Merge(validateMCOSupport(mc))
@@ -212,36 +200,6 @@ func ToConfigBytes(input []byte, options common.TranslateBytesOptions) ([]byte, 
 	} else {
 		return cutil.TranslateBytesYAML(input, &Config{}, "ToMachineConfig4_20", options)
 	}
-}
-
-func addLuksFipsOptions(mc *result.MachineConfig) translate.TranslationSet {
-	ts := translate.NewTranslationSet("yaml", "json")
-	if !util.IsTrue(mc.Spec.FIPS) {
-		return ts
-	}
-
-OUTER:
-	for i := range mc.Spec.Config.Storage.Luks {
-		luks := &mc.Spec.Config.Storage.Luks[i]
-		// Only add options if the user hasn't already specified
-		// a cipher option.  Do this in-place, since config merging
-		// doesn't support conditional logic.
-		for _, option := range luks.Options {
-			if option == fipsCipherOption ||
-				strings.HasPrefix(string(option), string(fipsCipherOption)+"=") ||
-				option == fipsCipherShortOption {
-				continue OUTER
-			}
-		}
-		for j := 0; j < 2; j++ {
-			ts.AddTranslation(path.New("yaml", "openshift", "fips"), path.New("json", "spec", "config", "storage", "luks", i, "options", len(luks.Options)+j))
-		}
-		if len(luks.Options) == 0 {
-			ts.AddTranslation(path.New("yaml", "openshift", "fips"), path.New("json", "spec", "config", "storage", "luks", i, "options"))
-		}
-		luks.Options = append(luks.Options, fipsCipherOption, fipsCipherArgument)
-	}
-	return ts
 }
 
 // Error on fields that are rejected by RHCOS.
