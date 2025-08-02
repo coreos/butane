@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
+	// _ "github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
@@ -1772,6 +1773,45 @@ func TestTranslateIgnition(t *testing.T) {
 					Replace: types.Resource{
 						Source:      util.StrToPtr("data:,xyzzy"),
 						Compression: util.StrToPtr(""),
+					},
+				},
+			},
+		},
+		{
+			Ignition{
+				Config: IgnitionConfig{
+					Merge: []Resource{
+						{
+							InlineButane: util.StrToPtr(`
+                                variant: fcos
+                                version: 1.6.0
+                                storage:
+                                links:
+                                  - path: /etc/localtime
+                                    target: ../usr/share/zoneinfo/Europe/Paris
+                            `),
+						},
+					},
+					Replace: Resource{
+						InlineButane: util.StrToPtr(`
+                            variant: fcos
+                            version: 1.6.0
+                            storage:
+                            links:
+                              - path: /etc/localtime
+                                target: ../usr/share/zoneinfo/Europe/Paris
+                        `),
+					},
+				},
+			},
+			types.Ignition{
+				Version: "3.6.0-experimental",
+				Config: types.IgnitionConfig{
+					Merge: []types.Resource{
+						{
+							Source:      util.StrToPtr("data:;base64,eyJpZ25pdGlvbiI6eyJ2ZXJzaW9uIjoiMy41LjAifSwic3RvcmFnZSI6eyJsaW5rcyI6W3sicGF0aCI6Ii9ldGMvbG9jYWx0aW1lIiwidGFyZ2V0IjoiLi4vdXNyL3NoYXJlL3pvbmVpbmZvL0V1cm9wZS9NYWRyaWQifV19fQ=="),
+							Compression: util.StrToPtr(""),
+						},
 					},
 				},
 			},
