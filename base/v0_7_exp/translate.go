@@ -167,6 +167,55 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			tm.AddTranslation(c, path.New("json", "compression"))
 		}
 	}
+
+	if from.LocalButane != nil {
+		c := path.New("yaml", "local_butane")
+
+		contents, err := baseutil.ReadLocalFile(*from.LocalButane, options.FilesDir)
+		if err != nil {
+			r.AddOnError(c, err)
+			return
+		}
+
+		contents, rp, err := common.TranslateBytes(contents, common.TranslateBytesOptions{
+			Pretty:           false,
+			Raw:              true,
+			TranslateOptions: options,
+		})
+		r.Merge(rp)
+		if err != nil {
+			return
+		}
+
+		handleIgnitionResource(contents, c, &r, &to, &tm, options)
+	}
+
+	if from.InlineButane != nil {
+		c := path.New("yaml", "inline_butane")
+
+		contents, rp, err := common.TranslateBytes([]byte(*from.InlineButane), common.TranslateBytesOptions{
+			Pretty:           false,
+			Raw:              true,
+			TranslateOptions: options,
+		})
+		r.Merge(rp)
+		if err != nil {
+			return
+		}
+
+		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
+		if err != nil {
+			r.AddOnError(c, err)
+			return
+		}
+		to.Source = &src
+		tm.AddTranslation(c, path.New("json", "source"))
+		if compression != nil {
+			to.Compression = compression
+			tm.AddTranslation(c, path.New("json", "compression"))
+		}
+	}
+
 	return
 }
 
