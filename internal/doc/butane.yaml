@@ -27,6 +27,19 @@ resource:
     - name: local
       after: source
       desc: "a local path to the contents of the %TYPE%, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`."
+    ## TODO: check & fix
+    - name: inline_butane
+      after: source
+      desc: "the contents of the %TYPE%. Mutually exclusive with `source` and `local`."
+      transforms:
+        - regex: " and `local`"
+          replacement: ""
+          if:
+            - variant: fcos
+              max: 1.0.0
+    - name: local_butane
+      after: source
+      desc: "a local path to the contents of the %TYPE%, relative to the directory specified by the `--files-dir` command-line argument. Mutually exclusive with `source` and `inline`."
 
 mode:
   # File mode transforms.
@@ -245,7 +258,7 @@ root:
                 - name: source
                   transforms:
                     - regex: "Supported schemes are .* haven't been modified."
-                      replacement: 'Only the [`data`](https://tools.ietf.org/html/rfc2397) scheme is supported.'
+                      replacement: "Only the [`data`](https://tools.ietf.org/html/rfc2397) scheme is supported."
                       if:
                         - variant: openshift
             - name: mode

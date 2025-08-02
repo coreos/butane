@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Add support for loading `inline` and `local` butane files, these are automatically translated to `ignition`.
+
 ### Bug fixes
 
 ### Misc. changes

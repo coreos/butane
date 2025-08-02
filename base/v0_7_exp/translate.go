@@ -25,6 +25,7 @@ import (
 
 	baseutil "github.com/coreos/butane/base/util"
 	"github.com/coreos/butane/config/common"
+	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
 
 	"github.com/coreos/go-systemd/v22/unit"
@@ -110,6 +111,20 @@ func (c Config) ToIgn3_6Unvalidated(options common.TranslateOptions) (types.Conf
 	return ret, tm, r
 }
 
+// Return FieldFilters for this spec.
+func (c Config) FieldFilters() *cutil.FieldFilters {
+	return nil
+}
+
+func (c Config) ToIgn3_6(options common.TranslateOptions) (types.Config, report.Report, error) {
+	cfg, r, err := cutil.Translate(c, "ToIgn3_6Unvalidated", options)
+	return cfg.(types.Config), r, err
+}
+
+func ToIgn3_6Bytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
+	return cutil.TranslateBytes(input, &Config{}, "ToIgn3_6", options)
+}
+
 func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tr.AddCustomTranslator(translateResource)
@@ -148,6 +163,44 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			r.AddOnError(c, err)
 			return
 		}
+
+		// Validating the contents of the local file from here since there is no way to
+		// get both the filename and filedirectory in the Validate context
+		if strings.HasPrefix(c.String(), "$.ignition.config") {
+			rp, err := ValidateIgnitionConfig(c, contents)
+			r.Merge(rp)
+			if err != nil {
+				return
+			}
+		}
+		contentToURL(contents, c, &r, &to, &tm, options)
+	}
+
+	if from.Inline != nil {
+		c := path.New("yaml", "inline")
+
+		contentToURL([]byte(*from.Inline), c, &r, &to, &tm, options)
+	}
+
+	if from.LocalButane != nil {
+		c := path.New("yaml", "local_butane")
+
+		contents, err := baseutil.ReadLocalFile(*from.LocalButane, options.FilesDir)
+		if err != nil {
+			r.AddOnError(c, err)
+			return
+		}
+
+		contents, rp, err := ToIgn3_6Bytes(contents, common.TranslateBytesOptions{
+			Pretty:           false,
+			Raw:              true,
+			TranslateOptions: options,
+		})
+		r.Merge(rp)
+		if err != nil {
+			return
+		}
+
 		// Validating the contents of the local file from here since there is no way to
 		// get both the filename and filedirectory in the Validate context
 		if strings.HasPrefix(c.String(), "$.ignition.config") {
@@ -158,34 +211,25 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			}
 		}
 
-		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
-	if from.Inline != nil {
-		c := path.New("yaml", "inline")
+	if from.InlineButane != nil {
+		c := path.New("yaml", "inline_butane")
 
-		src, compression, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, !options.NoResourceAutoCompression)
+		contents, rp, err := ToIgn3_6Bytes([]byte(*from.InlineButane), common.TranslateBytesOptions{
+			Pretty:           false,
+			Raw:              true,
+			TranslateOptions: options,
+		})
+		r.Merge(rp)
 		if err != nil {
-			r.AddOnError(c, err)
 			return
 		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
+
 	return
 }
 
@@ -507,5 +551,19 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 		Name:     unitName,
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
+	}
+}
+
+func contentToURL(contents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
+	src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
+	if err != nil {
+		r.AddOnError(c, err)
+		return
+	}
+	to.Source = &src
+	tm.AddTranslation(c, path.New("json", "source"))
+	if compression != nil {
+		to.Compression = compression
+		tm.AddTranslation(c, path.New("json", "compression"))
 	}
 }
