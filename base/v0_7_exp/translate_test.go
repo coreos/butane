@@ -1778,6 +1778,49 @@ func TestTranslateIgnition(t *testing.T) {
 		},
 		{
 			Ignition{
+				Config: IgnitionConfig{
+					Merge: []Resource{
+						{
+							InlineButane: util.StrToPtr(`
+                                variant: fcos
+                                version: 1.6.0
+                                storage:
+                                  links:
+                                    - path: /etc/localtime
+                                      target: ../usr/share/zoneinfo/Europe/Paris
+                            `),
+						},
+					},
+					Replace: Resource{
+						InlineButane: util.StrToPtr(`
+                            variant: fcos
+                            version: 1.6.0
+                            storage:
+                              links:
+                                - path: /etc/localtime
+                                  target: ../usr/share/zoneinfo/Europe/Paris
+                        `),
+					},
+				},
+			},
+			types.Ignition{
+				Version: "3.6.0-experimental",
+				Config: types.IgnitionConfig{
+					Merge: []types.Resource{
+						{
+							Source:      util.StrToPtr("data:;base64,eyJpZ25pdGlvbiI6eyJ2ZXJzaW9uIjoiMy41LjAifSwic3RvcmFnZSI6eyJsaW5rcyI6W3sicGF0aCI6Ii9ldGMvbG9jYWx0aW1lIiwidGFyZ2V0IjoiLi4vdXNyL3NoYXJlL3pvbmVpbmZvL0V1cm9wZS9QYXJpcyJ9XX19"),
+							Compression: util.StrToPtr(""),
+						},
+					},
+					Replace: types.Resource{
+						Source:      util.StrToPtr("data:;base64,eyJpZ25pdGlvbiI6eyJ2ZXJzaW9uIjoiMy41LjAifSwic3RvcmFnZSI6eyJsaW5rcyI6W3sicGF0aCI6Ii9ldGMvbG9jYWx0aW1lIiwidGFyZ2V0IjoiLi4vdXNyL3NoYXJlL3pvbmVpbmZvL0V1cm9wZS9QYXJpcyJ9XX19"),
+						Compression: util.StrToPtr(""),
+					},
+				},
+			},
+		},
+		{
+			Ignition{
 				Proxy: Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []string{"example.com"},
