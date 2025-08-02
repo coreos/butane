@@ -148,27 +148,8 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			r.AddOnError(c, err)
 			return
 		}
-		// Validating the contents of the local file from here since there is no way to
-		// get both the filename and filedirectory in the Validate context
-		if strings.HasPrefix(c.String(), "$.ignition.config") {
-			rp, err := ValidateIgnitionConfig(c, contents)
-			r.Merge(rp)
-			if err != nil {
-				return
-			}
-		}
 
-		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+		handleIgnitionResource(contents, c, &r, &to, &tm, options)
 	}
 
 	if from.Inline != nil {
@@ -507,5 +488,29 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 		Name:     unitName,
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
+	}
+}
+
+func handleIgnitionResource(contents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
+	// Validating the contents of the local file from here since there is no way to
+	// get both the filename and filedirectory in the Validate context
+	if strings.HasPrefix(c.String(), "$.ignition.config") {
+		rp, err := ValidateIgnitionConfig(c, contents)
+		r.Merge(rp)
+		if err != nil {
+			return
+		}
+	}
+
+	src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
+	if err != nil {
+		r.AddOnError(c, err)
+		return
+	}
+	to.Source = &src
+	tm.AddTranslation(c, path.New("json", "source"))
+	if compression != nil {
+		to.Compression = compression
+		tm.AddTranslation(c, path.New("json", "compression"))
 	}
 }
