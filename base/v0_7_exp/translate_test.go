@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
+	// _ "github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
