@@ -210,6 +210,16 @@ func TranslateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
+		// Validating the contents of the local file from here since there is no way to
+		// get both the filename and filedirectory in the Validate context
+		if strings.HasPrefix(c.String(), "$.ignition.config") {
+			rp, err := ValidateIgnitionConfig(c, contents)
+			r.Merge(rp)
+			if err != nil {
+				return
+			}
+		}
+
 		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
