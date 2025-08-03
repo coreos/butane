@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_7_exp
+package tests
 
 import (
 	"fmt"
@@ -25,7 +25,8 @@ import (
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
-	// _ "github.com/coreos/butane/config"
+	"github.com/coreos/butane/base/v0_7_exp"
+	_ "github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	confutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
@@ -81,14 +82,14 @@ func TestTranslateFile(t *testing.T) {
 	}
 
 	tests := []struct {
-		in         File
+		in         v0_7_exp.File
 		out        types.File
 		exceptions []translate.Translation
 		report     string
 		options    common.TranslateOptions
 	}{
 		{
-			File{},
+			v0_7_exp.File{},
 			types.File{},
 			nil,
 			"",
@@ -97,41 +98,41 @@ func TestTranslateFile(t *testing.T) {
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Group: NodeGroup{
+				Group: v0_7_exp.NodeGroup{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("foobar"),
 				},
-				User: NodeUser{
+				User: v0_7_exp.NodeUser{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("bazquux"),
 				},
 				Mode: util.IntToPtr(420),
-				Append: []Resource{
+				Append: []v0_7_exp.Resource{
 					{
 						Source:      util.StrToPtr("http://example/com"),
 						Compression: util.StrToPtr("gzip"),
-						HTTPHeaders: HTTPHeaders{
-							HTTPHeader{
+						HTTPHeaders: v0_7_exp.HTTPHeaders{
+							v0_7_exp.HTTPHeader{
 								Name:  "Header",
 								Value: util.StrToPtr("this isn't validated"),
 							},
 						},
-						Verification: Verification{
+						Verification: v0_7_exp.Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},
 					},
 					{
 						Inline:      util.StrToPtr("hello"),
 						Compression: util.StrToPtr("gzip"),
-						HTTPHeaders: HTTPHeaders{
-							HTTPHeader{
+						HTTPHeaders: v0_7_exp.HTTPHeaders{
+							v0_7_exp.HTTPHeader{
 								Name:  "Header",
 								Value: util.StrToPtr("this isn't validated"),
 							},
 						},
-						Verification: Verification{
+						Verification: v0_7_exp.Verification{
 							Hash: util.StrToPtr("this isn't validated"),
 						},
 					},
@@ -140,16 +141,16 @@ func TestTranslateFile(t *testing.T) {
 					},
 				},
 				Overwrite: util.BoolToPtr(true),
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Source:      util.StrToPtr("http://example/com"),
 					Compression: util.StrToPtr("gzip"),
-					HTTPHeaders: HTTPHeaders{
-						HTTPHeader{
+					HTTPHeaders: v0_7_exp.HTTPHeaders{
+						v0_7_exp.HTTPHeader{
 							Name:  "Header",
 							Value: util.StrToPtr("this isn't validated"),
 						},
 					},
-					Verification: Verification{
+					Verification: v0_7_exp.Verification{
 						Hash: util.StrToPtr("this isn't validated"),
 					},
 				},
@@ -285,9 +286,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// inline file contents
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					// String is too short for auto gzip compression
 					Inline: util.StrToPtr("xyzzy"),
 				},
@@ -318,9 +319,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// local file contents
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Local: util.StrToPtr("file-1"),
 				},
 			},
@@ -352,9 +353,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// local file in subdirectory
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Local: util.StrToPtr("subdir/file-4"),
 				},
 			},
@@ -386,9 +387,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// filesDir not specified
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Local: util.StrToPtr("file-1"),
 				},
 			},
@@ -403,9 +404,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// attempted directory traversal
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Local: util.StrToPtr("../file-1"),
 				},
 			},
@@ -422,9 +423,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// attempted inclusion of nonexistent file
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Local: util.StrToPtr("file-missing"),
 				},
 			},
@@ -441,13 +442,13 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// inline and local automatic file encoding
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					// gzip
 					Inline: util.StrToPtr(zzz),
 				},
-				Append: []Resource{
+				Append: []v0_7_exp.Resource{
 					{
 						// gzip
 						Local: util.StrToPtr("file-2"),
@@ -554,9 +555,9 @@ func TestTranslateFile(t *testing.T) {
 		},
 		// Test disable automatic gzip compression
 		{
-			File{
+			v0_7_exp.File{
 				Path: "/foo",
-				Contents: Resource{
+				Contents: v0_7_exp.Resource{
 					Inline: util.StrToPtr(zzz),
 				},
 			},
@@ -590,7 +591,7 @@ func TestTranslateFile(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
-			actual, translations, r := translateFile(test.in, test.options)
+			actual, translations, r := v0_7_exp.TranslateFile(test.in, test.options)
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -604,23 +605,23 @@ func TestTranslateFile(t *testing.T) {
 // TestTranslateDirectory tests translating the ct storage.directories.[i] entries to ignition storage.directories.[i] entires.
 func TestTranslateDirectory(t *testing.T) {
 	tests := []struct {
-		in  Directory
+		in  v0_7_exp.Directory
 		out types.Directory
 	}{
 		{
-			Directory{},
+			v0_7_exp.Directory{},
 			types.Directory{},
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			Directory{
+			v0_7_exp.Directory{
 				Path: "/foo",
-				Group: NodeGroup{
+				Group: v0_7_exp.NodeGroup{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("foobar"),
 				},
-				User: NodeUser{
+				User: v0_7_exp.NodeUser{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("bazquux"),
 				},
@@ -649,7 +650,7 @@ func TestTranslateDirectory(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
-			actual, translations, r := translateDirectory(test.in, common.TranslateOptions{})
+			actual, translations, r := v0_7_exp.TranslateDirectory(test.in, common.TranslateOptions{})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -662,23 +663,23 @@ func TestTranslateDirectory(t *testing.T) {
 // TestTranslateLink tests translating the ct storage.links.[i] entries to ignition storage.links.[i] entires.
 func TestTranslateLink(t *testing.T) {
 	tests := []struct {
-		in  Link
+		in  v0_7_exp.Link
 		out types.Link
 	}{
 		{
-			Link{},
+			v0_7_exp.Link{},
 			types.Link{},
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			Link{
+			v0_7_exp.Link{
 				Path: "/foo",
-				Group: NodeGroup{
+				Group: v0_7_exp.NodeGroup{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("foobar"),
 				},
-				User: NodeUser{
+				User: v0_7_exp.NodeUser{
 					ID:   util.IntToPtr(1),
 					Name: util.StrToPtr("bazquux"),
 				},
@@ -709,7 +710,7 @@ func TestTranslateLink(t *testing.T) {
 
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
-			actual, translations, r := translateLink(test.in, common.TranslateOptions{})
+			actual, translations, r := v0_7_exp.TranslateLink(test.in, common.TranslateOptions{})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -722,17 +723,17 @@ func TestTranslateLink(t *testing.T) {
 // TestTranslateFilesystem tests translating the butane storage.filesystems.[i] entries to ignition storage.filesystems.[i] entries.
 func TestTranslateFilesystem(t *testing.T) {
 	tests := []struct {
-		in  Filesystem
+		in  v0_7_exp.Filesystem
 		out types.Filesystem
 	}{
 		{
-			Filesystem{},
+			v0_7_exp.Filesystem{},
 			types.Filesystem{},
 		},
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device:         "/foo",
 				Format:         util.StrToPtr("/bar"),
 				Label:          util.StrToPtr("/baz"),
@@ -760,9 +761,9 @@ func TestTranslateFilesystem(t *testing.T) {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
 			// Filesystem doesn't have a custom translator, so embed in a
 			// complete config
-			in := Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{test.in},
+			in := v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{test.in},
 				},
 			}
 			expected := []types.Filesystem{test.out}
@@ -789,14 +790,14 @@ func TestTranslateFilesystem(t *testing.T) {
 // TestTranslateMountUnit tests the Butane storage.filesystems.[i].with_mount_unit flag.
 func TestTranslateMountUnit(t *testing.T) {
 	tests := []struct {
-		in  Config
+		in  v0_7_exp.Config
 		out types.Config
 	}{
 		// local mount with options, overridden enabled flag
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/disk/by-label/foo",
 							Format:        util.StrToPtr("ext4"),
@@ -806,8 +807,8 @@ func TestTranslateMountUnit(t *testing.T) {
 						},
 					},
 				},
-				Systemd: Systemd{
-					Units: []Unit{
+				Systemd: v0_7_exp.Systemd{
+					Units: []v0_7_exp.Unit{
 						{
 							Name:    "var-lib-containers.mount",
 							Enabled: util.BoolToPtr(false),
@@ -854,9 +855,9 @@ RequiredBy=local-fs.target`),
 		},
 		// remote mount with options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/mapper/foo-bar",
 							Format:        util.StrToPtr("ext4"),
@@ -865,12 +866,12 @@ RequiredBy=local-fs.target`),
 							WithMountUnit: util.BoolToPtr(true),
 						},
 					},
-					Luks: []Luks{
+					Luks: []v0_7_exp.Luks{
 						{
 							Name:   "foo-bar",
 							Device: util.StrToPtr("/dev/bar"),
-							Clevis: Clevis{
-								Tang: []Tang{
+							Clevis: v0_7_exp.Clevis{
+								Tang: []v0_7_exp.Tang{
 									{
 										URL: "http://example.com",
 									},
@@ -932,9 +933,9 @@ RequiredBy=remote-fs.target`),
 		},
 		// local mount, no options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/disk/by-label/foo",
 							Format:        util.StrToPtr("ext4"),
@@ -981,9 +982,9 @@ RequiredBy=local-fs.target`),
 		},
 		// remote mount, no options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/mapper/foo-bar",
 							Format:        util.StrToPtr("ext4"),
@@ -991,12 +992,12 @@ RequiredBy=local-fs.target`),
 							WithMountUnit: util.BoolToPtr(true),
 						},
 					},
-					Luks: []Luks{
+					Luks: []v0_7_exp.Luks{
 						{
 							Name:   "foo-bar",
 							Device: util.StrToPtr("/dev/bar"),
-							Clevis: Clevis{
-								Tang: []Tang{
+							Clevis: v0_7_exp.Clevis{
+								Tang: []v0_7_exp.Tang{
 									{
 										URL: "http://example.com",
 									},
@@ -1057,9 +1058,9 @@ RequiredBy=remote-fs.target`),
 		},
 		// overridden mount unit
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/disk/by-label/foo",
 							Format:        util.StrToPtr("ext4"),
@@ -1068,8 +1069,8 @@ RequiredBy=remote-fs.target`),
 						},
 					},
 				},
-				Systemd: Systemd{
-					Units: []Unit{
+				Systemd: v0_7_exp.Systemd{
+					Units: []v0_7_exp.Unit{
 						{
 							Name:     "var-lib-containers.mount",
 							Contents: util.StrToPtr("[Service]\nExecStart=/bin/false\n"),
@@ -1103,9 +1104,9 @@ RequiredBy=remote-fs.target`),
 		},
 		// swap, no options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/disk/by-label/foo",
 							Format:        util.StrToPtr("swap"),
@@ -1144,9 +1145,9 @@ RequiredBy=swap.target`),
 		},
 		// swap with options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device:        "/dev/disk/by-label/foo",
 							Format:        util.StrToPtr("swap"),
@@ -1208,10 +1209,10 @@ func TestTranslateTree(t *testing.T) {
 		dirFiles   map[string]os.FileMode   // relative path -> mode
 		dirLinks   map[string]string        // relative path -> target
 		dirSockets []string                 // relative path
-		inTrees    []Tree
-		inFiles    []File
-		inDirs     []Directory
-		inLinks    []Link
+		inTrees    []v0_7_exp.Tree
+		inFiles    []v0_7_exp.File
+		inDirs     []v0_7_exp.Directory
+		inLinks    []v0_7_exp.Link
 		outFiles   []types.File
 		outLinks   []types.Link
 		report     string
@@ -1236,7 +1237,7 @@ func TestTranslateTree(t *testing.T) {
 				"tree/subdir/link":            "../file",
 				"tree/subdir/overridden-link": "../file",
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1245,26 +1246,26 @@ func TestTranslateTree(t *testing.T) {
 					Path:  util.StrToPtr("/etc"),
 				},
 			},
-			inFiles: []File{
+			inFiles: []v0_7_exp.File{
 				{
 					Path: "/overridden",
 					Mode: util.IntToPtr(0600),
-					User: NodeUser{
+					User: v0_7_exp.NodeUser{
 						Name: util.StrToPtr("bovik"),
 					},
 				},
 				{
 					Path: "/overridden-executable",
 					Mode: util.IntToPtr(0600),
-					User: NodeUser{
+					User: v0_7_exp.NodeUser{
 						Name: util.StrToPtr("bovik"),
 					},
 				},
 			},
-			inLinks: []Link{
+			inLinks: []v0_7_exp.Link{
 				{
 					Path: "/subdir/overridden-link",
-					User: NodeUser{
+					User: v0_7_exp.NodeUser{
 						Name: util.StrToPtr("bovik"),
 					},
 				},
@@ -1410,7 +1411,7 @@ func TestTranslateTree(t *testing.T) {
 			dirLinks: map[string]string{
 				"tree/subdir/link": "../file",
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1474,7 +1475,7 @@ func TestTranslateTree(t *testing.T) {
 				"tree13/tree-link":    "file", // set up for tree/tree collision
 				"tree14/tree-link":    "file",
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree0",
 				},
@@ -1524,10 +1525,10 @@ func TestTranslateTree(t *testing.T) {
 					Local: "tree15",
 				},
 			},
-			inFiles: []File{
+			inFiles: []v0_7_exp.File{
 				{
 					Path: "/file",
-					Contents: Resource{
+					Contents: v0_7_exp.Resource{
 						Source: util.StrToPtr("data:,foo"),
 					},
 				},
@@ -1535,12 +1536,12 @@ func TestTranslateTree(t *testing.T) {
 					Path: "/file-partial",
 				},
 			},
-			inDirs: []Directory{
+			inDirs: []v0_7_exp.Directory{
 				{
 					Path: "/directory",
 				},
 			},
-			inLinks: []Link{
+			inLinks: []v0_7_exp.Link{
 				{
 					Path:   "/link",
 					Target: util.StrToPtr("file"),
@@ -1564,7 +1565,7 @@ func TestTranslateTree(t *testing.T) {
 		},
 		// files-dir escape
 		{
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "../escape",
 				},
@@ -1574,7 +1575,7 @@ func TestTranslateTree(t *testing.T) {
 		// no files-dir
 		{
 			options: &common.TranslateOptions{},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1586,7 +1587,7 @@ func TestTranslateTree(t *testing.T) {
 			dirSockets: []string{
 				"tree/socket",
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1609,7 +1610,7 @@ func TestTranslateTree(t *testing.T) {
 			dirFiles: map[string]os.FileMode{
 				"tree/file": 0000,
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1633,7 +1634,7 @@ func TestTranslateTree(t *testing.T) {
 			dirFiles: map[string]os.FileMode{
 				"tree": 0600,
 			},
-			inTrees: []Tree{
+			inTrees: []v0_7_exp.Tree{
 				{
 					Local: "tree",
 				},
@@ -1703,8 +1704,8 @@ func TestTranslateTree(t *testing.T) {
 				defer listener.Close()
 			}
 
-			config := Config{
-				Storage: Storage{
+			config := v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
 					Files:       test.inFiles,
 					Directories: test.inDirs,
 					Links:       test.inLinks,
@@ -1739,24 +1740,24 @@ func TestTranslateTree(t *testing.T) {
 // It ensures that the version is set as well.
 func TestTranslateIgnition(t *testing.T) {
 	tests := []struct {
-		in  Ignition
+		in  v0_7_exp.Ignition
 		out types.Ignition
 	}{
 		{
-			Ignition{},
+			v0_7_exp.Ignition{},
 			types.Ignition{
 				Version: "3.6.0-experimental",
 			},
 		},
 		{
-			Ignition{
-				Config: IgnitionConfig{
-					Merge: []Resource{
+			v0_7_exp.Ignition{
+				Config: v0_7_exp.IgnitionConfig{
+					Merge: []v0_7_exp.Resource{
 						{
 							Inline: util.StrToPtr("xyzzy"),
 						},
 					},
-					Replace: Resource{
+					Replace: v0_7_exp.Resource{
 						Inline: util.StrToPtr("xyzzy"),
 					},
 				},
@@ -1778,9 +1779,9 @@ func TestTranslateIgnition(t *testing.T) {
 			},
 		},
 		{
-			Ignition{
-				Config: IgnitionConfig{
-					Merge: []Resource{
+			v0_7_exp.Ignition{
+				Config: v0_7_exp.IgnitionConfig{
+					Merge: []v0_7_exp.Resource{
 						{
 							InlineButane: util.StrToPtr(`
                                 variant: fcos
@@ -1792,7 +1793,7 @@ func TestTranslateIgnition(t *testing.T) {
                             `),
 						},
 					},
-					Replace: Resource{
+					Replace: v0_7_exp.Resource{
 						InlineButane: util.StrToPtr(`
                             variant: fcos
                             version: 1.6.0
@@ -1821,8 +1822,8 @@ func TestTranslateIgnition(t *testing.T) {
 			},
 		},
 		{
-			Ignition{
-				Proxy: Proxy{
+			v0_7_exp.Ignition{
+				Proxy: v0_7_exp.Proxy{
 					HTTPProxy: util.StrToPtr("https://example.com:8080"),
 					NoProxy:   []string{"example.com"},
 				},
@@ -1836,10 +1837,10 @@ func TestTranslateIgnition(t *testing.T) {
 			},
 		},
 		{
-			Ignition{
-				Security: Security{
-					TLS: TLS{
-						CertificateAuthorities: []Resource{
+			v0_7_exp.Ignition{
+				Security: v0_7_exp.Security{
+					TLS: v0_7_exp.TLS{
+						CertificateAuthorities: []v0_7_exp.Resource{
 							{
 								Inline: util.StrToPtr("xyzzy"),
 							},
@@ -1864,7 +1865,7 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 	for i, test := range tests {
 		t.Run(fmt.Sprintf("translate %d", i), func(t *testing.T) {
-			actual, translations, r := translateIgnition(test.in, common.TranslateOptions{})
+			actual, translations, r := v0_7_exp.TranslateIgnition(test.in, common.TranslateOptions{})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -1884,16 +1885,16 @@ func TestTranslateIgnition(t *testing.T) {
 // KernelArguments do not use a custom translation function (it utilizes the MergeP2 functionality) so pass an entire config
 func TestTranslateKernelArguments(t *testing.T) {
 	tests := []struct {
-		in  Config
+		in  v0_7_exp.Config
 		out types.Config
 	}{
 		{
-			Config{
-				KernelArguments: KernelArguments{
-					ShouldExist: []KernelArgument{
+			v0_7_exp.Config{
+				KernelArguments: v0_7_exp.KernelArguments{
+					ShouldExist: []v0_7_exp.KernelArgument{
 						"foo",
 					},
-					ShouldNotExist: []KernelArgument{
+					ShouldNotExist: []v0_7_exp.KernelArgument{
 						"bar",
 					},
 				},
@@ -1928,25 +1929,25 @@ func TestTranslateKernelArguments(t *testing.T) {
 // TestTranslateLuks test translating the butane storage.luks.clevis.tang.[i] arguments to ignition storage.luks.clevis.tang.[i] entries.
 func TestTranslateTang(t *testing.T) {
 	tests := []struct {
-		in  Config
+		in  v0_7_exp.Config
 		out types.Config
 	}{
 		// Luks with tang and all options set, returns a valid ignition config with the same options
 		{
-			Config{
-				Storage: Storage{
-					Filesystems: []Filesystem{
+			v0_7_exp.Config{
+				Storage: v0_7_exp.Storage{
+					Filesystems: []v0_7_exp.Filesystem{
 						{
 							Device: "/dev/mapper/foo-bar",
 							Path:   util.StrToPtr("/var/lib/containers"),
 						},
 					},
-					Luks: []Luks{
+					Luks: []v0_7_exp.Luks{
 						{
 							Name:   "foo-bar",
 							Device: util.StrToPtr("/dev/bar"),
-							Clevis: Clevis{
-								Tang: []Tang{
+							Clevis: v0_7_exp.Clevis{
+								Tang: []v0_7_exp.Tang{
 									{
 										URL:           "http://example.com",
 										Thumbprint:    util.StrToPtr("xyzzy"),
@@ -2031,7 +2032,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		in           PasswdUser
+		in           v0_7_exp.PasswdUser
 		out          types.PasswdUser
 		translations []translate.Translation
 		report       string
@@ -2039,7 +2040,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 	}{
 		{
 			"empty user",
-			PasswdUser{},
+			v0_7_exp.PasswdUser{},
 			types.PasswdUser{},
 			[]translate.Translation{},
 			"",
@@ -2047,7 +2048,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid inline keys",
-			PasswdUser{SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeys: []v0_7_exp.SSHAuthorizedKey{v0_7_exp.SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline)}},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2058,7 +2059,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid local keys",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2069,7 +2070,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid local keys with multiple keys per file",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKey2),
 				types.SSHAuthorizedKey("#comment"),
@@ -2086,7 +2087,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid multiple local key files",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName, sshKeyMultipleKeysFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName, sshKeyMultipleKeysFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKey1),
 				types.SSHAuthorizedKey(sshKey2),
@@ -2105,7 +2106,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid local and inline keys",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}, SSHAuthorizedKeys: []v0_7_exp.SSHAuthorizedKey{v0_7_exp.SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey(sshKeyInline), types.SSHAuthorizedKey(sshKey1)}},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2117,7 +2118,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid local keys with multiple keys per file and inline keys",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}, SSHAuthorizedKeys: []SSHAuthorizedKey{SSHAuthorizedKey(sshKeyInline)}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyMultipleKeysFileName}, SSHAuthorizedKeys: []v0_7_exp.SSHAuthorizedKey{v0_7_exp.SSHAuthorizedKey(sshKeyInline)}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKeyInline),
 				types.SSHAuthorizedKey(sshKey2),
@@ -2136,7 +2137,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid empty local file",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyEmptyFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyEmptyFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2146,7 +2147,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid blank local file",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyBlankFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyBlankFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{types.SSHAuthorizedKey("\t")}},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2157,7 +2158,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"valid Windows style line endings in local file",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyWindowsLineEndingsFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyWindowsLineEndingsFileName}},
 			types.PasswdUser{SSHAuthorizedKeys: []types.SSHAuthorizedKey{
 				types.SSHAuthorizedKey(sshKey1),
 				types.SSHAuthorizedKey("#comment"),
@@ -2172,7 +2173,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"missing local file",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyNonExistingFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyNonExistingFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2182,7 +2183,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"missing embed directory",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2192,7 +2193,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 		},
 		{
 			"wrong embed directory",
-			PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
+			v0_7_exp.PasswdUser{SSHAuthorizedKeysLocal: []string{sshKeyFileName}},
 			types.PasswdUser{},
 			[]translate.Translation{
 				{From: path.New("yaml", "ssh_authorized_keys_local"), To: path.New("json", "sshAuthorizedKeys")},
@@ -2204,7 +2205,7 @@ func TestTranslateSSHAuthorizedKey(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, translations, r := translatePasswdUser(test.in, common.TranslateOptions{FilesDir: test.fileDir})
+			actual, translations, r := v0_7_exp.TranslatePasswdUser(test.in, common.TranslateOptions{FilesDir: test.fileDir})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -2238,7 +2239,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		in           Unit
+		in           v0_7_exp.Unit
 		out          types.Unit
 		translations []translate.Translation
 		report       string
@@ -2246,7 +2247,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 	}{
 		{
 			"empty unit",
-			Unit{},
+			v0_7_exp.Unit{},
 			types.Unit{},
 			[]translate.Translation{},
 			"",
@@ -2254,7 +2255,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid contents",
-			Unit{Contents: &unitDefinitionInline, Name: unitName},
+			v0_7_exp.Unit{Contents: &unitDefinitionInline, Name: unitName},
 			types.Unit{Contents: &unitDefinitionInline, Name: unitName},
 			[]translate.Translation{},
 			"",
@@ -2262,7 +2263,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid contents_local",
-			Unit{ContentsLocal: &unitName, Name: unitName},
+			v0_7_exp.Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Contents: &unitDefinitionFile, Name: unitName},
 			[]translate.Translation{
 				{From: path.New("yaml", "contents_local"), To: path.New("json", "contents")},
@@ -2272,7 +2273,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"non existing contents_local file name",
-			Unit{ContentsLocal: &unitNonExistingFileName, Name: unitName},
+			v0_7_exp.Unit{ContentsLocal: &unitNonExistingFileName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
 			"error at $.contents_local: open " + filepath.Join(unitDir, unitNonExistingFileName) + ": " + osNotFound + "\n",
@@ -2280,7 +2281,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid empty contents_local file",
-			Unit{ContentsLocal: &unitEmptyFileName, Name: unitName},
+			v0_7_exp.Unit{ContentsLocal: &unitEmptyFileName, Name: unitName},
 			types.Unit{Contents: &unitEmptyDefinition, Name: unitName},
 			[]translate.Translation{
 				{From: path.New("yaml", "contents_local"), To: path.New("json", "contents")},
@@ -2290,7 +2291,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"missing embed directory",
-			Unit{ContentsLocal: &unitName, Name: unitName},
+			v0_7_exp.Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
 			"error at $.contents_local: " + common.ErrNoFilesDir.Error() + "\n",
@@ -2298,7 +2299,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"wrong embed directory",
-			Unit{ContentsLocal: &unitName, Name: unitName},
+			v0_7_exp.Unit{ContentsLocal: &unitName, Name: unitName},
 			types.Unit{Name: unitName},
 			[]translate.Translation{},
 			"error at $.contents_local: open " + filepath.Join(randomDir, unitName) + ": " + osNotFound + "\n",
@@ -2306,7 +2307,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"empty dropin unit",
-			Unit{Name: dropinName, Dropins: nil},
+			v0_7_exp.Unit{Name: dropinName, Dropins: nil},
 			types.Unit{Name: dropinName, Dropins: nil},
 			[]translate.Translation{},
 			"",
@@ -2314,7 +2315,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid dropin contents",
-			Unit{Dropins: []Dropin{{Name: dropinName, Contents: &unitDefinitionInline}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, Contents: &unitDefinitionInline}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionInline}}, Name: unitName},
 			[]translate.Translation{},
 			"",
@@ -2322,7 +2323,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid dropin contents_local",
-			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitDefinitionFile}}, Name: unitName},
 			[]translate.Translation{
 				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
@@ -2332,7 +2333,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"non existing dropin contents_local file name",
-			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, ContentsLocal: &unitNonExistingFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: open " + filepath.Join(unitDir, unitNonExistingFileName) + ": " + osNotFound + "\n",
@@ -2340,7 +2341,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"valid empty dropin contents_local file",
-			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitEmptyFileName}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, ContentsLocal: &unitEmptyFileName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName, Contents: &unitEmptyDefinition}}, Name: unitName},
 			[]translate.Translation{
 				{From: path.New("yaml", "dropins", 0, "contents_local"), To: path.New("json", "dropins", 0, "contents")},
@@ -2350,7 +2351,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"missing embed directory for dropin",
-			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: " + common.ErrNoFilesDir.Error() + "\n",
@@ -2358,7 +2359,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 		},
 		{
 			"wrong embed directory for dropin",
-			Unit{Dropins: []Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
+			v0_7_exp.Unit{Dropins: []v0_7_exp.Dropin{{Name: dropinName, ContentsLocal: &unitName}}, Name: unitName},
 			types.Unit{Dropins: []types.Dropin{{Name: dropinName}}, Name: unitName},
 			[]translate.Translation{},
 			"error at $.dropins.0.contents_local: open " + filepath.Join(randomDir, unitName) + ": " + osNotFound + "\n",
@@ -2368,7 +2369,7 @@ func TestTranslateUnitLocal(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actual, translations, r := translateUnit(test.in, common.TranslateOptions{FilesDir: test.fileDir})
+			actual, translations, r := v0_7_exp.TranslateUnit(test.in, common.TranslateOptions{FilesDir: test.fileDir})
 			r = confutil.TranslateReportPaths(r, translations)
 			baseutil.VerifyReport(t, test.in, r)
 			assert.Equal(t, test.out, actual, "translation mismatch")
@@ -2383,11 +2384,11 @@ func TestTranslateUnitLocal(t *testing.T) {
 // tested since it uses the Ignition translation code which has its own set of tests.
 func TestToIgn3_6(t *testing.T) {
 	tests := []struct {
-		in  Config
+		in  v0_7_exp.Config
 		out types.Config
 	}{
 		{
-			Config{},
+			v0_7_exp.Config{},
 			types.Config{
 				Ignition: types.Ignition{
 					Version: "3.6.0-experimental",

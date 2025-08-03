@@ -82,13 +82,13 @@ func (c Config) ToIgn3_6Unvalidated(options common.TranslateOptions) (types.Conf
 	ret := types.Config{}
 
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateIgnition)
-	tr.AddCustomTranslator(translateFile)
-	tr.AddCustomTranslator(translateDirectory)
-	tr.AddCustomTranslator(translateLink)
-	tr.AddCustomTranslator(translateResource)
-	tr.AddCustomTranslator(translatePasswdUser)
-	tr.AddCustomTranslator(translateUnit)
+	tr.AddCustomTranslator(TranslateIgnition)
+	tr.AddCustomTranslator(TranslateFile)
+	tr.AddCustomTranslator(TranslateDirectory)
+	tr.AddCustomTranslator(TranslateLink)
+	tr.AddCustomTranslator(TranslateResource)
+	tr.AddCustomTranslator(TranslatePasswdUser)
+	tr.AddCustomTranslator(TranslateUnit)
 
 	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
 	tm.AddTranslation(path.New("yaml", "version"), path.New("json", "ignition", "version"))
@@ -110,9 +110,9 @@ func (c Config) ToIgn3_6Unvalidated(options common.TranslateOptions) (types.Conf
 	return ret, tm, r
 }
 
-func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
+func TranslateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(TranslateResource)
 	to.Version = types.MaxVersion.String()
 	tm, r = translate.Prefixed(tr, "config", &from.Config, &to.Config)
 	translate.MergeP(tr, tm, &r, "proxy", &from.Proxy, &to.Proxy)
@@ -121,9 +121,9 @@ func translateIgnition(from Ignition, options common.TranslateOptions) (to types
 	return
 }
 
-func translateFile(from File, options common.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
+func TranslateFile(from File, options common.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(TranslateResource)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	translate.MergeP(tr, tm, &r, "append", &from.Append, &to.Append)
@@ -134,7 +134,7 @@ func translateFile(from File, options common.TranslateOptions) (to types.File, t
 	return
 }
 
-func translateResource(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
+func TranslateResource(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	translate.MergeP2(tr, tm, &r, "http_headers", &from.HTTPHeaders, "httpHeaders", &to.HTTPHeaders)
@@ -219,7 +219,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 	return
 }
 
-func translateDirectory(from Directory, options common.TranslateOptions) (to types.Directory, tm translate.TranslationSet, r report.Report) {
+func TranslateDirectory(from Directory, options common.TranslateOptions) (to types.Directory, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
@@ -229,7 +229,7 @@ func translateDirectory(from Directory, options common.TranslateOptions) (to typ
 	return
 }
 
-func translateLink(from Link, options common.TranslateOptions) (to types.Link, tm translate.TranslationSet, r report.Report) {
+func TranslateLink(from Link, options common.TranslateOptions) (to types.Link, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
@@ -240,7 +240,7 @@ func translateLink(from Link, options common.TranslateOptions) (to types.Link, t
 	return
 }
 
-func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to types.PasswdUser, tm translate.TranslationSet, r report.Report) {
+func TranslatePasswdUser(from PasswdUser, options common.TranslateOptions) (to types.PasswdUser, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "gecos", &from.Gecos, &to.Gecos)
 	translate.MergeP(tr, tm, &r, "groups", &from.Groups, &to.Groups)
@@ -285,9 +285,9 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 	return
 }
 
-func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
+func TranslateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateDropin)
+	tr.AddCustomTranslator(TranslateDropin)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "dropins", &from.Dropins, &to.Dropins)
 	translate.MergeP(tr, tm, &r, "enabled", &from.Enabled, &to.Enabled)
@@ -308,7 +308,7 @@ func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, t
 	return
 }
 
-func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
+func TranslateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
