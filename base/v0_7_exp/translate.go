@@ -149,23 +149,21 @@ func TranslateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
-		handleIgnitionResource(contents, c, &r, &to, &tm, options)
+		// Validating the contents of the local file from here since there is no way to
+		// get both the filename and filedirectory in the Validate context
+		if strings.HasPrefix(c.String(), "$.ignition.config") {
+			rp, err := ValidateIgnitionConfig(c, contents)
+			r.Merge(rp)
+			if err != nil {
+				return
+			}
+		}
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
 	if from.Inline != nil {
 		c := path.New("yaml", "inline")
-
-		src, compression, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, !options.NoResourceAutoCompression)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+		contentToURL([]byte(*from.Inline), c, &r, &to, &tm, options)
 	}
 
 	if from.LocalButane != nil {
@@ -187,7 +185,16 @@ func TranslateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
-		handleIgnitionResource(contents, c, &r, &to, &tm, options)
+		// Validating the contents of the local file from here since there is no way to
+		// get both the filename and filedirectory in the Validate context
+		if strings.HasPrefix(c.String(), "$.ignition.config") {
+			rp, err := ValidateIgnitionConfig(c, contents)
+			r.Merge(rp)
+			if err != nil {
+				return
+			}
+		}
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
 	if from.InlineButane != nil {
@@ -203,17 +210,7 @@ func TranslateResource(from Resource, options common.TranslateOptions) (to types
 			return
 		}
 
-		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
 	return
@@ -540,17 +537,7 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 	}
 }
 
-func handleIgnitionResource(contents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
-	// Validating the contents of the local file from here since there is no way to
-	// get both the filename and filedirectory in the Validate context
-	if strings.HasPrefix(c.String(), "$.ignition.config") {
-		rp, err := ValidateIgnitionConfig(c, contents)
-		r.Merge(rp)
-		if err != nil {
-			return
-		}
-	}
-
+func contentToURL(contents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
 	src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
 	if err != nil {
 		r.AddOnError(c, err)
