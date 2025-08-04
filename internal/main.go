@@ -21,7 +21,7 @@ import (
 
 	"github.com/spf13/pflag"
 
-	"github.com/coreos/butane/config"
+	_ "github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	"github.com/coreos/butane/internal/version"
 )
@@ -96,7 +96,7 @@ func main() {
 		fail("failed to read %s: %v\n", infile.Name(), err)
 	}
 
-	dataOut, r, err := config.TranslateBytes(dataIn, options)
+	dataOut, r, err := common.TranslateBytes(dataIn, options)
 	fmt.Fprintf(os.Stderr, "%s", r.String())
 	if err != nil {
 		fail("Error translating config: %v\n", err)

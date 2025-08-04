@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.)
 
-package v0_7_exp
+package tests
 
 import (
 	"fmt"
 	"testing"
 
 	baseutil "github.com/coreos/butane/base/util"
+	"github.com/coreos/butane/base/v0_7_exp"
 	"github.com/coreos/butane/config/common"
 
 	"github.com/coreos/ignition/v2/config/util"
@@ -30,7 +31,7 @@ import (
 // TestValidateResource tests that multiple sources (i.e. urls and inline) are not allowed but zero or one sources are
 func TestValidateResource(t *testing.T) {
 	tests := []struct {
-		in      Resource
+		in      v0_7_exp.Resource
 		out     error
 		errPath path.ContextPath
 	}{
@@ -39,10 +40,10 @@ func TestValidateResource(t *testing.T) {
 		{
 			// contains invalid (by the validator's definition) combinations of fields,
 			// but the translator doesn't care and we can check they all get translated at once
-			Resource{
+			v0_7_exp.Resource{
 				Source:      util.StrToPtr("http://example/com"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -51,10 +52,10 @@ func TestValidateResource(t *testing.T) {
 		},
 		// inline specified
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Inline:      util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -63,10 +64,10 @@ func TestValidateResource(t *testing.T) {
 		},
 		// local specified
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Local:       util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -75,11 +76,11 @@ func TestValidateResource(t *testing.T) {
 		},
 		// source + inline, invalid
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Source:      util.StrToPtr("data:,hello"),
 				Inline:      util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -88,11 +89,11 @@ func TestValidateResource(t *testing.T) {
 		},
 		// source + local, invalid
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Source:      util.StrToPtr("data:,hello"),
 				Local:       util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -101,11 +102,11 @@ func TestValidateResource(t *testing.T) {
 		},
 		// inline + local, invalid
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Inline:      util.StrToPtr("hello"),
 				Local:       util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -114,12 +115,12 @@ func TestValidateResource(t *testing.T) {
 		},
 		// source + inline + local, invalid
 		{
-			Resource{
+			v0_7_exp.Resource{
 				Source:      util.StrToPtr("data:,hello"),
 				Inline:      util.StrToPtr("hello"),
 				Local:       util.StrToPtr("hello"),
 				Compression: util.StrToPtr("gzip"),
-				Verification: Verification{
+				Verification: v0_7_exp.Verification{
 					Hash: util.StrToPtr("this isn't validated"),
 				},
 			},
@@ -141,11 +142,11 @@ func TestValidateResource(t *testing.T) {
 
 func TestValidateTree(t *testing.T) {
 	tests := []struct {
-		in  Tree
+		in  v0_7_exp.Tree
 		out error
 	}{
 		{
-			in:  Tree{},
+			in:  v0_7_exp.Tree{},
 			out: common.ErrTreeNoLocal,
 		},
 	}
@@ -163,21 +164,21 @@ func TestValidateTree(t *testing.T) {
 
 func TestValidateFileMode(t *testing.T) {
 	fileTests := []struct {
-		in  File
+		in  v0_7_exp.File
 		out error
 	}{
 		{
-			in:  File{},
+			in:  v0_7_exp.File{},
 			out: nil,
 		},
 		{
-			in: File{
+			in: v0_7_exp.File{
 				Mode: util.IntToPtr(0600),
 			},
 			out: nil,
 		},
 		{
-			in: File{
+			in: v0_7_exp.File{
 				Mode: util.IntToPtr(600),
 			},
 			out: common.ErrDecimalMode,
@@ -197,21 +198,21 @@ func TestValidateFileMode(t *testing.T) {
 
 func TestValidateDirMode(t *testing.T) {
 	dirTests := []struct {
-		in  Directory
+		in  v0_7_exp.Directory
 		out error
 	}{
 		{
-			in:  Directory{},
+			in:  v0_7_exp.Directory{},
 			out: nil,
 		},
 		{
-			in: Directory{
+			in: v0_7_exp.Directory{
 				Mode: util.IntToPtr(01770),
 			},
 			out: nil,
 		},
 		{
-			in: Directory{
+			in: v0_7_exp.Directory{
 				Mode: util.IntToPtr(1770),
 			},
 			out: common.ErrDecimalMode,
@@ -231,24 +232,24 @@ func TestValidateDirMode(t *testing.T) {
 
 func TestValidateFilesystem(t *testing.T) {
 	tests := []struct {
-		in      Filesystem
+		in      v0_7_exp.Filesystem
 		out     error
 		errPath path.ContextPath
 	}{
 		{
-			Filesystem{},
+			v0_7_exp.Filesystem{},
 			nil,
 			path.New("yaml"),
 		},
 		{
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device: "/dev/foo",
 			},
 			nil,
 			path.New("yaml"),
 		},
 		{
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device:        "/dev/foo",
 				Format:        util.StrToPtr("zzz"),
 				Path:          util.StrToPtr("/z"),
@@ -258,7 +259,7 @@ func TestValidateFilesystem(t *testing.T) {
 			path.New("yaml"),
 		},
 		{
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device:        "/dev/foo",
 				Format:        util.StrToPtr("swap"),
 				WithMountUnit: util.BoolToPtr(true),
@@ -267,7 +268,7 @@ func TestValidateFilesystem(t *testing.T) {
 			path.New("yaml"),
 		},
 		{
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device:        "/dev/foo",
 				WithMountUnit: util.BoolToPtr(true),
 			},
@@ -275,7 +276,7 @@ func TestValidateFilesystem(t *testing.T) {
 			path.New("yaml", "format"),
 		},
 		{
-			Filesystem{
+			v0_7_exp.Filesystem{
 				Device:        "/dev/foo",
 				Format:        util.StrToPtr("zzz"),
 				WithMountUnit: util.BoolToPtr(true),
@@ -299,14 +300,14 @@ func TestValidateFilesystem(t *testing.T) {
 // TestValidateUnit tests that multiple sources (i.e. contents and contents_local) are not allowed but zero or one sources are
 func TestValidateUnit(t *testing.T) {
 	tests := []struct {
-		in      Unit
+		in      v0_7_exp.Unit
 		out     error
 		errPath path.ContextPath
 	}{
 		{},
 		// contents specified
 		{
-			Unit{
+			v0_7_exp.Unit{
 				Contents: util.StrToPtr("hello"),
 			},
 			nil,
@@ -314,7 +315,7 @@ func TestValidateUnit(t *testing.T) {
 		},
 		// contents_local specified
 		{
-			Unit{
+			v0_7_exp.Unit{
 				ContentsLocal: util.StrToPtr("hello"),
 			},
 			nil,
@@ -322,7 +323,7 @@ func TestValidateUnit(t *testing.T) {
 		},
 		// contents + contents_local, invalid
 		{
-			Unit{
+			v0_7_exp.Unit{
 				Contents:      util.StrToPtr("hello"),
 				ContentsLocal: util.StrToPtr("hello, too"),
 			},
@@ -345,14 +346,14 @@ func TestValidateUnit(t *testing.T) {
 // TestValidateDropin tests that multiple sources (i.e. contents and contents_local) are not allowed but zero or one sources are
 func TestValidateDropin(t *testing.T) {
 	tests := []struct {
-		in      Dropin
+		in      v0_7_exp.Dropin
 		out     error
 		errPath path.ContextPath
 	}{
 		{},
 		// contents specified
 		{
-			Dropin{
+			v0_7_exp.Dropin{
 				Contents: util.StrToPtr("hello"),
 			},
 			nil,
@@ -360,7 +361,7 @@ func TestValidateDropin(t *testing.T) {
 		},
 		// contents_local specified
 		{
-			Dropin{
+			v0_7_exp.Dropin{
 				ContentsLocal: util.StrToPtr("hello"),
 			},
 			nil,
@@ -368,7 +369,7 @@ func TestValidateDropin(t *testing.T) {
 		},
 		// contents + contents_local, invalid
 		{
-			Dropin{
+			v0_7_exp.Dropin{
 				Contents:      util.StrToPtr("hello"),
 				ContentsLocal: util.StrToPtr("hello, too"),
 			},
@@ -391,11 +392,11 @@ func TestValidateDropin(t *testing.T) {
 // TestUnkownIgnitionVersion tests that butane will raise a warning but will not fail when an ignition config with an unkown version is specified
 func TestUnkownIgnitionVersion(t *testing.T) {
 	test := struct {
-		in      Resource
+		in      v0_7_exp.Resource
 		out     error
 		errPath path.ContextPath
 	}{
-		Resource{
+		v0_7_exp.Resource{
 			Inline: util.StrToPtr(`{"ignition": {"version": "10.0.0"}}`),
 		},
 		common.ErrUnkownIgnitionVersion,
