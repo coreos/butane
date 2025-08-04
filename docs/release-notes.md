@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Add support for [`gomplate`](https://github.com/hairyhenderson/gomplate) integration, opt-in via `--enable-gomplate`
+
 ### Bug fixes
 
 - Stop overriding default LUKS cipher algorithm in FIPS mode _(openshift 4.20.0-exp)_

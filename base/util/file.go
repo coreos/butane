@@ -10,7 +10,7 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.)
+// limitations under the License.
 
 package util
 
@@ -47,7 +47,15 @@ func ReadLocalFile(configPath, filesDir string) ([]byte, error) {
 	if err := EnsurePathWithinFilesDir(filePath, filesDir); err != nil {
 		return nil, err
 	}
-	return os.ReadFile(filePath)
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// TODO: keep old branch, if based on version?
+	return GomplateReadLocalFile(file)
 }
 
 // CheckForDecimalMode fails if the specified mode appears to have been
