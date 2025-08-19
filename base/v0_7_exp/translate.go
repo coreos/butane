@@ -82,13 +82,13 @@ func (c Config) ToIgn3_6Unvalidated(options common.TranslateOptions) (types.Conf
 	ret := types.Config{}
 
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateIgnition)
-	tr.AddCustomTranslator(translateFile)
-	tr.AddCustomTranslator(translateDirectory)
-	tr.AddCustomTranslator(translateLink)
-	tr.AddCustomTranslator(translateResource)
-	tr.AddCustomTranslator(translatePasswdUser)
-	tr.AddCustomTranslator(translateUnit)
+	tr.AddCustomTranslator(TranslateIgnition)
+	tr.AddCustomTranslator(TranslateFile)
+	tr.AddCustomTranslator(TranslateDirectory)
+	tr.AddCustomTranslator(TranslateLink)
+	tr.AddCustomTranslator(TranslateResource)
+	tr.AddCustomTranslator(TranslatePasswdUser)
+	tr.AddCustomTranslator(TranslateUnit)
 
 	tm, r := translate.Prefixed(tr, "ignition", &c.Ignition, &ret.Ignition)
 	tm.AddTranslation(path.New("yaml", "version"), path.New("json", "ignition", "version"))
@@ -110,9 +110,9 @@ func (c Config) ToIgn3_6Unvalidated(options common.TranslateOptions) (types.Conf
 	return ret, tm, r
 }
 
-func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
+func TranslateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(TranslateResource)
 	to.Version = types.MaxVersion.String()
 	tm, r = translate.Prefixed(tr, "config", &from.Config, &to.Config)
 	translate.MergeP(tr, tm, &r, "proxy", &from.Proxy, &to.Proxy)
@@ -121,9 +121,9 @@ func translateIgnition(from Ignition, options common.TranslateOptions) (to types
 	return
 }
 
-func translateFile(from File, options common.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
+func TranslateFile(from File, options common.TranslateOptions) (to types.File, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(TranslateResource)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
 	translate.MergeP(tr, tm, &r, "append", &from.Append, &to.Append)
@@ -134,7 +134,7 @@ func translateFile(from File, options common.TranslateOptions) (to types.File, t
 	return
 }
 
-func translateResource(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
+func TranslateResource(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	translate.MergeP2(tr, tm, &r, "http_headers", &from.HTTPHeaders, "httpHeaders", &to.HTTPHeaders)
@@ -148,6 +148,7 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			r.AddOnError(c, err)
 			return
 		}
+
 		// Validating the contents of the local file from here since there is no way to
 		// get both the filename and filedirectory in the Validate context
 		if strings.HasPrefix(c.String(), "$.ignition.config") {
@@ -157,39 +158,36 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 				return
 			}
 		}
-
-		src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
-		if err != nil {
-			r.AddOnError(c, err)
-			return
-		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+		contentToURL(contents, c, &r, &to, &tm, options)
 	}
 
 	if from.Inline != nil {
 		c := path.New("yaml", "inline")
+		contentToURL([]byte(*from.Inline), c, &r, &to, &tm, options)
+	}
 
-		src, compression, err := baseutil.MakeDataURL([]byte(*from.Inline), to.Compression, !options.NoResourceAutoCompression)
+	if from.LocalButane != nil {
+		c := path.New("yaml", "local_butane")
+
+		contents, err := baseutil.ReadLocalFile(*from.LocalButane, options.FilesDir)
 		if err != nil {
 			r.AddOnError(c, err)
 			return
 		}
-		to.Source = &src
-		tm.AddTranslation(c, path.New("json", "source"))
-		if compression != nil {
-			to.Compression = compression
-			tm.AddTranslation(c, path.New("json", "compression"))
-		}
+
+		translateButaneResource(contents, c, &r, &to, &tm, options)
 	}
+
+	if from.InlineButane != nil {
+		c := path.New("yaml", "inline_butane")
+
+		translateButaneResource([]byte(*from.InlineButane), c, &r, &to, &tm, options)
+	}
+
 	return
 }
 
-func translateDirectory(from Directory, options common.TranslateOptions) (to types.Directory, tm translate.TranslationSet, r report.Report) {
+func TranslateDirectory(from Directory, options common.TranslateOptions) (to types.Directory, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
@@ -199,7 +197,7 @@ func translateDirectory(from Directory, options common.TranslateOptions) (to typ
 	return
 }
 
-func translateLink(from Link, options common.TranslateOptions) (to types.Link, tm translate.TranslationSet, r report.Report) {
+func TranslateLink(from Link, options common.TranslateOptions) (to types.Link, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "group", &from.Group, &to.Group)
 	translate.MergeP(tr, tm, &r, "user", &from.User, &to.User)
@@ -210,7 +208,7 @@ func translateLink(from Link, options common.TranslateOptions) (to types.Link, t
 	return
 }
 
-func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to types.PasswdUser, tm translate.TranslationSet, r report.Report) {
+func TranslatePasswdUser(from PasswdUser, options common.TranslateOptions) (to types.PasswdUser, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "gecos", &from.Gecos, &to.Gecos)
 	translate.MergeP(tr, tm, &r, "groups", &from.Groups, &to.Groups)
@@ -255,9 +253,9 @@ func translatePasswdUser(from PasswdUser, options common.TranslateOptions) (to t
 	return
 }
 
-func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
+func TranslateUnit(from Unit, options common.TranslateOptions) (to types.Unit, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateDropin)
+	tr.AddCustomTranslator(TranslateDropin)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "dropins", &from.Dropins, &to.Dropins)
 	translate.MergeP(tr, tm, &r, "enabled", &from.Enabled, &to.Enabled)
@@ -278,7 +276,7 @@ func translateUnit(from Unit, options common.TranslateOptions) (to types.Unit, t
 	return
 }
 
-func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
+func TranslateDropin(from Dropin, options common.TranslateOptions) (to types.Dropin, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "contents", &from.Contents, &to.Contents)
 	translate.MergeP(tr, tm, &r, "name", &from.Name, &to.Name)
@@ -508,4 +506,42 @@ func mountUnitFromFS(fs Filesystem, remote bool) types.Unit {
 		Enabled:  util.BoolToPtr(true),
 		Contents: util.StrToPtr(contents.String()),
 	}
+}
+
+func contentToURL(contents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
+	src, compression, err := baseutil.MakeDataURL(contents, to.Compression, !options.NoResourceAutoCompression)
+	if err != nil {
+		r.AddOnError(c, err)
+		return
+	}
+	to.Source = &src
+	tm.AddTranslation(c, path.New("json", "source"))
+	if compression != nil {
+		to.Compression = compression
+		tm.AddTranslation(c, path.New("json", "compression"))
+	}
+}
+
+func translateButaneResource(butaneContents []byte, c path.ContextPath, r *report.Report, to *types.Resource, tm *translate.TranslationSet, options common.TranslateOptions) {
+	contents, rp, err := common.TranslateBytes(butaneContents, common.TranslateBytesOptions{
+		Pretty:           false,
+		Raw:              true,
+		TranslateOptions: options,
+	})
+	r.Merge(rp)
+	if err != nil {
+		return
+	}
+
+	// Validating the contents of the local file from here since there is no way to
+	// get both the filename and filedirectory in the Validate context
+	if strings.HasPrefix(c.String(), "$.ignition.config") {
+		rp, err := ValidateIgnitionConfig(c, contents)
+		r.Merge(rp)
+		if err != nil {
+			return
+		}
+	}
+
+	contentToURL(contents, c, r, to, tm, options)
 }
