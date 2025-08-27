@@ -30,7 +30,7 @@ import (
 	"github.com/coreos/ignition/v2/config/util"
 	"gopkg.in/yaml.v3"
 
-	"github.com/coreos/butane/config"
+	_ "github.com/coreos/butane/config"
 	"github.com/coreos/butane/config/common"
 	buUtil "github.com/coreos/butane/config/util"
 
@@ -298,7 +298,7 @@ func getIgnitionVersion(variant string, version semver.Version) (semver.Version,
 	}
 
 	// translate to Ignition config
-	ign, _, err := config.TranslateBytes(bu, common.TranslateBytesOptions{
+	ign, _, err := common.TranslateBytes(bu, common.TranslateBytesOptions{
 		Raw: true,
 	})
 	if err != nil {
