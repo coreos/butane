@@ -15,8 +15,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/coreos/butane/config/common"
 	fcos1_0 "github.com/coreos/butane/config/fcos/v1_0"
 	fcos1_1 "github.com/coreos/butane/config/fcos/v1_1"
@@ -48,108 +46,40 @@ import (
 	r4e1_1 "github.com/coreos/butane/config/r4e/v1_1"
 	r4e1_2_exp "github.com/coreos/butane/config/r4e/v1_2_exp"
 
-	"github.com/coreos/go-semver/semver"
 	"github.com/coreos/vcontext/report"
-	"gopkg.in/yaml.v3"
 )
-
-var (
-	registry = map[string]translator{}
-)
-
-// Fields that must be included in the root struct of every spec version.
-type commonFields struct {
-	Version string `yaml:"version"`
-	Variant string `yaml:"variant"`
-}
 
 func init() {
-	RegisterTranslator("fcos", "1.0.0", fcos1_0.ToIgn3_0Bytes)
-	RegisterTranslator("fcos", "1.1.0", fcos1_1.ToIgn3_1Bytes)
-	RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
-	RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
-	RegisterTranslator("fcos", "1.4.0", fcos1_4.ToIgn3_3Bytes)
-	RegisterTranslator("fcos", "1.5.0", fcos1_5.ToIgn3_4Bytes)
-	RegisterTranslator("fcos", "1.6.0", fcos1_6.ToIgn3_5Bytes)
-	RegisterTranslator("fcos", "1.7.0-experimental", fcos1_7_exp.ToIgn3_6Bytes)
-	RegisterTranslator("flatcar", "1.0.0", flatcar1_0.ToIgn3_3Bytes)
-	RegisterTranslator("flatcar", "1.1.0", flatcar1_1.ToIgn3_4Bytes)
-	RegisterTranslator("flatcar", "1.2.0-experimental", flatcar1_2_exp.ToIgn3_6Bytes)
-	RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
-	RegisterTranslator("openshift", "4.9.0", openshift4_9.ToConfigBytes)
-	RegisterTranslator("openshift", "4.10.0", openshift4_10.ToConfigBytes)
-	RegisterTranslator("openshift", "4.11.0", openshift4_11.ToConfigBytes)
-	RegisterTranslator("openshift", "4.12.0", openshift4_12.ToConfigBytes)
-	RegisterTranslator("openshift", "4.13.0", openshift4_13.ToConfigBytes)
-	RegisterTranslator("openshift", "4.14.0", openshift4_14.ToConfigBytes)
-	RegisterTranslator("openshift", "4.15.0", openshift4_15.ToConfigBytes)
-	RegisterTranslator("openshift", "4.16.0", openshift4_16.ToConfigBytes)
-	RegisterTranslator("openshift", "4.17.0", openshift4_17.ToConfigBytes)
-	RegisterTranslator("openshift", "4.18.0", openshift4_18.ToConfigBytes)
-	RegisterTranslator("openshift", "4.19.0", openshift4_19.ToConfigBytes)
-	RegisterTranslator("openshift", "4.20.0-experimental", openshift4_20_exp.ToConfigBytes)
-	RegisterTranslator("r4e", "1.0.0", r4e1_0.ToIgn3_3Bytes)
-	RegisterTranslator("r4e", "1.1.0", r4e1_1.ToIgn3_4Bytes)
-	RegisterTranslator("r4e", "1.2.0-experimental", r4e1_2_exp.ToIgn3_6Bytes)
-	RegisterTranslator("fiot", "1.0.0", fiot1_0.ToIgn3_4Bytes)
-	RegisterTranslator("fiot", "1.1.0-experimental", fiot1_1_exp.ToIgn3_6Bytes)
-	RegisterTranslator("rhcos", "0.1.0", unsupportedRhcosVariant)
-}
-
-// RegisterTranslator registers a translator for the specified variant and
-// version to be available for use by TranslateBytes.  This is only needed
-// by users implementing their own translators outside the Butane package.
-func RegisterTranslator(variant, version string, trans translator) {
-	key := fmt.Sprintf("%s+%s", variant, version)
-	if _, ok := registry[key]; ok {
-		panic("tried to reregister existing translator")
-	}
-	registry[key] = trans
-}
-
-func getTranslator(variant string, version semver.Version) (translator, error) {
-	t, ok := registry[fmt.Sprintf("%s+%s", variant, version.String())]
-	if !ok {
-		return nil, common.ErrUnknownVersion{
-			Variant: variant,
-			Version: version,
-		}
-	}
-	return t, nil
-}
-
-// translators take a raw config and translate it to a raw Ignition config. The report returned should include any
-// errors, warnings, etc. and may or may not be fatal. If report is fatal, or other errors are encountered while translating
-// translators should return an error.
-type translator func([]byte, common.TranslateBytesOptions) ([]byte, report.Report, error)
-
-// TranslateBytes wraps all of the individual TranslateBytes functions in a switch that determines the correct one to call.
-// TranslateBytes returns an error if the report had fatal errors or if other errors occured during translation.
-func TranslateBytes(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
-	// first determine version; this will ignore most fields
-	ver := commonFields{}
-	if err := yaml.Unmarshal(input, &ver); err != nil {
-		return nil, report.Report{}, common.ErrUnmarshal{
-			Detail: err.Error(),
-		}
-	}
-
-	if ver.Variant == "" {
-		return nil, report.Report{}, common.ErrNoVariant
-	}
-
-	tmp, err := semver.NewVersion(ver.Version)
-	if err != nil {
-		return nil, report.Report{}, common.ErrInvalidVersion
-	}
-	version := *tmp
-
-	translator, err := getTranslator(ver.Variant, version)
-	if err != nil {
-		return nil, report.Report{}, err
-	}
-
-	return translator(input, options)
+	common.RegisterTranslator("fcos", "1.0.0", fcos1_0.ToIgn3_0Bytes)
+	common.RegisterTranslator("fcos", "1.1.0", fcos1_1.ToIgn3_1Bytes)
+	common.RegisterTranslator("fcos", "1.2.0", fcos1_2.ToIgn3_2Bytes)
+	common.RegisterTranslator("fcos", "1.3.0", fcos1_3.ToIgn3_2Bytes)
+	common.RegisterTranslator("fcos", "1.4.0", fcos1_4.ToIgn3_3Bytes)
+	common.RegisterTranslator("fcos", "1.5.0", fcos1_5.ToIgn3_4Bytes)
+	common.RegisterTranslator("fcos", "1.6.0", fcos1_6.ToIgn3_5Bytes)
+	common.RegisterTranslator("fcos", "1.7.0-experimental", fcos1_7_exp.ToIgn3_6Bytes)
+	common.RegisterTranslator("flatcar", "1.0.0", flatcar1_0.ToIgn3_3Bytes)
+	common.RegisterTranslator("flatcar", "1.1.0", flatcar1_1.ToIgn3_4Bytes)
+	common.RegisterTranslator("flatcar", "1.2.0-experimental", flatcar1_2_exp.ToIgn3_6Bytes)
+	common.RegisterTranslator("openshift", "4.8.0", openshift4_8.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.9.0", openshift4_9.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.10.0", openshift4_10.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.11.0", openshift4_11.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.12.0", openshift4_12.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.13.0", openshift4_13.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.14.0", openshift4_14.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.15.0", openshift4_15.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.16.0", openshift4_16.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.17.0", openshift4_17.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.18.0", openshift4_18.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.19.0", openshift4_19.ToConfigBytes)
+	common.RegisterTranslator("openshift", "4.20.0-experimental", openshift4_20_exp.ToConfigBytes)
+	common.RegisterTranslator("r4e", "1.0.0", r4e1_0.ToIgn3_3Bytes)
+	common.RegisterTranslator("r4e", "1.1.0", r4e1_1.ToIgn3_4Bytes)
+	common.RegisterTranslator("r4e", "1.2.0-experimental", r4e1_2_exp.ToIgn3_6Bytes)
+	common.RegisterTranslator("fiot", "1.0.0", fiot1_0.ToIgn3_4Bytes)
+	common.RegisterTranslator("fiot", "1.1.0-experimental", fiot1_1_exp.ToIgn3_6Bytes)
+	common.RegisterTranslator("rhcos", "0.1.0", unsupportedRhcosVariant)
 }
 
 func unsupportedRhcosVariant(input []byte, options common.TranslateBytesOptions) ([]byte, report.Report, error) {
