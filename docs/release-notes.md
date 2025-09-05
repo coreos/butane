@@ -8,9 +8,13 @@ nav_order: 9
 
 ### Features
 
+- Stabilize OpenShift spec 4.20.0, targeting Ignition spec 3.5.0
+- Add OpenShift spec 4.21.0-experimental, targeting Ignition spec
+  3.6.0-experimental
+
 ### Bug fixes
 
-- Stop overriding default LUKS cipher algorithm in FIPS mode _(openshift 4.20.0-exp)_
+- Stop overriding default LUKS cipher algorithm in FIPS mode _(openshift 4.20.0)_
 
 ### Misc. changes
 
@@ -32,7 +36,7 @@ nav_order: 9
 ### Bug fixes
 
 - Fail if LUKS method is not specified while `boot_device.luks.device` is set _(fcos 1.7.0-exp)_
-- Validate kernel arguments when CEX support is enabled on s390x _(4.19.0 and 4.20.0-experimental)_
+- Validate kernel arguments when CEX support is enabled on s390x _(4.19.0 and 4.20.0)_
 
 ### Misc. changes
 
