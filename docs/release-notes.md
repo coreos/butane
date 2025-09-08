@@ -4,7 +4,17 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.25.0 (unreleased)
+## Upcoming Butane 0.26.0 (unreleased)
+
+### Features
+
+### Bug fixes
+
+### Misc. changes
+
+### Docs changes
+
+## Butane 0.25.0 (2025-09-08)
 
 ### Features
 
@@ -16,12 +26,9 @@ nav_order: 9
 
 - Stop overriding default LUKS cipher algorithm in FIPS mode _(openshift 4.20.0)_
 
-### Misc. changes
-
 ### Docs changes
 
 - Add missing examples in upgrading-openshift _(openshift 4.14)_
-
 
 ## Butane 0.24.0 (2025-05-27)
 
