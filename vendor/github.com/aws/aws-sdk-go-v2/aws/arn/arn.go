@@ -75,9 +75,8 @@ func Parse(arn string) (ARN, error) {
 	}, nil
 }
 
-// IsARN returns whether the given string is an ARN by looking for
-// whether the string starts with "arn:" and contains the correct number
-// of sections delimited by colons(:).
+// IsARN returns whether the given string is an arn
+// by looking for whether the string starts with arn:
 func IsARN(arn string) bool {
 	return strings.HasPrefix(arn, arnPrefix) && strings.Count(arn, ":") >= arnSections-1
 }
