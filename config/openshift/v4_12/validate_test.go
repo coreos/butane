@@ -127,7 +127,7 @@ func TestReportCorrelation(t *testing.T) {
                            files:
                            - path: /z
                              q: z`,
-			"Unused key q",
+			"unused key q",
 			9,
 		},
 		// Butane YAML validation error

@@ -55,25 +55,6 @@ storage:
         inline: REPLACE-THIS-WITH-YOUR-KEY-MATERIAL
 ```
 
-### Special mode bits supported
-
-The `mode` field of the `files` and `directories` sections now respects the setuid, setgid, and sticky bits. Previous spec versions ignore these bits.
-
-<!-- butane-config -->
-```yaml
-variant: flatcar
-version: 1.1.0
-storage:
-  files:
-    - path: /usr/local/bin/setuid
-      mode: 04755
-      contents:
-        source: https://rootkit.example.com/setuid
-  directories:
-    - path: /var/local/tmp
-      mode: 01777
-```
-
 ### AWS S3 access point ARN support
 
 The sections which allow fetching a remote URL now accept AWS S3 access point ARNs (`arn:aws:s3:<region>:<account>:accesspoint/<accesspoint>/object/<path>`) in the `source` field.
