@@ -333,12 +333,12 @@ func (c Config) processTrees(ret *types.Config, options common.TranslateOptions)
 			destBaseDir = *tree.Path
 		}
 
-		walkTree(yamlPath, &ts, &r, t, srcBaseDir, destBaseDir, options)
+		walkTree(yamlPath, &ts, &r, t, tree.User, tree.Group, tree.FileMode, tree.DirMode, srcBaseDir, destBaseDir, options)
 	}
 	return ts, r
 }
 
-func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report.Report, t *nodeTracker, srcBaseDir, destBaseDir string, options common.TranslateOptions) {
+func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report.Report, t *nodeTracker, user NodeUser, group NodeGroup, fileMode *int, dirMode *int, srcBaseDir, destBaseDir string, options common.TranslateOptions) {
 	// The strategy for errors within WalkFunc is to add an error to
 	// the report and return nil, so walking continues but translation
 	// will fail afterward.
@@ -371,6 +371,14 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 				i, file = t.AddFile(types.File{
 					Node: types.Node{
 						Path: destPath,
+						User: types.NodeUser{
+							ID:   user.ID,
+							Name: user.Name,
+						},
+						Group: types.NodeGroup{
+							ID:   group.ID,
+							Name: group.Name,
+						},
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "files", i), file)
@@ -400,6 +408,9 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 				if info.Mode()&0111 != 0 {
 					mode = 0755
 				}
+				if fileMode != nil {
+					mode = *fileMode
+				}
 				file.Mode = &mode
 				ts.AddTranslation(yamlPath, path.New("json", "storage", "files", i, "mode"))
 			}
@@ -418,6 +429,14 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 				i, link = t.AddLink(types.Link{
 					Node: types.Node{
 						Path: destPath,
+						User: types.NodeUser{
+							ID:   user.ID,
+							Name: user.Name,
+						},
+						Group: types.NodeGroup{
+							ID:   group.ID,
+							Name: group.Name,
+						},
 					},
 				})
 				ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "links", i), link)

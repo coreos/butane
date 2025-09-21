@@ -279,6 +279,24 @@ root:
               desc: the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
             - name: path
               desc: the path of the tree within the target system. Defaults to `/`.
+            - name: file_mode
+              desc: Custom permissions to apply to files
+            - name: dir_mode
+              desc: Custom permissions to apply to directories
+            - name: user
+              desc: User owner of the tree
+              children:
+              - name: name
+                desc: username
+              - name: id
+                desc: uid
+            - name: group
+              desc: Group owner of the tree
+              children:
+              - name: name
+                desc: group name
+              - name: id
+                desc: gid
     - name: systemd
       children:
         - name: units
