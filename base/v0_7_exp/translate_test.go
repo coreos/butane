@@ -1212,6 +1212,7 @@ func TestTranslateTree(t *testing.T) {
 		inDirs     []Directory
 		inLinks    []Link
 		outFiles   []types.File
+		outDirs    []types.Directory
 		outLinks   []types.Link
 		report     string
 		skip       func(t *testing.T)
@@ -1648,6 +1649,7 @@ func TestTranslateTree(t *testing.T) {
 			dirFiles: map[string]os.FileMode{
 				"tree/file":        0600,
 				"tree/subdir/file": 0644,
+				"tree2/file":       0600,
 			},
 			dirLinks: map[string]string{
 				"tree/subdir/link": "../file",
@@ -1661,6 +1663,49 @@ func TestTranslateTree(t *testing.T) {
 					},
 					Group: NodeGroup{
 						ID: util.IntToPtr(1000),
+					},
+				},
+				{
+					Local:   "tree2",
+					DirMode: util.IntToPtr(0777),
+					Path:    util.StrToPtr("/etc"),
+				},
+			},
+			outDirs: []types.Directory{
+				{
+					Node: types.Node{
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+						Path: "/",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0755),
+					},
+				},
+				{
+					Node: types.Node{
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+						Path: "/subdir",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0755),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/etc",
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0777),
 					},
 				},
 			},
@@ -1699,6 +1744,18 @@ func TestTranslateTree(t *testing.T) {
 							Compression: util.StrToPtr(""),
 						},
 						Mode: util.IntToPtr(0777),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/etc/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source:      util.StrToPtr("data:,tree2%2Ffile"),
+							Compression: util.StrToPtr(""),
+						},
+						Mode: util.IntToPtr(0644),
 					},
 				},
 			},
@@ -1804,7 +1861,7 @@ func TestTranslateTree(t *testing.T) {
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 
 			assert.Equal(t, test.outFiles, actual.Storage.Files, "files mismatch")
-			assert.Equal(t, []types.Directory(nil), actual.Storage.Directories, "directories mismatch")
+			assert.Equal(t, test.outDirs, actual.Storage.Directories, "directories mismatch")
 			assert.Equal(t, test.outLinks, actual.Storage.Links, "links mismatch")
 		})
 	}

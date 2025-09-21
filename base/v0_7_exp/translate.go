@@ -355,7 +355,46 @@ func walkTree(yamlPath path.ContextPath, ts *translate.TranslationSet, r *report
 		destPath := slashpath.Join(destBaseDir, filepath.ToSlash(relPath))
 
 		if info.Mode().IsDir() {
-			return nil
+			// If nothing custom is required we skip directories generation
+			if dirMode == nil &&
+				user.ID == nil && user.Name == nil &&
+				group.ID == nil && group.Name == nil {
+				return nil
+			}
+
+			_, dir := t.GetDir(destPath)
+			if dir != nil {
+				r.AddOnError(yamlPath, common.ErrNodeExists)
+				return nil
+			}
+			if t.Exists(destPath) {
+				r.AddOnError(yamlPath, common.ErrNodeExists)
+				return nil
+			}
+			mode := util.IntToPtr(0755)
+			if dirMode != nil {
+				mode = dirMode
+			}
+			i, dir := t.AddDir(types.Directory{
+				Node: types.Node{
+					Path: destPath,
+					User: types.NodeUser{
+						ID:   user.ID,
+						Name: user.Name,
+					},
+					Group: types.NodeGroup{
+						ID:   group.ID,
+						Name: group.Name,
+					},
+				},
+				DirectoryEmbedded1: types.DirectoryEmbedded1{
+					Mode: mode,
+				},
+			})
+			ts.AddFromCommonSource(yamlPath, path.New("json", "storage", "directories", i), dir)
+			if i == 0 {
+				ts.AddTranslation(yamlPath, path.New("json", "storage", "directories"))
+			}
 		} else if info.Mode().IsRegular() {
 			i, file := t.GetFile(destPath)
 			if file != nil {
