@@ -8,6 +8,8 @@ nav_order: 9
 
 ### Features
 
+- Add support for mode and ownership settings for trees.
+
 ### Bug fixes
 
 ### Misc. changes
