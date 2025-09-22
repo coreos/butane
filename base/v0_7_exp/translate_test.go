@@ -1776,6 +1776,28 @@ func TestTranslateTree(t *testing.T) {
 				},
 			},
 		},
+		// Overwrite via tree ownership fails
+		{
+			dirFiles: map[string]os.FileMode{
+				"tree/etc/file": 0600,
+			},
+			inDirs: []Directory{
+				{Path: "/etc"},
+			},
+			inTrees: []Tree{
+				{
+					Local:    "tree",
+					FileMode: util.IntToPtr(0777),
+					User: NodeUser{
+						Name: util.StrToPtr("bovik"),
+					},
+					Group: NodeGroup{
+						ID: util.IntToPtr(1000),
+					},
+				},
+			},
+			report: "error at $.storage.trees.0: " + common.ErrNodeExists.Error() + "\n",
+		},
 	}
 
 	for i, test := range tests {
