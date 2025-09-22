@@ -256,9 +256,9 @@ root:
               use: mode
         - name: trees
           after: $
-          desc: a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+          desc: a list of local directory trees to be embedded in the config. Ownership, file modes (using `file_mode`) and directories modes (using `dir_mode`) can be specified for the tree. If not specified, ownership is not preserved and file modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
           transforms:
-            - regex: Ownership is not preserved.
+            - regex: If not specified, ownership is not preserved
               replacement: Symlinks must not be present. $0
               if:
                 - variant: openshift

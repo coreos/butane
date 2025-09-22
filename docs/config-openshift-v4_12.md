@@ -132,7 +132,7 @@ The OpenShift configuration is a YAML document conforming to the following speci
         * **pin** (string): the clevis pin.
         * **config** (string): the clevis configuration JSON.
         * **_needs_network_** (boolean): whether or not the device requires networking.
-  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Symlinks must not be present. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. File attributes can be overridden by creating a corresponding entry in the `files` section; such entries must omit `contents`.
+  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership, file modes (using `file_mode`) and directories modes (using `dir_mode`) can be specified for the tree. Symlinks must not be present. If not specified, ownership is not preserved and file modes are set to 0755 if the local file is executable or 0644 otherwise. File attributes can be overridden by creating a corresponding entry in the `files` section; such entries must omit `contents`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
 * **_systemd_** (object): describes the desired state of the systemd units.

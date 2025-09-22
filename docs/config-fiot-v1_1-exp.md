@@ -109,7 +109,7 @@ The Fedora IoT configuration is a YAML document conforming to the following spec
       * **_name_** (string): the group name of the group.
     * **target** (string): the target path of the link
     * **_hard_** (boolean): a symbolic link is created if this is false, a hard one if this is true.
-  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+  * **_trees_** (list of objects): a list of local directory trees to be embedded in the config. Ownership, file modes (using `file_mode`) and directories modes (using `dir_mode`) can be specified for the tree. If not specified, ownership is not preserved and file modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
     * **local** (string): the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
     * **_path_** (string): the path of the tree within the target system. Defaults to `/`.
     * **_file_mode_** (integer): Custom permissions to apply to files
