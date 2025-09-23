@@ -19,6 +19,7 @@ There are no breaking changes between versions 1.5.0 and 1.6.0 of the `fcos` con
 
 The following is a list of notable new features.
 
+
 ### LUKS CEX support
 
 The `luks` sections in `storage` and `boot_device` gained a `cex` field. If enabled, this will configure an encrypted root filesystem on a s390x system using IBM Crypto Express (CEX) card.
@@ -169,25 +170,6 @@ storage:
         - "--perf-no_write_workqueue"
       clevis:
         tpm2: true
-```
-
-### Special mode bits supported
-
-The `mode` field of the `files` and `directories` sections now respects the setuid, setgid, and sticky bits. Previous spec versions ignore these bits.
-
-<!-- butane-config -->
-```yaml
-variant: fcos
-version: 1.5.0
-storage:
-  files:
-    - path: /usr/local/bin/setuid
-      mode: 04755
-      contents:
-        source: https://rootkit.example.com/setuid
-  directories:
-    - path: /var/local/tmp
-      mode: 01777
 ```
 
 ### AWS S3 access point ARN support
