@@ -14,6 +14,16 @@ nav_order: 9
 
 ### Docs changes
 
+## Butane 0.25.1 (2025-09-24)
+
+### Docs changes
+
+- Update docs around the use of setuid/gid from Ignition [bug](coreos/ignition#2042)'
+
+### Misc. changes
+
+- Update vendor'd Ignition dependency to point to latest v2.23.0
+
 ## Butane 0.25.0 (2025-09-08)
 
 ### Features
