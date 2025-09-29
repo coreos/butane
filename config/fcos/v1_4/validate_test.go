@@ -164,7 +164,7 @@ func TestValidateBootDevice(t *testing.T) {
 			BootDevice{
 				Layout: util.StrToPtr("sparc"),
 			},
-			common.ErrUnknownBootDeviceLayout,
+			common.ErrUnknownBootDeviceLayoutLegacy,
 			path.New("yaml", "layout"),
 		},
 		// only one mirror device
