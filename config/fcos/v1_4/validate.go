@@ -26,7 +26,7 @@ func (d BootDevice) Validate(c path.ContextPath) (r report.Report) {
 		switch *d.Layout {
 		case "aarch64", "ppc64le", "x86_64":
 		default:
-			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayout)
+			r.AddOnError(c.Append("layout"), common.ErrUnknownBootDeviceLayoutLegacy)
 		}
 	}
 	r.Merge(d.Mirror.Validate(c.Append("mirror")))
