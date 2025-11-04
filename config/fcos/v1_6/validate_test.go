@@ -246,6 +246,7 @@ func TestValidateBootDevice(t *testing.T) {
 		// only one mirror device
 		{
 			BootDevice{
+				Layout: util.StrToPtr("x86_64"),
 				Mirror: BootDeviceMirror{
 					Devices: []string{"/dev/vda"},
 				},
@@ -303,6 +304,17 @@ func TestValidateBootDevice(t *testing.T) {
 			common.ErrLuksBootDeviceBadName,
 			path.New("yaml", "layout"),
 		},
+		// mirror with layout should succeed
+		{
+			BootDevice{
+				Layout: util.StrToPtr("aarch64"),
+				Mirror: BootDeviceMirror{
+					Devices: []string{"/dev/vda", "/dev/vdb"},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
 	}
 
 	for i, test := range tests {
@@ -311,6 +323,33 @@ func TestValidateBootDevice(t *testing.T) {
 			baseutil.VerifyReport(t, test.in, actual)
 			expected := report.Report{}
 			expected.AddOnError(test.errPath, test.out)
+			assert.Equal(t, expected, actual, "bad validation report")
+		})
+	}
+
+	warningTests := []struct {
+		in      BootDevice
+		out     error
+		errPath path.ContextPath
+	}{
+		// mirror without layout
+		{
+			BootDevice{
+				Mirror: BootDeviceMirror{
+					Devices: []string{"/dev/vda", "/dev/vdb"},
+				},
+			},
+			common.ErrMirrorRequiresLayout,
+			path.New("yaml", "mirror"),
+		},
+	}
+
+	for i, test := range warningTests {
+		t.Run(fmt.Sprintf("validate warning %d", i), func(t *testing.T) {
+			actual := test.in.Validate(path.New("yaml"))
+			baseutil.VerifyReport(t, test.in, actual)
+			expected := report.Report{}
+			expected.AddOnWarn(test.errPath, test.out)
 			assert.Equal(t, expected, actual, "bad validation report")
 		})
 	}

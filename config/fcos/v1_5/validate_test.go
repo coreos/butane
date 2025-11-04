@@ -170,6 +170,7 @@ func TestValidateBootDevice(t *testing.T) {
 		// only one mirror device
 		{
 			BootDevice{
+				Layout: util.StrToPtr("x86_64"),
 				Mirror: BootDeviceMirror{
 					Devices: []string{"/dev/vda"},
 				},

@@ -6,13 +6,21 @@ nav_order: 9
 
 ## Upcoming Butane 0.26.0 (unreleased)
 
+### Breaking changes
+
+- Require `boot_device.layout` when using `boot_device.mirror` _(fcos 1.7.0-exp)_
+
 ### Features
 
 ### Bug fixes
 
+- Warn for `boot_device.layout` to be specified when using `boot_device.mirror` _(fcos 1.3.0-1.6.0)_
+
 ### Misc. changes
 
 ### Docs changes
+
+- Update `boot_device.mirror` examples to specify `boot_device.layout`
 
 ## Butane 0.25.1 (2025-09-24)
 
