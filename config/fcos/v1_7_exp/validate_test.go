@@ -246,6 +246,7 @@ func TestValidateBootDevice(t *testing.T) {
 		// only one mirror device
 		{
 			BootDevice{
+				Layout: util.StrToPtr("x86_64"),
 				Mirror: BootDeviceMirror{
 					Devices: []string{"/dev/vda"},
 				},
@@ -302,6 +303,27 @@ func TestValidateBootDevice(t *testing.T) {
 			},
 			common.ErrLuksBootDeviceBadName,
 			path.New("yaml", "layout"),
+		},
+		// mirror with layout should succeed
+		{
+			BootDevice{
+				Layout: util.StrToPtr("aarch64"),
+				Mirror: BootDeviceMirror{
+					Devices: []string{"/dev/vda", "/dev/vdb"},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
+		// mirror without layout
+		{
+			BootDevice{
+				Mirror: BootDeviceMirror{
+					Devices: []string{"/dev/vda", "/dev/vdb"},
+				},
+			},
+			common.ErrMirrorRequiresLayout,
+			path.New("yaml", "mirror"),
 		},
 	}
 

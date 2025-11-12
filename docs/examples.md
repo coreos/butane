@@ -363,6 +363,7 @@ This example replicates all default partitions on the boot disk across multiple 
 variant: fcos
 version: 1.3.0
 boot_device:
+  layout: x86_64
   mirror:
     devices:
       - /dev/sda
@@ -376,6 +377,7 @@ This example configures a mirrored boot disk with a TPM2-encrypted root filesyst
 variant: fcos
 version: 1.3.0
 boot_device:
+  layout: x86_64
   luks:
     tpm2: true
   mirror:
