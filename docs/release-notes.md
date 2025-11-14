@@ -12,6 +12,8 @@ nav_order: 9
 
 ### Features
 
+- Add support for mode and ownership settings for trees.
+
 ### Bug fixes
 
 - Warn for `boot_device.layout` to be specified when using `boot_device.mirror` _(fcos 1.3.0-1.6.0)_
