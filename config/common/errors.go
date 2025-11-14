@@ -86,6 +86,7 @@ var (
 	ErrUserNameSupport          = errors.New("users other than \"core\" are not supported in this spec version")
 	ErrKernelArgumentSupport    = errors.New("this section cannot be used for kernel arguments in this spec version; use openshift.kernel_arguments instead")
 	ErrMissingKernelArgumentCex = errors.New("'rd.luks.key=/etc/luks/cex.key' must be set as kernel argument when CEX is enabled for the boot device")
+	ErrGrubConfigSupport        = errors.New("GRUB configuration is not supported in this version")
 
 	// Storage
 	ErrClevisSupport     = errors.New("clevis is not supported in this spec version")
