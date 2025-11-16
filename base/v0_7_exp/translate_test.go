@@ -1212,6 +1212,7 @@ func TestTranslateTree(t *testing.T) {
 		inDirs     []Directory
 		inLinks    []Link
 		outFiles   []types.File
+		outDirs    []types.Directory
 		outLinks   []types.Link
 		report     string
 		skip       func(t *testing.T)
@@ -1643,6 +1644,160 @@ func TestTranslateTree(t *testing.T) {
 			report: "error at $.storage.trees.0: " + common.ErrTreeNotDirectory.Error() + "\n" +
 				"error at $.storage.trees.1: " + osStatName + " %FilesDir%" + string(filepath.Separator) + "nonexistent: " + osNotFound + "\n",
 		},
+		// Permissions and ownership
+		{
+			dirFiles: map[string]os.FileMode{
+				"tree/file":        0600,
+				"tree/subdir/file": 0644,
+				"tree2/file":       0600,
+			},
+			dirLinks: map[string]string{
+				"tree/subdir/link": "../file",
+			},
+			inTrees: []Tree{
+				{
+					Local:    "tree",
+					FileMode: util.IntToPtr(0777),
+					User: NodeUser{
+						Name: util.StrToPtr("bovik"),
+					},
+					Group: NodeGroup{
+						ID: util.IntToPtr(1000),
+					},
+				},
+				{
+					Local:   "tree2",
+					DirMode: util.IntToPtr(0777),
+					Path:    util.StrToPtr("/etc"),
+				},
+			},
+			outDirs: []types.Directory{
+				{
+					Node: types.Node{
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+						Path: "/",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0755),
+					},
+				},
+				{
+					Node: types.Node{
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+						Path: "/subdir",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0755),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/etc",
+					},
+					DirectoryEmbedded1: types.DirectoryEmbedded1{
+						Mode: util.IntToPtr(0777),
+					},
+				},
+			},
+			outFiles: []types.File{
+				{
+					Node: types.Node{
+						Path: "/file",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source:      util.StrToPtr("data:,tree%2Ffile"),
+							Compression: util.StrToPtr(""),
+						},
+						Mode: util.IntToPtr(0777),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/subdir/file",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source:      util.StrToPtr("data:,tree%2Fsubdir%2Ffile"),
+							Compression: util.StrToPtr(""),
+						},
+						Mode: util.IntToPtr(0777),
+					},
+				},
+				{
+					Node: types.Node{
+						Path: "/etc/file",
+					},
+					FileEmbedded1: types.FileEmbedded1{
+						Contents: types.Resource{
+							Source:      util.StrToPtr("data:,tree2%2Ffile"),
+							Compression: util.StrToPtr(""),
+						},
+						Mode: util.IntToPtr(0644),
+					},
+				},
+			},
+			outLinks: []types.Link{
+				{
+					Node: types.Node{
+						Path: "/subdir/link",
+						User: types.NodeUser{
+							Name: util.StrToPtr("bovik"),
+						},
+						Group: types.NodeGroup{
+							ID: util.IntToPtr(1000),
+						},
+					},
+					LinkEmbedded1: types.LinkEmbedded1{
+						Target: util.StrToPtr("../file"),
+					},
+				},
+			},
+		},
+		// Overwrite via tree ownership fails
+		{
+			dirFiles: map[string]os.FileMode{
+				"tree/etc/file": 0600,
+			},
+			inDirs: []Directory{
+				{Path: "/etc"},
+			},
+			inTrees: []Tree{
+				{
+					Local:    "tree",
+					FileMode: util.IntToPtr(0777),
+					User: NodeUser{
+						Name: util.StrToPtr("bovik"),
+					},
+					Group: NodeGroup{
+						ID: util.IntToPtr(1000),
+					},
+				},
+			},
+			report: "error at $.storage.trees.0: " + common.ErrNodeExists.Error() + "\n",
+		},
 	}
 
 	for i, test := range tests {
@@ -1728,7 +1883,7 @@ func TestTranslateTree(t *testing.T) {
 			assert.NoError(t, translations.DebugVerifyCoverage(actual), "incomplete TranslationSet coverage")
 
 			assert.Equal(t, test.outFiles, actual.Storage.Files, "files mismatch")
-			assert.Equal(t, []types.Directory(nil), actual.Storage.Directories, "directories mismatch")
+			assert.Equal(t, test.outDirs, actual.Storage.Directories, "directories mismatch")
 			assert.Equal(t, test.outLinks, actual.Storage.Links, "links mismatch")
 		})
 	}
