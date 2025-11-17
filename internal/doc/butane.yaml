@@ -256,9 +256,9 @@ root:
               use: mode
         - name: trees
           after: $
-          desc: a list of local directory trees to be embedded in the config. Ownership is not preserved. File modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
+          desc: a list of local directory trees to be embedded in the config. Ownership, file modes (using `file_mode`) and directories modes (using `dir_mode`) can be specified for the tree. If not specified, ownership is not preserved and file modes are set to 0755 if the local file is executable or 0644 otherwise. Attributes of files, directories, and symlinks can be overridden by creating a corresponding entry in the `files`, `directories`, or `links` section; such `files` entries must omit `contents` and such `links` entries must omit `target`.
           transforms:
-            - regex: Ownership is not preserved.
+            - regex: Ownership,
               replacement: Symlinks must not be present. $0
               if:
                 - variant: openshift
@@ -274,11 +274,56 @@ root:
               replacement: $1.
               if:
                 - variant: openshift
+            - regex: ", file modes \\(using `file_mode`\\) and directories modes \\(using `dir_mode`\\) can be specified for the tree. If not specified, ownership is not preserved and f"
+              replacement: " is not preserved. F"
+              if:
+                - variant: fcos
+                  max: 1.6.0
+                - variant: fiot
+                  max: 1.0.0
+                - variant: flatcar
+                  max: 1.1.0
+                - variant: openshift
+                  max: 4.20.0
+                - variant: r4e
+                  max: 1.1.0
           children:
             - name: local
               desc: the base of the local directory tree, relative to the directory specified by the `--files-dir` command-line argument.
             - name: path
               desc: the path of the tree within the target system. Defaults to `/`.
+            - name: file_mode
+              desc: Custom permissions to apply to files
+            - name: dir_mode
+              desc: Custom permissions to apply to directories
+              transforms:
+                - regex: ".*"
+                  replacement: "Unsupported"
+                  if:
+                    - variant: fcos
+                      max: 1.6.0
+                    - variant: fiot
+                      max: 1.0.0
+                    - variant: flatcar
+                      max: 1.1.0
+                    - variant: openshift
+                      max: 4.20.0
+                    - variant: r4e
+                      max: 1.1.0
+            - name: user
+              desc: User owner of the tree
+              children:
+              - name: name
+                desc: username
+              - name: id
+                desc: uid
+            - name: group
+              desc: Group owner of the tree
+              children:
+              - name: name
+                desc: group name
+              - name: id
+                desc: gid
     - name: systemd
       children:
         - name: units
