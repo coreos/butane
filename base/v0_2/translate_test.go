@@ -45,7 +45,7 @@ var (
 
 func init() {
 	if runtime.GOOS == "windows" {
-		osStatName = "CreateFile"
+		osStatName = "GetFileAttributesEx"
 		osNotFound = "The system cannot find the file specified."
 	} else {
 		osStatName = "stat"
