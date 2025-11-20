@@ -1,6 +1,6 @@
 module github.com/coreos/butane
 
-go 1.23.0
+go 1.24.0
 
 toolchain go1.24.5
 
@@ -8,7 +8,7 @@ require (
 	github.com/clarketm/json v1.17.1
 	github.com/coreos/go-semver v0.3.1
 	github.com/coreos/go-systemd/v22 v22.6.0
-	github.com/coreos/ignition/v2 v2.23.0
+	github.com/coreos/ignition/v2 v2.24.0
 	github.com/coreos/vcontext v0.0.0-20230201181013-d72178a18687
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
@@ -17,7 +17,7 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.38.2 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.39.2 // indirect
 	github.com/coreos/go-json v0.0.0-20230131223807-18775e0fb4fb // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/kr/pretty v0.3.1 // indirect
