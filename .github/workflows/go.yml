@@ -34,7 +34,7 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
     - name: Check out repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Install macOS dependencies
       if: runner.os == 'macOS'
       shell: bash
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Set up Go 1.x
       uses: actions/setup-go@v5
       with:
