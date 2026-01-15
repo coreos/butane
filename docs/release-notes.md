@@ -14,6 +14,9 @@ nav_order: 9
 
 ### Misc. changes
 
+- Warn on root partition size is too small _(fcos 1.7.0-exp)_
+- Warn on root partition constrained by another partition _(fcos 1.7.0-exp)_
+
 ### Docs changes
 
 
@@ -36,7 +39,6 @@ key](https://getfedora.org/security/).
 ### Bug fixes
 
 - Warn for `boot_device.layout` to be specified when using `boot_device.mirror` _(fcos 1.3.0-1.6.0)_
-
 ### Docs changes
 
 - Update `boot_device.mirror` examples to specify `boot_device.layout`
