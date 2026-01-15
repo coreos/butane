@@ -39,7 +39,7 @@ mode:
       replacement: are not supported
       if:
         - variant: openshift
-          min: 4.21.0
+          min: 4.22.0
 
 append-contents-local:
   # Mention contents_local on specs that support it.
@@ -407,7 +407,7 @@ root:
           replacement: "Unsupported"
           if:
             - variant: openshift
-              max: 4.20.0
+              max: 4.21.0
       children:
         - name: users
           desc: the list of GRUB superusers.
@@ -416,7 +416,7 @@ root:
               replacement: "Unsupported"
               if:
                 - variant: openshift
-                  max: 4.20.0
+                  max: 4.21.0
           children:
             - name: name
               desc: the user name.
@@ -425,7 +425,7 @@ root:
                   replacement: "Unsupported"
                   if:
                     - variant: openshift
-                      max: 4.20.0
+                      max: 4.21.0
             - name: password_hash
               desc: the PBKDF2 password hash, generated with `grub2-mkpasswd-pbkdf2`.
               # required by validation
@@ -435,7 +435,7 @@ root:
                   replacement: "Unsupported"
                   if:
                     - variant: openshift
-                      max: 4.20.0
+                      max: 4.21.0
     - name: openshift
       after: $
       desc: describes miscellaneous OpenShift configuration. Respected when rendering to a MachineConfig, ignored when rendering directly to an Ignition config.
