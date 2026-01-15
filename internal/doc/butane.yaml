@@ -39,7 +39,7 @@ mode:
       replacement: are not supported
       if:
         - variant: openshift
-          min: 4.21.0
+          min: 4.22.0
 
 append-contents-local:
   # Mention contents_local on specs that support it.

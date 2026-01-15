@@ -15,6 +15,9 @@ key](https://getfedora.org/security/).
 
 ### Features
 
+- Stabilize OpenShift spec 4.21.0, targeting Ignition spec 3.5.0
+- Add OpenShift spec 4.22.0-experimental, targeting Ignition spec
+  3.6.0-experimental
 - Add support for mode and ownership settings for trees.
 
 ### Bug fixes
