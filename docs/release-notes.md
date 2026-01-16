@@ -52,6 +52,7 @@ key](https://getfedora.org/security/).
 
 - Update vendor'd Ignition dependency to point to latest v2.23.0
 
+
 ## Butane 0.25.0 (2025-09-08)
 
 ### Features
@@ -67,6 +68,7 @@ key](https://getfedora.org/security/).
 ### Docs changes
 
 - Add missing examples in upgrading-openshift _(openshift 4.14)_
+
 
 ## Butane 0.24.0 (2025-05-27)
 
