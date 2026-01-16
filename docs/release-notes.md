@@ -4,7 +4,20 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.26.0 (unreleased)
+## Upcoming Butane 0.27.0 (unreleased)
+
+### Breaking changes
+
+### Features
+
+### Bug fixes
+
+### Misc. changes
+
+### Docs changes
+
+
+## Butane 0.26.0 (2026-01-16)
 
 Starting with this release, Butane binaries are signed with the [Fedora 43
 key](https://getfedora.org/security/).
@@ -24,11 +37,10 @@ key](https://getfedora.org/security/).
 
 - Warn for `boot_device.layout` to be specified when using `boot_device.mirror` _(fcos 1.3.0-1.6.0)_
 
-### Misc. changes
-
 ### Docs changes
 
 - Update `boot_device.mirror` examples to specify `boot_device.layout`
+
 
 ## Butane 0.25.1 (2025-09-24)
 
