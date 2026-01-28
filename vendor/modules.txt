@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go-v2 v1.40.1
+# github.com/aws/aws-sdk-go-v2 v1.41.0
 ## explicit; go 1.23
 github.com/aws/aws-sdk-go-v2/aws/arn
 # github.com/clarketm/json v1.17.1
@@ -13,7 +13,7 @@ github.com/coreos/go-semver/semver
 # github.com/coreos/go-systemd/v22 v22.6.0
 ## explicit; go 1.23
 github.com/coreos/go-systemd/v22/unit
-# github.com/coreos/ignition/v2 v2.25.0
+# github.com/coreos/ignition/v2 v2.25.1
 ## explicit; go 1.24.0
 github.com/coreos/ignition/v2/config/doc
 github.com/coreos/ignition/v2/config/merge
