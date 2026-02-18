@@ -16,9 +16,11 @@ package v4_19
 
 import (
 	"net/url"
+	"reflect"
 	"strings"
 
 	"github.com/coreos/butane/config/common"
+	fcos "github.com/coreos/butane/config/fcos/v1_6"
 	"github.com/coreos/butane/config/openshift/v4_19/result"
 	cutil "github.com/coreos/butane/config/util"
 	"github.com/coreos/butane/translate"
@@ -115,6 +117,12 @@ func (c Config) FieldFilters() *cutil.FieldFilters {
 func (c Config) ToMachineConfig4_19Unvalidated(options common.TranslateOptions) (result.MachineConfig, translate.TranslationSet, report.Report) {
 	cfg, ts, r := c.Config.ToIgn3_5Unvalidated(options)
 	if r.IsFatal() {
+		return result.MachineConfig{}, ts, r
+	}
+
+	// If any GRUB settings are provided by the user, return an error.
+	if !reflect.DeepEqual(c.Grub, fcos.Grub{}) {
+		r.AddOnError(path.New("yaml", "grub"), common.ErrGrubConfigSupport)
 		return result.MachineConfig{}, ts, r
 	}
 
