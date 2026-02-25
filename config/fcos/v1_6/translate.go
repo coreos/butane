@@ -71,16 +71,70 @@ func (c Config) ToIgn3_5Unvalidated(options common.TranslateOptions) (types.Conf
 	}
 	r.Merge(c.processBootDevice(&ret, &ts, options))
 	for i, disk := range ret.Storage.Disks {
-		// In the boot_device.mirror case, nothing specifies partition numbers
-		// so match existing partitions only when `wipeTable` is false
-		if !util.IsTrue(disk.WipeTable) {
-			for j, partition := range disk.Partitions {
-				// check for reserved partlabels
-				if partition.Label != nil {
-					if (*partition.Label == "BIOS-BOOT" && partition.Number != 1) || (*partition.Label == "PowerPC-PReP-boot" && partition.Number != 1) || (*partition.Label == "EFI-SYSTEM" && partition.Number != 2) || (*partition.Label == "boot" && partition.Number != 3) || (*partition.Label == "root" && partition.Number != 4) {
-						r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", j, "label"), common.ErrWrongPartitionNumber)
+		for p, partition := range disk.Partitions {
+			// if the partition is not nil and is root
+			if partition.Label != nil {
+				if *partition.Label == "root" {
+					if partition.SizeMiB == nil || *partition.SizeMiB == 0 {
+						// Root is set to "fill available" (0 or unspecified)
+						// Check if it's constrained by the next partition on disk
+						// Sort partitions by disk position (StartMiB) to find the next partition
+						var rootStart int
+						if partition.StartMiB != nil {
+							rootStart = *partition.StartMiB
+						}
+
+						// Find the partition that comes immediately after root on disk
+						var nextPartition *types.Partition
+						for idx, ap := range disk.Partitions {
+							// Skip the root partition itself
+							if idx == p {
+								continue
+							}
+
+							var apStart int
+							if ap.StartMiB != nil {
+								apStart = *ap.StartMiB
+							}
+
+							// Only consider partitions that start after root
+							// (or auto-positioned partitions which will be placed after root)
+							if apStart > rootStart || (apStart == 0 && rootStart >= 0) {
+								if nextPartition == nil {
+									nextPartition = &ap
+								} else {
+									var nextStart int
+									if nextPartition.StartMiB != nil {
+										nextStart = *nextPartition.StartMiB
+									}
+									// If this partition starts before the current "next", it's closer to root
+									if (apStart > 0 && apStart < nextStart) || (nextStart == 0 && apStart > 0) {
+										nextPartition = &ap
+									}
+								}
+							}
+						}
+
+						// Check if the next partition constrains root
+						if nextPartition != nil {
+							if nextPartition.StartMiB == nil || *nextPartition.StartMiB == 0 {
+								r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", p, "label"), common.ErrRootConstrained)
+							}
+						}
+					} else if *partition.SizeMiB < 8192 {
+						r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", p, "size_mib"), common.ErrRootTooSmall)
 					}
 				}
+
+				// In the boot_device.mirror case, nothing specifies partition numbers
+				// so match existing partitions only when `wipeTable` is false
+				if !util.IsTrue(disk.WipeTable) {
+					// check for reserved partlabels
+					if (*partition.Label == "BIOS-BOOT" && partition.Number != 1) || (*partition.Label == "PowerPC-PReP-boot" && partition.Number != 1) || (*partition.Label == "EFI-SYSTEM" && partition.Number != 2) || (*partition.Label == "boot" && partition.Number != 3) || (*partition.Label == "root" && partition.Number != 4) {
+						r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", p, "label"), common.ErrWrongPartitionNumber)
+					}
+				}
+
 			}
 		}
 	}

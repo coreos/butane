@@ -1506,6 +1506,181 @@ func TestTranslateBootDevice(t *testing.T) {
 	}
 }
 
+// TestPartitionSorting tests that partitions are properly sorted by disk position,
+// not by partition number, when detecting constraints.
+func TestPartitionSorting(t *testing.T) {
+	tests := []struct {
+		name   string
+		in     Config
+		report report.Report
+	}{
+		// Root partition with default size (0, fill available) followed by a partition
+		// with explicit StartMiB = 0 (auto-positioned). The next partition should be
+		// the one that comes AFTER root on disk.
+		{
+			name: "root partition constrained by disk position not partition number",
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										Number:  4,
+										SizeMiB: util.IntToPtr(0), // fill available
+									},
+									{
+										Label:    util.StrToPtr("data"),
+										StartMiB: util.IntToPtr(0), // auto-positioned - will be placed after root
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			report: report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrRootConstrained.Error(),
+						Context: path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"),
+					},
+				},
+			},
+		},
+		// Root partition followed by a partition with explicit StartMiB that would
+		// constrain root.
+		{
+			name: "root constrained by explicit StartMiB partition",
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:    util.StrToPtr("root"),
+										Number:   4,
+										SizeMiB:  util.IntToPtr(0), // fill available
+										StartMiB: util.IntToPtr(2048),
+									},
+									{
+										Label:    util.StrToPtr("var"),
+										StartMiB: util.IntToPtr(0), // auto-positioned - constrains root
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			report: report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrRootConstrained.Error(),
+						Context: path.New("yaml", "storage", "disks", 0, "partitions", 0, "label"),
+					},
+				},
+			},
+		},
+		// Root partition NOT constrained because next partition has explicit StartMiB
+		{
+			name: "root not constrained with explicit StartMiB after",
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:    util.StrToPtr("root"),
+										Number:   4,
+										SizeMiB:  util.IntToPtr(0), // fill available
+										StartMiB: util.IntToPtr(2048),
+									},
+									{
+										Label:    util.StrToPtr("data"),
+										StartMiB: util.IntToPtr(10240), // explicit position - does NOT constrain root
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			report: report.Report{},
+		},
+		// Root partition too small (explicit size < 8192 MiB)
+		{
+			name: "root partition too small",
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										Number:  4,
+										SizeMiB: util.IntToPtr(4096),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			report: report.Report{
+				Entries: []report.Entry{
+					{
+						Kind:    report.Warn,
+						Message: common.ErrRootTooSmall.Error(),
+						Context: path.New("json", "storage", "disks", 0, "partitions", 0, "size_mib"),
+					},
+				},
+			},
+		},
+		// Root partition exactly 8192 MiB
+		{
+			name: "root partition exactly 8GiB",
+			in: Config{
+				Config: base.Config{
+					Storage: base.Storage{
+						Disks: []base.Disk{
+							{
+								Device: "/dev/vda",
+								Partitions: []base.Partition{
+									{
+										Label:   util.StrToPtr("root"),
+										Number:  4,
+										SizeMiB: util.IntToPtr(8192),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			report: report.Report{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			_, translations, r := test.in.ToIgn3_5Unvalidated(common.TranslateOptions{})
+			r = confutil.TranslateReportPaths(r, translations)
+			assert.Equal(t, test.report, r, "report mismatch")
+		})
+	}
+}
+
 // TestTranslateGrub tests translating the Butane config Grub section.
 func TestTranslateGrub(t *testing.T) {
 	// Some tests below have the same translations
