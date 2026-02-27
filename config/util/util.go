@@ -92,9 +92,12 @@ func Translate(cfg Config, translateMethod string, options common.TranslateOptio
 	dupsReport := validate.ValidateCustom(final, "json", ignvalidate.ValidateDups)
 	r.Merge(TranslateReportPaths(dupsReport, translations))
 
-	// Validate JSON semantics.
-	jsonReport := validate.Validate(final, "json")
-	r.Merge(TranslateReportPaths(jsonReport, translations))
+	// When user use --plain-text flag, we skip the JSON semantics validation because the resulting Ignition is invalid, and this is for debug only
+	if !options.PlainTextEncoding {
+		// Validate JSON semantics.
+		jsonReport := validate.Validate(final, "json")
+		r.Merge(TranslateReportPaths(jsonReport, translations))
+	}
 
 	if r.IsFatal() {
 		return zeroValue, r, common.ErrInvalidGeneratedConfig

@@ -54,6 +54,8 @@ func main() {
 	pflag.Lookup("input").Hidden = true
 	pflag.StringVarP(&output, "output", "o", "", "write to output file instead of stdout")
 	pflag.StringVarP(&options.FilesDir, "files-dir", "d", "", "allow embedding local files from this directory")
+	pflag.BoolVar(&options.PlainTextEncoding, "plain-text", false,
+		"use plain text only -- only for debugging, should not be used for configs!!!")
 
 	pflag.Usage = func() {
 		fmt.Fprintf(pflag.CommandLine.Output(), "Usage: %s [options] [input-file]\n", os.Args[0])

@@ -24,7 +24,13 @@ import (
 	"github.com/vincent-petithory/dataurl"
 )
 
-func MakeDataURL(contents []byte, currentCompression *string, allowCompression bool) (uri string, compression *string, err error) {
+func MakeDataURL(contents []byte, currentCompression *string, allowCompression bool, humanReadableEncoding bool) (uri string, compression *string, err error) {
+	if humanReadableEncoding {
+		compression = util.StrToPtr("")
+		uri = string(contents)
+		return
+	}
+
 	// try three different encodings, and select the smallest one
 
 	if util.NilOrEmpty(currentCompression) {

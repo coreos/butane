@@ -371,7 +371,7 @@ func (c Config) handleUserGrubCfg(options common.TranslateOptions) (types.Config
 		})
 
 	userCfgContent := []byte(buildGrubConfig(c.Grub))
-	src, compression, err := baseutil.MakeDataURL(userCfgContent, nil, !options.NoResourceAutoCompression)
+	src, compression, err := baseutil.MakeDataURL(userCfgContent, nil, !options.NoResourceAutoCompression, false)
 	if err != nil {
 		r.AddOnError(yamlPath, err)
 		return rendered, ts, r
