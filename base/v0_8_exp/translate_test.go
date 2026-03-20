@@ -2517,3 +2517,235 @@ func TestToIgn3_7(t *testing.T) {
 		})
 	}
 }
+
+func TestTranslateQuadlets(t *testing.T) {
+	const (
+		SleepContainer = `[Unit]
+Description=A sleepy container
+[Container]
+ContainerName=sleepy-pod-inf
+Image=quay.io/fedora/fedora
+Exec=sleep infinity
+[Install]
+WantedBy=multi-user.target`
+
+		SleepContainerAsData = "data:,%5BUnit%5D%0ADescription%3DA%20sleepy%20container%0A%5BContainer%5D%0AContainerName%3Dsleepy-pod-inf%0AImage%3Dquay.io%2Ffedora%2Ffedora%0AExec%3Dsleep%20infinity%0A%5BInstall%5D%0AWantedBy%3Dmulti-user.target"
+
+		SleepContainerTemplate = `[Unit]
+Description=A templated sleepy container
+[Container]
+Image=quay.io/fedora/fedora
+Exec=sleep %i
+[Service]
+# Restart service when sleep finishes
+Restart=always
+[Install]
+WantedBy=multi-user.target`
+
+		SleepContainerTemplateAsData = "data:;base64,H4sIAAAAAAAC/zSNvU4DMRCE+32KlRAl4Qlc8FekBSGKk4uVb5Ks5Fsf3j2C3x6JJNWMRvPpmz5NI9MrvHRdQ5ulJw4sa5XAzF6BdXBpFqKGTtPLrWbaL3JE+t5k7LQ9HjC3Ltegt1+U9E/zvdL0gf6jBZnu+B0e0oP9MvH5BLt4+KCmfoLT9ZOknmU4TXvzkFozfYkF5ueRlq2GPmyOvgvpR8RfAAAA//91kIIEyQAAAA=="
+	)
+
+	filesDir := t.TempDir()
+	fileContents := map[string]string{
+		"sample.container":  SleepContainer,
+		"sample@.container": SleepContainerTemplate,
+	}
+	for name, contents := range fileContents {
+		if err := os.MkdirAll(filepath.Join(filesDir, filepath.Dir(name)), 0755); err != nil {
+			t.Error(err)
+			return
+		}
+		err := os.WriteFile(filepath.Join(filesDir, name), []byte(contents), 0644)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+	}
+
+	tests := []struct {
+		name        string
+		inputConfig Config
+		outConf     types.Config
+		reportPath  string
+		options     common.TranslateOptions
+	}{
+		{
+			name: "Basic .container quadlets",
+			inputConfig: Config{
+				Systemd: Systemd{
+					Quadlets: []Quadlet{
+						{
+							Name:     "sleepy.container",
+							Contents: util.StrToPtr(SleepContainer),
+							Rootful:  true,
+						},
+						{
+							Name:     "sleepy.container",
+							Contents: util.StrToPtr(SleepContainer),
+							Rootful:  false,
+						},
+					},
+				},
+			},
+			outConf: types.Config{
+				Ignition: types.Ignition{
+					Version: "3.7.0-experimental",
+				},
+				Storage: types.Storage{
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/etc/containers/systemd/sleepy.container",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Contents: types.Resource{
+									Source:      util.StrToPtr(SleepContainerAsData),
+									Compression: util.StrToPtr(""),
+								},
+							},
+						},
+						{
+							Node: types.Node{
+								Path: "/etc/containers/systemd/users/sleepy.container",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Contents: types.Resource{
+									Source:      util.StrToPtr(SleepContainerAsData),
+									Compression: util.StrToPtr(""),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "Template instance is symlink",
+			inputConfig: Config{
+				Systemd: Systemd{
+					Quadlets: []Quadlet{
+						{
+							Name:     "sleepy@.container",
+							Contents: util.StrToPtr(SleepContainerTemplate),
+							Rootful:  true,
+						},
+						{
+							Name:    "sleepy@100.container",
+							Rootful: true,
+						},
+					},
+				},
+			},
+			outConf: types.Config{
+				Ignition: types.Ignition{
+					Version: "3.7.0-experimental",
+				},
+				Storage: types.Storage{
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/etc/containers/systemd/sleepy@.container",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Contents: types.Resource{
+									Source:      util.StrToPtr(SleepContainerTemplateAsData),
+									Compression: util.StrToPtr("gzip"),
+								},
+							},
+						},
+					},
+					Links: []types.Link{
+						{
+							Node: types.Node{
+								Path: "/etc/containers/systemd/sleepy@100.container",
+							},
+							LinkEmbedded1: types.LinkEmbedded1{
+								Target: util.StrToPtr("sleepy@.container"),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "Quadlet with non-existent contents_local",
+			inputConfig: Config{
+				Systemd: Systemd{
+					Quadlets: []Quadlet{
+						{
+							Name:          "sleepy.container",
+							ContentsLocal: util.StrToPtr("fake/path"),
+							Rootful:       true,
+						},
+					},
+				},
+			},
+			options:    common.TranslateOptions{FilesDir: filesDir},
+			reportPath: "error at $.systemd.quadlets.0.contents_local: open " + filesDir + "/fake/path: no such file or directory\n",
+		},
+		{
+			name: "Quadlet with contents_local",
+			inputConfig: Config{
+				Systemd: Systemd{
+					Quadlets: []Quadlet{
+						{
+							Name:          "sleepy.container",
+							ContentsLocal: util.StrToPtr("sample.container"),
+							Rootful:       true,
+						},
+					},
+				},
+			},
+			outConf: types.Config{
+				Ignition: types.Ignition{
+					Version: "3.7.0-experimental",
+				},
+				Storage: types.Storage{
+					Files: []types.File{
+						{
+							Node: types.Node{
+								Path: "/etc/containers/systemd/sleepy.container",
+							},
+							FileEmbedded1: types.FileEmbedded1{
+								Contents: types.Resource{
+									Source:      util.StrToPtr(SleepContainerAsData),
+									Compression: util.StrToPtr(""),
+								},
+							},
+						},
+					},
+				},
+			},
+			options: common.TranslateOptions{FilesDir: filesDir},
+		},
+		{
+			name: "Overrides break",
+			inputConfig: Config{
+				Systemd: Systemd{
+					Quadlets: []Quadlet{
+						// two quadlets with the same name should give an error
+						{
+							Name:     "sleepy.container",
+							Contents: util.StrToPtr(SleepContainer),
+							Rootful:  true,
+						},
+						{
+							Name:     "sleepy.container",
+							Contents: util.StrToPtr(SleepContainerTemplate),
+							Rootful:  true,
+						},
+					},
+				},
+			},
+			outConf:    types.Config{},
+			reportPath: "error at $.systemd.quadlets.1: matching filesystem node has existing contents or different type\n",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c, _, r := test.inputConfig.ToIgn3_7Unvalidated(test.options)
+			assert.Equal(t, test.outConf, c, test.name+"translation mismatch")
+			assert.Equal(t, test.reportPath, r.String(), test.name+"report mismatch")
+		})
+	}
+}
