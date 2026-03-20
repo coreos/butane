@@ -91,16 +91,48 @@ func (t Tree) Validate(c path.ContextPath) (r report.Report) {
 	return
 }
 
-func (rs Unit) Validate(c path.ContextPath) (r report.Report) {
-	if rs.ContentsLocal != nil && rs.Contents != nil {
+func validateNotTooManySources(contentsLocal, contents *string, c path.ContextPath) (r report.Report) {
+	if contentsLocal != nil && contents != nil {
 		r.AddOnError(c.Append("contents_local"), common.ErrTooManySystemdSources)
 	}
 	return
 }
 
+func (rs Unit) Validate(c path.ContextPath) (r report.Report) {
+	return validateNotTooManySources(rs.ContentsLocal, rs.Contents, c)
+}
+
 func (rs Dropin) Validate(c path.ContextPath) (r report.Report) {
-	if rs.ContentsLocal != nil && rs.Contents != nil {
-		r.AddOnError(c.Append("contents_local"), common.ErrTooManySystemdSources)
+	return validateNotTooManySources(rs.ContentsLocal, rs.Contents, c)
+}
+
+// All accepted extensions by podman-systemd.unit
+func quadletExtension(name string) error {
+	extensionIsSupported := strings.HasSuffix(name, ".container") ||
+		strings.HasSuffix(name, ".volume") ||
+		strings.HasSuffix(name, ".network") ||
+		strings.HasSuffix(name, ".kube") ||
+		strings.HasSuffix(name, ".image") ||
+		strings.HasSuffix(name, ".build") ||
+		strings.HasSuffix(name, ".pod") ||
+		strings.HasSuffix(name, ".artifact")
+
+	if !extensionIsSupported {
+		return common.ErrQuadletBadExtension
 	}
-	return
+
+	return nil
+}
+
+// For quadlets we will also validate that the extension is supported, ignition does this for units
+func (rs Quadlet) Validate(c path.ContextPath) (r report.Report) {
+	r = validateNotTooManySources(rs.ContentsLocal, rs.Contents, c)
+	// Template instances cannot have a content as they are symlinks
+	if isTemplateInstance, _ := quadletBaseTemplate(rs.Name); isTemplateInstance && (rs.ContentsLocal != nil || rs.Contents != nil) {
+		r.AddOnError(c, common.ErrTemplateInstanceCannotHaveContents)
+	}
+	if err := quadletExtension(rs.Name); err != nil {
+		r.AddOnError(c.Append("name"), err)
+	}
+	return r
 }

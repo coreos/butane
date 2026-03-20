@@ -100,9 +100,13 @@ func (c Config) ToIgn3_7Unvalidated(options common.TranslateOptions) (types.Conf
 
 	c.addMountUnits(&ret, &tm)
 
-	tm2, r2 := c.processTrees(&ret, options)
-	tm.Merge(tm2)
-	r.Merge(r2)
+	tmTrees, rTrees := c.processTrees(&ret, options)
+	tmQuadlets, rQuadlets := c.processQuadlets(&ret, options)
+
+	tm.Merge(tmTrees)
+	tm.Merge(tmQuadlets)
+	r.Merge(rTrees)
+	r.Merge(rQuadlets)
 
 	if r.IsFatal() {
 		return types.Config{}, translate.TranslationSet{}, r
@@ -295,6 +299,130 @@ func translateDropin(from Dropin, options common.TranslateOptions) (to types.Dro
 	}
 
 	return
+}
+
+// There are different paths where the containers must be stored, depending on their privilege.
+// See https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
+func buildQuadletPath(isRoot bool, quadletName string) string {
+	const (
+		adminContainersPath = "/etc/containers/systemd"
+		userContainersPath  = "/etc/containers/systemd/users"
+	)
+	var base string
+	if isRoot {
+		base = adminContainersPath
+	} else {
+		base = userContainersPath
+	}
+	return fmt.Sprintf("%s/%s", base, quadletName)
+}
+
+// When we find a file in the form foo@bar.container, this should just be a symlink to foo@.container
+func quadletBaseTemplate(name string) (bool, string) {
+	splitIndex := strings.Index(name, "@")
+	extensionIndex := strings.Index(name, ".")
+	if splitIndex == -1 || splitIndex+1 == extensionIndex {
+		return false, ""
+	}
+	baseName := name[:splitIndex]
+	extension := name[extensionIndex+1:]
+	templateName := fmt.Sprintf("%s@.%s", baseName, extension)
+	return true, templateName
+}
+
+func getQuadletContent(quadlet Quadlet, quadletPath path.ContextPath, options common.TranslateOptions) (content []byte, contentPath path.ContextPath, err error) {
+	if util.NotEmpty(quadlet.ContentsLocal) {
+		contentPath = quadletPath.Append("contents_local")
+		localContents, err := baseutil.ReadLocalFile(*quadlet.ContentsLocal, options.FilesDir)
+		if err != nil {
+			return content, contentPath, err
+		}
+		content = localContents
+	}
+
+	if util.NotEmpty(quadlet.Contents) {
+		contentPath = quadletPath.Append("contents")
+		content = []byte(*quadlet.Contents)
+	}
+	return
+}
+
+// We allow templated quadlets, such as `sleep@100.container`. This quadlet should just be a symlink to `sleep@.contianer`.
+func quadletToSymlink(quadlet Quadlet, quadletPath path.ContextPath, ts *translate.TranslationSet, r *report.Report, t *nodeTracker, templateName string) {
+	destPath := buildQuadletPath(quadlet.Rootful, quadlet.Name)
+	i, link := t.GetLink(destPath)
+	// If the node already exists, we don't want to over-write, we will just error
+	if link != nil || t.Exists(destPath) {
+		r.AddOnError(quadletPath, common.ErrNodeExists)
+		return
+	}
+
+	i, link = t.AddLink(types.Link{Node: types.Node{Path: destPath}, LinkEmbedded1: types.LinkEmbedded1{
+		Target: &templateName,
+	}})
+	if i == 0 {
+		ts.AddTranslation(quadletPath, path.New("json", "storage", "links"))
+	}
+	ts.AddFromCommonSource(quadletPath, path.New("json", "storage", "links", i), link)
+	ts.AddTranslation(quadletPath.Append("name"), path.New("json", "storage", "links", i, "path"))
+	ts.AddTranslation(quadletPath, path.New("json", "storage", "links", i, "target"))
+}
+
+// Convert a quadlet into a file.
+func quadletToFile(quadlet Quadlet, quadletPath path.ContextPath, ts *translate.TranslationSet, r *report.Report, t *nodeTracker, options common.TranslateOptions) {
+	destPath := buildQuadletPath(quadlet.Rootful, quadlet.Name)
+	i, file := t.GetFile(destPath)
+	// If the node already exists, we dont want to over-write, we will just error
+	if (file != nil && util.NotEmpty(file.Contents.Source)) || t.Exists(destPath) {
+		r.AddOnError(quadletPath, common.ErrNodeExists)
+		return
+	}
+
+	i, file = t.AddFile(types.File{Node: createNode(destPath, NodeUser{}, NodeGroup{})})
+	if i == 0 {
+		ts.AddTranslation(quadletPath, path.New("json", "storage", "files"))
+	}
+	ts.AddFromCommonSource(quadletPath, path.New("json", "storage", "files", i), file)
+	ts.AddTranslation(quadletPath.Append("name"), path.New("json", "storage", "files", i, "path"))
+	contentBytes, contentPath, err := getQuadletContent(quadlet, quadletPath, options)
+	if err != nil {
+		r.AddOnError(contentPath, err)
+		return
+	}
+	url, compression, err := baseutil.MakeDataURL(contentBytes, file.Contents.Compression, !options.NoResourceAutoCompression)
+	if err != nil {
+		r.AddOnError(quadletPath, err)
+		return
+	}
+	file.Contents.Source = &url
+	ts.AddTranslation(contentPath, path.New("json", "storage", "files", i, "contents", "source"))
+	if compression != nil {
+		file.Contents.Compression = compression
+		ts.AddTranslation(quadletPath, path.New("json", "storage", "files", i, "contents", "compression"))
+	}
+	ts.AddTranslation(contentPath, path.New("json", "storage", "files", i, "contents"))
+}
+
+func (c Config) processQuadlets(ret *types.Config, options common.TranslateOptions) (translate.TranslationSet, report.Report) {
+	ts := translate.NewTranslationSet("yaml", "json")
+	var r report.Report
+	if len(c.Systemd.Quadlets) == 0 {
+		return ts, r
+	}
+
+	t := newNodeTracker(ret)
+	for quadletNum, quadlet := range c.Systemd.Quadlets {
+		quadletPath := path.New("yaml", "systemd", "quadlets", quadletNum)
+
+		// We need to handle `foo@bar.container` differently than `foo@.container`, as the former needs to be a symlink to the latter
+		if isTemplateInstance, templateName := quadletBaseTemplate(quadlet.Name); isTemplateInstance {
+			quadletToSymlink(quadlet, quadletPath, &ts, &r, t, templateName)
+		} else {
+			quadletToFile(quadlet, quadletPath, &ts, &r, t, options)
+		}
+	}
+
+	return ts, r
 }
 
 func (c Config) processTrees(ret *types.Config, options common.TranslateOptions) (translate.TranslationSet, report.Report) {
