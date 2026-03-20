@@ -46,7 +46,9 @@ var (
 	ErrDecimalMode = errors.New("unreasonable mode would be reasonable if specified in octal; remember to add a leading zero")
 
 	// systemd
-	ErrTooManySystemdSources = errors.New("only one of the following can be set: contents, contents_local")
+	ErrTooManySystemdSources              = errors.New("only one of the following can be set: contents, contents_local")
+	ErrQuadletBadExtension                = errors.New("unsupported file extension for quadlet: must be one of .container, .volume, .network, .kube, .image, .build, .pod, or .artifact")
+	ErrTemplateInstanceCannotHaveContents = errors.New("template instances cannot have contents or contents_local")
 
 	// mount units
 	ErrMountUnitNoPath     = errors.New("path is required if with_mount_unit is true and format is not swap")
