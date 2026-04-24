@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "dev/Butane-Schema.json",
+  "$comment": "Sources: https://github.com/coreos/butane",
+  "title": "Fedora Coreos Butane Schema",
+  "type": "object",
+  "required": ["variant", "version"],
+
+  "properties": {
+    "variant": {
+      "$id": "#/properties/variant",
+      "type": "string",
+      "title": "variant (string):",
+      "description": "Used to differentiate configs for different operating systems.",
+      "enum": [
+         "fcos",
+         "flatcar"
+      ],
+      "default": "fcos"
+    },
+    "version": {
+      "$id": "#/properties/version",
+      "type": "string",
+      "title": "version (string):"
+    }
+  },
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "properties": {
+            "variant": {
+              "const": "fcos"
+            },
+            "version": {
+              "enum": [
+                "1.4.0",
+                "1.5.0",
+                "1.6.0",
+                "1.7.0"
+              ],
+              "default": "1.7.0"
+            }
+          }
+        },
+        {
+          "properties": {
+            "variant": {
+              "const": "flatcar"
+            },
+            "version": {
+              "enum": ["1.1.0"],
+              "default": "1.1.0"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "properties": {
+                "variant": {
+                  "const": "fcos"
+                },
+                "version": {
+                  "const": "1.4.0"
+                }
+              }
+            },
+            {
+              "$ref": "./fcos/v1.4.0/1.4.0.json"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "properties": {
+                "variant": {
+                  "const": "fcos"
+                },
+                "version": {
+                  "const": "1.5.0"
+                }
+              }
+            },
+            {
+              "$ref": "./fcos/v1.5.0/1.5.0.json"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "properties": {
+                "variant": {
+                  "const": "fcos"
+                },
+                "version": {
+                  "const": "1.6.0"
+                }
+              }
+            },
+            {
+              "$ref": "./fcos/v1.6.0/1.6.0.json"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "properties": {
+                "variant": {
+                  "const": "fcos"
+                },
+                "version": {
+                  "const": "1.7.0"
+                }
+              }
+            },
+            {
+              "$ref": "./fcos/v1.7.0/1.7.0.json"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+                "properties": {
+                  "variant": {
+                      "const": "flatcar"
+                  },
+                  "version": {
+                      "const": "1.1.0"
+                  }
+                }
+            },
+            {
+              "$ref": "./flatcar/v1.1.0/1.1.0.json"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

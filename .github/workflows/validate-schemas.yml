@@ -1,0 +1,46 @@
+name: Validate Changes
+
+on:
+  push:
+    paths:
+      - '/schemas/**.json'
+    branches:
+      - main
+    
+  pull_request:
+    paths:
+      - '/schemas/**.json'
+      
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-json-validation:
+    runs-on: ubuntu-latest
+    steps:
+    
+      - uses: actions/checkout@v3
+      
+      - name: Validate all json files using their own $schema properties
+        uses: cardinalby/schema-validator-action@v3
+        with:
+          file: '/schemas/**.json|/schemas/**/*.json'
+          fileParser: json
+          
+      - name: Validate butane files using associated json schema
+        uses: cardinalby/schema-validator-action@v3
+        with:
+          file: '/schemas/**/*.bu'
+          fileParser: yaml
+          schema: './Butane-Schema.json'
+          mode: spec
+          refSchemasArray: |
+            [
+            "./fcos/v1.4.0/1.4.0.json",
+            "./fcos/v1.5.0/1.5.0.json",
+            "./fcos/v1.6.0/1.6.0.json",
+            "./fcos/v1.7.0/1.7.0.json",
+            "./flatcar/v1.1.0/1.1.0.json"
+            ]
