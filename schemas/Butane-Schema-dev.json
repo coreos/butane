@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "dev/Butane-Schema.json",
+  "$id": "Butane-Schema.json",
   "$comment": "Sources: https://github.com/coreos/butane",
   "title": "Fedora Coreos Butane Schema",
   "type": "object",
