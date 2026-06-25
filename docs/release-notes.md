@@ -4,22 +4,45 @@ nav_order: 9
 
 # Release notes
 
-## Upcoming Butane 0.28.0 (unreleased)
+## Upcoming Butane 0.29.0 (unreleased)
 
 ### Breaking changes
 
 ### Features
 
 - Add JSON Schemas for CoreOS and Flatcar Butane variants
-- Add `systemd.quadlets` section for embedding Podman Quadlet files
-  _(fcos 1.8.0-exp, fiot 1.1.0-exp, flatcar 1.2.0-exp, openshift
-  4.22.0-exp, r4e 1.2.0-exp)_
-
 ### Bug fixes
 
 ### Misc. changes
 
+- Roll back to Ignition spec 3.5.0 _(openshift 4.22.0)_
+- Add support for pretty error reporting, can be controlled through
+  the use of `--raw-errors` (disable) and `--color`/`--colour`
+
 ### Docs changes
+
+## Butane 0.28.0 (2026-05-19)
+
+Starting with this release, Butane binaries are signed with the [Fedora 44
+key](https://getfedora.org/security/).
+
+### Features
+
+- Stabilize OpenShift spec 4.22.0, targeting Ignition spec 3.6.0
+- Add OpenShift spec 4.23.0-experimental, targeting Ignition spec
+  3.7.0-experimental
+- Add `systemd.quadlets` section for embedding Podman Quadlet files
+  _(fcos 1.8.0-exp, fiot 1.1.0-exp, flatcar 1.2.0-exp, openshift
+  4.23.0-exp, r4e 1.2.0-exp)_
+
+### Bug fixes
+
+- Don't warn about partitions being reused by label for boot_device.mirror disks
+
+### Misc. changes
+
+- Warn on root partition size is too small _(fcos 1.3.0-1.8.0-exp)_
+- Warn on root partition constrained by another partition _(fcos 1.3.0-1.8.0-exp)_
 
 ## Butane 0.27.0 (2026-02-27)
 
