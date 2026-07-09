@@ -77,9 +77,6 @@ func (c Config) ToIgn3_4Unvalidated(options common.TranslateOptions) (types.Conf
 				if *partition.Label == "root" {
 					if partition.SizeMiB == nil || *partition.SizeMiB == 0 {
 						for idx := p + 1; idx < len(disk.Partitions); idx++ {
-							if idx == p {
-								continue
-							}
 							if disk.Partitions[idx].StartMiB == nil || *disk.Partitions[idx].StartMiB == 0 {
 								r.AddOnWarn(path.New("json", "storage", "disks", i, "partitions", p, "label"), common.ErrRootConstrained)
 								break
