@@ -76,7 +76,7 @@ func (c Config) ToIgn3_4Unvalidated(options common.TranslateOptions) (types.Conf
 			if partition.Label != nil {
 				if *partition.Label == "root" {
 					if partition.SizeMiB == nil || *partition.SizeMiB == 0 {
-						for idx := range disk.Partitions {
+						for idx := p + 1; idx < len(disk.Partitions); idx++ {
 							if idx == p {
 								continue
 							}
