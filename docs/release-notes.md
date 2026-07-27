@@ -12,6 +12,8 @@ nav_order: 9
 
 ### Bug fixes
 
+- fix root partition constraint check to only examine subsequent partitions
+
 ### Misc. changes
 
 ### Docs changes
@@ -30,6 +32,7 @@ nav_order: 9
 ### Features
 
 ### Bug fixes
+
 
 ### Misc. changes
 
