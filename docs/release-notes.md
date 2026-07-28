@@ -19,6 +19,7 @@ Butane 0.29.0 is the last release from this standalone repository. Butane has be
 
 ### Features
 
+- Add JSON Schemas for CoreOS and Flatcar Butane variants
 ### Bug fixes
 
 ### Misc. changes

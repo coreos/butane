@@ -1,0 +1,259 @@
+# yaml-language-server: $schema=../../Butane-Schema-dev.json
+variant: fcos
+version: 1.7.0
+
+ignition:
+  config:
+    merge:
+      - source: https://example.com/etc/hosts
+        http_headers:
+          - name: Authorization
+            value: Basic YWxhZGRpbjpvcGVuc2VzYW1l
+          - name: User-Agent
+            value: Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1)
+        verification:
+          hash: sha256-702d8a08044b106d73a1ff8f1636e3b410d5bc1f9bed5afb99981ec5f97c4a66
+      - inline : |
+          "some inline config
+          on multiple lines"
+
+    replace:
+      source: "https://example.com/replacement.ign"
+      http_headers:
+        - name: Authorization
+          value: Basic YWxhZGRpbjpvcGVuc2VzYW1l
+        - name: User-Agent
+          value: Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1)
+      verification:
+        hash: sha256-702d8a08044b106d73a1ff8f1636e3b410d5bc1f9bed5afb99981ec5f97c4a66
+
+  timeouts:
+    http_response_headers : 10
+    http_total : 0
+
+  security:
+    tls:
+      certificate_authorities :
+        - source: http://www.cacert.org/certs/root_X0F.crt
+          http_headers:
+            - name: Authorization
+              value: Basic YWxhZGRpbjpvcGVuc2VzYW1l
+            - name: User-Agent
+              value: Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1)
+          verification:
+            hash: sha256-702d8a08044b106d73a1ff8f1636e3b410d5bc1f9bed5afb99981ec5f97c4a66
+        - inline: PEM
+
+  proxy:
+    http_proxy: "http://proxy"
+    https_proxy: "https://proxy"
+    no_proxy:
+      - 10.10.10.10
+      - service.local
+
+storage:
+  disks:
+  - device: /dev/sda
+    wipe_table: false
+    partitions:
+    - number: 4
+      label: root
+      size_mib: 8192
+      resize: true
+    - size_mib: 0
+      label: Var
+  - device: /dev/sdb
+    wipe_table: true
+    partitions:
+      - number: 2
+        label: boot
+        size_mib: 8192
+        resize: false
+      - size_mib: 0
+        number: 3
+        label: etc
+        type_guid: 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+
+  raid:
+    - name: Raid
+      level: mirror
+      devices:
+        - /dev/disk/by-id/ata-WDC_WD10SPZX-80Z10T2_WD-WX41A49H9FT4
+        - /dev/disk/by-id/ata-WDC_WD10SPZX-80Z10T2_WD-WXL1A49KPYFD
+      options:
+        - --config=/etc/mdadm.conf
+        - --assume-clean
+        - --uuid=7ec8d4df:823fae52:c55d5e56:e773b281
+
+  filesystems:
+    - path: /var
+      device: /dev/md/Raid
+      format: xfs
+      label: Var
+      wipe_filesystem: false
+      uuid: a1bdb8c9-cdb7-cbec-af9b-34c5facfb00c
+      options:
+        - --optiontomkfs
+      mount_options:
+        - --mountoption
+      with_mount_unit: true
+
+    - device: /dev/disk/by-partlabel/swap
+      format: swap
+      wipe_filesystem: true
+      with_mount_unit: true
+
+  files:
+    - path: /etc/hostname
+      mode : 0644
+      contents:
+        inline: hostname
+      user:
+        name: core
+      group:
+        name: wheel
+
+    - path: /opt/file2
+      contents:
+        source: arn:example.com/file2
+        compression: gzip
+        verification:
+          hash: sha512-4ee6a9d20cc0e6c7ee187daffa6822bdef7f4cebe109eff44b235f97e45dc3d7a5bb932efc841192e46618f48a6f4f5bc0d15fd74b1038abf46bf4b4fd409f2e
+      mode: 0644
+
+    - path: /opt/file
+      contents:
+        inline: Hello, world!
+      mode: 0644
+      user:
+        id: 500
+      group:
+        id: 501
+
+  luks:
+    - name: static-key-example
+      device: /dev/sdb
+      key_file:
+        inline: REPLACE-THIS-WITH-YOUR-KEY-MATERIAL
+      discard: false
+    - name: tpm-example
+      device: /dev/sdc
+      clevis:
+        tpm2: true
+      cex:
+        enabled: false
+    - name: tang-example
+      device: /dev/sdd
+      clevis:
+        tang:
+          - url: https://tang.example.com
+            thumbprint: REPLACE-THIS-WITH-YOUR-TANG-THUMBPRINT
+            advertisement: now you know jhon snow !
+      discard: true
+
+  trees:
+    - local: v1.5.0
+      dir_mode: 0644
+      file_mode: 0644
+      user:
+        name: core
+      group:
+        name: wheel
+      path: /opt/tree
+
+passwd:
+  users:
+    - name: user1
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2asdfas test@openssh.com
+        - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT asdfasdf
+        - ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzOD asdfasdf
+        - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1Mj test@example.net
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 testing
+        - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAI yubikey 5 nfc
+        - ssh-dss AAAAB3NzaC1kc3 oldkey@example.com
+      ssh_authorized_keys_local:
+        - secret/id_ed25519.pub
+        - secret/id_rsa.pub
+      password_hash: $y$j9T$aUmgEDoFIDPhGxEe2FUjc/$C5A...
+      home_dir: /home/user1
+      no_create_home: true
+      groups:
+        - wheel
+        - plugdev
+      shell: /bin/bash
+      should_exist: true
+
+  groups:
+    - name: plugdev
+      should_exist: true
+
+systemd:
+  units:
+    - name: exporter.service
+      enabled: true
+      dropins:
+        - name: dropin.conf
+          contents: some string
+      contents: |
+        [Unit]
+        Description=Prometheus node exporter
+        After=network-online.target
+        Wants=network-online.target
+
+        [Service]
+        Environment=PODMAN_SYSTEMD_UNIT=%n
+        ExecStart=/usr/bin/podman run --label="io.containers.autoupdate=registry" --detach --replace --name=%N --privileged --network=host --pid=host -v /run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro -v /:/host:ro,rslave quay.io/prometheus/node-exporter:latest --path.rootfs=/host --collector.systemd
+        ExecStop=/usr/bin/podman stop %N
+        Type=forking
+
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: another-one.service
+      enabled: true
+      dropins:
+        - name: dropin.conf
+          contents_local: /opt/local/dropincontent
+      contents_local: /opt/local/unitcontent
+
+    - name: serial-getty@ttyS0.service
+      dropins:
+        - name: autologin-core.conf
+          contents: |
+            [Service]
+            # Override Execstart in main unit
+            ExecStart=
+            # Add new Execstart with `-` prefix to ignore failure`
+            ExecStart=-/usr/sbin/agetty --autologin core --noclear %I $TERM
+
+kernel_arguments:
+  should_exist:
+    - mitigations=off
+  should_not_exist:
+    - mitigations=auto,nosmt
+
+boot_device:
+  layout: x86_64
+  luks:
+    device: /dev/dasd
+    discard: true
+    cex:
+      enabled: true
+    tpm2: true
+    threshold: 0
+    tang:
+      - url: http://url.com
+        advertisement: be carefull
+        thumbprint: thisisathumbprint
+
+  mirror:
+    devices:
+      - /dev/sda
+      - /dev/sdb
+
+grub:
+  users:
+    - name: root
+      password_hash: grub.pbkdf2.sha512.10000.874A958E5264...
+      
