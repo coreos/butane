@@ -1992,6 +1992,75 @@ func TestTranslateIgnition(t *testing.T) {
 	}
 }
 
+// TestTranslateIgnitionLocalValidation verifies that local files referenced
+// via ignition.config.merge/replace are validated as Ignition configs during
+// translation (regression test for issue #724).
+func TestTranslateIgnitionLocalValidation(t *testing.T) {
+	filesDir := t.TempDir()
+
+	// A malformed Ignition config (invalid YAML) referenced via a local file.
+	malformed := "this: is: not: valid: ignition: config"
+	// A well-formed Ignition config (empty JSON object) referenced via a local file.
+	valid := `{"ignition": {"version": "3.7.0-experimental"}}`
+
+	if err := os.WriteFile(filepath.Join(filesDir, "malformed"), []byte(malformed), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(filesDir, "valid"), []byte(valid), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name      string
+		in        Ignition
+		expectErr bool
+	}{
+		{
+			name: "malformed local config under merge is rejected",
+			in: Ignition{
+				Config: IgnitionConfig{
+					Merge: []Resource{
+						{Local: util.StrToPtr("malformed")},
+					},
+				},
+			},
+			expectErr: true,
+		},
+		{
+			name: "valid local config under merge is accepted",
+			in: Ignition{
+				Config: IgnitionConfig{
+					Merge: []Resource{
+						{Local: util.StrToPtr("valid")},
+					},
+				},
+			},
+			expectErr: false,
+		},
+		{
+			name: "malformed local config under replace is rejected",
+			in: Ignition{
+				Config: IgnitionConfig{
+					Replace: Resource{Local: util.StrToPtr("malformed")},
+				},
+			},
+			expectErr: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			_, translations, r := translateIgnition(test.in, common.TranslateOptions{FilesDir: filesDir})
+			r = confutil.TranslateReportPaths(r, translations)
+			if test.expectErr {
+				assert.NotEqual(t, report.Report{}, r, "expected a validation error for malformed local ignition config")
+			} else {
+				assert.Equal(t, report.Report{}, r, "unexpected validation error for valid local ignition config")
+			}
+		})
+	}
+}
+
 // TestTranslateKernelArguments tests translating the butane kernel_arguments.{should_exist,should_not_exist}.[i] entries to
 // ignition kernelArguments.{shouldExist,shouldNotExist}.[i] entries.
 //

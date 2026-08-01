@@ -116,7 +116,7 @@ func (c Config) ToIgn3_7Unvalidated(options common.TranslateOptions) (types.Conf
 
 func translateIgnition(from Ignition, options common.TranslateOptions) (to types.Ignition, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
-	tr.AddCustomTranslator(translateResource)
+	tr.AddCustomTranslator(translateResourceForIgnition)
 	to.Version = types.MaxVersion.String()
 	tm, r = translate.Prefixed(tr, "config", &from.Config, &to.Config)
 	translate.MergeP(tr, tm, &r, "proxy", &from.Proxy, &to.Proxy)
@@ -139,6 +139,18 @@ func translateFile(from File, options common.TranslateOptions) (to types.File, t
 }
 
 func translateResource(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
+	return translateResourceInternal(from, options, false)
+}
+
+// translateResourceForIgnition is like translateResource but additionally
+// validates the contents of local files as Ignition configs, since the
+// resources under ignition.config.merge/replace are themselves Ignition
+// configs.
+func translateResourceForIgnition(from Resource, options common.TranslateOptions) (to types.Resource, tm translate.TranslationSet, r report.Report) {
+	return translateResourceInternal(from, options, true)
+}
+
+func translateResourceInternal(from Resource, options common.TranslateOptions, validateIgnitionConfig bool) (to types.Resource, tm translate.TranslationSet, r report.Report) {
 	tr := translate.NewTranslator("yaml", "json", options)
 	tm, r = translate.Prefixed(tr, "verification", &from.Verification, &to.Verification)
 	translate.MergeP2(tr, tm, &r, "http_headers", &from.HTTPHeaders, "httpHeaders", &to.HTTPHeaders)
@@ -152,9 +164,11 @@ func translateResource(from Resource, options common.TranslateOptions) (to types
 			r.AddOnError(c, err)
 			return
 		}
-		// Validating the contents of the local file from here since there is no way to
-		// get both the filename and filedirectory in the Validate context
-		if strings.HasPrefix(c.String(), "$.ignition.config") {
+		// Validate the contents of the local file from here since there is no
+		// way to get both the filename and filedirectory in the Validate
+		// context. Local files under ignition.config.merge/replace are Ignition
+		// configs and must be validated as such.
+		if validateIgnitionConfig {
 			rp, err := ValidateIgnitionConfig(c, contents)
 			r.Merge(rp)
 			if err != nil {
