@@ -149,6 +149,38 @@ storage:
       mode: 0644
 ```
 
+Use ordinary `contents` when Butane should write the complete contents of a new or existing regular file. Use `append` with the safe default `overwrite: false` when the existing contents should be preserved and one or more fragments added to the end. This example appends a rule to a drop-in under `/etc/sudoers.d/` instead of modifying `/etc/sudoers` directly.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.7.0
+storage:
+  files:
+    - path: /etc/sudoers.d/core
+      mode: 0440
+      overwrite: false
+      append:
+        - inline: |
+            core ALL=(ALL) NOPASSWD: /usr/bin/podman
+```
+
+Use `overwrite: true` with `contents` when any existing filesystem node at the path should be removed and replaced. This example replaces anything at `/etc/example.conf` with a regular file containing the specified settings.
+
+<!-- butane-config -->
+```yaml
+variant: fcos
+version: 1.7.0
+storage:
+  files:
+    - path: /etc/example.conf
+      overwrite: true
+      contents:
+        inline: |
+          enabled = true
+      mode: 0644
+```
+
 ### Directory trees
 
 Consider a directory tree at `~/conf/tree` on the system running Butane:
