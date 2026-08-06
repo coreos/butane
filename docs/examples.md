@@ -149,7 +149,7 @@ storage:
       mode: 0644
 ```
 
-Use ordinary `contents` when Butane should write the complete contents of a new or existing regular file. Use `append` with the safe default `overwrite: false` when the existing contents should be preserved and one or more fragments added to the end. This example appends a rule to a drop-in under `/etc/sudoers.d/` instead of modifying `/etc/sudoers` directly.
+Use ordinary `contents` when Butane should write the complete contents of a new or existing regular file. Use `append` with the safe default `overwrite: false` when the existing contents should be preserved and one or more fragments added to the end. For sudoers rules, prefer a drop-in under `/etc/sudoers.d/` over modifying `/etc/sudoers` directly; this example appends to `/etc/sudoers.d/core`.
 
 <!-- butane-config -->
 ```yaml
