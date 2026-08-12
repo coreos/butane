@@ -149,7 +149,7 @@ storage:
       mode: 0644
 ```
 
-Use ordinary `contents` when Butane should write the complete contents of a new or existing regular file. Use `append` with the safe default `overwrite: false` when the existing contents should be preserved and one or more fragments added to the end. This example adds a sudoers rule to the end of the shipped `/etc/sudoers`.
+Use ordinary `contents` when Butane should write the complete contents of a new or existing regular file. Use `append` with the safe default `overwrite: false` when the existing contents should be preserved and one or more fragments added to the end. This example adds a sudoers rule to the end of the shipped `/etc/sudoers`. The rule deliberately allows only one command with exact arguments; avoid granting unrestricted passwordless access to shells, package managers, or container runtimes, since that is equivalent to root access.
 
 <!-- butane-config -->
 ```yaml
@@ -161,7 +161,7 @@ storage:
       overwrite: false
       append:
         - inline: |
-            core ALL=(ALL) NOPASSWD: /usr/bin/podman
+            core ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart example.service
 ```
 
 For sudoers rules specifically, a drop-in under `/etc/sudoers.d/` is usually preferable to appending to `/etc/sudoers`, since it survives updates to the shipped file. The same `append` semantics apply, and a new drop-in needs an explicit `mode`:
@@ -177,7 +177,7 @@ storage:
       overwrite: false
       append:
         - inline: |
-            core ALL=(ALL) NOPASSWD: /usr/bin/podman
+            core ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart example.service
 ```
 
 Use `overwrite: true` with `contents` when any existing filesystem node at the path should be removed and replaced. This example replaces anything at `/etc/example.conf` with a regular file containing the specified settings.
