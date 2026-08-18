@@ -266,6 +266,69 @@ func TestValidateConfig(t *testing.T) {
 			common.ErrMissingKernelArgumentCex,
 			path.New("yaml", "openshift", "kernel_arguments"),
 		},
+		{
+			// both CEX sources enabled and the kernel argument present:
+			// the valid path must produce no error
+			Config{
+				Config: fcos.Config{
+					BootDevice: fcos.BootDevice{
+						Layout: util.StrToPtr("s390x-eckd"),
+						Luks: fcos.BootDeviceLuks{
+							Device: util.StrToPtr("/dev/dasda"),
+							Cex: base.Cex{
+								Enabled: util.BoolToPtr(true),
+							},
+						},
+					},
+					Config: base.Config{
+						Storage: base.Storage{
+							Luks: []base.Luks{
+								{
+									Name:   "root",
+									Label:  util.StrToPtr("luks-root"),
+									Device: util.StrToPtr("/dev/disk/by-label/root"),
+									Cex: base.Cex{
+										Enabled: util.BoolToPtr(true),
+									},
+								},
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					KernelArguments: []string{"rd.luks.key=/etc/luks/cex.key"},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
+		{
+			// a CEX-enabled storage.luks entry whose name is not "root"
+			// must not trigger the root-specific kernel argument check
+			Config{
+				Config: fcos.Config{
+					Config: base.Config{
+						Storage: base.Storage{
+							Luks: []base.Luks{
+								{
+									Name:   "data",
+									Label:  util.StrToPtr("luks-data"),
+									Device: util.StrToPtr("/dev/disk/by-label/data"),
+									Cex: base.Cex{
+										Enabled: util.BoolToPtr(true),
+									},
+								},
+							},
+						},
+					},
+				},
+				OpenShift: OpenShift{
+					KernelArguments: []string{},
+				},
+			},
+			nil,
+			path.New("yaml"),
+		},
 	}
 
 	for i, test := range tests {
